@@ -108,7 +108,7 @@ namespace PawNClaw.Business.Service
             var userViewModel = await VerifyFirebaseTokenId(loginRequestModel.IdToken, loginRequestModel.deviceId, loginRequestModel.SignInMethod);
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Name, userViewModel.Name ?? ClaimTypes.Name, ""),
+                new(ClaimTypes.Name, userViewModel.Name != null ? userViewModel.Name : ""),
                 new(ClaimTypes.Email, userViewModel.UserName),
                 new(ClaimTypes.Role, userViewModel.Role),
             };
@@ -182,7 +182,8 @@ namespace PawNClaw.Business.Service
             //Get data for loginViewModel
             try
             {
-                switch(account.RoleCode)
+                string roleCode = account.RoleCode.Trim();
+                switch (roleCode)
                 {
                     case "01":
                         Name = _adminRepository.Get(account.Id).Name;
@@ -207,8 +208,6 @@ namespace PawNClaw.Business.Service
             {
                 throw new Exception();
             }
-
-
 
             var loginViewModel = new LoginViewModel
             {
