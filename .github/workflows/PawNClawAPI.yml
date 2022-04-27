@@ -1,6 +1,6 @@
 name: Build and deploy .NET Core application to windows webapp PawNClawAPI with API Management Service PawNClawAPI
 on:
-  push:
+  merge:
     branches:
     - main
 env:
