@@ -50,13 +50,14 @@ namespace PawNClaw.Data.Database
         public virtual DbSet<VoucherType> VoucherTypes { get; set; }
         public virtual DbSet<Staff> Staff { get; set; }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    if (!optionsBuilder.IsConfigured)
-        //    {
-        //        optionsBuilder.UseSqlServer("Server=pawnclaw.database.windows.net;Database=PawNClaw;User Id=pawnclaw;Password=Sa123321;");
-        //    }
-        //}
+//        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//        {
+//            if (!optionsBuilder.IsConfigured)
+//            {
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+//                optionsBuilder.UseSqlServer("Server=pawnclaw.database.windows.net;Database=PawNClaw;User Id=pawnclaw;Password=Sa123321;");
+//            }
+//        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -65,6 +66,10 @@ namespace PawNClaw.Data.Database
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.Property(e => e.CreatedUser).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.DeviceId).IsUnicode(false);
+
+                entity.Property(e => e.Phone).IsUnicode(false);
 
                 entity.Property(e => e.RoleCode)
                     .IsUnicode(false)
@@ -83,8 +88,6 @@ namespace PawNClaw.Data.Database
             modelBuilder.Entity<Admin>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.Phone).IsUnicode(false);
 
                 entity.Property(e => e.Status).HasDefaultValueSql("((1))");
 
@@ -240,8 +243,6 @@ namespace PawNClaw.Data.Database
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.Phone).IsUnicode(false);
-
                 entity.Property(e => e.Status).HasDefaultValueSql("((1))");
 
                 entity.HasOne(d => d.IdNavigation)
@@ -301,8 +302,6 @@ namespace PawNClaw.Data.Database
             modelBuilder.Entity<Owner>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.Phone).IsUnicode(false);
 
                 entity.Property(e => e.Status).HasDefaultValueSql("((1))");
 
@@ -636,19 +635,25 @@ namespace PawNClaw.Data.Database
 
                 entity.Property(e => e.Code).IsUnicode(false);
 
-                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.ModifyDate).HasDefaultValueSql("(getdate())");
-
                 entity.Property(e => e.Status).HasDefaultValueSql("((1))");
 
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.SupplyTypeCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
+                    .HasConstraintName("FK__SupplyTyp__creat__0F2D40CE");
+
+                entity.HasOne(d => d.CreateUser1)
+                    .WithMany(p => p.SupplyTypeCreateUser1s)
+                    .HasForeignKey(d => d.CreateUser)
                     .HasConstraintName("FK__SupplyTyp__creat__489AC854");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.SupplyTypeModifyUserNavigations)
+                    .HasForeignKey(d => d.ModifyUser)
+                    .HasConstraintName("FK__SupplyTyp__modif__10216507");
+
+                entity.HasOne(d => d.ModifyUser1)
+                    .WithMany(p => p.SupplyTypeModifyUser1s)
                     .HasForeignKey(d => d.ModifyUser)
                     .HasConstraintName("FK__SupplyTyp__modif__498EEC8D");
             });
@@ -707,12 +712,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.VoucherTypeCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__VoucherTy__creat__57DD0BE4");
+                    .HasConstraintName("FK__VoucherTy__creat__1B9317B3");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.VoucherTypeModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__VoucherTy__modif__58D1301D");
+                    .HasConstraintName("FK__VoucherTy__modif__1C873BEC");
             });
 
             modelBuilder.Entity<Staff>(entity =>

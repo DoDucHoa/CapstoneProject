@@ -27,9 +27,6 @@ namespace PawNClaw.Data.Database
         public string Name { get; set; }
         [Column("birth", TypeName = "date")]
         public DateTime? Birth { get; set; }
-        [Column("phone")]
-        [StringLength(32)]
-        public string Phone { get; set; }
         [Column("status")]
         public bool? Status { get; set; }
 

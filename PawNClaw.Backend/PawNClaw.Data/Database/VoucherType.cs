@@ -36,11 +36,11 @@ namespace PawNClaw.Data.Database
         public bool? Status { get; set; }
 
         [ForeignKey(nameof(CreateUser))]
-        [InverseProperty(nameof(Staff.VoucherTypeCreateUserNavigations))]
-        public virtual Staff CreateUserNavigation { get; set; }
+        [InverseProperty(nameof(Admin.VoucherTypeCreateUserNavigations))]
+        public virtual Admin CreateUserNavigation { get; set; }
         [ForeignKey(nameof(ModifyUser))]
-        [InverseProperty(nameof(Staff.VoucherTypeModifyUserNavigations))]
-        public virtual Staff ModifyUserNavigation { get; set; }
+        [InverseProperty(nameof(Admin.VoucherTypeModifyUserNavigations))]
+        public virtual Admin ModifyUserNavigation { get; set; }
         [InverseProperty(nameof(Voucher.VoucherTypeCodeNavigation))]
         public virtual ICollection<Voucher> Vouchers { get; set; }
     }
