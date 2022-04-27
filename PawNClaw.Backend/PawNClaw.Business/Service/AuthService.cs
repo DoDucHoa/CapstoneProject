@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -106,6 +108,7 @@ namespace PawNClaw.Business.Service
             var userViewModel = await VerifyFirebaseTokenId(loginRequestModel.IdToken, loginRequestModel.deviceId, loginRequestModel.SignInMethod);
             var claims = new List<Claim>
             {
+                new(ClaimTypes.Name, userViewModel.Name ?? ClaimTypes.Name, ""),
                 new(ClaimTypes.Email, userViewModel.UserName),
                 new(ClaimTypes.Role, userViewModel.Role),
             };
@@ -152,12 +155,15 @@ namespace PawNClaw.Business.Service
                 //Not in database
                 if (account == null) throw new UnauthorizedAccessException();
 
+                //Check if avaliable
+                if (account.Status == false) throw new UnauthorizedAccessException($"Oops!!! This account is currently unavailable!!!");
+
                 //Check deviceId for mobile
                 if (deviceId != null)
                 {
                     try
                     {
-                        //account.DeviceId = deviceId;
+                        account.DeviceId = deviceId;
                         _repository.Update(account);
                         _repository.SaveDbChange();
                     }
@@ -165,7 +171,6 @@ namespace PawNClaw.Business.Service
                     {
                         throw new Exception();
                     }
-
                 }
             } catch
             {
