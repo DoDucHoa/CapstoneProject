@@ -1,5 +1,6 @@
 ﻿using FirebaseAdmin.Auth;
 using Microsoft.IdentityModel.Tokens;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using System;
@@ -17,11 +18,21 @@ namespace PawNClaw.Business.Service
     {
         private readonly IAccountRepository _repository;
         private readonly IRoleRepository _roleRepository;
+        private readonly IAdminRepository _adminRepository;
+        private readonly IOwnerRepository _ownerRepository;
+        private readonly IStaffRepository _staffRepository;
+        private readonly ICustomerRepository _customerRepository;
 
-        public AuthService(IAccountRepository userInfoRepository, IRoleRepository roleRepository)
+        public AuthService(IAccountRepository userInfoRepository, IRoleRepository roleRepository, 
+            IAdminRepository adminRepository, IOwnerRepository ownerRepository,
+            IStaffRepository staffRepository, ICustomerRepository customerRepository)
         {
             _repository = userInfoRepository;
             _roleRepository = roleRepository;
+            _adminRepository = adminRepository;
+            _ownerRepository = ownerRepository;
+            _staffRepository = staffRepository;
+            _customerRepository = customerRepository;
         }
         ////register
         //public async task<loginviewmodel> register(loginrequestmodel loginrequestmodel, string universityid, string username)
@@ -92,7 +103,7 @@ namespace PawNClaw.Business.Service
         //login
         public async Task<LoginViewModel> Login(LoginRequestModel loginRequestModel)
         {
-            var userViewModel = await VerifyFirebaseTokenId(loginRequestModel.IdToken, loginRequestModel.deviceId);
+            var userViewModel = await VerifyFirebaseTokenId(loginRequestModel.IdToken, loginRequestModel.deviceId, loginRequestModel.SignInMethod);
             var claims = new List<Claim>
             {
                 new(ClaimTypes.Email, userViewModel.UserName),
@@ -106,7 +117,7 @@ namespace PawNClaw.Business.Service
             return userViewModel;
         }
 
-        public async Task<LoginViewModel> VerifyFirebaseTokenId(string idToken, string deviceId)
+        public async Task<LoginViewModel> VerifyFirebaseTokenId(string idToken, string deviceId, string SignInMethod)
         {
             FirebaseToken decodedToken;
             try
@@ -122,31 +133,86 @@ namespace PawNClaw.Business.Service
             var user = await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
 
             // Query account table in DB
-            var account = _repository.GetFirstOrDefault(x => x.UserName == user.Email);
-
-
-            if (account == null) throw new UnauthorizedAccessException();
-
-            if (deviceId != null)
+            var account = new Account();
+            try
             {
-                try
+                switch(SignInMethod)
                 {
-                    //account.DeviceId = deviceId;
-                    _repository.Update(account);
-                    _repository.SaveDbChange();
-                }
-                catch (Exception)
-                {
-                    throw new Exception();
+                    case "Email/Password":
+                        account = _repository.GetFirstOrDefault(x => x.UserName == user.Email);
+                        break;
+                    case "Google":
+                        account = _repository.GetFirstOrDefault(x => x.UserName == user.Email);
+                        break;
+                    case "Phone":
+                        account = _repository.GetFirstOrDefault(x => x.Phone == user.PhoneNumber);
+                        break;
                 }
 
+                //Not in database
+                if (account == null) throw new UnauthorizedAccessException();
+
+                //Check deviceId for mobile
+                if (deviceId != null)
+                {
+                    try
+                    {
+                        //account.DeviceId = deviceId;
+                        _repository.Update(account);
+                        _repository.SaveDbChange();
+                    }
+                    catch (Exception)
+                    {
+                        throw new Exception();
+                    }
+
+                }
+            } catch
+            {
+                throw new Exception();
             }
+
+            string Name = null;
+            string Email = null;
+            //Get data for loginViewModel
+            try
+            {
+                switch(account.RoleCode)
+                {
+                    case "01":
+                        Name = _adminRepository.Get(account.Id).Name;
+                        Email = _adminRepository.Get(account.Id).Email;
+                        break;
+                    case "02":
+                        Name = _adminRepository.Get(account.Id).Name;
+                        Email = _adminRepository.Get(account.Id).Email;
+                        break;
+                    case "03":
+                        Name = _ownerRepository.Get(account.Id).Name;
+                        Email = _ownerRepository.Get(account.Id).Email;
+                        break;
+                    case "04":
+                        break;
+                    case "05":
+                        Name = _customerRepository.Get(account.Id).Name;
+                        Email = account.UserName;
+                        break;
+                }
+            }catch
+            {
+                throw new Exception();
+            }
+
+
 
             var loginViewModel = new LoginViewModel
             {
                 Id = account.Id,
                 Role = _roleRepository.Get(account.RoleCode).RoleName,
                 UserName = account.UserName,
+                Name = Name,
+                Phone = account.Phone,
+                Email = Email,
                 JwtToken = null
             };
             return loginViewModel;

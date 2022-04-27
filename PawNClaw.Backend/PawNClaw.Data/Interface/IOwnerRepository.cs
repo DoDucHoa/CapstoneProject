@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PawNClaw.Data.Interface
 {
-    public interface IAdminRepository : IRepository<Admin>
+    public interface IOwnerRepository : IRepository<Owner>
     {
     }
 }

@@ -45,6 +45,17 @@ namespace PawNClaw.API
             services.AddTransient<IAccountRepository, AccountRepository>();
             services.AddTransient<AccountRepository, AccountRepository>();
 
+            services.AddTransient<IAdminRepository, AdminRepository>();
+            services.AddTransient<AdminRepository, AdminRepository>();
+
+            services.AddTransient<IOwnerRepository, OwnerRepository>();
+            services.AddTransient<OwnerRepository, OwnerRepository>();
+
+            services.AddTransient<IStaffRepository, StaffRepository>();
+            services.AddTransient<StaffRepository, StaffRepository>();
+
+            services.AddTransient<ICustomerRepository, CustomerRepository>();
+            services.AddTransient<CustomerRepository, CustomerRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

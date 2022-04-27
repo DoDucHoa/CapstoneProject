@@ -27,9 +27,6 @@ namespace PawNClaw.Data.Database
         [Column("email")]
         [StringLength(256)]
         public string Email { get; set; }
-        [Column("phone")]
-        [StringLength(32)]
-        public string Phone { get; set; }
         [Column("status")]
         public bool? Status { get; set; }
 

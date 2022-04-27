@@ -26,6 +26,12 @@ namespace PawNClaw.Data.Database
         [Column("role_code")]
         [StringLength(32)]
         public string RoleCode { get; set; }
+        [Column("device_id")]
+        [StringLength(512)]
+        public string DeviceId { get; set; }
+        [Column("phone")]
+        [StringLength(32)]
+        public string Phone { get; set; }
 
         [ForeignKey(nameof(RoleCode))]
         [InverseProperty(nameof(Role.Accounts))]
