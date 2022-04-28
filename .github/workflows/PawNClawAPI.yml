@@ -68,7 +68,7 @@ jobs:
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        publish-profile: ${{ secrets.PawNClawAPI_b55b }}
+        publish-profile: ${{ secrets.PawNClawAPI_dbf }}
     - name: Azure Login
       uses: azure/login@v1
       with:
