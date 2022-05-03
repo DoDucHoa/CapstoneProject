@@ -8,6 +8,8 @@ abstract class AuthState extends Equatable {
   List<Object?> get props => [];
 }
 
+class InitialAuth extends AuthState {}
+
 class Unauthenticated extends AuthState {}
 
 class PhoneVerified extends AuthState {
@@ -20,4 +22,12 @@ class PhoneVerified extends AuthState {
   List<Object?> get props => [phoneNumber];
 }
 
-class Authenticated extends AuthState {}
+class Authenticated extends AuthState {
+  final Account user;
+
+  const Authenticated(this.user);
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [user];
+}

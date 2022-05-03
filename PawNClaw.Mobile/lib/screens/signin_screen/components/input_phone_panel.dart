@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:pawnclaw_mobile_application/blocs/bloc/auth_bloc.dart';
+import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
 import 'package:pawnclaw_mobile_application/constants.dart';
 
 class InputPhonePanel extends StatefulWidget {
@@ -27,7 +26,7 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Spacer(flex: 35),
+          const Spacer(flex: 35),
           const Text(
             "Sign up",
             style: TextStyle(
@@ -35,7 +34,7 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Spacer(flex: 1),
+          const Spacer(flex: 1),
           const Text(
             "to booking your service",
             style: TextStyle(
@@ -44,7 +43,7 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Spacer(flex: 3),
+          const Spacer(flex: 3),
           InternationalPhoneNumberInput(
             onInputChanged: (PhoneNumber number) {
               setState(() {
@@ -55,7 +54,6 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
               setState(() {
                 isValid = value;
               });
-              ;
             },
             selectorConfig: const SelectorConfig(
               useEmoji: true,
@@ -84,7 +82,7 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
               border: InputBorder.none,
             ),
           ),
-          Spacer(flex: 30),
+          const Spacer(flex: 30),
           Center(
             child: Opacity(
               opacity: isValid ? 1 : 0.3,
@@ -95,8 +93,8 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
                             .add(VerifyPhonenumber(phoneController.text));
                       }
                     : () {},
-                child: Text(
-                  "Verify your phonenumber",
+                child: const Text(
+                  "Verify your phone number",
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 style: ButtonStyle(

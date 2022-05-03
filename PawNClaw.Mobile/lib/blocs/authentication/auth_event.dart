@@ -9,6 +9,16 @@ abstract class AuthEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+class CheckingCurrentAuth extends AuthEvent {
+  final User? user;
+
+  const CheckingCurrentAuth(this.user);
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [user];
+}
+
 class VerifyPhonenumber extends AuthEvent {
   final String phoneNumber;
 
@@ -26,4 +36,13 @@ class VerifyOTP extends AuthEvent {
   @override
   // TODO: implement props
   List<Object?> get props => [verificationId, otp];
+}
+
+class SignOut extends AuthEvent {
+  final context;
+
+  const SignOut(this.context);
+  @override
+  // TODO: implement props
+  List<Object?> get props => [context];
 }
