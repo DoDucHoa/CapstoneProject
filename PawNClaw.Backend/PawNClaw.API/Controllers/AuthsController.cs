@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PawNClaw.Business.Service;
+using PawNClaw.Business.Services;
 using PawNClaw.Data.Helper;
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost("sign-in")]
-        public async Task<ActionResult<LoginViewModel>> Post([FromQuery] LoginRequestModel loginRequestModel)
+        public async Task<ActionResult<LoginViewModel>> Post([FromBody] LoginRequestModel loginRequestModel)
         {
             return Ok(await _authService.Login(loginRequestModel));
         }
