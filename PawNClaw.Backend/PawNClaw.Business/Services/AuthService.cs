@@ -14,7 +14,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PawNClaw.Business.Service
+namespace PawNClaw.Business.Services
 {
     public class AuthService
     {
@@ -141,7 +141,7 @@ namespace PawNClaw.Business.Service
             {
                 switch(SignInMethod)
                 {
-                    case "Email/Password":
+                    case "Email":
                         account = _repository.GetFirstOrDefault(x => x.UserName == user.Email);
                         break;
                     case "Google":
