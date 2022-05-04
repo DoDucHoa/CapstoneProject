@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pawnclaw_mobile_application/blocs/bloc/auth_bloc.dart';
-import 'package:pawnclaw_mobile_application/screens/signin_screen/SignInScreen.dart';
+import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
+import 'package:pinput/pinput.dart';
 
 class InputOTPPanel extends StatefulWidget {
   InputOTPPanel({Key? key, required this.phoneNumber}) : super(key: key);
@@ -15,7 +15,7 @@ class InputOTPPanel extends StatefulWidget {
 class _InputOTPPanelState extends State<InputOTPPanel> {
   TextEditingController otpController = TextEditingController();
   late String verificationId;
-  @override
+  final TextEditingController _pinPutController = TextEditingController();
   void initState() {
     // TODO: implement initState
     _verifyPhone(widget.phoneNumber);
@@ -43,7 +43,7 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Spacer(flex: 35),
+          const Spacer(flex: 35),
           const Text(
             "Enter OTP",
             style: TextStyle(
@@ -51,7 +51,7 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Spacer(flex: 1),
+          const Spacer(flex: 1),
           const Text(
             "to verify your account",
             style: TextStyle(
@@ -60,21 +60,36 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          TextField(
-            controller: otpController,
-            onChanged: (value) {},
+          // TextField(
+          //   controller: otpController,
+          //   onChanged: (value) {},
+          // ),
+          const Spacer(flex: 1),
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child: Pinput(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              closeKeyboardWhenCompleted: true,
+              androidSmsAutofillMethod:
+                  AndroidSmsAutofillMethod.smsUserConsentApi,
+              length: 6,
+              controller: otpController,
+              textCapitalization: TextCapitalization.characters,
+              showCursor: false,
+              keyboardType: TextInputType.number,
+            ),
           ),
-          Spacer(flex: 30),
+          const Spacer(flex: 30),
           Center(
             child: Opacity(
               opacity: 1,
               child: ElevatedButton(
                 onPressed: () {
                   BlocProvider.of<AuthBloc>(context)
-                      .add(VerifyOTP(this.verificationId, otpController.text));
+                      .add(VerifyOTP(verificationId, otpController.text));
                 },
-                child: Text(
-                  "Verify your phonenumber",
+                child: const Text(
+                  "Confirm",
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 style: ButtonStyle(
