@@ -25,9 +25,17 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet]
+        [Route("get-by-id")]
+        public IActionResult GetAccount(int id)
+        {
+            var data = _accountService.GetAccountById(id);
+            return Ok(data);
+        }
+
+        [HttpGet]
         [Route("get-for-admin")]
         [Authorize(Roles = "Admin")]
-        public IActionResult GetAccount([FromQuery] AccountRequestParameter _requestParameter, PagingParameter _paging)
+        public IActionResult GetAccounts([FromQuery] AccountRequestParameter _requestParameter, PagingParameter _paging)
         {
             var data = _accountService.GetAccounts(_requestParameter, _paging);
             return Ok(data);
@@ -36,7 +44,7 @@ namespace PawNClaw.API.Controllers
         [HttpGet]
         [Route("get-for-mod")]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult GetAccountForMod([FromQuery] AccountRequestParameter _requestParameter, PagingParameter _paging)
+        public IActionResult GetAccountsForMod([FromQuery] AccountRequestParameter _requestParameter, PagingParameter _paging)
         {
             if (_requestParameter.RoleCode.Trim().Equals("01") || _requestParameter.RoleCode.Trim().Equals("02")) return BadRequest();
             var data = _accountService.GetAccounts(_requestParameter, _paging);
@@ -46,7 +54,7 @@ namespace PawNClaw.API.Controllers
         [HttpPost]
         [Route("create-for-admin")]
         [Authorize(Roles = "Admin")]
-        public IActionResult Add(Account account)
+        public IActionResult Add([FromBody] Account account)
         {
             if (account.RoleCode.Trim().Equals("01")) return BadRequest();
             if (_accountService.Add(account) != -1)
@@ -59,7 +67,7 @@ namespace PawNClaw.API.Controllers
         [HttpPost]
         [Route("create-for-mod")]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult AddForMod(Account account)
+        public IActionResult AddForMod([FromBody] Account account)
         {
             if (account.RoleCode.Trim().Equals("01") || account.RoleCode.Trim().Equals("02")) return BadRequest();
             if (_accountService.Add(account) != -1)
@@ -70,8 +78,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Update(Account account)
+        public IActionResult Update([FromBody] Account account)
         {
 
             if (_accountService.Update(account))
@@ -82,10 +89,33 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpDelete]
-        [Route("status-false")]
+        [Route("status-false-mod")]
         [Authorize(Roles = "Admin,Mod")]
+        public IActionResult DeleteForMod(int id)
+        {
+            if (_accountService.GetAccountById(id).RoleCode.Trim().Equals("01") ||
+                _accountService.GetAccountById(id).RoleCode.Trim().Equals("02"))
+            {
+                ModelState.AddModelError("Id", "ID is Mod or Admin account");
+                return BadRequest(ModelState);
+            }
+            if (_accountService.Delete(id))
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+
+        [HttpDelete]
+        [Route("status-false-admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
+            if (_accountService.GetAccountById(id).RoleCode.Trim().Equals("01"))
+            {
+                ModelState.AddModelError("Id", "ID is Admin account");
+                return BadRequest(ModelState);
+            }
             if (_accountService.Delete(id))
             {
                 return Ok();
