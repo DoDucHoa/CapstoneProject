@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PawNClaw.Data.Database
 {
-    [Table("PetCenter")]
     [Index(nameof(Id), Name = "i")]
     public partial class PetCenter
     {
@@ -20,7 +19,7 @@ namespace PawNClaw.Data.Database
             GeneralLedgers = new HashSet<GeneralLedger>();
             Services = new HashSet<Service>();
             Vouchers = new HashSet<Voucher>();
-            Staff = new HashSet<Staff>();
+            staff = new HashSet<Staff>();
         }
 
         [Key]
@@ -74,7 +73,7 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<Service> Services { get; set; }
         [InverseProperty(nameof(Voucher.Center))]
         public virtual ICollection<Voucher> Vouchers { get; set; }
-        [InverseProperty("Center")]
-        public virtual ICollection<Staff> Staff { get; set; }
+        [InverseProperty(nameof(Staff.Center))]
+        public virtual ICollection<Staff> staff { get; set; }
     }
 }

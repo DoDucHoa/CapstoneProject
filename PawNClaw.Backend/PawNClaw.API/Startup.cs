@@ -34,28 +34,25 @@ namespace PawNClaw.API
         {
             services.ConfigFirebaseAuth();
             services.AddTransient<AuthService, AuthService>();
+            
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
             services.AddHttpClient();
 
             services.AddTransient<IRoleRepository, RoleRepository>();
-            services.AddTransient<RoleRepository, RoleRepository>();
 
             services.AddTransient<IAccountRepository, AccountRepository>();
-            services.AddTransient<AccountRepository, AccountRepository>();
+            services.AddTransient<AccountService, AccountService>();
 
             services.AddTransient<IAdminRepository, AdminRepository>();
-            services.AddTransient<AdminRepository, AdminRepository>();
+            services.AddTransient<AdminService, AdminService>();
 
             services.AddTransient<IOwnerRepository, OwnerRepository>();
-            services.AddTransient<OwnerRepository, OwnerRepository>();
 
             services.AddTransient<IStaffRepository, StaffRepository>();
-            services.AddTransient<StaffRepository, StaffRepository>();
 
             services.AddTransient<ICustomerRepository, CustomerRepository>();
-            services.AddTransient<CustomerRepository, CustomerRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

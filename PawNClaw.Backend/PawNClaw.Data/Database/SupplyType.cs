@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PawNClaw.Data.Database
 {
-    [Table("SupplyType")]
     public partial class SupplyType
     {
         public SupplyType()
@@ -36,14 +35,8 @@ namespace PawNClaw.Data.Database
         public bool? Status { get; set; }
 
         [ForeignKey(nameof(CreateUser))]
-        [InverseProperty(nameof(Staff.SupplyTypeCreateUser1s))]
-        public virtual Staff CreateUser1 { get; set; }
-        [ForeignKey(nameof(CreateUser))]
         [InverseProperty(nameof(Admin.SupplyTypeCreateUserNavigations))]
         public virtual Admin CreateUserNavigation { get; set; }
-        [ForeignKey(nameof(ModifyUser))]
-        [InverseProperty(nameof(Staff.SupplyTypeModifyUser1s))]
-        public virtual Staff ModifyUser1 { get; set; }
         [ForeignKey(nameof(ModifyUser))]
         [InverseProperty(nameof(Admin.SupplyTypeModifyUserNavigations))]
         public virtual Admin ModifyUserNavigation { get; set; }

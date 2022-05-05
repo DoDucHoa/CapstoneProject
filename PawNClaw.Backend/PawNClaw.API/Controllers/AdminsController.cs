@@ -27,10 +27,19 @@ namespace PawNClaw.API.Controllers
         [HttpGet]
         [Route("get-admins")]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult GetAdmins([FromQuery] AdminRequestParameter _requestParameter, PagingParameter _paging)
+        public IActionResult GetAdmins([FromQuery] AdminRequestParameter _requestParameter, [FromQuery] PagingParameter _paging)
         {
             var data = _adminService.GetAdmins(_requestParameter, _paging);
-            return Ok(data);
+            var metadata = new
+            {
+                data.TotalCount,
+                data.PageSize,
+                data.CurrentPage,
+                data.TotalPages,
+                data.HasNext,
+                data.HasPrevious
+            };
+            return Ok(new { data, metadata });
         }
 
         [HttpPost]

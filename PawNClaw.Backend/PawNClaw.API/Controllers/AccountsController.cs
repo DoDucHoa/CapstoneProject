@@ -35,20 +35,38 @@ namespace PawNClaw.API.Controllers
         [HttpGet]
         [Route("get-for-admin")]
         [Authorize(Roles = "Admin")]
-        public IActionResult GetAccounts([FromQuery] AccountRequestParameter _requestParameter, PagingParameter _paging)
+        public IActionResult GetAccounts([FromQuery] AccountRequestParameter _requestParameter, [FromQuery] PagingParameter _paging)
         {
             var data = _accountService.GetAccounts(_requestParameter, _paging);
-            return Ok(data);
+            var metadata = new
+            {
+                data.TotalCount,
+                data.PageSize,
+                data.CurrentPage,
+                data.TotalPages,
+                data.HasNext,
+                data.HasPrevious
+            };
+            return Ok(new { data, metadata });
         }
 
         [HttpGet]
         [Route("get-for-mod")]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult GetAccountsForMod([FromQuery] AccountRequestParameter _requestParameter, PagingParameter _paging)
+        public IActionResult GetAccountsForMod([FromQuery] AccountRequestParameter _requestParameter, [FromQuery] PagingParameter _paging)
         {
             if (_requestParameter.RoleCode.Trim().Equals("01") || _requestParameter.RoleCode.Trim().Equals("02")) return BadRequest();
             var data = _accountService.GetAccounts(_requestParameter, _paging);
-            return Ok(data);
+            var metadata = new
+            {
+                data.TotalCount,
+                data.PageSize,
+                data.CurrentPage,
+                data.TotalPages,
+                data.HasNext,
+                data.HasPrevious
+            };
+            return Ok(new { data, metadata });
         }
 
         [HttpPost]
