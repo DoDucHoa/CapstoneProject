@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,12 @@ namespace PawNClaw.API.Controllers
         public async Task<ActionResult<LoginViewModel>> Post([FromBody] LoginRequestModel loginRequestModel)
         {
             return Ok(await _authService.Login(loginRequestModel));
+        }
+
+        [HttpPost("sign-up")]
+        public async Task<ActionResult<LoginViewModel>> SignUp([FromQuery] LoginRequestModel loginRequestModel, [FromQuery] AccountRequestParameter account, [FromQuery] CustomerRequestParameter customer)
+        {
+            return Ok(await _authService.Register(loginRequestModel, account, customer));
         }
     }
 }

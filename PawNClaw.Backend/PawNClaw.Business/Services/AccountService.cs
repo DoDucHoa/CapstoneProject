@@ -82,6 +82,8 @@ namespace PawNClaw.Business.Services
         {
             try
             {
+                if (_accountRepository.GetFirstOrDefault(x => x.UserName.Trim().Equals(account.UserName)) != null)
+                    return -1;
                 _accountRepository.Add(account);
                 _accountRepository.SaveDbChange();
                 var id = account.Id;
