@@ -140,20 +140,16 @@ export default function UserList() {
     <Page title="Admin: List">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="User List"
-          links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.root },
-            { name: 'User', href: PATH_DASHBOARD.user.root },
-            { name: 'List' },
-          ]}
+          heading="Morderator List"
+          links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Morderator List' }]}
           action={
             <Button
               variant="contained"
               component={RouterLink}
-              to={PATH_DASHBOARD.user.new}
+              to={PATH_DASHBOARD.admin.new}
               startIcon={<Iconify icon={'eva:plus-fill'} />}
             >
-              New User
+              New Moderator
             </Button>
           }
         />

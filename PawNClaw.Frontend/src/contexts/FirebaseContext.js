@@ -12,9 +12,13 @@ import { getFirestore, collection, doc, getDoc, setDoc } from 'firebase/firestor
 //
 import { FIREBASE_API } from '../config';
 
+// utils
+import axios from '../utils/axios';
+import { isValidToken, setSession } from '../utils/jwt';
+
 // ----------------------------------------------------------------------
 
-const ADMIN_EMAILS = ['hhoa0978@gmail.com'];
+const ADMIN_EMAILS = ['hhoa0978@gmail.com', 'pawnclaw.ad@gmail.com'];
 
 const firebaseApp = initializeApp(FIREBASE_API);
 
@@ -87,7 +91,35 @@ function AuthProvider({ children }) {
     [dispatch]
   );
 
-  const login = (email, password) => signInWithEmailAndPassword(AUTH, email, password);
+  // const getBackendToken = async (IdToken, SignInMethod) => {
+  //   const response = await axios.post('/api/auth/sign-in', {
+  //     IdToken,
+  //     SignInMethod,
+  //   });
+
+  //   const res = await response.json();
+  //   console.log(res);
+  //   // const { jwtToken, userName } = await response.data;
+  //   // console.log(jwtToken);
+  //   // console.log(userName);
+  //   // setSession(jwtToken);
+  // };
+
+  const getBackendToken = async (IdToken, SignInMethod) => {
+    await fetch('https://pawnclawapi.azurewebsites.net/api/auth/sign-in', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ IdToken, SignInMethod }),
+    })
+      .then((res) => console.log(res.json()))
+      .catch((err) => console.log(err));
+  };
+
+  const login = (email, password) =>
+    signInWithEmailAndPassword(AUTH, email, password).then((userCredentials) => {
+      const { accessToken } = userCredentials.user;
+      getBackendToken(accessToken, 'Email/Password');
+    });
 
   const register = (email, password, firstName, lastName) =>
     createUserWithEmailAndPassword(AUTH, email, password).then(async (res) => {
