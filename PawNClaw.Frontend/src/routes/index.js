@@ -69,7 +69,6 @@ export default function Router() {
         { path: 'analytics', element: <GeneralAnalytics /> },
         { path: 'banking', element: <GeneralBanking /> },
         { path: 'booking', element: <GeneralBooking /> },
-
         {
           path: 'e-commerce',
           children: [
@@ -159,7 +158,8 @@ export default function Router() {
     },
     {
       path: '/',
-      element: <MainLayout />,
+      // element: <MainLayout />,
+      element: <Navigate to="/auth/login" />,
       children: [
         { element: <HomePage />, index: true },
         { path: 'about-us', element: <About /> },

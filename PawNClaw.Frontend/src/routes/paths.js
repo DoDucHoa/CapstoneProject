@@ -92,6 +92,7 @@ export const PATH_DASHBOARD = {
   admin: {
     root: path(ROOTS_DASHBOARD, '/admin'),
     list: path(ROOTS_DASHBOARD, '/admin/list'),
+    new: path(ROOTS_DASHBOARD, '/admin/new'),
   },
 };
 
