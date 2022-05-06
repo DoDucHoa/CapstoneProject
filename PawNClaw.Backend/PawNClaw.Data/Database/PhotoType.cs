@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PawNClaw.Data.Database
 {
-    [Table("PhotoType")]
     public partial class PhotoType
     {
         public PhotoType()
