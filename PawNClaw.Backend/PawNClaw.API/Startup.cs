@@ -78,6 +78,8 @@ namespace PawNClaw.API
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -278,13 +278,14 @@ namespace PawNClaw.Business.Services
             var loginViewModel = new LoginViewModel
             {
                 Id = account.Id,
-                Role = _roleRepository.Get(account.RoleCode).RoleName,
+                Role = _roleRepository.Get(account.RoleCode.Trim()).RoleName,
                 UserName = account.UserName,
                 Name = Name,
                 Phone = account.Phone,
                 Email = Email,
                 JwtToken = null
             };
+
             return loginViewModel;
         }
 
