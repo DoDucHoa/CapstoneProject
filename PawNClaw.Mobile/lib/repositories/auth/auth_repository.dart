@@ -18,14 +18,14 @@ class AuthRepository implements BaseAuthRepository {
     // TODO: implement signIn
     var deviceId = await _getId();
     try {
-      var queryParameters = {
+      var requestBody = {
         'IdToken': token,
         'deviceId': deviceId,
         'SignInMethod': 'Phone'
       };
       const String _url =
-          "https://pawnclawapi.azurewebsites.net/api/auth/sign-in";
-      var response = await _dio.post(_url, queryParameters: queryParameters);
+          "https://pawnclawdevelopmentapi.azurewebsites.net/api/auth/sign-in";
+      var response = await _dio.post(_url, data: requestBody);
       final account = Account.fromJson(response.data);
       return account;
     } catch (e) {
@@ -48,6 +48,36 @@ class AuthRepository implements BaseAuthRepository {
     } else if (Platform.isAndroid) {
       var androidDeviceInfo = await deviceInfo.androidInfo;
       return androidDeviceInfo.androidId; // unique ID on Android
+    }
+  }
+
+  @override
+  Future<Account?> signUp(
+      {required String token,
+      required String name,
+      required String phone,
+      required String email,
+      required DateTime birthday}) async {
+    // TODO: implement signUp
+    var deviceId = await _getId();
+    try {
+      var requestBody = {
+        'IdToken': token,
+        'deviceId': deviceId,
+        'SignInMethod': 'Phone',
+        'UserName': email,
+        'Phone': phone,
+        'Name': name,
+        'Birth': birthday.toIso8601String(),
+      };
+      const String _url =
+          "https://pawnclawdevelopmentapi.azurewebsites.net/api/auth/sign-up";
+      var response = await _dio.post(_url, data: requestBody);
+      final account = Account.fromJson(response.data);
+      return account;
+    } catch (e) {
+      print(e);
+      return null;
     }
   }
 }

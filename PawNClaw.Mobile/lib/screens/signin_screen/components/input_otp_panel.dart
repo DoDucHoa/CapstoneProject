@@ -5,9 +5,11 @@ import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart'
 import 'package:pinput/pinput.dart';
 
 class InputOTPPanel extends StatefulWidget {
-  InputOTPPanel({Key? key, required this.phoneNumber}) : super(key: key);
+  InputOTPPanel({Key? key, required this.phoneNumber, this.error})
+      : super(key: key);
 
   final String phoneNumber;
+  final String? error;
   @override
   State<InputOTPPanel> createState() => _InputOTPPanelState();
 }
@@ -15,7 +17,7 @@ class InputOTPPanel extends StatefulWidget {
 class _InputOTPPanelState extends State<InputOTPPanel> {
   TextEditingController otpController = TextEditingController();
   late String verificationId;
-  final TextEditingController _pinPutController = TextEditingController();
+  bool isValid = false;
   void initState() {
     // TODO: implement initState
     _verifyPhone(widget.phoneNumber);
@@ -67,26 +69,44 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
           const Spacer(flex: 1),
           Padding(
             padding: const EdgeInsets.all(5),
-            child: Pinput(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              closeKeyboardWhenCompleted: true,
-              androidSmsAutofillMethod:
-                  AndroidSmsAutofillMethod.smsUserConsentApi,
-              length: 6,
-              controller: otpController,
-              textCapitalization: TextCapitalization.characters,
-              showCursor: false,
-              keyboardType: TextInputType.number,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Pinput(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  closeKeyboardWhenCompleted: true,
+                  androidSmsAutofillMethod:
+                      AndroidSmsAutofillMethod.smsUserConsentApi,
+                  length: 6,
+                  controller: otpController,
+                  textCapitalization: TextCapitalization.characters,
+                  showCursor: false,
+                  keyboardType: TextInputType.number,
+                  onChanged: (input) {
+                    input.length == 6
+                        ? setState(() {
+                            isValid = true;
+                          })
+                        : setState(() {
+                            isValid = false;
+                          });
+                  },
+                ),
+                Text(
+                  widget.error ?? "",
+                  style: TextStyle(color: Colors.red),
+                ),
+              ],
             ),
           ),
           const Spacer(flex: 30),
           Center(
             child: Opacity(
-              opacity: 1,
+              opacity: isValid ? 1 : 0.3,
               child: ElevatedButton(
                 onPressed: () {
-                  BlocProvider.of<AuthBloc>(context)
-                      .add(VerifyOTP(verificationId, otpController.text));
+                  BlocProvider.of<AuthBloc>(context).add(VerifyOTP(
+                      verificationId, otpController.text, widget.phoneNumber));
                 },
                 child: const Text(
                   "Confirm",
