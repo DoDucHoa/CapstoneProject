@@ -14,7 +14,7 @@ import { FIREBASE_API } from '../config';
 
 // utils
 import axios from '../utils/axios';
-import { isValidToken, setSession } from '../utils/jwt';
+import { setSession } from '../utils/jwt';
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +33,7 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
-  if (action.type === 'INITIALISE') {
+  if (action.type === 'INITIALIZE') {
     const { isAuthenticated, user } = action.payload;
     return {
       ...state,
@@ -78,12 +78,12 @@ function AuthProvider({ children }) {
           }
 
           dispatch({
-            type: 'INITIALISE',
+            type: 'INITIALIZE',
             payload: { isAuthenticated: true, user },
           });
         } else {
           dispatch({
-            type: 'INITIALISE',
+            type: 'INITIALIZE',
             payload: { isAuthenticated: false, user: null },
           });
         }
@@ -91,34 +91,21 @@ function AuthProvider({ children }) {
     [dispatch]
   );
 
-  // const getBackendToken = async (IdToken, SignInMethod) => {
-  //   const response = await axios.post('/api/auth/sign-in', {
-  //     IdToken,
-  //     SignInMethod,
-  //   });
+  const getBackendToken = async (idToken, signInMethod) => {
+    const response = await axios.post('/api/auth/sign-in', {
+      idToken,
+      signInMethod,
+    });
 
-  //   const res = await response.json();
-  //   console.log(res);
-  //   // const { jwtToken, userName } = await response.data;
-  //   // console.log(jwtToken);
-  //   // console.log(userName);
-  //   // setSession(jwtToken);
-  // };
-
-  const getBackendToken = async (IdToken, SignInMethod) => {
-    await fetch('https://pawnclawapi.azurewebsites.net/api/auth/sign-in', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ IdToken, SignInMethod }),
-    })
-      .then((res) => console.log(res.json()))
-      .catch((err) => console.log(err));
+    const { jwtToken } = response.data;
+    setSession(jwtToken);
   };
 
   const login = (email, password) =>
     signInWithEmailAndPassword(AUTH, email, password).then((userCredentials) => {
       const { accessToken } = userCredentials.user;
-      getBackendToken(accessToken, 'Email/Password');
+      console.log(accessToken);
+      getBackendToken(accessToken, 'Email');
     });
 
   const register = (email, password, firstName, lastName) =>
