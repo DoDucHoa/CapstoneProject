@@ -26,7 +26,7 @@ namespace PawNClaw.Business.Services
         private readonly IStaffRepository _staffRepository;
         private readonly ICustomerRepository _customerRepository;
 
-        public AuthService(IAccountRepository userInfoRepository, IRoleRepository roleRepository, 
+        public AuthService(IAccountRepository userInfoRepository, IRoleRepository roleRepository,
             IAdminRepository adminRepository, IOwnerRepository ownerRepository,
             IStaffRepository staffRepository, ICustomerRepository customerRepository)
         {
@@ -60,8 +60,6 @@ namespace PawNClaw.Business.Services
         //verify for register
         public async Task<LoginViewModel> VerifyFirebaseTokenIdRegister(string idtoken, AccountRequestParameter _account, CustomerRequestParameter _customer)
         {
-            _account.Id = 0;
-            _customer.Id = 0;
             FirebaseToken decodedtoken;
             try
             {
@@ -79,7 +77,7 @@ namespace PawNClaw.Business.Services
             Account accountToDb = new Account();
             accountToDb.UserName = _account.UserName;
             accountToDb.Status = true;
-            accountToDb.RoleCode = "05";
+            accountToDb.RoleCode = _account.RoleCode;
             accountToDb.DeviceId = _account.DeviceId;
             accountToDb.Phone = _account.Phone;
 
@@ -90,6 +88,11 @@ namespace PawNClaw.Business.Services
 
             try
             {
+                if (_repository.GetFirstOrDefault(x => x.UserName.Trim().Equals(accountToDb.UserName)) != null
+                    || _repository.GetFirstOrDefault(x => x.Phone.Trim().Equals(accountToDb.Phone)) != null)
+                {
+                    throw new Exception();
+                }
                 _repository.Add(accountToDb);
                 _repository.SaveDbChange();
                 customerToDb.Id = accountToDb.Id;
@@ -106,8 +109,8 @@ namespace PawNClaw.Business.Services
             var account = new Account();
             try
             {
-                
-                account = _repository.GetFirstOrDefault(x => x.Phone == user.PhoneNumber);
+
+                account = _repository.GetFirstOrDefault(x => x.Phone.Equals(user.PhoneNumber));
 
                 //Not in database
                 if (account == null) throw new UnauthorizedAccessException();
@@ -143,12 +146,13 @@ namespace PawNClaw.Business.Services
             {
                 Name = _customerRepository.Get(account.Id).Name; ;
                 Email = account.UserName;
-            } catch
+            }
+            catch
             {
                 throw new Exception();
             }
-            
-            
+
+
             var loginViewModel = new LoginViewModel
             {
                 Id = account.Id,
@@ -199,16 +203,16 @@ namespace PawNClaw.Business.Services
             var account = new Account();
             try
             {
-                switch(SignInMethod)
+                switch (SignInMethod)
                 {
                     case "Email":
-                        account = _repository.GetFirstOrDefault(x => x.UserName == user.Email);
+                        account = _repository.GetFirstOrDefault(x => x.UserName.Equals(user.Email));
                         break;
                     case "Google":
-                        account = _repository.GetFirstOrDefault(x => x.UserName == user.Email);
+                        account = _repository.GetFirstOrDefault(x => x.UserName.Equals(user.Email));
                         break;
                     case "Phone":
-                        account = _repository.GetFirstOrDefault(x => x.Phone == user.PhoneNumber);
+                        account = _repository.GetFirstOrDefault(x => x.Phone.Equals(user.PhoneNumber));
                         break;
                 }
 
@@ -232,7 +236,8 @@ namespace PawNClaw.Business.Services
                         throw new Exception();
                     }
                 }
-            } catch
+            }
+            catch
             {
                 throw new Exception();
             }
@@ -264,7 +269,8 @@ namespace PawNClaw.Business.Services
                         Email = account.UserName;
                         break;
                 }
-            }catch
+            }
+            catch
             {
                 throw new Exception();
             }
