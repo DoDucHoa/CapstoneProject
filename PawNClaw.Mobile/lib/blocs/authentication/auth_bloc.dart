@@ -17,43 +17,67 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
   AuthBloc({required AuthRepository authRepository})
       : this._authRepository = authRepository,
-        super(InitialAuth()) {
-    on<VerifyPhonenumber>((event, emit) //Test Id
-        {
-      emit(PhoneVerified(event.phoneNumber));
+        super(Loading()) {
+    on<VerifyPhonenumber>((event, emit) {
+      emit(PhoneVerified(event.phoneNumber, null));
     });
     on<VerifyOTP>((event, emit) async {
+      emit(Loading());
       PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
           verificationId: event.verificationId, smsCode: event.otp);
-      final account = await signInWithPhoneAuthCredential(phoneAuthCredential);
-      account == null ? emit(Unauthenticated()) : emit(Authenticated(account));
+      final result = await signInWithPhoneAuthCredential(phoneAuthCredential);
+      result == "Error"
+          ? emit(PhoneVerified(
+              event.phone, "Authentication failed, please check your OTP!"))
+          : (result is Account
+              ? emit(Authenticated(result))
+              : emit(Unsigned(event.phone)));
     });
     on<CheckingCurrentAuth>((event, emit) async {
+      emit(Loading());
       if (event.user == null)
         emit(Unauthenticated());
       else {
         final account = await signInWithToken();
-        account == null
-            ? emit(Unauthenticated())
-            : emit(Authenticated(account));
+        account != null
+            ? emit(Authenticated(account))
+            : emit(Unauthenticated());
       }
     });
     on<SignOut>(
       (event, emit) async {
+        emit(Loading());
         await _authRepository.signOut();
-        Navigator.popUntil(event.context, ModalRoute.withName("/"));
         emit(Unauthenticated());
+        Navigator.popUntil(event.context, ModalRoute.withName("/"));
       },
     );
+    on<SignUp>((event, emit) async {
+      emit(Loading());
+      var token = await FirebaseAuth.instance.currentUser!.getIdToken();
+      final account = await _authRepository.signUp(
+        token: token,
+        name: event.name,
+        phone: event.phone,
+        email: event.email,
+        birthday: event.birthday,
+      );
+      account != null ? emit(Authenticated(account)) : emit(Unauthenticated());
+    });
   }
 
-  Future<Account?> signInWithPhoneAuthCredential(
+  Future<dynamic> signInWithPhoneAuthCredential(
       PhoneAuthCredential phoneAuthCredential) async {
     //Sign in to firebase with phone auth credential
-    await _auth.signInWithCredential(phoneAuthCredential);
-    String token = await FirebaseAuth.instance.currentUser!.getIdToken();
-    var account = await _authRepository.signIn(token: token);
-    return account;
+    try {
+      await _auth.signInWithCredential(phoneAuthCredential);
+      String token = await FirebaseAuth.instance.currentUser!.getIdToken();
+      print(token);
+      var account = await _authRepository.signIn(token: token);
+      return account;
+    } on Exception catch (e) {
+      return "Error";
+    }
   }
 
   Future<Account?> signInWithToken() async {
