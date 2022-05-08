@@ -45,7 +45,7 @@ namespace PawNClaw.Data.Database
         public bool? Status { get; set; }
 
         [ForeignKey(nameof(CenterId))]
-        [InverseProperty(nameof(PetCenter.staff))]
+        [InverseProperty(nameof(PetCenter.Staff))]
         public virtual PetCenter Center { get; set; }
         [ForeignKey(nameof(CreateUser))]
         [InverseProperty(nameof(Admin.StaffCreateUserNavigations))]

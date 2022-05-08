@@ -353,9 +353,13 @@ namespace PawNClaw.Data.Database
 
             modelBuilder.Entity<PetCenter>(entity =>
             {
+                entity.Property(e => e.CloseTime).IsUnicode(false);
+
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.ModifyDate).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.OpenTime).IsUnicode(false);
 
                 entity.Property(e => e.Phone).IsUnicode(false);
 
@@ -591,7 +595,7 @@ namespace PawNClaw.Data.Database
                 entity.Property(e => e.Status).HasDefaultValueSql("((1))");
 
                 entity.HasOne(d => d.Center)
-                    .WithMany(p => p.staff)
+                    .WithMany(p => p.Staff)
                     .HasForeignKey(d => d.CenterId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Staffs__center_i__0B91BA14");
