@@ -69,7 +69,9 @@ class AuthRepository implements BaseAuthRepository {
         'Phone': phone,
         'Name': name,
         'Birth': birthday.toIso8601String(),
+        'RoleCode': '05'
       };
+      print(requestBody);
       const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/auth/sign-up";
       var response = await _dio.post(_url, data: requestBody);

@@ -133,7 +133,7 @@ class _SignUpFormState extends State<SignUpForm> {
                       }
                     : () {},
                 child: const Text(
-                  "Verify your phone number",
+                  "Confirm",
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 style: ButtonStyle(
