@@ -19,6 +19,8 @@ namespace PawNClaw.Data.Parameter
         public int? ModifyUser { get; set; } = null;
         public bool? Status { get; set; } = null;
         public int? BrandId { get; set; } = null;
+        public string OpenTime { get; set; } = null;
+        public string CloseTime { get; set; } = null;
 
         public string dir { get; set; } = "asc";
         public string sort { get; set; } = null;

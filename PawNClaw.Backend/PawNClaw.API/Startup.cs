@@ -34,7 +34,7 @@ namespace PawNClaw.API
         {
             services.ConfigFirebaseAuth();
             services.AddTransient<AuthService, AuthService>();
-            
+
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
@@ -55,6 +55,10 @@ namespace PawNClaw.API
             services.AddTransient<ICustomerRepository, CustomerRepository>();
 
             services.AddControllers();
+            services.AddControllersWithViews()
+                    .AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                    );
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PawNClaw.API", Version = "v1" });
