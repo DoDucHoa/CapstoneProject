@@ -34,6 +34,7 @@ namespace PawNClaw.API
         {
             services.ConfigFirebaseAuth();
             services.AddTransient<AuthService, AuthService>();
+            services.AddTransient<SearchService, SearchService>();
 
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -53,6 +54,18 @@ namespace PawNClaw.API
             services.AddTransient<IStaffRepository, StaffRepository>();
 
             services.AddTransient<ICustomerRepository, CustomerRepository>();
+
+            services.AddTransient<IBookingDetailRepository, BookingDetailRepository>();
+
+            services.AddTransient<IPetCenterRepository, PetCenterRepository>();
+
+            services.AddTransient<IPetCenterRepository, PetCenterRepository>();
+
+            services.AddTransient<ILocationRepository, LocationRepository>();
+
+            services.AddTransient<IBookingRepository, BookingRepository>();
+
+            services.AddTransient<IPetCenterRepository, PetCenterRepository>();
 
             services.AddControllers();
             services.AddControllersWithViews()
