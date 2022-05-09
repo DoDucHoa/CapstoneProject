@@ -22,8 +22,8 @@ namespace PawNClaw.Data.Repository
             IQueryable<Booking> query = _dbSet;
 
             query = query.Where(x => x.CenterId == Id && (x.StatusId == 1 || x.StatusId == 2 || x.StatusId == 3)
-            && DateTime.Compare(_startBooking, (DateTime)x.EndBooking) >= 0 
-            && DateTime.Compare(_endBooking, (DateTime)x.StartBooking) <= 0);
+            && DateTime.Compare(_startBooking, (DateTime)x.StartBooking) <= 0 
+            && DateTime.Compare(_endBooking, (DateTime)x.EndBooking) >= 0);
             
             return query.ToList();
         }

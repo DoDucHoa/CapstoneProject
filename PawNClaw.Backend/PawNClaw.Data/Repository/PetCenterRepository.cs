@@ -22,7 +22,7 @@ namespace PawNClaw.Data.Repository
         {
             IQueryable<PetCenter> query = _dbSet;
 
-            query = query.Include("Location").Where(x => x.Location.CityId.ToString().Trim().Equals(City) 
+            query = query.Include("Location").Include("CageTypes").Where(x => x.Location.CityId.ToString().Trim().Equals(City) 
                                             && x.Location.DistrictId.ToString().Trim().Equals(District));
 
             return query.ToList();

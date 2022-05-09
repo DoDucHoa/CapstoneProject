@@ -20,17 +20,22 @@ namespace PawNClaw.Business.Services
 
         IPetCenterRepository _petCenterRepository;
         IBookingRepository _bookingRepository;
+        IBookingDetailRepository _bookingDetailRepository;
+        ICageRepository _cageRepository;
         ILocationRepository _locationRepository;
 
         public SearchService(IPetCenterRepository petCenterRepository, ILocationRepository locationRepository,
-            IBookingRepository bookingRepository)
+            IBookingRepository bookingRepository, IBookingDetailRepository bookingDetailRepository,
+            ICageRepository cageRepository)
         {
             _petCenterRepository = petCenterRepository;
             _locationRepository = locationRepository;
             _bookingRepository = bookingRepository;
+            _bookingDetailRepository = bookingDetailRepository;
+            _cageRepository = cageRepository;
         }
 
-        public PagedList<PetCenter> GetAccounts(string City, string District,
+        public PagedList<PetCenter> MainSearchCenter(string City, string District,
             string StartBooking, string EndBooking,
             List<PetRequestParameter> _petRequests, PagingParameter paging)
         {
@@ -79,7 +84,7 @@ namespace PawNClaw.Business.Services
 
 
             //START Check Size of Pet
-            List<PetSizeCage> PetSize = new List<PetSizeCage>();
+            List<PetSizeCage> PetSizes = new List<PetSizeCage>();
 
             foreach (var _petRequest in _petRequests)
             {
@@ -94,7 +99,7 @@ namespace PawNClaw.Business.Services
                 petSize.Height = Height;
                 petSize.Width = Width;
 
-                PetSize.Add(petSize);
+                PetSizes.Add(petSize);
             }
             //END Check Size of Pet
 
@@ -102,12 +107,80 @@ namespace PawNClaw.Business.Services
             //Check free cage in time booking
             //Check amount of cage with amount of pet
             //Check size of cage with size of pet (merge with upper line)
+            //Get cage code of center store to Map
+            List<BookingDetail> BookingDetails = new List<BookingDetail>();
+            List<string> CageCodesNotValid = new List<string>();
+            Dictionary<int, List<string>> CenterWithCage = new Dictionary<int, List<string>>();
+            
             foreach (var center in values)
             {
                 var BookingOfCenter = _bookingRepository.GetBookingValidSearch(center.Id, _startBooking, _endBooking);
 
+                //If BookingOfCenter is null => That center have cage free for pet
+                if (BookingOfCenter == null)
+                {
+                    validOCCenter.Add(center);
+                } else
+                {
+                    foreach (var booking in BookingOfCenter)
+                    {
+                        //This code is get booking detail of all busy bookings in center
+                        BookingDetails = _bookingDetailRepository.GetBookingDetailForSearch(booking.Id).ToList();
+                        foreach (var bookingdetail in BookingDetails)
+                        {
+                            CageCodesNotValid.Add(bookingdetail.CageCode);
+                        }
+                    }
+                    //Here is cage of the center is invalid time with booking
+                    //CenterWithCage.Add(center.Id, CageCodesNotValid);
+                    //Check center cagetype is valid size
+                    //List<int> CageTypeValidCode = new List<int>();
+                    var CageTypes = center.CageTypes;
 
+                    //Check is fields that check center have any cage valid for pet
+                    bool Check = true;
+                    List<int> CageTypeCodeIsSelect = new List<int>();
+                    foreach (var petsize in PetSizes)
+                    {
+                        foreach (var cagetype in CageTypes)
+                        {
+                            if (cagetype.Height >= petsize.Height && cagetype.Width >= petsize.Width)
+                            {
+                                //CageTypeValidCode.Add(cagetype.Id);
+                                int CageAmount = 1;
+                                int CageTypeCodeIsSelectAmount = CageTypeCodeIsSelect.Where(x => x == cagetype.Id).Count();
+                                if (CageTypeCodeIsSelectAmount > 0)
+                                {
+                                    CageAmount += CageTypeCodeIsSelectAmount;
+                                }
+                                if (_cageRepository.CountCageByCageTypeIDExceptBusyCage(cagetype.Id, CageCodesNotValid) >= CageAmount)
+                                {
+                                    Check = true;
+                                    CageTypeCodeIsSelect.Add(cagetype.Id);
+                                    break;
+                                } else
+                                {
+                                    Check = false;
+                                }
+                            } 
+                        }
+
+                        //If check here is null that 1 of those pet dont have cage in this center
+                        if (!Check)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (Check)
+                    {
+                        validOCCenter.Add(center);
+                    }
+                }
             }
+            //END Check valid cage for pet
+
+            values = validOCCenter;
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
