@@ -14,7 +14,7 @@ import { FIREBASE_API } from '../config';
 
 // utils
 import axios from '../utils/axios';
-import { setSession } from '../utils/jwt';
+import { setSession, setAccountInfoSession } from '../utils/jwt';
 
 // ----------------------------------------------------------------------
 
@@ -26,20 +26,43 @@ const AUTH = getAuth(firebaseApp);
 
 const DB = getFirestore(firebaseApp);
 
+// user: chứa thông tin user của firebase
+// accountInfo: chứa thông tin user của backend
 const initialState = {
   isAuthenticated: false,
   isInitialized: false,
   user: null,
+  accountInfo: null,
 };
 
 const reducer = (state, action) => {
   if (action.type === 'INITIALIZE') {
-    const { isAuthenticated, user } = action.payload;
+    const { isAuthenticated, user, accountInfo } = action.payload;
     return {
       ...state,
       isAuthenticated,
       isInitialized: true,
       user,
+      accountInfo,
+    };
+  }
+
+  if (action.type === 'LOGIN') {
+    const { user, accountInfo } = action.payload;
+    return {
+      ...state,
+      isAuthenticated: true,
+      user,
+      accountInfo,
+    };
+  }
+
+  if (action.type === 'LOGOUT') {
+    return {
+      ...state,
+      isAuthenticated: false,
+      user: null,
+      accountInfo: null,
     };
   }
 
@@ -65,8 +88,9 @@ function AuthProvider({ children }) {
 
   const [profile, setProfile] = useState(null);
 
-  useEffect(
-    () =>
+  useEffect(() => {
+    const accountInfo = JSON.parse(window.localStorage.getItem('accountInfo'));
+    if (accountInfo) {
       onAuthStateChanged(AUTH, async (user) => {
         if (user) {
           const userRef = doc(DB, 'users', user.uid);
@@ -79,17 +103,22 @@ function AuthProvider({ children }) {
 
           dispatch({
             type: 'INITIALIZE',
-            payload: { isAuthenticated: true, user },
+            payload: { isAuthenticated: true, user, accountInfo },
           });
         } else {
           dispatch({
             type: 'INITIALIZE',
-            payload: { isAuthenticated: false, user: null },
+            payload: { isAuthenticated: false, user: null, accountInfo: null },
           });
         }
-      }),
-    [dispatch]
-  );
+      });
+    } else {
+      dispatch({
+        type: 'INITIALIZE',
+        payload: { isAuthenticated: false, user: null, accountInfo: null },
+      });
+    }
+  }, [dispatch]);
 
   const getBackendToken = async (idToken, signInMethod) => {
     const response = await axios.post('/api/auth/sign-in', {
@@ -97,16 +126,30 @@ function AuthProvider({ children }) {
       signInMethod,
     });
 
-    const { jwtToken } = response.data;
+    const { jwtToken, ...userData } = response.data;
+    console.log('jwtToken: ', jwtToken);
     setSession(jwtToken);
+    setAccountInfoSession(JSON.stringify(userData));
+    return userData;
   };
 
-  const login = (email, password) =>
-    signInWithEmailAndPassword(AUTH, email, password).then((userCredentials) => {
+  const login = async (email, password) => {
+    const userCredentials = await signInWithEmailAndPassword(AUTH, email, password);
+
+    if (userCredentials) {
       const { accessToken } = userCredentials.user;
-      console.log(accessToken);
-      getBackendToken(accessToken, 'Email');
-    });
+      const userData = await getBackendToken(accessToken, 'Email');
+      if (userData) {
+        dispatch({
+          type: 'LOGIN',
+          payload: {
+            user: userCredentials.user,
+            accountInfo: userData,
+          },
+        });
+      }
+    }
+  };
 
   const register = (email, password, firstName, lastName) =>
     createUserWithEmailAndPassword(AUTH, email, password).then(async (res) => {
@@ -119,7 +162,12 @@ function AuthProvider({ children }) {
       });
     });
 
-  const logout = () => signOut(AUTH);
+  const logout = () => {
+    signOut(AUTH);
+    setSession(null);
+    setAccountInfoSession(null);
+    dispatch({ type: 'LOGOUT' });
+  };
 
   return (
     <AuthContext.Provider
