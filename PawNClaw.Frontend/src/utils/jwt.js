@@ -45,4 +45,15 @@ const setSession = (accessToken) => {
   }
 };
 
-export { isValidToken, setSession };
+const setAccountInfoSession = (accountInfo) => {
+  if (accountInfo) {
+    localStorage.setItem('accountInfo', accountInfo);
+    // This function below will handle when token is expired
+    // const { exp } = jwtDecode(accessToken);
+    // handleTokenExpired(exp);
+  } else {
+    localStorage.removeItem('accountInfo');
+  }
+};
+
+export { isValidToken, setSession, setAccountInfoSession };

@@ -23,7 +23,7 @@ import {
 // ----------------------------------------------------------------------
 
 export default function GeneralApp() {
-  const { user } = useAuth();
+  const { userFirebase: user } = useAuth();
   const theme = useTheme();
   const { themeStretch } = useSettings();
 
