@@ -18,30 +18,29 @@ class _SignInScreenState extends State<SignInScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      body: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-          if (state is Unauthenticated) {
-            return InputPhonePanel();
-          }
-          if (state is PhoneVerified) {
-            return InputOTPPanel(
-              phoneNumber: state.phoneNumber,
-              error: state.error,
-            );
-          }
-          if (state is Unsigned) {
-            return SignUpForm(phoneNumber: state.phone);
-          }
-          if (state is Authenticated) {
-            return const HomeScreen();
-          } else
-            return const Center(
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is Unauthenticated) {
+          return InputPhonePanel();
+        }
+        if (state is PhoneVerified) {
+          return InputOTPPanel(
+            phoneNumber: state.phoneNumber,
+            error: state.error,
+          );
+        }
+        if (state is Unsigned) {
+          return SignUpForm(phoneNumber: state.phone);
+        }
+        if (state is Authenticated) {
+          return const HomeScreen();
+        } else
+          return Scaffold(
+            body: const Center(
               child: CircularProgressIndicator(),
-            );
-        },
-      ),
+            ),
+          );
+      },
     );
   }
 }

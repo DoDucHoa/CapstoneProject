@@ -42,6 +42,7 @@ dependencies:
   device_info_plus: ^3.2.3
   dio: ^4.0.6
   pinput: ^2.2.7
+  flutter_snake_navigationbar: ^0.6.1
 
 dev_dependencies:
   flutter_test:
