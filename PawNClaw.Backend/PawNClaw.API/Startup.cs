@@ -68,6 +68,8 @@ namespace PawNClaw.API
 
             services.AddTransient<ICageRepository, CageRepository>();
 
+            services.AddTransient<IPhotoRepository, PhotoRepository>();
+
             services.AddControllers();
             services.AddControllersWithViews()
                     .AddNewtonsoftJson(options =>
