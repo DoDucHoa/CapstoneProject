@@ -3,9 +3,6 @@ on:
   push:
     branches:
     - main
-  pull_request:
-    branches:
-    - main
 env:
   AZURE_WEBAPP_NAME: PawNClawAPI
   DOTNET_CORE_VERSION: 5.0.x
