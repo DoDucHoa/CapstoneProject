@@ -21,7 +21,7 @@ namespace PawNClaw.Data.Repository
         {
             IQueryable<Cage> query = _dbSet;
             return query.Where(x => x.CageTypeId == Id
-                                && !cageCodesInvalid.Contains(x.Code)).Count();
+                                && !cageCodesInvalid.Contains(x.Code) && x.IsOnline == true).Count();
         }
     }
 }
