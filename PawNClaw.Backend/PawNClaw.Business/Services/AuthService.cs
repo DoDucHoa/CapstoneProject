@@ -25,10 +25,12 @@ namespace PawNClaw.Business.Services
         private readonly IOwnerRepository _ownerRepository;
         private readonly IStaffRepository _staffRepository;
         private readonly ICustomerRepository _customerRepository;
+        private readonly IPhotoRepository _photoRepository;
 
         public AuthService(IAccountRepository userInfoRepository, IRoleRepository roleRepository,
             IAdminRepository adminRepository, IOwnerRepository ownerRepository,
-            IStaffRepository staffRepository, ICustomerRepository customerRepository)
+            IStaffRepository staffRepository, ICustomerRepository customerRepository,
+            IPhotoRepository photoRepository)
         {
             _repository = userInfoRepository;
             _roleRepository = roleRepository;
@@ -36,6 +38,7 @@ namespace PawNClaw.Business.Services
             _ownerRepository = ownerRepository;
             _staffRepository = staffRepository;
             _customerRepository = customerRepository;
+            _photoRepository = photoRepository;
         }
 
         //register
@@ -161,6 +164,7 @@ namespace PawNClaw.Business.Services
                 Name = Name,
                 Phone = account.Phone,
                 Email = Email,
+                Url = null,
                 JwtToken = null
             };
             return loginViewModel;
@@ -244,6 +248,7 @@ namespace PawNClaw.Business.Services
 
             string Name = null;
             string Email = null;
+            string Url = null;
             //Get data for loginViewModel
             try
             {
@@ -253,20 +258,28 @@ namespace PawNClaw.Business.Services
                     case "01":
                         Name = _adminRepository.Get(account.Id).Name;
                         Email = _adminRepository.Get(account.Id).Email;
+                        Url = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 1 
+                                                            && x.IdActor == account.Id).Url;
                         break;
                     case "02":
                         Name = _adminRepository.Get(account.Id).Name;
                         Email = _adminRepository.Get(account.Id).Email;
+                        Url = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 2
+                                                            && x.IdActor == account.Id).Url;
                         break;
                     case "03":
                         Name = _ownerRepository.Get(account.Id).Name;
                         Email = _ownerRepository.Get(account.Id).Email;
+                        Url = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 3
+                                                            && x.IdActor == account.Id).Url;
                         break;
                     case "04":
                         break;
                     case "05":
                         Name = _customerRepository.Get(account.Id).Name;
                         Email = account.UserName;
+                        Url = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 5
+                                                            && x.IdActor == account.Id).Url;
                         break;
                 }
             }
@@ -283,6 +296,7 @@ namespace PawNClaw.Business.Services
                 Name = Name,
                 Phone = account.Phone,
                 Email = Email,
+                Url = Url,
                 JwtToken = null
             };
 
