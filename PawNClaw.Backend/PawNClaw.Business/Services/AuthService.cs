@@ -249,6 +249,7 @@ namespace PawNClaw.Business.Services
             string Name = null;
             string Email = null;
             string Url = null;
+            Photo photo = new Photo();
             //Get data for loginViewModel
             try
             {
@@ -258,28 +259,44 @@ namespace PawNClaw.Business.Services
                     case "01":
                         Name = _adminRepository.Get(account.Id).Name;
                         Email = _adminRepository.Get(account.Id).Email;
-                        Url = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 1 
-                                                            && x.IdActor == account.Id).Url;
+                        photo = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 1
+                                                            && x.IdActor == account.Id);
+                        if (photo != null)
+                        {
+                            Url = photo.Url;
+                        }
                         break;
                     case "02":
                         Name = _adminRepository.Get(account.Id).Name;
                         Email = _adminRepository.Get(account.Id).Email;
-                        Url = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 2
-                                                            && x.IdActor == account.Id).Url;
+                        photo = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 2
+                                                            && x.IdActor == account.Id);
+                        if (photo != null)
+                        {
+                            Url = photo.Url;
+                        }
                         break;
                     case "03":
                         Name = _ownerRepository.Get(account.Id).Name;
                         Email = _ownerRepository.Get(account.Id).Email;
-                        Url = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 3
-                                                            && x.IdActor == account.Id).Url;
+                        photo = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 3
+                                                            && x.IdActor == account.Id);
+                        if (photo != null)
+                        {
+                            Url = photo.Url;
+                        }
                         break;
                     case "04":
                         break;
                     case "05":
                         Name = _customerRepository.Get(account.Id).Name;
                         Email = account.UserName;
-                        Url = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 5
-                                                            && x.IdActor == account.Id).Url;
+                        photo = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 5
+                                                            && x.IdActor == account.Id);
+                        if (photo != null)
+                        {
+                            Url = photo.Url;
+                        }
                         break;
                 }
             }
