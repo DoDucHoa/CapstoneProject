@@ -24,29 +24,33 @@ namespace PawNClaw.API.Controllers
             _accountService = accountService;
         }
 
-        [HttpGet]
-        [Route("get-for-admin")]
-        [Authorize(Roles = "Admin")]
-        public IActionResult GetAccount([FromQuery] AccountRequestParameter _requestParameter, PagingParameter _paging)
+        [HttpGet("{id}")]
+        public IActionResult GetAccount(int id)
         {
-            var data = _accountService.GetAccounts(_requestParameter, _paging);
+            var data = _accountService.GetAccountById(id);
             return Ok(data);
         }
 
         [HttpGet]
-        [Route("get-for-mod")]
-        [Authorize(Roles = "Admin,Mod")]
-        public IActionResult GetAccountForMod([FromQuery] AccountRequestParameter _requestParameter, PagingParameter _paging)
+        [Authorize(Roles = "Admin")]
+        public IActionResult GetAccounts([FromQuery] AccountRequestParameter _requestParameter, [FromQuery] PagingParameter _paging)
         {
-            if (_requestParameter.RoleCode.Trim().Equals("01") || _requestParameter.RoleCode.Trim().Equals("02")) return BadRequest();
             var data = _accountService.GetAccounts(_requestParameter, _paging);
-            return Ok(data);
+            var metadata = new
+            {
+                data.TotalCount,
+                data.PageSize,
+                data.CurrentPage,
+                data.TotalPages,
+                data.HasNext,
+                data.HasPrevious
+            };
+            return Ok(new { data, metadata });
         }
 
         [HttpPost]
-        [Route("create-for-admin")]
         [Authorize(Roles = "Admin")]
-        public IActionResult Add(Account account)
+        public IActionResult Add([FromBody] Account account)
         {
             if (account.RoleCode.Trim().Equals("01")) return BadRequest();
             if (_accountService.Add(account) != -1)
@@ -59,7 +63,7 @@ namespace PawNClaw.API.Controllers
         [HttpPost]
         [Route("create-for-mod")]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult AddForMod(Account account)
+        public IActionResult AddForMod([FromBody] Account account)
         {
             if (account.RoleCode.Trim().Equals("01") || account.RoleCode.Trim().Equals("02")) return BadRequest();
             if (_accountService.Add(account) != -1)
@@ -69,23 +73,29 @@ namespace PawNClaw.API.Controllers
             return BadRequest();
         }
 
-        [HttpPut]
-        [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Update(Account account)
+        [HttpPut("{id}")]
+        public IActionResult Update(int Id, [FromBody] AccountRequestParameter account)
         {
-
-            if (_accountService.Update(account))
+            var accountDb = _accountService.GetAccountById(Id);
+            accountDb.DeviceId = account.DeviceId;
+            accountDb.RoleCode = account.RoleCode;
+            if (_accountService.Update(accountDb))
             {
                 return Ok();
             }
             return BadRequest();
         }
 
-        [HttpDelete]
-        [Route("status-false")]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Delete(int id)
+        public IActionResult DeleteForMod(int id)
         {
+            if (_accountService.GetAccountById(id).RoleCode.Trim().Equals("01") ||
+                _accountService.GetAccountById(id).RoleCode.Trim().Equals("02"))
+            {
+                ModelState.AddModelError("Id", "ID is Mod or Admin account");
+                return BadRequest(ModelState);
+            }
             if (_accountService.Delete(id))
             {
                 return Ok();
@@ -93,8 +103,23 @@ namespace PawNClaw.API.Controllers
             return BadRequest();
         }
 
-        [HttpPut]
-        [Route("status-true")]
+        [HttpDelete("admin/{id}")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Delete(int id)
+        {
+            if (_accountService.GetAccountById(id).RoleCode.Trim().Equals("01"))
+            {
+                ModelState.AddModelError("Id", "ID is Admin account");
+                return BadRequest(ModelState);
+            }
+            if (_accountService.Delete(id))
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+
+        [HttpPut("restore/{id}")]
         [Authorize(Roles = "Admin,Mod")]
         public IActionResult Restore(int id)
         {

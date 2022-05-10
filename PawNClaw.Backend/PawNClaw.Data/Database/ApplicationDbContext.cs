@@ -33,7 +33,7 @@ namespace PawNClaw.Data.Database
         public virtual DbSet<Pet> Pets { get; set; }
         public virtual DbSet<PetBookingDetail> PetBookingDetails { get; set; }
         public virtual DbSet<PetCenter> PetCenters { get; set; }
-        public virtual DbSet<PetHealthHistory> PetHealthHistories { get; set; }
+        public virtual DbSet<PetHealthHistory> PetHealthHistorys { get; set; }
         public virtual DbSet<PetType> PetTypes { get; set; }
         public virtual DbSet<Photo> Photos { get; set; }
         public virtual DbSet<PhotoType> PhotoTypes { get; set; }
@@ -43,19 +43,19 @@ namespace PawNClaw.Data.Database
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<ServiceOrder> ServiceOrders { get; set; }
         public virtual DbSet<SponsorBanner> SponsorBanners { get; set; }
+        public virtual DbSet<Staff> Staffs { get; set; }
         public virtual DbSet<Supply> Supplies { get; set; }
         public virtual DbSet<SupplyOrder> SupplyOrders { get; set; }
         public virtual DbSet<SupplyType> SupplyTypes { get; set; }
         public virtual DbSet<Voucher> Vouchers { get; set; }
         public virtual DbSet<VoucherType> VoucherTypes { get; set; }
-        public virtual DbSet<Staff> Staff { get; set; }
 
 //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //        {
 //            if (!optionsBuilder.IsConfigured)
 //            {
 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//                optionsBuilder.UseSqlServer("Server=pawnclaw.database.windows.net;Database=PawNClaw;User Id=pawnclaw;Password=Sa123321;");
+//                optionsBuilder.UseSqlServer("Server=pawnclaw.database.windows.net;Database=PawNClaw;User Id=pawnclaw;Password=Sa123321");
 //            }
 //        }
 
@@ -82,7 +82,7 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.Accounts)
                     .HasForeignKey(d => d.RoleCode)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Account__role_co__628FA481");
+                    .HasConstraintName("FK__Accounts__role_c__628FA481");
             });
 
             modelBuilder.Entity<Admin>(entity =>
@@ -95,7 +95,7 @@ namespace PawNClaw.Data.Database
                     .WithOne(p => p.Admin)
                     .HasForeignKey<Admin>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Admin__id__66603565");
+                    .HasConstraintName("FK__Admins__id__66603565");
             });
 
             modelBuilder.Entity<Booking>(entity =>
@@ -110,29 +110,30 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.CenterId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Booking__center___6AEFE058");
+                    .HasConstraintName("FK__Bookings__center__6AEFE058");
 
                 entity.HasOne(d => d.Customer)
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.CustomerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Booking__custome__69FBBC1F");
+                    .HasConstraintName("FK__Bookings__custom__69FBBC1F");
 
                 entity.HasOne(d => d.Status)
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.StatusId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Booking__status___681373AD");
+                    .HasConstraintName("FK__Bookings__status__681373AD");
 
                 entity.HasOne(d => d.VoucherCodeNavigation)
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.VoucherCode)
-                    .HasConstraintName("FK__Booking__voucher__690797E6");
+                    .HasConstraintName("FK__Bookings__vouche__690797E6");
             });
 
             modelBuilder.Entity<BookingDetail>(entity =>
             {
-                entity.HasKey(e => new { e.BookingId, e.Line });
+                entity.HasKey(e => new { e.BookingId, e.Line })
+                    .HasName("PK_BookingDetail");
 
                 entity.Property(e => e.CageCode).IsUnicode(false);
 
@@ -146,7 +147,7 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.BookingDetails)
                     .HasForeignKey(d => new { d.CageCode, d.CenterId })
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__BookingDetail__756D6ECB");
+                    .HasConstraintName("FK__BookingDetails__756D6ECB");
             });
 
             modelBuilder.Entity<BookingStatus>(entity =>
@@ -165,23 +166,24 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.BrandCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Brand__create_us__778AC167");
+                    .HasConstraintName("FK__Brands__create_u__778AC167");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.BrandModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Brand__modify_us__787EE5A0");
+                    .HasConstraintName("FK__Brands__modify_u__787EE5A0");
 
                 entity.HasOne(d => d.Owner)
                     .WithMany(p => p.Brands)
                     .HasForeignKey(d => d.OwnerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Brand__owner_id__797309D9");
+                    .HasConstraintName("FK__Brands__owner_id__797309D9");
             });
 
             modelBuilder.Entity<Cage>(entity =>
             {
-                entity.HasKey(e => new { e.Code, e.CenterId });
+                entity.HasKey(e => new { e.Code, e.CenterId })
+                    .HasName("PK_Cage");
 
                 entity.Property(e => e.Code).IsUnicode(false);
 
@@ -195,23 +197,23 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.Cages)
                     .HasForeignKey(d => d.CageTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Cage__cage_type___2B0A656D");
+                    .HasConstraintName("FK__Cages__cage_type__2B0A656D");
 
                 entity.HasOne(d => d.Center)
                     .WithMany(p => p.Cages)
                     .HasForeignKey(d => d.CenterId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Cage__center_id__2BFE89A6");
+                    .HasConstraintName("FK__Cages__center_id__2BFE89A6");
 
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.CageCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Cage__create_use__29221CFB");
+                    .HasConstraintName("FK__Cages__create_us__29221CFB");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.CageModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Cage__modify_use__2A164134");
+                    .HasConstraintName("FK__Cages__modify_us__2A164134");
             });
 
             modelBuilder.Entity<CageType>(entity =>
@@ -226,17 +228,17 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.CageTypes)
                     .HasForeignKey(d => d.CenterId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CageType__center__1AD3FDA4");
+                    .HasConstraintName("FK__CageTypes__cente__1AD3FDA4");
 
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.CageTypeCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__CageType__create__18EBB532");
+                    .HasConstraintName("FK__CageTypes__creat__18EBB532");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.CageTypeModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__CageType__modify__19DFD96B");
+                    .HasConstraintName("FK__CageTypes__modif__19DFD96B");
             });
 
             modelBuilder.Entity<Customer>(entity =>
@@ -249,7 +251,7 @@ namespace PawNClaw.Data.Database
                     .WithOne(p => p.Customer)
                     .HasForeignKey<Customer>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Customer__id__6E01572D");
+                    .HasConstraintName("FK__Customers__id__6E01572D");
             });
 
             modelBuilder.Entity<CustomerAddress>(entity =>
@@ -296,7 +298,7 @@ namespace PawNClaw.Data.Database
                     .WithOne(p => p.Location)
                     .HasForeignKey<Location>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Location__id__03F0984C");
+                    .HasConstraintName("FK__Locations__id__03F0984C");
             });
 
             modelBuilder.Entity<Owner>(entity =>
@@ -309,7 +311,7 @@ namespace PawNClaw.Data.Database
                     .WithOne(p => p.Owner)
                     .HasForeignKey<Owner>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Owner__id__6A30C649");
+                    .HasConstraintName("FK__Owners__id__6A30C649");
             });
 
             modelBuilder.Entity<Pet>(entity =>
@@ -322,18 +324,19 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.Pets)
                     .HasForeignKey(d => d.CustomerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Pet__customer_id__367C1819");
+                    .HasConstraintName("FK__Pets__customer_i__367C1819");
 
                 entity.HasOne(d => d.PetTypeCodeNavigation)
                     .WithMany(p => p.Pets)
                     .HasForeignKey(d => d.PetTypeCode)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Pet__pet_type_co__37703C52");
+                    .HasConstraintName("FK__Pets__pet_type_c__37703C52");
             });
 
             modelBuilder.Entity<PetBookingDetail>(entity =>
             {
-                entity.HasKey(e => new { e.BookingId, e.Line, e.PetId });
+                entity.HasKey(e => new { e.BookingId, e.Line, e.PetId })
+                    .HasName("PK_PetBookingDetail");
 
                 entity.HasOne(d => d.Pet)
                     .WithMany(p => p.PetBookingDetails)
@@ -350,9 +353,13 @@ namespace PawNClaw.Data.Database
 
             modelBuilder.Entity<PetCenter>(entity =>
             {
+                entity.Property(e => e.CloseTime).IsUnicode(false);
+
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.ModifyDate).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.OpenTime).IsUnicode(false);
 
                 entity.Property(e => e.Phone).IsUnicode(false);
 
@@ -387,7 +394,7 @@ namespace PawNClaw.Data.Database
             modelBuilder.Entity<PetType>(entity =>
             {
                 entity.HasKey(e => e.Code)
-                    .HasName("PK__PetType__357D4CF8469BEF28");
+                    .HasName("PK__PetTypes__357D4CF842B57910");
 
                 entity.Property(e => e.Code).IsUnicode(false);
 
@@ -400,17 +407,18 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.PetTypeCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__PetType__create___31B762FC");
+                    .HasConstraintName("FK__PetTypes__create__31B762FC");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.PetTypeModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__PetType__modify___32AB8735");
+                    .HasConstraintName("FK__PetTypes__modify__32AB8735");
             });
 
             modelBuilder.Entity<Photo>(entity =>
             {
-                entity.HasKey(e => new { e.PhotoTypeId, e.IdActor, e.Line });
+                entity.HasKey(e => new { e.PhotoTypeId, e.IdActor, e.Line })
+                    .HasName("PK_Photo");
 
                 entity.Property(e => e.Line).ValueGeneratedOnAdd();
 
@@ -420,7 +428,7 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.Photos)
                     .HasForeignKey(d => d.PhotoTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Photo__photo_typ__04AFB25B");
+                    .HasConstraintName("FK__Photos__photo_ty__04AFB25B");
             });
 
             modelBuilder.Entity<PhotoType>(entity =>
@@ -444,29 +452,29 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.Prices)
                     .HasForeignKey(d => d.CageTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Price__cage_type__22751F6C");
+                    .HasConstraintName("FK__Prices__cage_typ__22751F6C");
 
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.PriceCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Price__create_us__208CD6FA");
+                    .HasConstraintName("FK__Prices__create_u__208CD6FA");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.PriceModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Price__modify_us__2180FB33");
+                    .HasConstraintName("FK__Prices__modify_u__2180FB33");
 
                 entity.HasOne(d => d.PriceTypeCodeNavigation)
                     .WithMany(p => p.Prices)
                     .HasForeignKey(d => d.PriceTypeCode)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Price__price_typ__236943A5");
+                    .HasConstraintName("FK__Prices__price_ty__236943A5");
             });
 
             modelBuilder.Entity<PriceType>(entity =>
             {
                 entity.HasKey(e => e.Code)
-                    .HasName("PK__PriceTyp__357D4CF8A4FAE60E");
+                    .HasName("PK__PriceTyp__357D4CF8D672578B");
 
                 entity.Property(e => e.Code).IsUnicode(false);
 
@@ -490,7 +498,7 @@ namespace PawNClaw.Data.Database
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.HasKey(e => e.Code)
-                    .HasName("PK__Role__357D4CF89F812551");
+                    .HasName("PK__Roles__357D4CF8E38D77FC");
 
                 entity.Property(e => e.Code)
                     .IsUnicode(false)
@@ -502,7 +510,7 @@ namespace PawNClaw.Data.Database
             modelBuilder.Entity<Service>(entity =>
             {
                 entity.HasKey(e => e.Code)
-                    .HasName("PK__Service__357D4CF8A4702825");
+                    .HasName("PK__Services__357D4CF8AD9AFFC6");
 
                 entity.Property(e => e.Code).IsUnicode(false);
 
@@ -518,22 +526,23 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.Services)
                     .HasForeignKey(d => d.CenterId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Service__center___42E1EEFE");
+                    .HasConstraintName("FK__Services__center__42E1EEFE");
 
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.ServiceCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Service__create___40F9A68C");
+                    .HasConstraintName("FK__Services__create__40F9A68C");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.ServiceModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Service__modify___41EDCAC5");
+                    .HasConstraintName("FK__Services__modify__41EDCAC5");
             });
 
             modelBuilder.Entity<ServiceOrder>(entity =>
             {
-                entity.HasKey(e => new { e.ServiceCode, e.BookingId });
+                entity.HasKey(e => new { e.ServiceCode, e.BookingId })
+                    .HasName("PK_ServiceOrder");
 
                 entity.Property(e => e.ServiceCode).IsUnicode(false);
 
@@ -575,10 +584,43 @@ namespace PawNClaw.Data.Database
                     .HasConstraintName("FK__SponsorBa__modif__0B5CAFEA");
             });
 
+            modelBuilder.Entity<Staff>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ModifyDate).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
+
+                entity.HasOne(d => d.Center)
+                    .WithMany(p => p.Staff)
+                    .HasForeignKey(d => d.CenterId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Staffs__center_i__0B91BA14");
+
+                entity.HasOne(d => d.CreateUserNavigation)
+                    .WithMany(p => p.StaffCreateUserNavigations)
+                    .HasForeignKey(d => d.CreateUser)
+                    .HasConstraintName("FK__Staffs__create_u__09A971A2");
+
+                entity.HasOne(d => d.IdNavigation)
+                    .WithOne(p => p.Staff)
+                    .HasForeignKey<Staff>(d => d.Id)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Staffs__id__0C85DE4D");
+
+                entity.HasOne(d => d.ModifyUserNavigation)
+                    .WithMany(p => p.StaffModifyUserNavigations)
+                    .HasForeignKey(d => d.ModifyUser)
+                    .HasConstraintName("FK__Staffs__modify_u__0A9D95DB");
+            });
+
             modelBuilder.Entity<Supply>(entity =>
             {
                 entity.HasKey(e => e.Code)
-                    .HasName("PK__Supply__357D4CF800C4C58E");
+                    .HasName("PK__Supplies__357D4CF860E33C7E");
 
                 entity.Property(e => e.Code).IsUnicode(false);
 
@@ -595,23 +637,24 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.SupplyCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Supply__create_u__503BEA1C");
+                    .HasConstraintName("FK__Supplies__create__503BEA1C");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.SupplyModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Supply__modify_u__51300E55");
+                    .HasConstraintName("FK__Supplies__modify__51300E55");
 
                 entity.HasOne(d => d.SupplyTypeCodeNavigation)
                     .WithMany(p => p.Supplies)
                     .HasForeignKey(d => d.SupplyTypeCode)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Supply__supply_t__5224328E");
+                    .HasConstraintName("FK__Supplies__supply__5224328E");
             });
 
             modelBuilder.Entity<SupplyOrder>(entity =>
             {
-                entity.HasKey(e => new { e.SupplyCode, e.BookingId });
+                entity.HasKey(e => new { e.SupplyCode, e.BookingId })
+                    .HasName("PK_SupplyOrder");
 
                 entity.Property(e => e.SupplyCode).IsUnicode(false);
 
@@ -631,29 +674,23 @@ namespace PawNClaw.Data.Database
             modelBuilder.Entity<SupplyType>(entity =>
             {
                 entity.HasKey(e => e.Code)
-                    .HasName("PK__SupplyTy__357D4CF8A03372CA");
+                    .HasName("PK__SupplyTy__357D4CF89EB2CEFA");
 
                 entity.Property(e => e.Code).IsUnicode(false);
+
+                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ModifyDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Status).HasDefaultValueSql("((1))");
 
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.SupplyTypeCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__SupplyTyp__creat__0F2D40CE");
-
-                entity.HasOne(d => d.CreateUser1)
-                    .WithMany(p => p.SupplyTypeCreateUser1s)
-                    .HasForeignKey(d => d.CreateUser)
                     .HasConstraintName("FK__SupplyTyp__creat__489AC854");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.SupplyTypeModifyUserNavigations)
-                    .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__SupplyTyp__modif__10216507");
-
-                entity.HasOne(d => d.ModifyUser1)
-                    .WithMany(p => p.SupplyTypeModifyUser1s)
                     .HasForeignKey(d => d.ModifyUser)
                     .HasConstraintName("FK__SupplyTyp__modif__498EEC8D");
             });
@@ -661,7 +698,7 @@ namespace PawNClaw.Data.Database
             modelBuilder.Entity<Voucher>(entity =>
             {
                 entity.HasKey(e => e.Code)
-                    .HasName("PK__Voucher__357D4CF82C36A9C8");
+                    .HasName("PK__Vouchers__357D4CF868D908FA");
 
                 entity.Property(e => e.Code).IsUnicode(false);
 
@@ -677,29 +714,29 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.Vouchers)
                     .HasForeignKey(d => d.CenterId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Voucher__center___607251E5");
+                    .HasConstraintName("FK__Vouchers__center__607251E5");
 
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.VoucherCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Voucher__create___5E8A0973");
+                    .HasConstraintName("FK__Vouchers__create__5E8A0973");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.VoucherModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Voucher__modify___5F7E2DAC");
+                    .HasConstraintName("FK__Vouchers__modify__5F7E2DAC");
 
                 entity.HasOne(d => d.VoucherTypeCodeNavigation)
                     .WithMany(p => p.Vouchers)
                     .HasForeignKey(d => d.VoucherTypeCode)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Voucher__voucher__6166761E");
+                    .HasConstraintName("FK__Vouchers__vouche__6166761E");
             });
 
             modelBuilder.Entity<VoucherType>(entity =>
             {
                 entity.HasKey(e => e.Code)
-                    .HasName("PK__VoucherT__357D4CF87E3A3AAB");
+                    .HasName("PK__VoucherT__357D4CF861E2F723");
 
                 entity.Property(e => e.Code).IsUnicode(false);
 
@@ -712,45 +749,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.VoucherTypeCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__VoucherTy__creat__1B9317B3");
+                    .HasConstraintName("FK__VoucherTy__creat__57DD0BE4");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.VoucherTypeModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__VoucherTy__modif__1C873BEC");
-            });
-
-            modelBuilder.Entity<Staff>(entity =>
-            {
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.ModifyDate).HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
-
-                entity.HasOne(d => d.Center)
-                    .WithMany(p => p.Staff)
-                    .HasForeignKey(d => d.CenterId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Staff__center_id__0B91BA14");
-
-                entity.HasOne(d => d.CreateUserNavigation)
-                    .WithMany(p => p.StaffCreateUserNavigations)
-                    .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Staff__create_us__09A971A2");
-
-                entity.HasOne(d => d.IdNavigation)
-                    .WithOne(p => p.Staff)
-                    .HasForeignKey<Staff>(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Staff__id__0C85DE4D");
-
-                entity.HasOne(d => d.ModifyUserNavigation)
-                    .WithMany(p => p.StaffModifyUserNavigations)
-                    .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Staff__modify_us__0A9D95DB");
+                    .HasConstraintName("FK__VoucherTy__modif__58D1301D");
             });
 
             OnModelCreatingPartial(modelBuilder);

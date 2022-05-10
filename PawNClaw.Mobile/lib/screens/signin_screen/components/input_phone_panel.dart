@@ -1,8 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
-import 'package:pawnclaw_mobile_application/constants.dart';
+import 'package:pawnclaw_mobile_application/common/constants.dart';
 
 class InputPhonePanel extends StatefulWidget {
   InputPhonePanel({Key? key}) : super(key: key);
@@ -28,7 +29,7 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
         children: [
           const Spacer(flex: 35),
           const Text(
-            "Sign up",
+            "Sign in",
             style: TextStyle(
               fontSize: 65,
               fontWeight: FontWeight.bold,
@@ -89,6 +90,7 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
               child: ElevatedButton(
                 onPressed: isValid
                     ? () {
+                        FirebaseAuth.instance.signOut();
                         BlocProvider.of<AuthBloc>(context)
                             .add(VerifyPhonenumber(phoneController.text));
                       }

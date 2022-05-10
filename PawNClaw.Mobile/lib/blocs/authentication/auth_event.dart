@@ -31,8 +31,9 @@ class VerifyPhonenumber extends AuthEvent {
 class VerifyOTP extends AuthEvent {
   final String verificationId;
   final String otp;
+  final String phone;
 
-  const VerifyOTP(this.verificationId, this.otp);
+  const VerifyOTP(this.verificationId, this.otp, this.phone);
   @override
   // TODO: implement props
   List<Object?> get props => [verificationId, otp];
@@ -45,4 +46,17 @@ class SignOut extends AuthEvent {
   @override
   // TODO: implement props
   List<Object?> get props => [context];
+}
+
+class SignUp extends AuthEvent {
+  final String name;
+  final String phone;
+  final String email;
+  final DateTime birthday;
+
+  const SignUp(this.name, this.phone, this.email, this.birthday);
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [name, phone, email, birthday];
 }

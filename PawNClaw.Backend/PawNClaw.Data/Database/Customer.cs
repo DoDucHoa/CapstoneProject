@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PawNClaw.Data.Database
 {
-    [Table("Customer")]
     public partial class Customer
     {
         public Customer()

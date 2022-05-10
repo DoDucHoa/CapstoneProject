@@ -22,7 +22,7 @@ namespace PawNClaw.Business.Services
         //Get All Admin Detail
         public PagedList<Admin> GetAdmins(AdminRequestParameter _requestParameter, PagingParameter paging)
         {
-            var values = _adminRepository.GetAll(includeProperties: _requestParameter.includeProperties);
+            var values = _adminRepository.GetAll(includeProperties: (_requestParameter.includeProperties));
 
             if (_requestParameter.Id != null)
             {

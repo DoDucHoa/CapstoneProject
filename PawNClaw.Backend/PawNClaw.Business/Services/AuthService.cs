@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -25,7 +26,7 @@ namespace PawNClaw.Business.Services
         private readonly IStaffRepository _staffRepository;
         private readonly ICustomerRepository _customerRepository;
 
-        public AuthService(IAccountRepository userInfoRepository, IRoleRepository roleRepository, 
+        public AuthService(IAccountRepository userInfoRepository, IRoleRepository roleRepository,
             IAdminRepository adminRepository, IOwnerRepository ownerRepository,
             IStaffRepository staffRepository, ICustomerRepository customerRepository)
         {
@@ -36,71 +37,134 @@ namespace PawNClaw.Business.Services
             _staffRepository = staffRepository;
             _customerRepository = customerRepository;
         }
-        ////register
-        //public async task<loginviewmodel> register(loginrequestmodel loginrequestmodel, string universityid, string username)
-        //{
 
-        //    var userviewmodel = await verifyfirebasetokenidregister(loginrequestmodel.idtoken, universityid, username);
-        //    var claims = new list<claim>
-        //    {
-        //        new(claimtypes.email, userviewmodel.email),
-        //        new(claimtypes.name, userviewmodel.name),
-        //    };
+        //register
+        public async Task<LoginViewModel> Register(LoginRequestModel loginrequestmodel, AccountRequestParameter _account, CustomerRequestParameter _customer)
+        {
 
-        //    var accesstoken = generateaccesstoken(claims);
-        //    // var refreshtoken = generaterefreshtoken();
+            var userViewModel = await VerifyFirebaseTokenIdRegister(loginrequestmodel.IdToken, _account, _customer);
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.Name, userViewModel.Name != null ? userViewModel.Name : ""),
+                new(ClaimTypes.Email, userViewModel.UserName),
+                new(ClaimTypes.Role, userViewModel.Role),
+            };
 
-        //    userviewmodel.jwttoken = accesstoken;
-        //    return userviewmodel;
-        //}
+            var accessToken = GenerateAccessToken(claims);
+            // var refreshToken = GenerateRefreshToken();
 
-        ////verify for register
-        //public async task<loginviewmodel> verifyfirebasetokenidregister(string idtoken, string universityid, string username)
-        //{
-        //    firebasetoken decodedtoken;
-        //    try
-        //    {
-        //        decodedtoken = await firebaseauth.defaultinstance
-        //               .verifyidtokenasync(idtoken);
-        //    }
-        //    catch
-        //    {
-        //        throw new exception();
-        //    }
-        //    string uid = decodedtoken.uid;
-        //    var user = await firebaseauth.defaultinstance.getuserasync(uid);
+            userViewModel.JwtToken = accessToken;
+            return userViewModel;
+        }
 
-        //    userinfo userinfo = new userinfo();
-        //    userinfo.email = user.email;
-        //    userinfo.name = username;
-        //    userinfo.universityid = universityid;
-        //    userinfo.isadmin = false;
-        //    userinfo.status = true;
+        //verify for register
+        public async Task<LoginViewModel> VerifyFirebaseTokenIdRegister(string idtoken, AccountRequestParameter _account, CustomerRequestParameter _customer)
+        {
+            FirebaseToken decodedtoken;
+            try
+            {
+                decodedtoken = await FirebaseAuth.DefaultInstance
+                       .VerifyIdTokenAsync(idtoken);
+            }
+            catch
+            {
+                throw new Exception();
+            }
+            string uid = decodedtoken.Uid;
+            var user = await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
 
-        //    try
-        //    {
-        //        _repository.add(userinfo);
-        //        _repository.savedbchange();
-        //    }
-        //    catch (exception)
-        //    {
-        //        throw new exception();
-        //    }
+            //Create new Account and Customer
+            Account accountToDb = new Account();
+            accountToDb.UserName = _account.UserName;
+            accountToDb.Status = true;
+            accountToDb.RoleCode = _account.RoleCode;
+            accountToDb.DeviceId = _account.DeviceId;
+            accountToDb.Phone = _account.Phone;
 
-        //    // query account table in db
-        //    var account = _repository.getfirstordefault(x => x.email == user.email);
+            Customer customerToDb = new Customer();
+            customerToDb.Name = _customer.Name;
+            customerToDb.Status = true;
+            customerToDb.Birth = _customer.Birth;
 
-        //    if (account == null) throw new unauthorizedaccessexception();
+            try
+            {
+                if (_repository.GetFirstOrDefault(x => x.UserName.Trim().Equals(accountToDb.UserName)) != null
+                    || _repository.GetFirstOrDefault(x => x.Phone.Trim().Equals(accountToDb.Phone)) != null)
+                {
+                    throw new Exception();
+                }
+                _repository.Add(accountToDb);
+                _repository.SaveDbChange();
+                customerToDb.Id = accountToDb.Id;
+                _customerRepository.Add(customerToDb);
+                _customerRepository.SaveDbChange();
+            }
+            catch
+            {
+                throw new Exception();
+            }
 
-        //    var loginviewmodel = new loginviewmodel
-        //    {
-        //        id = account.id,
-        //        email = account.email,
-        //        name = account.name,
-        //        jwttoken = null
-        //    };
-        //    return loginviewmodel;
-        //}
+
+            // query account table in db
+            var account = new Account();
+            try
+            {
+
+                account = _repository.GetFirstOrDefault(x => x.Phone.Equals(user.PhoneNumber));
+
+                //Not in database
+                if (account == null) throw new UnauthorizedAccessException();
+
+                //Check if avaliable
+                if (account.Status == false) throw new UnauthorizedAccessException($"Oops!!! This account is currently unavailable!!!");
+
+                //Check deviceId for mobile
+                if (_account.DeviceId != null)
+                {
+                    try
+                    {
+                        account.DeviceId = _account.DeviceId;
+                        _repository.Update(account);
+                        _repository.SaveDbChange();
+                    }
+                    catch (Exception)
+                    {
+                        throw new Exception();
+                    }
+                }
+            }
+            catch
+            {
+                throw new Exception();
+            }
+
+            string Name = null;
+            string Email = null;
+
+            //Get data for loginViewModel
+            try
+            {
+                Name = _customerRepository.Get(account.Id).Name; ;
+                Email = account.UserName;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+
+
+            var loginViewModel = new LoginViewModel
+            {
+                Id = account.Id,
+                Role = _roleRepository.Get(account.RoleCode).RoleName,
+                UserName = account.UserName,
+                Name = Name,
+                Phone = account.Phone,
+                Email = Email,
+                JwtToken = null
+            };
+            return loginViewModel;
+        }
 
         //login
         public async Task<LoginViewModel> Login(LoginRequestModel loginRequestModel)
@@ -139,16 +203,16 @@ namespace PawNClaw.Business.Services
             var account = new Account();
             try
             {
-                switch(SignInMethod)
+                switch (SignInMethod)
                 {
                     case "Email":
-                        account = _repository.GetFirstOrDefault(x => x.UserName == user.Email);
+                        account = _repository.GetFirstOrDefault(x => x.UserName.Equals(user.Email));
                         break;
                     case "Google":
-                        account = _repository.GetFirstOrDefault(x => x.UserName == user.Email);
+                        account = _repository.GetFirstOrDefault(x => x.UserName.Equals(user.Email));
                         break;
                     case "Phone":
-                        account = _repository.GetFirstOrDefault(x => x.Phone == user.PhoneNumber);
+                        account = _repository.GetFirstOrDefault(x => x.Phone.Equals(user.PhoneNumber));
                         break;
                 }
 
@@ -172,7 +236,8 @@ namespace PawNClaw.Business.Services
                         throw new Exception();
                     }
                 }
-            } catch
+            }
+            catch
             {
                 throw new Exception();
             }
@@ -204,7 +269,8 @@ namespace PawNClaw.Business.Services
                         Email = account.UserName;
                         break;
                 }
-            }catch
+            }
+            catch
             {
                 throw new Exception();
             }
@@ -212,13 +278,14 @@ namespace PawNClaw.Business.Services
             var loginViewModel = new LoginViewModel
             {
                 Id = account.Id,
-                Role = _roleRepository.Get(account.RoleCode).RoleName,
+                Role = _roleRepository.Get(account.RoleCode.Trim()).RoleName,
                 UserName = account.UserName,
                 Name = Name,
                 Phone = account.Phone,
                 Email = Email,
                 JwtToken = null
             };
+
             return loginViewModel;
         }
 
