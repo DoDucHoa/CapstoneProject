@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PawNClaw.Data.Database
 {
-    [Table("PetCenter")]
     [Index(nameof(Id), Name = "i")]
     public partial class PetCenter
     {
@@ -50,6 +49,12 @@ namespace PawNClaw.Data.Database
         public bool? Status { get; set; }
         [Column("brand_id")]
         public int BrandId { get; set; }
+        [Column("open_time")]
+        [StringLength(32)]
+        public string OpenTime { get; set; }
+        [Column("close_time")]
+        [StringLength(32)]
+        public string CloseTime { get; set; }
 
         [ForeignKey(nameof(BrandId))]
         [InverseProperty("PetCenters")]
@@ -74,7 +79,7 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<Service> Services { get; set; }
         [InverseProperty(nameof(Voucher.Center))]
         public virtual ICollection<Voucher> Vouchers { get; set; }
-        [InverseProperty("Center")]
+        [InverseProperty(nameof(PawNClaw.Data.Database.Staff.Center))]
         public virtual ICollection<Staff> Staff { get; set; }
     }
 }

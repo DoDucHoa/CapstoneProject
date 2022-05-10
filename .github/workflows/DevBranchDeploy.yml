@@ -1,13 +1,10 @@
-name: Build and deploy .NET Core application to windows webapp PawNClawAPI with API Management Service PawNClawAPI
+name: Build and deploy .NET Core application to windows webapp PawNClawDevelopmentAPI with API Management Service PawNClawDevelopmentAPI
 on:
   push:
     branches:
-    - main
-  pull_request:
-    branches:
-    - main
+    - dev
 env:
-  AZURE_WEBAPP_NAME: PawNClawAPI
+  AZURE_WEBAPP_NAME: PawNClawDevelopmentAPI
   DOTNET_CORE_VERSION: 5.0.x
   WORKING_DIRECTORY: ./PawNClaw.Backend/PawNClaw.API/PawNClaw.API.csproj
   WORKING_DIRECTORY_SWAG: ./PawNClaw.Backend/PawNClaw.API/
@@ -15,9 +12,9 @@ env:
   AZURE_WEBAPP_PACKAGE_PATH: ./publish
   AZURE_APIM_RESOURCE_PATH: /
   AZURE_APIM_RESOURCEGROUP: PawNClaw
-  AZURE_APIM_SERVICENAME: PawNClawAPI
-  AZURE_APIM_API_ID: PawNClawAPI
-  AZURE_APIM_APPSERVICEURL: https://pawnclawapi.azurewebsites.net
+  AZURE_APIM_SERVICENAME: PawNClawDevelopmentAPI
+  AZURE_APIM_API_ID: PawNClawDevelopmentAPI
+  AZURE_APIM_APPSERVICEURL: https://pawnclawdevelopmentapi.azurewebsites.net
   SWASHBUCLE_ASPNET_CORE_CLI_PACKAGE_VERSION: 5.6.3
   SWASHBUCKLE_DOTNET_CORE_VERSION: 3.1.x
   API_IMPORT_SPECIFICATION_PATH: ./publish/swagger.json
@@ -66,13 +63,13 @@ jobs:
     - name: Azure Login
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.PawNClawAPI_spn }}
+        creds: ${{ secrets.PawNClawDevelopmentAPI_spn }}
     - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        publish-profile: ${{ secrets.PawNClawAPI_dbf }}
+        publish-profile: ${{ secrets.PawNClawDevelopmentAPI_83ce }}
     - name: Import API into Azure API Management
       run: az apim api import --path "${{ env.AZURE_APIM_RESOURCE_PATH }}" --resource-group "${{ env.AZURE_APIM_RESOURCEGROUP }}" --service-name "${{ env.AZURE_APIM_SERVICENAME }}" --api-id "${{ env.AZURE_APIM_API_ID }}" --service-url "${{ env.AZURE_APIM_APPSERVICEURL }}" --specification-path "${{ env.API_IMPORT_SPECIFICATION_PATH }}" --specification-format OpenApi --subscription-required false
     - name: logout

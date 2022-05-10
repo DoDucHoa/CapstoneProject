@@ -12,9 +12,13 @@ import { getFirestore, collection, doc, getDoc, setDoc } from 'firebase/firestor
 //
 import { FIREBASE_API } from '../config';
 
+// utils
+import axios from '../utils/axios';
+import { setSession, setAccountInfoSession } from '../utils/jwt';
+
 // ----------------------------------------------------------------------
 
-const ADMIN_EMAILS = ['hhoa0978@gmail.com'];
+const ADMIN_EMAILS = ['hhoa0978@gmail.com', 'pawnclaw.ad@gmail.com'];
 
 const firebaseApp = initializeApp(FIREBASE_API);
 
@@ -22,20 +26,43 @@ const AUTH = getAuth(firebaseApp);
 
 const DB = getFirestore(firebaseApp);
 
+// user: chứa thông tin user của firebase
+// accountInfo: chứa thông tin user của backend
 const initialState = {
   isAuthenticated: false,
   isInitialized: false,
   user: null,
+  accountInfo: null,
 };
 
 const reducer = (state, action) => {
-  if (action.type === 'INITIALISE') {
-    const { isAuthenticated, user } = action.payload;
+  if (action.type === 'INITIALIZE') {
+    const { isAuthenticated, user, accountInfo } = action.payload;
     return {
       ...state,
       isAuthenticated,
       isInitialized: true,
       user,
+      accountInfo,
+    };
+  }
+
+  if (action.type === 'LOGIN') {
+    const { user, accountInfo } = action.payload;
+    return {
+      ...state,
+      isAuthenticated: true,
+      user,
+      accountInfo,
+    };
+  }
+
+  if (action.type === 'LOGOUT') {
+    return {
+      ...state,
+      isAuthenticated: false,
+      user: null,
+      accountInfo: null,
     };
   }
 
@@ -61,8 +88,9 @@ function AuthProvider({ children }) {
 
   const [profile, setProfile] = useState(null);
 
-  useEffect(
-    () =>
+  useEffect(() => {
+    const accountInfo = JSON.parse(window.localStorage.getItem('accountInfo'));
+    if (accountInfo) {
       onAuthStateChanged(AUTH, async (user) => {
         if (user) {
           const userRef = doc(DB, 'users', user.uid);
@@ -74,20 +102,54 @@ function AuthProvider({ children }) {
           }
 
           dispatch({
-            type: 'INITIALISE',
-            payload: { isAuthenticated: true, user },
+            type: 'INITIALIZE',
+            payload: { isAuthenticated: true, user, accountInfo },
           });
         } else {
           dispatch({
-            type: 'INITIALISE',
-            payload: { isAuthenticated: false, user: null },
+            type: 'INITIALIZE',
+            payload: { isAuthenticated: false, user: null, accountInfo: null },
           });
         }
-      }),
-    [dispatch]
-  );
+      });
+    } else {
+      dispatch({
+        type: 'INITIALIZE',
+        payload: { isAuthenticated: false, user: null, accountInfo: null },
+      });
+    }
+  }, [dispatch]);
 
-  const login = (email, password) => signInWithEmailAndPassword(AUTH, email, password);
+  const getBackendToken = async (idToken, signInMethod) => {
+    const response = await axios.post('/api/auth/sign-in', {
+      idToken,
+      signInMethod,
+    });
+
+    const { jwtToken, ...userData } = response.data;
+    console.log('jwtToken: ', jwtToken);
+    setSession(jwtToken);
+    setAccountInfoSession(JSON.stringify(userData));
+    return userData;
+  };
+
+  const login = async (email, password) => {
+    const userCredentials = await signInWithEmailAndPassword(AUTH, email, password);
+
+    if (userCredentials) {
+      const { accessToken } = userCredentials.user;
+      const userData = await getBackendToken(accessToken, 'Email');
+      if (userData) {
+        dispatch({
+          type: 'LOGIN',
+          payload: {
+            user: userCredentials.user,
+            accountInfo: userData,
+          },
+        });
+      }
+    }
+  };
 
   const register = (email, password, firstName, lastName) =>
     createUserWithEmailAndPassword(AUTH, email, password).then(async (res) => {
@@ -100,7 +162,12 @@ function AuthProvider({ children }) {
       });
     });
 
-  const logout = () => signOut(AUTH);
+  const logout = () => {
+    signOut(AUTH);
+    setSession(null);
+    setAccountInfoSession(null);
+    dispatch({ type: 'LOGOUT' });
+  };
 
   return (
     <AuthContext.Provider

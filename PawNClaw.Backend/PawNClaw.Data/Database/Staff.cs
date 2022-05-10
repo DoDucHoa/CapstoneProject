@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PawNClaw.Data.Database
 {
-    [Table("Staff")]
     public partial class Staff
     {
         public Staff()
@@ -25,8 +24,6 @@ namespace PawNClaw.Data.Database
             ServiceModifyUserNavigations = new HashSet<Service>();
             SupplyCreateUserNavigations = new HashSet<Supply>();
             SupplyModifyUserNavigations = new HashSet<Supply>();
-            SupplyTypeCreateUser1s = new HashSet<SupplyType>();
-            SupplyTypeModifyUser1s = new HashSet<SupplyType>();
             VoucherCreateUserNavigations = new HashSet<Voucher>();
             VoucherModifyUserNavigations = new HashSet<Voucher>();
         }
@@ -83,10 +80,6 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<Supply> SupplyCreateUserNavigations { get; set; }
         [InverseProperty(nameof(Supply.ModifyUserNavigation))]
         public virtual ICollection<Supply> SupplyModifyUserNavigations { get; set; }
-        [InverseProperty(nameof(SupplyType.CreateUser1))]
-        public virtual ICollection<SupplyType> SupplyTypeCreateUser1s { get; set; }
-        [InverseProperty(nameof(SupplyType.ModifyUser1))]
-        public virtual ICollection<SupplyType> SupplyTypeModifyUser1s { get; set; }
         [InverseProperty(nameof(Voucher.CreateUserNavigation))]
         public virtual ICollection<Voucher> VoucherCreateUserNavigations { get; set; }
         [InverseProperty(nameof(Voucher.ModifyUserNavigation))]

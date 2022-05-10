@@ -47,7 +47,7 @@ const TabsWrapperStyle = styled('div')(({ theme }) => ({
 export default function UserProfile() {
   const { themeStretch } = useSettings();
 
-  const { user } = useAuth();
+  const { userFirebase: user } = useAuth();
 
   const { currentTab, onChangeTab } = useTabs('profile');
 

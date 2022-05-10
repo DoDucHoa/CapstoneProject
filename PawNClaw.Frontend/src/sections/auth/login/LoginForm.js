@@ -31,8 +31,8 @@ export default function LoginForm() {
   });
 
   const defaultValues = {
-    email: 'hhoa0978@gmail.com',
-    password: 'sa123123',
+    email: 'pawnclaw.ad@gmail.com',
+    password: 'pawnclaw@09/05/2022',
     remember: true,
   };
 

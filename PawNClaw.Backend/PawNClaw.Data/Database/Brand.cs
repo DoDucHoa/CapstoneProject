@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PawNClaw.Data.Database
 {
-    [Table("Brand")]
     [Index(nameof(Id), Name = "i")]
     public partial class Brand
     {
