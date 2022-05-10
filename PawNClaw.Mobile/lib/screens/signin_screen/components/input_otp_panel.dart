@@ -39,90 +39,94 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(35),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Spacer(flex: 35),
-          const Text(
-            "Enter OTP",
-            style: TextStyle(
-              fontSize: 65,
-              fontWeight: FontWeight.bold,
+    return Scaffold(
+      body: Container(
+        padding: const EdgeInsets.all(35),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Spacer(flex: 35),
+            const Text(
+              "Enter OTP",
+              style: TextStyle(
+                fontSize: 65,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const Spacer(flex: 1),
-          const Text(
-            "to verify your account",
-            style: TextStyle(
-              color: Colors.black54,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+            const Spacer(flex: 1),
+            const Text(
+              "to verify your account",
+              style: TextStyle(
+                color: Colors.black54,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          // TextField(
-          //   controller: otpController,
-          //   onChanged: (value) {},
-          // ),
-          const Spacer(flex: 1),
-          Padding(
-            padding: const EdgeInsets.all(5),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Pinput(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  closeKeyboardWhenCompleted: true,
-                  androidSmsAutofillMethod:
-                      AndroidSmsAutofillMethod.smsUserConsentApi,
-                  length: 6,
-                  controller: otpController,
-                  textCapitalization: TextCapitalization.characters,
-                  showCursor: false,
-                  keyboardType: TextInputType.number,
-                  onChanged: (input) {
-                    input.length == 6
-                        ? setState(() {
-                            isValid = true;
-                          })
-                        : setState(() {
-                            isValid = false;
-                          });
+            // TextField(
+            //   controller: otpController,
+            //   onChanged: (value) {},
+            // ),
+            const Spacer(flex: 1),
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Pinput(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    closeKeyboardWhenCompleted: true,
+                    androidSmsAutofillMethod:
+                        AndroidSmsAutofillMethod.smsUserConsentApi,
+                    length: 6,
+                    controller: otpController,
+                    textCapitalization: TextCapitalization.characters,
+                    showCursor: false,
+                    keyboardType: TextInputType.number,
+                    onChanged: (input) {
+                      input.length == 6
+                          ? setState(() {
+                              isValid = true;
+                            })
+                          : setState(() {
+                              isValid = false;
+                            });
+                    },
+                  ),
+                  Text(
+                    widget.error ?? "",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ],
+              ),
+            ),
+            const Spacer(flex: 30),
+            Center(
+              child: Opacity(
+                opacity: isValid ? 1 : 0.3,
+                child: ElevatedButton(
+                  onPressed: () {
+                    BlocProvider.of<AuthBloc>(context).add(VerifyOTP(
+                        verificationId,
+                        otpController.text,
+                        widget.phoneNumber));
                   },
-                ),
-                Text(
-                  widget.error ?? "",
-                  style: TextStyle(color: Colors.red),
-                ),
-              ],
-            ),
-          ),
-          const Spacer(flex: 30),
-          Center(
-            child: Opacity(
-              opacity: isValid ? 1 : 0.3,
-              child: ElevatedButton(
-                onPressed: () {
-                  BlocProvider.of<AuthBloc>(context).add(VerifyOTP(
-                      verificationId, otpController.text, widget.phoneNumber));
-                },
-                child: const Text(
-                  "Confirm",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+                  child: const Text(
+                    "Confirm",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
