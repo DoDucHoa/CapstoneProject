@@ -25,8 +25,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet]
-        [Route("get-admins")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin")]
         public IActionResult GetAdmins([FromQuery] AdminRequestParameter _requestParameter, [FromQuery] PagingParameter _paging)
         {
             var data = _adminService.GetAdmins(_requestParameter, _paging);
@@ -43,7 +42,6 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        [Route("create-admin")]
         [Authorize(Roles = "Admin")]
         public IActionResult Add([FromBody] Admin admin)
         {
@@ -54,20 +52,22 @@ namespace PawNClaw.API.Controllers
             return BadRequest();
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Update([FromBody] Admin admin)
+        public IActionResult Update(int Id, [FromBody] AdminRequestParameter admin)
         {
+            var adminDb = _adminService.GetAdminById(Id);
+            adminDb.Email = admin.Email;
+            adminDb.Name = admin.Name;
 
-            if (_adminService.Update(admin))
+            if (_adminService.Update(adminDb))
             {
                 return Ok();
             }
             return BadRequest();
         }
 
-        [HttpDelete]
-        [Route("status-false")]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
@@ -78,8 +78,7 @@ namespace PawNClaw.API.Controllers
             return BadRequest();
         }
 
-        [HttpPut]
-        [Route("status-true")]
+        [HttpPut("restore/{id}")]
         [Authorize(Roles = "Admin")]
         public IActionResult Restore(int id)
         {

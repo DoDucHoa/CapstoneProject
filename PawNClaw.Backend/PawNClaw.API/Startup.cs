@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static PawNClaw.Data.Repository.PetCenterRepository;
 
 namespace PawNClaw.API
 {
@@ -34,12 +35,14 @@ namespace PawNClaw.API
         {
             services.ConfigFirebaseAuth();
             services.AddTransient<AuthService, AuthService>();
-            services.AddTransient<SearchService, SearchService>();
+
 
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
             services.AddHttpClient();
+
+            services.AddTransient<SearchService, SearchService>();
 
             services.AddTransient<IRoleRepository, RoleRepository>();
 
@@ -59,13 +62,11 @@ namespace PawNClaw.API
 
             services.AddTransient<IPetCenterRepository, PetCenterRepository>();
 
-            services.AddTransient<IPetCenterRepository, PetCenterRepository>();
-
             services.AddTransient<ILocationRepository, LocationRepository>();
 
             services.AddTransient<IBookingRepository, BookingRepository>();
 
-            services.AddTransient<IPetCenterRepository, PetCenterRepository>();
+            services.AddTransient<ICageRepository, CageRepository>();
 
             services.AddControllers();
             services.AddControllersWithViews()
@@ -75,6 +76,34 @@ namespace PawNClaw.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PawNClaw.API", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                                Scheme = "oauth2",
+                                Name = "Bearer",
+                                In = ParameterLocation.Header,
+                            },
+                        new List<string>()
+                    }
+                });
             });
         }
 
