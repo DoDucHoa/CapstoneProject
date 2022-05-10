@@ -47,106 +47,108 @@ class _SignUpFormState extends State<SignUpForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(35),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Spacer(flex: 35),
-          const Text(
-            "Welcome!",
-            style: TextStyle(
-              fontSize: 65,
-              fontWeight: FontWeight.bold,
+    return Scaffold(
+      body: Container(
+        padding: const EdgeInsets.all(35),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Spacer(flex: 35),
+            const Text(
+              "Welcome!",
+              style: TextStyle(
+                fontSize: 65,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const Spacer(flex: 1),
-          const Text(
-            "Please fill your information to finish signing up",
-            style: TextStyle(
-              color: Colors.black54,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+            const Spacer(flex: 1),
+            const Text(
+              "Please fill your information to finish signing up",
+              style: TextStyle(
+                color: Colors.black54,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const Spacer(flex: 3),
-          TextField(
-            controller: _nameController,
-            decoration: InputDecoration(
-              labelText: "Name",
-              errorText: nameError,
-            ),
-            onChanged: (input) => setState(() {
-              nameError = InputValidator().isEmpty(input);
-            }),
-          ),
-          const Spacer(flex: 3),
-          TextField(
-            controller: _phoneController,
-            decoration: InputDecoration(
-              labelText: "Phone",
-            ),
-            readOnly: true,
-          ),
-          const Spacer(flex: 3),
-          TextField(
-            controller: _emailController,
-            decoration: InputDecoration(
-              labelText: "Email",
-              errorText: emailError,
-            ),
-            onChanged: (input) => setState(() {
-              emailError = InputValidator().isEmpty(input) ??
-                  InputValidator().isValidMail(input);
-            }),
-            autofocus: false,
-          ),
-          const Spacer(flex: 3),
-          GestureDetector(
-            onTap: () => _selectDate(context),
-            child: TextField(
-              enabled: false,
-              controller: _birthController,
+            const Spacer(flex: 3),
+            TextField(
+              controller: _nameController,
               decoration: InputDecoration(
-                  labelText: "Birth",
-                  errorText: InputValidator().isEmpty(_birthController.text)),
+                labelText: "Name",
+                errorText: nameError,
+              ),
+              onChanged: (input) => setState(() {
+                nameError = InputValidator().isEmpty(input);
+              }),
+            ),
+            const Spacer(flex: 3),
+            TextField(
+              controller: _phoneController,
+              decoration: InputDecoration(
+                labelText: "Phone",
+              ),
               readOnly: true,
             ),
-          ),
-          const Spacer(flex: 30),
-          Center(
-            child: Opacity(
-              opacity: (nameError == null &&
-                      emailError == null &&
-                      _birthController.text != "")
-                  ? 1
-                  : 0.3,
-              child: ElevatedButton(
-                onPressed: (nameError == null && emailError == null)
-                    ? () {
-                        BlocProvider.of<AuthBloc>(context).add(SignUp(
-                            _nameController.text,
-                            _phoneController.text,
-                            _emailController.text,
-                            _selectedDate));
-                      }
-                    : () {},
-                child: const Text(
-                  "Confirm",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+            const Spacer(flex: 3),
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: "Email",
+                errorText: emailError,
+              ),
+              onChanged: (input) => setState(() {
+                emailError = InputValidator().isEmpty(input) ??
+                    InputValidator().isValidMail(input);
+              }),
+              autofocus: false,
+            ),
+            const Spacer(flex: 3),
+            GestureDetector(
+              onTap: () => _selectDate(context),
+              child: TextField(
+                enabled: false,
+                controller: _birthController,
+                decoration: InputDecoration(
+                    labelText: "Birth",
+                    errorText: InputValidator().isEmpty(_birthController.text)),
+                readOnly: true,
+              ),
+            ),
+            const Spacer(flex: 30),
+            Center(
+              child: Opacity(
+                opacity: (nameError == null &&
+                        emailError == null &&
+                        _birthController.text != "")
+                    ? 1
+                    : 0.3,
+                child: ElevatedButton(
+                  onPressed: (nameError == null && emailError == null)
+                      ? () {
+                          BlocProvider.of<AuthBloc>(context).add(SignUp(
+                              _nameController.text,
+                              _phoneController.text,
+                              _emailController.text,
+                              _selectedDate));
+                        }
+                      : () {},
+                  child: const Text(
+                    "Confirm",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
