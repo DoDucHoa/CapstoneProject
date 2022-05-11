@@ -338,7 +338,7 @@ namespace PawNClaw.Business.Services
             {
                 Subject = new ClaimsIdentity(claims),
                 //Expires = DateTime.Now.AddDays(5),
-                //Expires = DateTime.Now.AddDays(7),
+                Expires = DateTime.Now.AddDays(30),
                 SigningCredentials = signinCredentials,
             };
 
