@@ -256,7 +256,7 @@ namespace PawNClaw.Business.Services
                 string roleCode = account.RoleCode.Trim();
                 switch (roleCode)
                 {
-                    case "01":
+                    case "AD":
                         Name = _adminRepository.Get(account.Id).Name;
                         Email = _adminRepository.Get(account.Id).Email;
                         photo = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 1
@@ -266,7 +266,7 @@ namespace PawNClaw.Business.Services
                             Url = photo.Url;
                         }
                         break;
-                    case "02":
+                    case "MOD":
                         Name = _adminRepository.Get(account.Id).Name;
                         Email = _adminRepository.Get(account.Id).Email;
                         photo = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 2
@@ -276,7 +276,7 @@ namespace PawNClaw.Business.Services
                             Url = photo.Url;
                         }
                         break;
-                    case "03":
+                    case "OWN":
                         Name = _ownerRepository.Get(account.Id).Name;
                         Email = _ownerRepository.Get(account.Id).Email;
                         photo = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 3
@@ -286,9 +286,9 @@ namespace PawNClaw.Business.Services
                             Url = photo.Url;
                         }
                         break;
-                    case "04":
+                    case "STF":
                         break;
-                    case "05":
+                    case "CUS":
                         Name = _customerRepository.Get(account.Id).Name;
                         Email = account.UserName;
                         photo = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 5
