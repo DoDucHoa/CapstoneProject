@@ -32,7 +32,7 @@ namespace PawNClaw.Business.Services
 
         public PagedList<PetCenter> MainSearchCenter(string City, string District,
             string StartBooking, string EndBooking,
-            List<PetRequestParameter> _petRequests, PagingParameter paging)
+            List<List<PetRequestParameter>> _petRequests, PagingParameter paging)
         {
             //Check loaction
             var values = _petCenterRepository.SearchPetCenter(City, District);
@@ -83,12 +83,18 @@ namespace PawNClaw.Business.Services
 
             foreach (var _petRequest in _petRequests)
             {
-                if (_petRequest.Height == null || _petRequest.Length == null || _petRequest.Weight == null)
+                decimal Height = 0;
+                decimal Width = 0;
+                foreach (var _pet in _petRequest)
                 {
-                    throw new Exception();
+                    if (_pet.Height == null || _pet.Length == null || _pet.Weight == null)
+                    {
+                        throw new Exception();
+                    }
+
+                    Height += (decimal)(_pet.Height + 5);
+                    Width += (decimal)Math.Round((((double)_pet.Length) + ((double)_pet.Height)) / (5 / 2), 0);
                 }
-                decimal Height = (decimal)(_petRequest.Height + 5);
-                decimal Width = (decimal)Math.Round((((double)_petRequest.Length) + ((double)_petRequest.Height)) / (5 / 2), 0);
 
                 PetSizeCage petSize = new PetSizeCage();
                 petSize.Height = Height;
@@ -417,6 +423,35 @@ namespace PawNClaw.Business.Services
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
             paging.PageSize);
+        }
+
+        public List<PetSizeCage> TestListParameter(List<List<PetRequestParameter>> _petRequests)
+        {
+            List<PetSizeCage> PetSizes = new List<PetSizeCage>();
+
+            foreach (var _petRequest in _petRequests)
+            {
+                decimal Height = 0;
+                decimal Width = 0;
+                foreach (var _pet in _petRequest)
+                {
+                    if (_pet.Height == null || _pet.Length == null || _pet.Weight == null)
+                    {
+                        throw new Exception();
+                    }
+
+                    Height += (decimal)(_pet.Height + 5);
+                    Width += (decimal)Math.Round((((double)_pet.Length) + ((double)_pet.Height)) / (5 / 2), 0);
+                }
+
+                PetSizeCage petSize = new PetSizeCage();
+                petSize.Height = Height;
+                petSize.Width = Width;
+
+                PetSizes.Add(petSize);
+            }
+
+            return PetSizes;
         }
     }
 }

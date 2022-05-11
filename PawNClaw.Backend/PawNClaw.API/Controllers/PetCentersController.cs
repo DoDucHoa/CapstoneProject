@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PawNClaw.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/petcenters")]
     [ApiController]
     [Authorize]
     public class PetCentersController : ControllerBase
@@ -22,7 +22,7 @@ namespace PawNClaw.API.Controllers
             _searchService = searchService;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("main-search")]
         public IActionResult GetAccounts([FromBody] SearchRequestModel _searchRequestModel)
         {
