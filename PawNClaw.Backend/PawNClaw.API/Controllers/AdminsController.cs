@@ -43,9 +43,9 @@ namespace PawNClaw.API.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin")]
-        public IActionResult GetAdminById(int Id)
+        public IActionResult GetAdminById(int id)
         {
-            var data = _adminService.GetAdminById(Id);
+            var data = _adminService.GetAdminById(id);
             return Ok(data);
         }
 
@@ -62,9 +62,9 @@ namespace PawNClaw.API.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Update(int Id, [FromBody] AdminRequestParameter admin)
+        public IActionResult Update(int id, [FromBody] AdminRequestParameter admin)
         {
-            var adminDb = _adminService.GetAdminById(Id);
+            var adminDb = _adminService.GetAdminById(id);
             adminDb.Email = admin.Email;
             adminDb.Name = admin.Name;
             adminDb.Status = admin.Status;

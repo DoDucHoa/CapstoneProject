@@ -74,9 +74,9 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int Id, [FromBody] AccountRequestParameter account)
+        public IActionResult Update(int id, [FromBody] AccountRequestParameter account)
         {
-            var accountDb = _accountService.GetAccountById(Id);
+            var accountDb = _accountService.GetAccountById(id);
             accountDb.DeviceId = account.DeviceId;
             accountDb.RoleCode = account.RoleCode;
             if (_accountService.Update(accountDb))
