@@ -18,6 +18,9 @@ export default function TableNoData({ isNotFound }) {
           <TableCell colSpan={9}>
             <EmptyContent
               title="No Data"
+              img={
+                'https://firebasestorage.googleapis.com/v0/b/pawnclaw-4b6ba.appspot.com/o/SVG%2FNo-data.svg?alt=media&token=01cc2ff0-86c8-4750-862b-1f730ff1ee82'
+              }
               sx={{
                 '& span.MuiBox-root': { height: 160 },
               }}

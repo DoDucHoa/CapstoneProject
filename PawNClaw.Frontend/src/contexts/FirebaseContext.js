@@ -18,6 +18,11 @@ import { setSession, setAccountInfoSession } from '../utils/jwt';
 
 // ----------------------------------------------------------------------
 
+const token = window.localStorage.getItem('accessToken');
+if (token) {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+}
+
 const ADMIN_EMAILS = ['hhoa0978@gmail.com', 'pawnclaw.ad@gmail.com'];
 
 const firebaseApp = initializeApp(FIREBASE_API);
@@ -121,16 +126,24 @@ function AuthProvider({ children }) {
   }, [dispatch]);
 
   const getBackendToken = async (idToken, signInMethod) => {
-    const response = await axios.post('/api/auth/sign-in', {
-      idToken,
-      signInMethod,
-    });
+    try {
+      const response = await axios.post('/api/auth/sign-in', {
+        idToken,
+        signInMethod,
+      });
 
-    const { jwtToken, ...userData } = response.data;
-    console.log('jwtToken: ', jwtToken);
-    setSession(jwtToken);
-    setAccountInfoSession(JSON.stringify(userData));
-    return userData;
+      if (response.statusText === 'OK') {
+        const { jwtToken, ...userData } = response.data;
+        console.log('jwtToken: ', jwtToken);
+        setSession(jwtToken);
+        setAccountInfoSession(JSON.stringify(userData));
+        return userData;
+      }
+      return null;
+    } catch (error) {
+      console.log('error: ', error);
+      return null;
+    }
   };
 
   const login = async (email, password) => {
@@ -138,6 +151,7 @@ function AuthProvider({ children }) {
 
     if (userCredentials) {
       const { accessToken } = userCredentials.user;
+      console.log('accessToken: ', accessToken);
       const userData = await getBackendToken(accessToken, 'Email');
       if (userData) {
         dispatch({

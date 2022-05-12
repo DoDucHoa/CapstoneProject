@@ -3,8 +3,6 @@ import { useState } from 'react';
 // ----------------------------------------------------------------------
 
 export default function useTable(props) {
-  const [dense, setDense] = useState(props?.defaultDense || false);
-
   const [orderBy, setOrderBy] = useState(props?.defaultOrderBy || 'name');
 
   const [order, setOrder] = useState(props?.defaultOrder || 'asc');
@@ -57,14 +55,9 @@ export default function useTable(props) {
     setPage(0);
   };
 
-  const onChangeDense = (event) => {
-    setDense(event.target.checked);
-  };
-
   // filter
 
   return {
-    dense,
     order,
     page,
     setPage,
@@ -78,7 +71,6 @@ export default function useTable(props) {
     //
     onSort,
     onChangePage,
-    onChangeDense,
     onChangeRowsPerPage,
   };
 }
