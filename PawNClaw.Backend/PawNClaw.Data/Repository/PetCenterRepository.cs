@@ -28,8 +28,8 @@ namespace PawNClaw.Data.Repository
         {
             IQueryable<PetCenter> query = _dbSet;
 
-            query = query.Include("Location").Include("CageTypes").Where(x => x.Location.CityId.ToString().Trim().Equals(City)
-                                            && x.Location.DistrictId.ToString().Trim().Equals(District));
+            query = query.Include("Location").Include("CageTypes").Where(x => x.Location.CityCode.Trim().Equals(City)
+                                            && x.Location.DistrictCode.Trim().Equals(District));
 
             return query.ToList();
         }
@@ -53,8 +53,8 @@ namespace PawNClaw.Data.Repository
                 .Include("Bookings")
                 .Include("Cages")
                 .Include("Bookings.BookingDetails")
-                .Where(x => x.Location.CityId.ToString().Trim().Equals(City)
-                    && x.Location.DistrictId.ToString().Trim().Equals(District)
+                .Where(x => x.Location.CityCode.ToString().Trim().Equals(City)
+                    && x.Location.DistrictCode.ToString().Trim().Equals(District)
                     && TimeSpan.ParseExact(x.OpenTime, "HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) < _startBooking.TimeOfDay
                     && TimeSpan.ParseExact(x.CloseTime, "HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) > _startBooking.TimeOfDay
                     && TimeSpan.ParseExact(x.OpenTime, "HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) < _endBooking.TimeOfDay
@@ -83,8 +83,8 @@ namespace PawNClaw.Data.Repository
                 .Include("Bookings")
                 .Include("Cages")
                 .Include("Bookings.BookingDetails")
-                .Where(x => x.Location.CityId.ToString().Trim().Equals(City)
-                    && x.Location.DistrictId.ToString().Trim().Equals(District)
+                .Where(x => x.Location.CityCode.ToString().Trim().Equals(City)
+                    && x.Location.DistrictCode.ToString().Trim().Equals(District)
                     && TimeSpan.ParseExact(x.OpenTime, "HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) < _startBooking.TimeOfDay
                     && TimeSpan.ParseExact(x.CloseTime, "HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) > _startBooking.TimeOfDay
                     && TimeSpan.ParseExact(x.OpenTime, "HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) < _endBooking.TimeOfDay

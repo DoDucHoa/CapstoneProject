@@ -25,8 +25,10 @@ namespace PawNClaw.Data.Database
         public virtual DbSet<Brand> Brands { get; set; }
         public virtual DbSet<Cage> Cages { get; set; }
         public virtual DbSet<CageType> CageTypes { get; set; }
+        public virtual DbSet<City> Cities { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<CustomerAddress> CustomerAddresses { get; set; }
+        public virtual DbSet<District> Districts { get; set; }
         public virtual DbSet<GeneralLedger> GeneralLedgers { get; set; }
         public virtual DbSet<Location> Locations { get; set; }
         public virtual DbSet<Owner> Owners { get; set; }
@@ -49,15 +51,7 @@ namespace PawNClaw.Data.Database
         public virtual DbSet<SupplyType> SupplyTypes { get; set; }
         public virtual DbSet<Voucher> Vouchers { get; set; }
         public virtual DbSet<VoucherType> VoucherTypes { get; set; }
-
-//        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//        {
-//            if (!optionsBuilder.IsConfigured)
-//            {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//                optionsBuilder.UseSqlServer("Server=pawnclaw.database.windows.net;Database=PawNClaw;User Id=pawnclaw;Password=Sa123321");
-//            }
-//        }
+        public virtual DbSet<Ward> Wards { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -73,8 +67,7 @@ namespace PawNClaw.Data.Database
 
                 entity.Property(e => e.RoleCode)
                     .IsUnicode(false)
-                    .HasDefaultValueSql("('CUS')")
-                    .IsFixedLength(true);
+                    .HasDefaultValueSql("('CUS')");
 
                 entity.Property(e => e.Status).HasDefaultValueSql("((1))");
 
@@ -82,7 +75,7 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.Accounts)
                     .HasForeignKey(d => d.RoleCode)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Accounts__role_c__628FA481");
+                    .HasConstraintName("FK__Accounts__role_c__251C81ED");
             });
 
             modelBuilder.Entity<Admin>(entity =>
@@ -241,6 +234,14 @@ namespace PawNClaw.Data.Database
                     .HasConstraintName("FK__CageTypes__modif__19DFD96B");
             });
 
+            modelBuilder.Entity<City>(entity =>
+            {
+                entity.HasKey(e => e.Code)
+                    .HasName("PK__City__357D4CF8389F18BC");
+
+                entity.Property(e => e.Code).IsUnicode(false);
+            });
+
             modelBuilder.Entity<Customer>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -269,6 +270,22 @@ namespace PawNClaw.Data.Database
                     .HasConstraintName("FK__CustomerA__custo__71D1E811");
             });
 
+            modelBuilder.Entity<District>(entity =>
+            {
+                entity.HasKey(e => e.Code)
+                    .HasName("PK__District__357D4CF8EA38B5CC");
+
+                entity.Property(e => e.Code).IsUnicode(false);
+
+                entity.Property(e => e.CityCode).IsUnicode(false);
+
+                entity.HasOne(d => d.CityCodeNavigation)
+                    .WithMany(p => p.Districts)
+                    .HasForeignKey(d => d.CityCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__District__city_c__54CB950F");
+            });
+
             modelBuilder.Entity<GeneralLedger>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -290,15 +307,39 @@ namespace PawNClaw.Data.Database
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.CityCode).IsUnicode(false);
+
+                entity.Property(e => e.DistrictCode).IsUnicode(false);
+
                 entity.Property(e => e.Latitude).IsUnicode(false);
 
                 entity.Property(e => e.Longtitude).IsUnicode(false);
+
+                entity.Property(e => e.WardCode).IsUnicode(false);
+
+                entity.HasOne(d => d.CityCodeNavigation)
+                    .WithMany(p => p.Locations)
+                    .HasForeignKey(d => d.CityCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Locations__city___5B78929E");
+
+                entity.HasOne(d => d.DistrictCodeNavigation)
+                    .WithMany(p => p.Locations)
+                    .HasForeignKey(d => d.DistrictCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Locations__distr__5C6CB6D7");
 
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Location)
                     .HasForeignKey<Location>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Locations__id__03F0984C");
+
+                entity.HasOne(d => d.WardCodeNavigation)
+                    .WithMany(p => p.Locations)
+                    .HasForeignKey(d => d.WardCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Locations__ward___5D60DB10");
             });
 
             modelBuilder.Entity<Owner>(entity =>
@@ -498,11 +539,9 @@ namespace PawNClaw.Data.Database
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.HasKey(e => e.Code)
-                    .HasName("PK__Roles__357D4CF8E38D77FC");
+                    .HasName("PK__Roles__357D4CF86A02D9AA");
 
-                entity.Property(e => e.Code)
-                    .IsUnicode(false)
-                    .IsFixedLength(true);
+                entity.Property(e => e.Code).IsUnicode(false);
 
                 entity.Property(e => e.Status).HasDefaultValueSql("((1))");
             });
@@ -595,7 +634,7 @@ namespace PawNClaw.Data.Database
                 entity.Property(e => e.Status).HasDefaultValueSql("((1))");
 
                 entity.HasOne(d => d.Center)
-                    .WithMany(p => p.Staff)
+                    .WithMany(p => p.staff)
                     .HasForeignKey(d => d.CenterId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Staffs__center_i__0B91BA14");
@@ -755,6 +794,30 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.VoucherTypeModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
                     .HasConstraintName("FK__VoucherTy__modif__58D1301D");
+            });
+
+            modelBuilder.Entity<Ward>(entity =>
+            {
+                entity.HasKey(e => e.Code)
+                    .HasName("PK__Ward__357D4CF82CE5E29A");
+
+                entity.Property(e => e.Code).IsUnicode(false);
+
+                entity.Property(e => e.CityCode).IsUnicode(false);
+
+                entity.Property(e => e.DistrictCode).IsUnicode(false);
+
+                entity.HasOne(d => d.CityCodeNavigation)
+                    .WithMany(p => p.Wards)
+                    .HasForeignKey(d => d.CityCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Ward__city_code__59904A2C");
+
+                entity.HasOne(d => d.DistrictCodeNavigation)
+                    .WithMany(p => p.Wards)
+                    .HasForeignKey(d => d.DistrictCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Ward__district_c__5A846E65");
             });
 
             OnModelCreatingPartial(modelBuilder);

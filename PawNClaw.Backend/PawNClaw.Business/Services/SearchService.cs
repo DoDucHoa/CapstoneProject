@@ -4,6 +4,7 @@ using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,8 @@ namespace PawNClaw.Business.Services
 {
     public class SearchService
     {
+        private const string TimeFormat = @"hh\:mm";
+        private const string DateFormat = "yyyy-MM-dd HH:mm:ss";
         IPetCenterRepository _petCenterRepository;
         IBookingRepository _bookingRepository;
         IBookingDetailRepository _bookingDetailRepository;
@@ -43,11 +46,11 @@ namespace PawNClaw.Business.Services
             {
                 throw new Exception();
             }
-            DateTime _startBooking = DateTime.ParseExact(StartBooking, "yyyy-MM-dd HH:mm:ss",
-                                       System.Globalization.CultureInfo.InvariantCulture);
+            DateTime _startBooking = DateTime.ParseExact(s: StartBooking, format: DateFormat,
+                                                        CultureInfo.InvariantCulture);
 
-            DateTime _endBooking = DateTime.ParseExact(EndBooking, "yyyy-MM-dd HH:mm:ss",
-                                       System.Globalization.CultureInfo.InvariantCulture);
+            DateTime _endBooking = DateTime.ParseExact(s: EndBooking, format: DateFormat,
+                                                        CultureInfo.InvariantCulture);
             if (DateTime.Compare(_startBooking, DateTime.Now) <= 0 || DateTime.Compare(_startBooking, _endBooking) >= 0)
             {
                 throw new Exception();
@@ -61,11 +64,15 @@ namespace PawNClaw.Business.Services
                 string petCenterOpenTime = _petCenterRepository.GetFirstOrDefault(x => x.Id == center.Id).OpenTime;
                 string petCenterCloseTime = _petCenterRepository.GetFirstOrDefault(x => x.Id == center.Id).CloseTime;
 
-                TimeSpan _petCenterOpenTime = TimeSpan.ParseExact(petCenterOpenTime, "HH:mm:ss",
-                                       System.Globalization.CultureInfo.InvariantCulture);
+                //String format = petCenterOpenTime.Length == 5 ? "H\\:mm\\:ss" : "HH\\:mm\\:ss";
 
-                TimeSpan _petCenterCloseTime = TimeSpan.ParseExact(petCenterCloseTime, "HH:mm:ss",
-                                           System.Globalization.CultureInfo.InvariantCulture);
+                TimeSpan _petCenterOpenTime = TimeSpan.ParseExact(input: petCenterOpenTime, format: TimeFormat,
+                                                                CultureInfo.InvariantCulture);
+
+                //format = petCenterCloseTime.Length == 5 ? "H\\:mm\\:ss" : "HH\\:mm\\:ss";
+
+                TimeSpan _petCenterCloseTime = TimeSpan.ParseExact(input: petCenterCloseTime, format: TimeFormat,
+                                                                CultureInfo.InvariantCulture);
 
                 if (_petCenterOpenTime < _startBooking.TimeOfDay && _petCenterCloseTime > _startBooking.TimeOfDay
                     && _petCenterOpenTime < _endBooking.TimeOfDay && _petCenterCloseTime > _endBooking.TimeOfDay)
@@ -91,8 +98,11 @@ namespace PawNClaw.Business.Services
                     {
                         throw new Exception();
                     }
-
-                    Height += (decimal)(_pet.Height + 5);
+                    if (Height < (decimal)(_pet.Height + 5))
+                    {
+                        Height = (decimal)(_pet.Height + 5);
+                    }
+                    
                     Width += (decimal)Math.Round((((double)_pet.Length) + ((double)_pet.Height)) / (5 / 2), 0);
                 }
 
@@ -115,23 +125,32 @@ namespace PawNClaw.Business.Services
 
             foreach (var center in values)
             {
+
+                Console.WriteLine(center.Id);
+
                 var BookingOfCenter = _bookingRepository.GetBookingValidSearch(center.Id, _startBooking, _endBooking);
 
                 //If BookingOfCenter is null => That center have cage free for pet
-                if (BookingOfCenter == null)
+                if (BookingOfCenter.Count() == 0)
                 {
                     var CageTypes = center.CageTypes;
-
+                    
+                    Console.WriteLine(center.Id + " Is Null");
                     //Check is fields that check center have any cage valid for pet
                     bool Check = true;
                     List<int> CageTypeCodeIsSelect = new List<int>();
                     foreach (var petsize in PetSizes)
                     {
+                        Console.WriteLine(center.Id + " Pet H: " + petsize.Height);
+                        Console.WriteLine(center.Id + " Pet W: " + petsize.Width);
                         foreach (var cagetype in CageTypes)
                         {
                             if (cagetype.Height >= petsize.Height && cagetype.Width >= petsize.Width)
                             {
                                 //CageTypeValidCode.Add(cagetype.Id);
+
+                                Console.WriteLine(center.Id + "Check Amount");
+
                                 int CageAmount = 1;
                                 int CageTypeCodeIsSelectAmount = CageTypeCodeIsSelect.Where(x => x == cagetype.Id).Count();
                                 if (CageTypeCodeIsSelectAmount > 0)
@@ -141,6 +160,7 @@ namespace PawNClaw.Business.Services
                                 if (_cageRepository.CountCageByCageTypeIDExceptBusyCage(cagetype.Id, CageCodesNotValid) >= CageAmount)
                                 {
                                     Check = true;
+                                    Console.WriteLine(center.Id + " CageWithTypeID: " + cagetype.Id);
                                     CageTypeCodeIsSelect.Add(cagetype.Id);
                                     break;
                                 }
@@ -206,6 +226,9 @@ namespace PawNClaw.Business.Services
                                 {
                                     Check = false;
                                 }
+                            } else
+                            {
+                                Check = false;
                             }
                         }
 
@@ -225,6 +248,11 @@ namespace PawNClaw.Business.Services
             //END Check valid cage for pet
 
             values = validOCCenter;
+
+            foreach (var item in values)
+            {
+                Console.WriteLine("Center is valid: " + item.Id);
+            }
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
@@ -400,11 +428,14 @@ namespace PawNClaw.Business.Services
                                 {
                                     Check = false;
                                 }
+                            } else
+                            {
+                                Check = false;
                             }
                         }
 
                         //If check here is null that 1 of those pet dont have cage in this center
-                        if (!Check)
+                        if (Check == false)
                         {
                             break;
                         }

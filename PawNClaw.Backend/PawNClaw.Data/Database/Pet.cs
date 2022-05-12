@@ -39,6 +39,9 @@ namespace PawNClaw.Data.Database
         [Column("pet_type_code")]
         [StringLength(32)]
         public string PetTypeCode { get; set; }
+        [Column("breed_name")]
+        [StringLength(256)]
+        public string BreedName { get; set; }
 
         [ForeignKey(nameof(CustomerId))]
         [InverseProperty("Pets")]
