@@ -26,9 +26,9 @@ namespace PawNClaw.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public IActionResult GetAdmins([FromQuery] AdminRequestParameter _requestParameter, [FromQuery] PagingParameter _paging)
+        public IActionResult GetAdmins([FromQuery] string Name, [FromQuery] bool Status, [FromQuery] PagingParameter _paging)
         {
-            var data = _adminService.GetAdmins(_requestParameter, _paging);
+            var data = _adminService.GetAdmins(Name, Status, _paging);
             var metadata = new
             {
                 data.TotalCount,

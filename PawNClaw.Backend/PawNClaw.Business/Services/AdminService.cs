@@ -53,9 +53,9 @@ namespace PawNClaw.Business.Services
                 {
                     case "Name":
                         if (_requestParameter.dir == "asc")
-                            values = values.OrderBy(d => d.Id);
+                            values = values.OrderBy(d => d.Name);
                         else if (_requestParameter.dir == "desc")
-                            values = values.OrderByDescending(d => d.Id);
+                            values = values.OrderByDescending(d => d.Name);
                         break;
                 }
             }
@@ -65,6 +65,30 @@ namespace PawNClaw.Business.Services
             paging.PageSize);
         }
 
+        public PagedList<Admin> GetAdmins(string Name, bool Status, PagingParameter paging)
+        {
+            var values = _adminRepository.GetAll(includeProperties: "IdNavigation");
+
+            values = values.Where(x => x.IdNavigation.RoleCode.Trim().EndsWith("Mod"));
+            if (!string.IsNullOrWhiteSpace(Name))
+            {
+                values = values.Where(x => x.Name.Trim().Equals(Name));
+            }
+            if (Status == true)
+            {
+                values = values.Where(x => x.Status == true);
+            }
+            else if (Status == false)
+            {
+                values = values.Where(x => x.Status == false);
+            }
+
+            values = values.OrderBy(d => d.Name);
+
+            return PagedList<Admin>.ToPagedList(values.AsQueryable(),
+            paging.PageNumber,
+            paging.PageSize);
+        }
         //Get Admin by Id  
         public Admin GetAdminById(int id)
         {
