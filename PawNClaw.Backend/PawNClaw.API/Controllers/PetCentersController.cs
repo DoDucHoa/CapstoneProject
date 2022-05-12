@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,13 @@ namespace PawNClaw.API.Controllers
             var data = _searchService.MainSearchCenter(_searchRequestModel.City, _searchRequestModel.District,
                                                 _searchRequestModel.StartBooking, _searchRequestModel.EndBooking,
                                                 _searchRequestModel._petRequests, _searchRequestModel.paging);
+
+
+            foreach (var item in data)
+            {
+                Console.WriteLine("Controller: " + item.Id);
+                
+            }
             var metadata = new
             {
                 data.TotalCount,

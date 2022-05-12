@@ -17,10 +17,6 @@ namespace PawNClaw.Data.Database
         [Column("user_name")]
         [StringLength(256)]
         public string UserName { get; set; }
-        [Required]
-        [Column("role_code")]
-        [StringLength(32)]
-        public string RoleCode { get; set; }
         [Column("created_user")]
         public int? CreatedUser { get; set; }
         [Column("device_id")]
@@ -31,6 +27,10 @@ namespace PawNClaw.Data.Database
         public string Phone { get; set; }
         [Column("status")]
         public bool? Status { get; set; }
+        [Required]
+        [Column("role_code")]
+        [StringLength(32)]
+        public string RoleCode { get; set; }
 
         [ForeignKey(nameof(RoleCode))]
         [InverseProperty(nameof(Role.Accounts))]
