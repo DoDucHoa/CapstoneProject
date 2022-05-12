@@ -69,7 +69,7 @@ namespace PawNClaw.Business.Services
         {
             var values = _adminRepository.GetAll(includeProperties: "IdNavigation");
 
-            values = values.Where(x => x.IdNavigation.RoleCode.Trim().EndsWith("Mod"));
+            values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("Mod"));
             if (!string.IsNullOrWhiteSpace(Name))
             {
                 values = values.Where(x => x.Name.Trim().Equals(Name));
