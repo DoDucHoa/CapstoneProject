@@ -1,4 +1,5 @@
-﻿using PawNClaw.Data.Database;
+﻿using Microsoft.EntityFrameworkCore;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Interface;
 using System;
 using System.Collections.Generic;
@@ -17,11 +18,11 @@ namespace PawNClaw.Data.Repository
             _db = db;
         }
 
-        public int CountCageByCageTypeIDExceptBusyCage(int Id, List<string> cageCodesInvalid)
+        public int CountCageByCageTypeIDExceptBusyCage(int Id, bool IsSingle, List<string> cageCodesInvalid)
         {
             IQueryable<Cage> query = _dbSet;
-            return query.Where(x => x.CageTypeId == Id
-                                && !cageCodesInvalid.Contains(x.Code) && x.IsOnline == true).Count();
+            return query.Include("CageType").Where(x => x.CageTypeId == Id
+                                && !cageCodesInvalid.Contains(x.Code) && x.IsOnline == true && x.CageType.IsSingle == IsSingle).Count();
         }
     }
 }

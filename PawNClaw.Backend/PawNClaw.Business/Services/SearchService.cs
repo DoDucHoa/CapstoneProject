@@ -90,6 +90,7 @@ namespace PawNClaw.Business.Services
 
             foreach (var _petRequest in _petRequests)
             {
+                int Count = 0;
                 decimal Height = 0;
                 decimal Width = 0;
                 foreach (var _pet in _petRequest)
@@ -104,12 +105,13 @@ namespace PawNClaw.Business.Services
                     }
                     
                     Width += (decimal)Math.Round((((double)_pet.Length) + ((double)_pet.Height)) / (5 / 2), 0);
+                    Count += 1;
                 }
 
                 PetSizeCage petSize = new PetSizeCage();
                 petSize.Height = Height;
                 petSize.Width = Width;
-
+                if (Count > 1) petSize.IsSingle = false;
                 PetSizes.Add(petSize);
             }
             //END Check Size of Pet
@@ -157,7 +159,7 @@ namespace PawNClaw.Business.Services
                                 {
                                     CageAmount += CageTypeCodeIsSelectAmount;
                                 }
-                                if (_cageRepository.CountCageByCageTypeIDExceptBusyCage(cagetype.Id, CageCodesNotValid) >= CageAmount)
+                                if (_cageRepository.CountCageByCageTypeIDExceptBusyCage(cagetype.Id, petsize.IsSingle, CageCodesNotValid) >= CageAmount)
                                 {
                                     Check = true;
                                     Console.WriteLine(center.Id + " CageWithTypeID: " + cagetype.Id);
@@ -216,7 +218,7 @@ namespace PawNClaw.Business.Services
                                 {
                                     CageAmount += CageTypeCodeIsSelectAmount;
                                 }
-                                if (_cageRepository.CountCageByCageTypeIDExceptBusyCage(cagetype.Id, CageCodesNotValid) >= CageAmount)
+                                if (_cageRepository.CountCageByCageTypeIDExceptBusyCage(cagetype.Id, petsize.IsSingle, CageCodesNotValid) >= CageAmount)
                                 {
                                     Check = true;
                                     CageTypeCodeIsSelect.Add(cagetype.Id);
@@ -360,7 +362,7 @@ namespace PawNClaw.Business.Services
                                 {
                                     CageAmount += CageTypeCodeIsSelectAmount;
                                 }
-                                if (_cageRepository.CountCageByCageTypeIDExceptBusyCage(cagetype.Id, CageCodesNotValid) >= CageAmount)
+                                if (_cageRepository.CountCageByCageTypeIDExceptBusyCage(cagetype.Id, petsize.IsSingle, CageCodesNotValid) >= CageAmount)
                                 {
                                     Check = true;
                                     CageTypeCodeIsSelect.Add(cagetype.Id);
@@ -418,7 +420,7 @@ namespace PawNClaw.Business.Services
                                 {
                                     CageAmount += CageTypeCodeIsSelectAmount;
                                 }
-                                if (_cageRepository.CountCageByCageTypeIDExceptBusyCage(cagetype.Id, CageCodesNotValid) >= CageAmount)
+                                if (_cageRepository.CountCageByCageTypeIDExceptBusyCage(cagetype.Id, petsize.IsSingle, CageCodesNotValid) >= CageAmount)
                                 {
                                     Check = true;
                                     CageTypeCodeIsSelect.Add(cagetype.Id);
