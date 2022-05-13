@@ -15,6 +15,7 @@ namespace PawNClaw.Data.Repository
         {
             public decimal Height { get; set; }
             public decimal Width { get; set; }
+            public bool IsSingle { get; set; } = true;
         }
 
         private readonly ApplicationDbContext _db;
