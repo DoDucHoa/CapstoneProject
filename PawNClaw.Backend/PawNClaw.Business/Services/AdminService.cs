@@ -65,11 +65,14 @@ namespace PawNClaw.Business.Services
             paging.PageSize);
         }
 
-        public PagedList<Admin> GetAdmins(string Name, bool Status, PagingParameter paging)
+        public PagedList<Admin> GetAdmins(string Name, bool? Status, PagingParameter paging)
         {
             var values = _adminRepository.GetAll(includeProperties: "IdNavigation");
 
-            values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("Mod"));
+            values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("MOD"));
+
+            
+
             if (!string.IsNullOrWhiteSpace(Name))
             {
                 values = values.Where(x => x.Name.Trim().Equals(Name));
@@ -83,7 +86,11 @@ namespace PawNClaw.Business.Services
                 values = values.Where(x => x.Status == false);
             }
 
+            
+
             values = values.OrderBy(d => d.Name);
+
+            
 
             return PagedList<Admin>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
