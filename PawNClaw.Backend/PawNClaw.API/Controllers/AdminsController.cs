@@ -15,7 +15,7 @@ namespace PawNClaw.API.Controllers
 {
     [Route("api/admins")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class AdminsController : ControllerBase
     {
         private readonly AdminService _adminService;
@@ -25,10 +25,10 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
-        public IActionResult GetAdmins([FromQuery] string Name, [FromQuery] bool? Status, [FromQuery] PagingParameter _paging)
+        [Authorize(Roles = "Admin")]
+        public IActionResult GetAdmins([FromQuery] string Name, [FromQuery] bool? Status, [FromQuery] string dir , [FromQuery] string sort, [FromQuery] PagingParameter _paging)
         {
-            var data = _adminService.GetAdmins(Name, Status, _paging);
+            var data = _adminService.GetAdmins(Name, Status, dir, sort, _paging);
             var metadata = new
             {
                 data.TotalCount,

@@ -65,7 +65,7 @@ namespace PawNClaw.Business.Services
             paging.PageSize);
         }
 
-        public PagedList<Admin> GetAdmins(string Name, bool? Status, PagingParameter paging)
+        public PagedList<Admin> GetAdmins(string Name, bool? Status, string dir, string sort, PagingParameter paging)
         {
             var values = _adminRepository.GetAll(includeProperties: "IdNavigation");
 
@@ -86,11 +86,36 @@ namespace PawNClaw.Business.Services
                 values = values.Where(x => x.Status == false);
             }
 
-            
-
-            values = values.OrderBy(d => d.Name);
-
-            
+            if (!string.IsNullOrWhiteSpace(sort))
+            {
+                switch (sort)
+                {
+                    case "Name":
+                        if (dir == "asc")
+                            values = values.OrderBy(d => d.Name);
+                        else if (dir == "desc")
+                            values = values.OrderByDescending(d => d.Name);
+                        break;
+                    case "Id":
+                        if (dir == "asc")
+                            values = values.OrderBy(d => d.Id);
+                        else if (dir == "desc")
+                            values = values.OrderByDescending(d => d.Id);
+                        break;
+                    case "Email":
+                        if (dir == "asc")
+                            values = values.OrderBy(d => d.Email);
+                        else if (dir == "desc")
+                            values = values.OrderByDescending(d => d.Email);
+                        break;
+                }
+            } else
+            {
+                if (dir == "asc")
+                    values = values.OrderBy(d => d.Name);
+                else if (dir == "desc")
+                    values = values.OrderByDescending(d => d.Name);
+            }
 
             return PagedList<Admin>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
