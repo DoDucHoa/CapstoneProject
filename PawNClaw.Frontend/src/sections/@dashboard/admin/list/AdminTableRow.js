@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Avatar, Checkbox, TableRow, TableCell, Typography, MenuItem } from '@mui/material';
+import { Avatar, TableRow, TableCell, Typography, MenuItem } from '@mui/material';
 
 // components
 import Label from '../../../../components/Label';
@@ -14,16 +14,14 @@ import { TableMoreMenu } from '../../../../components/table';
 
 AdminTableRow.propTypes = {
   row: PropTypes.object,
-  selected: PropTypes.bool,
   onEditRow: PropTypes.func,
-  onSelectRow: PropTypes.func,
   onDeleteRow: PropTypes.func,
 };
 
-export default function AdminTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
+export default function AdminTableRow({ row, onEditRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { name, avatarUrl, company, role, isVerified, status } = row;
+  const { name, avatarUrl, email, phoneNumber, status } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -36,11 +34,7 @@ export default function AdminTableRow({ row, selected, onEditRow, onSelectRow, o
   };
 
   return (
-    <TableRow hover selected={selected}>
-      <TableCell padding="checkbox">
-        <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell>
-
+    <TableRow hover>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
         <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
         <Typography variant="subtitle2" noWrap>
@@ -48,31 +42,17 @@ export default function AdminTableRow({ row, selected, onEditRow, onSelectRow, o
         </Typography>
       </TableCell>
 
-      <TableCell align="left">{company}</TableCell>
+      <TableCell align="left">{email}</TableCell>
 
-      <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
-        {role}
-      </TableCell>
-
-      <TableCell align="center">
-        <Iconify
-          icon={isVerified ? 'eva:checkmark-circle-fill' : 'eva:clock-outline'}
-          sx={{
-            width: 20,
-            height: 20,
-            color: 'success.main',
-            ...(!isVerified && { color: 'warning.main' }),
-          }}
-        />
-      </TableCell>
+      <TableCell align="left">{phoneNumber}</TableCell>
 
       <TableCell align="left">
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-          color={(status === 'banned' && 'error') || 'success'}
+          color={(status === false && 'error') || 'success'}
           sx={{ textTransform: 'capitalize' }}
         >
-          {status}
+          {status ? 'active' : 'banned'}
         </Label>
       </TableCell>
 

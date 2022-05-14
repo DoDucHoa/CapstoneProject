@@ -70,6 +70,7 @@ export default function Router() {
           children: [
             { element: <Navigate to="/dashboard/admin/list" replace />, index: true },
             { path: 'list', element: <AdminList /> },
+            { path: 'new', element: <AdminCreate /> },
           ],
         },
       ],
@@ -125,3 +126,4 @@ const NotFound = Loadable(lazy(() => import('../pages/Page404')));
 
 // ADMIN
 const AdminList = Loadable(lazy(() => import('../pages/dashboard/Admin/AdminList')));
+const AdminCreate = Loadable(lazy(() => import('../pages/dashboard/Admin/AdminCreate')));
