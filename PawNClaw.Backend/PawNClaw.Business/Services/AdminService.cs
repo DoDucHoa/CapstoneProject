@@ -13,10 +13,12 @@ namespace PawNClaw.Business.Services
     public class AdminService
     {
         IAdminRepository _adminRepository;
+        IAccountRepository _accountRepository;
 
-        public AdminService(IAdminRepository adminRepository)
+        public AdminService(IAdminRepository adminRepository, IAccountRepository accountRepository)
         {
             _adminRepository = adminRepository;
+            _accountRepository = accountRepository;
         }
 
         //Get All Admin Detail
@@ -165,10 +167,14 @@ namespace PawNClaw.Business.Services
             {
                 var objFromDb = _adminRepository.Get(id);
                 objFromDb.Status = false;
+                var accountFromDb = _accountRepository.Get(objFromDb.Id);
+                accountFromDb.Status = false;
                 if (objFromDb != null)
                 {
                     _adminRepository.Update(objFromDb);
                     _adminRepository.SaveDbChange();
+                    _accountRepository.Update(accountFromDb);
+                    _accountRepository.SaveDbChange();
                     return true;
                 }
             }
@@ -186,10 +192,14 @@ namespace PawNClaw.Business.Services
             {
                 var objFromDb = _adminRepository.Get(id);
                 objFromDb.Status = true;
+                var accountFromDb = _accountRepository.Get(objFromDb.Id);
+                accountFromDb.Status = true;
                 if (objFromDb != null)
                 {
                     _adminRepository.Update(objFromDb);
                     _adminRepository.SaveDbChange();
+                    _accountRepository.Update(accountFromDb);
+                    _accountRepository.SaveDbChange();
                     return true;
                 }
             }
