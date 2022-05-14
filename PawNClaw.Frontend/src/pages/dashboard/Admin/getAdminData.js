@@ -1,9 +1,11 @@
 import axios from '../../../utils/axios';
 
-const getAdmins = async () => {
+const getAdmins = async (page, rowsPerPage, filterStatus) => {
   const response = await axios.get('/api/admins', {
     params: {
-      includeProperties: 'IdNavigation',
+      PageSize: rowsPerPage,
+      PageNumber: page,
+      Status: filterStatus,
     },
   });
   return response.data;

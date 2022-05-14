@@ -23,7 +23,7 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
 import useTabs from '../../../hooks/useTabs';
 import useSettings from '../../../hooks/useSettings';
-import useTable, { getComparator, emptyRows } from '../../../hooks/useTable';
+import useTable, { emptyRows } from '../../../hooks/useTable';
 
 // components
 import Page from '../../../components/Page';
@@ -40,13 +40,16 @@ import { getAdmins } from './getAdminData';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = ['all', 'active', 'banned'];
+const STATUS_OPTIONS = [
+  { key: 0, value: '', label: 'All' },
+  { key: 1, value: 'true', label: 'Active' },
+  { key: 2, value: 'false', label: 'Banned' },
+];
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
-  { id: 'company', label: 'Company', align: 'left' },
-  { id: 'role', label: 'Role', align: 'left' },
-  { id: 'isVerified', label: 'Verified', align: 'center' },
+  { id: 'email', label: 'Email', align: 'left' },
+  { id: 'phone', label: 'Phone Number', align: 'left' },
   { id: 'status', label: 'Status', align: 'left' },
   { id: '' },
 ];
@@ -57,9 +60,23 @@ export default function UserList() {
   const [tableData, setTableData] = useState([]);
   const [metadata, setMetadata] = useState({});
 
+  const {
+    page,
+    order,
+    orderBy,
+    rowsPerPage,
+    setPage,
+    //
+    onSort,
+    onChangePage,
+    onChangeRowsPerPage,
+  } = useTable();
+
+  const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('');
+
   useEffect(() => {
     const getAdminData = async () => {
-      const response = await getAdmins();
+      const response = await getAdmins(page, rowsPerPage, filterStatus);
       const { data, metadata } = response;
 
       const admins = data.map((admin, index) => ({
@@ -68,33 +85,13 @@ export default function UserList() {
         name: admin.name,
         email: admin.email,
         phoneNumber: admin.idNavigation.phone,
-        role: admin.idNavigation.roleCode === 'AD' ? 'Admin' : 'Moderator',
-        status: admin.idNavigation.status ? 'Active' : 'Banned',
+        status: admin.idNavigation.status,
       }));
       setTableData(admins);
       setMetadata(metadata);
     };
     getAdminData();
-  }, []);
-
-  console.log('metadata', metadata);
-
-  const {
-    page,
-    order,
-    orderBy,
-    rowsPerPage,
-    setPage,
-    //
-    selected,
-    setSelected,
-    onSelectRow,
-    onSelectAllRows,
-    //
-    onSort,
-    onChangePage,
-    onChangeRowsPerPage,
-  } = useTable();
+  }, [page, rowsPerPage, filterStatus]);
 
   const { themeStretch } = useSettings();
 
@@ -102,36 +99,21 @@ export default function UserList() {
 
   const [filterName, setFilterName] = useState('');
 
-  const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all');
-
   const handleFilterName = (filterName) => {
     setFilterName(filterName);
     setPage(0);
-  };
-
-  const handleDeleteRow = (id) => {
-    const deleteRow = tableData.filter((row) => row.id !== id);
-    setSelected([]);
-    setTableData(deleteRow);
   };
 
   const handleEditRow = (id) => {
     navigate(PATH_DASHBOARD.user.edit(paramCase(id)));
   };
 
-  const dataFiltered = applySortFilter({
-    tableData,
-    comparator: getComparator(order, orderBy),
-    filterName,
-    filterStatus,
-  });
-
   const denseHeight = 72;
 
-  const isNotFound = (!dataFiltered.length && !!filterName) || (!dataFiltered.length && !!filterStatus);
+  const isNotFound = (!metadata.totalCount && !!filterName) || (!metadata.totalCount && !!filterStatus);
 
   return (
-    <Page title="Admin: List">
+    <Page title="Moderator: List">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Morderator List"
@@ -158,7 +140,7 @@ export default function UserList() {
             sx={{ px: 2, bgcolor: 'background.neutral' }}
           >
             {STATUS_OPTIONS.map((tab) => (
-              <Tab disableRipple key={tab} label={tab} value={tab} />
+              <Tab disableRipple key={tab.key} label={tab.label} value={tab.value} />
             ))}
           </Tabs>
 
@@ -171,34 +153,14 @@ export default function UserList() {
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
               <Table size={'medium'}>
-                <TableHeadCustom
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
-                  numSelected={selected.length}
-                  onSort={onSort}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      tableData.map((row) => row.id)
-                    )
-                  }
-                />
+                <TableHeadCustom order={order} orderBy={orderBy} headLabel={TABLE_HEAD} onSort={onSort} />
 
                 <TableBody>
-                  {dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-                    <AdminTableRow
-                      key={row.id}
-                      row={row}
-                      selected={selected.includes(row.id)}
-                      onSelectRow={() => onSelectRow(row.id)}
-                      onDeleteRow={() => handleDeleteRow(row.id)}
-                      onEditRow={() => handleEditRow(row.name)}
-                    />
+                  {tableData.map((row) => (
+                    <AdminTableRow key={row.id} row={row} onEditRow={() => handleEditRow(row.name)} />
                   ))}
 
-                  <TableEmptyRows height={denseHeight} emptyRows={emptyRows(page, rowsPerPage, tableData.length)} />
+                  <TableEmptyRows height={denseHeight} emptyRows={emptyRows(page, rowsPerPage, metadata.totalCount)} />
 
                   <TableNoData isNotFound={isNotFound} />
                 </TableBody>
@@ -208,9 +170,9 @@ export default function UserList() {
 
           <Box sx={{ position: 'relative' }}>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
+              rowsPerPageOptions={[5, 10, 15, 20]}
               component="div"
-              count={dataFiltered.length}
+              count={metadata.totalCount}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={onChangePage}
@@ -221,28 +183,4 @@ export default function UserList() {
       </Container>
     </Page>
   );
-}
-
-// ----------------------------------------------------------------------
-
-function applySortFilter({ tableData, comparator, filterName, filterStatus }) {
-  const stabilizedThis = tableData.map((el, index) => [el, index]);
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-
-  tableData = stabilizedThis.map((el) => el[0]);
-
-  if (filterName) {
-    tableData = tableData.filter((item) => item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1);
-  }
-
-  if (filterStatus !== 'all') {
-    tableData = tableData.filter((item) => item.status === filterStatus);
-  }
-
-  return tableData;
 }
