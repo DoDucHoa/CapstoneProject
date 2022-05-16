@@ -51,7 +51,7 @@ namespace PawNClaw.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public IActionResult Add([FromBody] Admin admin)
+        public IActionResult Add([FromBody] CreateAdminParameter admin)
         {
             if (_adminService.Add(admin) != -1)
             {
