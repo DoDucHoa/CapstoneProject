@@ -27,5 +27,13 @@ namespace PawNClaw.Data.Repository
             
             return query.ToList();
         }
+
+        public bool ConfirmBooking(int Id, int StatusId)
+        {
+            Booking query = _dbSet.FirstOrDefault(x => x.Id == Id);
+            query.StatusId = StatusId;
+            _dbSet.Update(query);
+            return (_db.SaveChanges() >= 0);
+        }
     }
 }
