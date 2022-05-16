@@ -130,13 +130,35 @@ namespace PawNClaw.Business.Services
         }
 
         //Add Admin
-        public int Add(Admin admin)
+        public int Add(CreateAdminParameter admin)
         {
+            Admin adminToDB = new Admin
+            {
+                Email = admin.UserName,
+                Name = admin.Name,
+                Status = true
+            };
+
+            Account accountToDb = new Account
+            {
+                UserName = admin.UserName,
+                CreatedUser = admin.CreatedUser,
+                Phone = admin.Phone,
+                RoleCode = admin.RoleCode,
+                Status = true
+            };
             try
             {
-                _adminRepository.Add(admin);
+                if (_accountRepository.GetFirstOrDefault(x => x.UserName.Trim().Equals(accountToDb.UserName)) != null)
+                    return -1;
+                _accountRepository.Add(accountToDb);
+                _accountRepository.SaveDbChange();
+
+                adminToDB.Id = accountToDb.Id;
+
+                _adminRepository.Add(adminToDB);
                 _adminRepository.SaveDbChange();
-                var id = admin.Id;
+                var id = adminToDB.Id;
                 return id;
             }
             catch
