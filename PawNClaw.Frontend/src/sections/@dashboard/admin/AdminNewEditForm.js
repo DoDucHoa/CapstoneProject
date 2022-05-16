@@ -1,23 +1,22 @@
 import PropTypes from 'prop-types';
+
 import * as Yup from 'yup';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useSnackbar } from 'notistack';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 // form
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { LoadingButton } from '@mui/lab';
-import { Box, Card, Grid, Stack, Switch, Typography, FormControlLabel } from '@mui/material';
+import { Box, Card, Grid, Stack, Switch, Typography, FormControlLabel, Button } from '@mui/material';
 // utils
 import { fData } from '../../../utils/formatNumber';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
-// _mock
-import { countries } from '../../../_mock';
 // components
 import Label from '../../../components/Label';
-import { FormProvider, RHFSelect, RHFSwitch, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
+import { FormProvider, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
 
 // ----------------------------------------------------------------------
 
@@ -35,12 +34,7 @@ export default function AdminNewEditForm({ isEdit, currentUser }) {
     name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email(),
     phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    country: Yup.string().required('country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role Number is required'),
+    createUser: Yup.number().required(),
     avatarUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
   });
 
@@ -184,22 +178,6 @@ export default function AdminNewEditForm({ isEdit, currentUser }) {
                 sx={{ mx: 0, mb: 3, width: 1, justifyContent: 'space-between' }}
               />
             )}
-
-            <RHFSwitch
-              name="isVerified"
-              labelPlacement="start"
-              label={
-                <>
-                  <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Email Verified
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Disabling this will automatically send the user a verification email
-                  </Typography>
-                </>
-              }
-              sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
-            />
           </Card>
         </Grid>
 
@@ -216,27 +194,14 @@ export default function AdminNewEditForm({ isEdit, currentUser }) {
               <RHFTextField name="name" label="Full Name" />
               <RHFTextField name="email" label="Email Address" />
               <RHFTextField name="phoneNumber" label="Phone Number" />
-
-              <RHFSelect name="country" label="Country" placeholder="Country">
-                <option value="" />
-                {countries.map((option) => (
-                  <option key={option.code} value={option.label}>
-                    {option.label}
-                  </option>
-                ))}
-              </RHFSelect>
-
-              <RHFTextField name="state" label="State/Region" />
-              <RHFTextField name="city" label="City" />
-              <RHFTextField name="address" label="Address" />
-              <RHFTextField name="zipCode" label="Zip/Code" />
-              <RHFTextField name="company" label="Company" />
-              <RHFTextField name="role" label="Role" />
             </Box>
 
-            <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+            <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
+              <Button to={PATH_DASHBOARD.admin.list} color="error" variant="contained" component={RouterLink}>
+                Cancel
+              </Button>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!isEdit ? 'Create User' : 'Save Changes'}
+                {!isEdit ? 'Create' : 'Save Changes'}
               </LoadingButton>
             </Stack>
           </Card>

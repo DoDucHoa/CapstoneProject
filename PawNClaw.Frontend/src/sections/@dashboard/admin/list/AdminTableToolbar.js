@@ -17,6 +17,7 @@ export default function AdminTableToolbar({ filterName, onFilterName }) {
         fullWidth
         value={filterName}
         onChange={(event) => onFilterName(event.target.value)}
+        onKeyPress={(event) => onFilterName(event)}
         placeholder="Search moderator..."
         InputProps={{
           startAdornment: (
