@@ -65,22 +65,22 @@ export default function AdminTableRow({ row, onEditRow, onDeleteRow }) {
             <>
               <MenuItem
                 onClick={() => {
-                  onDeleteRow();
-                  handleCloseMenu();
-                }}
-                sx={{ color: 'error.main' }}
-              >
-                <Iconify icon={'eva:trash-2-outline'} />
-                Delete
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
                   onEditRow();
                   handleCloseMenu();
                 }}
               >
                 <Iconify icon={'eva:edit-fill'} />
                 Edit
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  onDeleteRow();
+                  handleCloseMenu();
+                }}
+                sx={{ color: 'error.main' }}
+              >
+                <Iconify icon={status ? 'eva:slash-outline' : 'eva:checkmark-square-outline'} />
+                {status ? 'Ban' : 'Unban'}
               </MenuItem>
             </>
           }

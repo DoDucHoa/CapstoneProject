@@ -100,6 +100,7 @@ export default function UserList() {
   const [filterName, setFilterName] = useState('');
 
   const handleFilterName = (filterName) => {
+    console.log('filterName', filterName);
     setFilterName(filterName);
     setPage(0);
   };

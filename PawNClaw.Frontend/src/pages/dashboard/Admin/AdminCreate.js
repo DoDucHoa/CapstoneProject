@@ -28,10 +28,10 @@ export default function UserCreate() {
   const currentUser = _userList.find((user) => paramCase(user.name) === name);
 
   return (
-    <Page title="User: Create a new Moderator">
+    <Page title="Moderator: Create a new Moderator">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading={!isEdit ? 'Create a new user' : 'Edit user'}
+          heading={!isEdit ? 'Create a new Moderator' : 'Edit Moderator'}
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             { name: 'Moderator', href: PATH_DASHBOARD.admin.list },
