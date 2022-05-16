@@ -10,5 +10,7 @@ namespace PawNClaw.Data.Interface
     public interface IBookingRepository : IRepository<Booking>
     {
         public IEnumerable<Booking> GetBookingValidSearch(int Id, DateTime _startBooking, DateTime _endBooking);
+
+        public bool ConfirmBooking(int Id, int StatusId);
     }
 }
