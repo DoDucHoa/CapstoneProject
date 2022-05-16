@@ -13,18 +13,18 @@ namespace PawNClaw.API.Controllers
     [Route("api/pets")]
     [ApiController]
     [Authorize]
-    public class PetController : ControllerBase
+    public class PetsController : ControllerBase
     {
         private readonly PetService _petService;
-        public PetController(PetService petService)
+        public PetsController(PetService petService)
         {
             _petService = petService;
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetPetsByCusId(int Id, [FromQuery] PagingParameter paging)
+        public IActionResult GetPetsByCusId(int id, [FromQuery] PagingParameter paging)
         {
-            var data = _petService.GetsPetByCusId(Id, paging);
+            var data = _petService.GetsPetByCusId(id, paging);
             var metadata = new
             {
                 data.TotalCount,

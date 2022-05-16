@@ -53,14 +53,20 @@ namespace PawNClaw.API
             services.AddTransient<AdminService, AdminService>();
 
             services.AddTransient<IOwnerRepository, OwnerRepository>();
+            services.AddTransient<OwnerService, OwnerService>();
 
             services.AddTransient<IStaffRepository, StaffRepository>();
+            services.AddTransient<StaffServicecs, StaffServicecs>();
 
             services.AddTransient<ICustomerRepository, CustomerRepository>();
 
-            services.AddTransient<IBookingDetailRepository, BookingDetailRepository>();
+            services.AddTransient<IBrandRepository, BrandRepository>();
+            services.AddTransient<BrandService, BrandService>();
 
             services.AddTransient<IPetCenterRepository, PetCenterRepository>();
+            services.AddTransient<PetCenterService, PetCenterService>();
+
+            services.AddTransient<IBookingDetailRepository, BookingDetailRepository>();
 
             services.AddTransient<IPetRepository, PetRepository>();
             services.AddTransient<PetService, PetService>();
@@ -72,6 +78,12 @@ namespace PawNClaw.API
             services.AddTransient<ICageRepository, CageRepository>();
 
             services.AddTransient<IPhotoRepository, PhotoRepository>();
+
+            services.AddTransient<ICityRepository, CityRepository>();
+            services.AddTransient<CityService, CityService>();
+
+            services.AddTransient<IDistrictRepository, DistrictRepository>();
+            services.AddTransient<DistrictService, DistrictService>();
 
             services.AddControllers();
             services.AddControllersWithViews()

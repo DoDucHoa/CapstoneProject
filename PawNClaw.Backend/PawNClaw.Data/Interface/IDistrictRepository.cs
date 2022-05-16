@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace PawNClaw.Data.Interface
 {
-    public interface ICageRepository : IRepository<Cage>
+    public interface IDistrictRepository : IRepository<District>
     {
-        public int CountCageByCageTypeIDExceptBusyCage(int Id, bool IsSingle, List<string> cageCodesInvalid);
     }
 }
