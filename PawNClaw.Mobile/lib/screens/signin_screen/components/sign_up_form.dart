@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
+import 'package:pawnclaw_mobile_application/common/date_picker.dart';
 import 'package:pawnclaw_mobile_application/common/input_validation.dart';
 import 'package:intl/intl.dart';
 
@@ -77,6 +78,10 @@ class _SignUpFormState extends State<SignUpForm> {
               decoration: InputDecoration(
                 labelText: "Name",
                 errorText: nameError,
+                prefixIcon: Icon(
+                  Icons.person,
+                  color: primaryColor,
+                ),
               ),
               onChanged: (input) => setState(() {
                 nameError = InputValidator().isEmpty(input);
@@ -87,6 +92,10 @@ class _SignUpFormState extends State<SignUpForm> {
               controller: _phoneController,
               decoration: InputDecoration(
                 labelText: "Phone",
+                prefixIcon: Icon(
+                  Icons.phone,
+                  color: primaryColor,
+                ),
               ),
               readOnly: true,
             ),
@@ -96,6 +105,10 @@ class _SignUpFormState extends State<SignUpForm> {
               decoration: InputDecoration(
                 labelText: "Email",
                 errorText: emailError,
+                prefixIcon: Icon(
+                  Icons.mail,
+                  color: primaryColor,
+                ),
               ),
               onChanged: (input) => setState(() {
                 emailError = InputValidator().isEmpty(input) ??
@@ -105,13 +118,21 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
             const Spacer(flex: 3),
             GestureDetector(
-              onTap: () => _selectDate(context),
+              onTap: () async {
+                final DateTime? picked = await selectSingleDate(context);
+                setState(() {
+                  _selectedDate = picked ?? DateTime.now();
+                  _birthController.text = DateFormat.yMd().format(picked!);
+                });
+              },
               child: TextField(
                 enabled: false,
                 controller: _birthController,
                 decoration: InputDecoration(
-                    labelText: "Birth",
-                    errorText: InputValidator().isEmpty(_birthController.text)),
+                  labelText: "Birth",
+                  errorText: InputValidator().isEmpty(_birthController.text),
+                  prefixIcon: Icon(Icons.calendar_month),
+                ),
                 readOnly: true,
               ),
             ),
