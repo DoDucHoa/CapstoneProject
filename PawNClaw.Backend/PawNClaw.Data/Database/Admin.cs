@@ -40,6 +40,8 @@ namespace PawNClaw.Data.Database
         public string Email { get; set; }
         [Column("status")]
         public bool? Status { get; set; }
+        [Column("gender")]
+        public byte? Gender { get; set; }
 
         [ForeignKey(nameof(Id))]
         [InverseProperty(nameof(Account.Admin))]
