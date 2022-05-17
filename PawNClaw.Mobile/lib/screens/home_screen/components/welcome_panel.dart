@@ -94,7 +94,7 @@ class WelcomePanel extends StatelessWidget {
                               radius: 8,
                             ),
                             Text(
-                              " Bookings",
+                              " Searchs",
                               style: TextStyle(
                                 fontSize: 18,
                                 color: Colors.white,

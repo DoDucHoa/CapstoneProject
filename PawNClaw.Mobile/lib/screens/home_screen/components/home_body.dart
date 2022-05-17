@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/SearchScreen.dart';
 
 class HomeBody extends StatelessWidget {
   const HomeBody({
@@ -42,13 +45,23 @@ class HomeBody extends StatelessWidget {
                 color: Colors.black45,
               ),
             ),
-            Container(
-              margin: EdgeInsets.symmetric(vertical: width * 0.05),
-              width: width * 0.85,
-              height: height * 0.18,
-              decoration: BoxDecoration(
-                  color: Colors.black26,
-                  borderRadius: BorderRadius.circular(15)),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchScreen(),
+                  ),
+                );
+              },
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: width * 0.05),
+                width: width * 0.85,
+                height: height * 0.18,
+                decoration: BoxDecoration(
+                    color: Colors.black26,
+                    borderRadius: BorderRadius.circular(15)),
+              ),
             ),
           ],
         ),

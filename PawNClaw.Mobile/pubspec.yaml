@@ -43,6 +43,8 @@ dependencies:
   dio: ^4.0.6
   pinput: ^2.2.7
   flutter_snake_navigationbar: ^0.6.1
+  shared_preferences: ^2.0.15
+  flutter_datetime_picker: ^1.5.1
 
 dev_dependencies:
   flutter_test:
@@ -65,6 +67,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - lib/assets/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
