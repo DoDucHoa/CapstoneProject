@@ -136,6 +136,7 @@ namespace PawNClaw.Business.Services
             {
                 Email = admin.UserName,
                 Name = admin.Name,
+                Gender = admin.Gender,
                 Status = true
             };
 
