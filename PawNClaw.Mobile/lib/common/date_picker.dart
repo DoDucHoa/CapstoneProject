@@ -37,7 +37,11 @@ extension DateTimeExt on DateTime {
       DateTime(this.year, this.month, this.day, this.hour, () {
         if (this.minute > 0 && this.minute <= 30) {
           return 30;
-        } else
-          return 60;
+        }
+        ;
+        if (this.minute == 0) {
+          return 0;
+        }
+        return 60;
       }());
 }

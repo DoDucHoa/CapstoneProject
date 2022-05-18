@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pawnclaw_mobile_application/common/components/elevated_container.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 
 class WelcomePanel extends StatelessWidget {
@@ -22,14 +23,14 @@ class WelcomePanel extends StatelessWidget {
           height: height * 0.35,
         ),
         Container(
-          padding: EdgeInsets.all(28),
+          padding: EdgeInsets.all(width * regularPadRate),
           height: height * 0.3,
           width: width,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
                 primaryColor,
-                primaryColor.withOpacity(0.5),
+                lightPrimaryColor,
               ],
               begin: Alignment.bottomRight,
               end: Alignment.topLeft,
@@ -43,16 +44,16 @@ class WelcomePanel extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Spacer(
+                  const Spacer(
                     flex: 5,
                   ),
                   RichText(
                     text: TextSpan(
                       children: <TextSpan>[
                         TextSpan(
-                          text: "Hi ",
+                          text: "Xin chào ",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: width * regularFontRate,
                             fontWeight: FontWeight.w300,
                             color: Colors.white,
                           ),
@@ -60,7 +61,7 @@ class WelcomePanel extends StatelessWidget {
                         TextSpan(
                           text: username + ",",
                           style: TextStyle(
-                            fontSize: 22,
+                            fontSize: width * regularFontRate,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),
@@ -68,35 +69,37 @@ class WelcomePanel extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Spacer(
+                  const Spacer(
                     flex: 1,
                   ),
                   Row(
                     children: [
                       Text(
-                        "You have   ",
+                        "Bạn có   ",
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: width * regularFontRate,
                           color: Colors.white,
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.all(4),
-                        height: 24,
+                        padding: EdgeInsets.all(width * 0.01),
+                        height: width * regularFontRate * 1.5,
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(15),
                         ),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CircleAvatar(
                               backgroundColor: Colors.white,
-                              radius: 8,
+                              radius: width * regularFontRate * 0.5,
                             ),
                             Text(
-                              " Searchs",
+                              " Lịch hẹn",
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: width * regularFontRate,
                                 color: Colors.white,
                               ),
                             ),
@@ -105,23 +108,23 @@ class WelcomePanel extends StatelessWidget {
                       )
                     ],
                   ),
-                  Spacer(
+                  const Spacer(
                     flex: 1,
                   ),
                   Text(
-                    "coming up today.",
+                    "trong hôm nay.",
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: width * regularFontRate,
                       color: Colors.white,
                     ),
                   ),
-                  Spacer(
+                  const Spacer(
                     flex: 5,
                   ),
                 ],
               ),
               CircleAvatar(
-                radius: 40,
+                radius: width * 0.12,
                 backgroundColor: Colors.white,
                 backgroundImage: null,
               )
@@ -129,41 +132,21 @@ class WelcomePanel extends StatelessWidget {
           ),
         ),
         Positioned(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(25),
-            child: Container(
-              margin: const EdgeInsets.only(
-                bottom: 4.0,
-                left: 1,
-                right: 1,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: Colors.white),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    offset: Offset(0.0, 1.0), //(x,y)
-                    blurRadius: 4.0,
-                  ),
-                ],
-              ),
-              alignment: Alignment.center,
-              height: height * 0.06,
-              width: width * 0.7,
-              child: TextField(
-                decoration: InputDecoration(
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: primaryColor,
-                  ),
-                  hintText: "Search centers, clinics and stores",
-                  hintStyle: TextStyle(color: Colors.black26),
-                  border: InputBorder.none,
+          child: ElevatedContainer(
+            height: height * 0.06,
+            width: width * 0.7,
+            child: TextField(
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: primaryColor,
                 ),
+                hintText: "Tìm kiếm trung tâm thú cưng",
+                hintStyle: TextStyle(color: lightFontColor),
+                border: InputBorder.none,
               ),
             ),
+            elevation: width * 0.015,
           ),
           top: height * 0.27,
           left: width * 0.1,

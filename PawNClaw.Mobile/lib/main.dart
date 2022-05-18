@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
           primarySwatch:
               MaterialColor(primaryColor.value, getSwatch(primaryColor)),
         ),
-        home: SignInScreen(),
+        home: const SignInScreen(),
       ),
     );
   }

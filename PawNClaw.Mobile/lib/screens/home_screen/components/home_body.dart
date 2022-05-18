@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
+import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/SearchScreen.dart';
 
 class HomeBody extends StatelessWidget {
@@ -22,11 +21,11 @@ class HomeBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Promotion",
+              "Khuyến mãi",
               style: TextStyle(
                 fontWeight: FontWeight.w800,
-                fontSize: 18,
-                color: Colors.black45,
+                fontSize: width * smallFontRate,
+                color: lightFontColor,
               ),
             ),
             Container(
@@ -38,11 +37,11 @@ class HomeBody extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15)),
             ),
             Text(
-              "Feature",
+              "Tính năng",
               style: TextStyle(
                 fontWeight: FontWeight.w800,
-                fontSize: 18,
-                color: Colors.black45,
+                fontSize: width * smallFontRate,
+                color: lightFontColor,
               ),
             ),
             GestureDetector(
@@ -50,12 +49,12 @@ class HomeBody extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SearchScreen(),
+                    builder: (context) => const SearchScreen(),
                   ),
                 );
               },
               child: Container(
-                margin: EdgeInsets.symmetric(vertical: width * 0.05),
+                margin: EdgeInsets.symmetric(vertical: width * smallPadRate),
                 width: width * 0.85,
                 height: height * 0.18,
                 decoration: BoxDecoration(

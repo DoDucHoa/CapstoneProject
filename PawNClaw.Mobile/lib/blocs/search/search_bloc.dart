@@ -29,10 +29,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       emit(FillingInformation((state as UpdatePetSelected).requests));
     });
     on<SearchCenter>((event, emit) async {
+      emit(Loading());
       var center = await _centerRepository.searchCenterToBooking(
           event.timeFrom,
           event.timeTo,
-          (state as FillingInformation).requests,
+          event.requests,
           event.cityCode,
           event.districtCode,
           event.pageNumber);
