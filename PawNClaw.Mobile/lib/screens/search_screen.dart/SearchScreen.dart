@@ -1,22 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
+import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
-import 'package:pawnclaw_mobile_application/common/date_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:pawnclaw_mobile_application/models/area.dart';
-import 'package:pawnclaw_mobile_application/repositories/area/area_repository.dart';
-import 'package:pawnclaw_mobile_application/repositories/center/center_repository.dart';
-import 'package:pawnclaw_mobile_application/screens/search_screen.dart/show_center.dart';
-import 'choose_pet_screen.dart';
-import 'fill_information_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/show_center.dart';
+import 'subscreens/choose_pet_screen.dart';
+import 'subscreens/fill_information_screen.dart';
 
 class SearchScreen extends StatefulWidget {
-  SearchScreen({Key? key}) : super(key: key);
+  const SearchScreen({Key? key}) : super(key: key);
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -33,16 +28,6 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
   }
 
-  final TextEditingController _fromController = TextEditingController();
-  final TextEditingController _toController = TextEditingController();
-  final TextEditingController _areaController = TextEditingController();
-  int selected = 0;
-  DateTime? to;
-  DateTime? from;
-  String? cityCode;
-  String? districtCode;
-  late List<Area>? cities;
-
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -51,13 +36,19 @@ class _SearchScreenState extends State<SearchScreen> {
       create: (context) => SearchBloc()..add(InitSearch()),
       child: BlocBuilder<SearchBloc, SearchState>(
         builder: (context, state) {
-          if (state is FillingInformation)
+          if (state is FillingInformation) {
             return FillInformationScreen(height: height, width: width);
-          if (state is SearchInitial || state is UpdatePetSelected)
+          }
+          if (state is SearchInitial || state is UpdatePetSelected) {
             return ChoosePetScreen(width: width, height: height);
-          if (state is SearchCompleted)
+          }
+          if (state is SearchCompleted) {
             return AvailableCenterScreen(height: height, width: width);
-          return Center(child: CircularProgressIndicator());
+          }
+          return const Scaffold(
+              backgroundColor: Colors.white,
+              body: LoadingIndicator(
+                  loadingText: "Đang tìm kiếm trung tâm cho bạn"));
         },
       ),
     );

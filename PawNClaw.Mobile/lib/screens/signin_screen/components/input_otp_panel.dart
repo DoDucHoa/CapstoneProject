@@ -5,7 +5,7 @@ import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart'
 import 'package:pinput/pinput.dart';
 
 class InputOTPPanel extends StatefulWidget {
-  InputOTPPanel({Key? key, required this.phoneNumber, this.error})
+  const InputOTPPanel({Key? key, required this.phoneNumber, this.error})
       : super(key: key);
 
   final String phoneNumber;
@@ -48,7 +48,7 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
           children: [
             const Spacer(flex: 35),
             const Text(
-              "Enter OTP",
+              "Nhập OTP",
               style: TextStyle(
                 fontSize: 65,
                 fontWeight: FontWeight.bold,
@@ -56,7 +56,7 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
             ),
             const Spacer(flex: 1),
             const Text(
-              "to verify your account",
+              "để xác thực tài khoản của bạn",
               style: TextStyle(
                 color: Colors.black54,
                 fontSize: 20,
@@ -112,7 +112,7 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
                         widget.phoneNumber));
                   },
                   child: const Text(
-                    "Confirm",
+                    "Xác nhận",
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   style: ButtonStyle(

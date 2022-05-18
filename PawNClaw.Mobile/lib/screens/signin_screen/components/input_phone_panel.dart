@@ -6,7 +6,7 @@ import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart'
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 
 class InputPhonePanel extends StatefulWidget {
-  InputPhonePanel({Key? key}) : super(key: key);
+  const InputPhonePanel({Key? key}) : super(key: key);
 
   @override
   State<InputPhonePanel> createState() => _InputPhonePanelState();
@@ -30,7 +30,7 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
           children: [
             const Spacer(flex: 35),
             const Text(
-              "Sign in",
+              "Đăng nhập",
               style: TextStyle(
                 fontSize: 65,
                 fontWeight: FontWeight.bold,
@@ -38,7 +38,7 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
             ),
             const Spacer(flex: 1),
             const Text(
-              "to booking your service",
+              "để sử dụng dịch vụ của bạn",
               style: TextStyle(
                 color: Colors.black54,
                 fontSize: 20,
@@ -76,7 +76,7 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
                   signed: true, decimal: true),
               cursorColor: Colors.black,
               inputDecoration: InputDecoration(
-                hintText: 'Phone Number',
+                hintText: 'Số điện thoại',
                 hintStyle: TextStyle(
                   color: Colors.grey.shade500,
                   fontSize: 16,
@@ -97,7 +97,7 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
                         }
                       : () {},
                   child: const Text(
-                    "Verify your phone number",
+                    "Xác thực số điện thoại của bạn",
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   style: ButtonStyle(

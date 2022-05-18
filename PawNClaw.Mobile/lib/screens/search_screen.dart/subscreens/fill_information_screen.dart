@@ -50,49 +50,57 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
         return Scaffold(
+          backgroundColor: backgroundColor,
           appBar: AppBar(
             title: Text(
-              "Booking information",
+              "Thông tin đặt chỗ",
               style: TextStyle(
-                fontSize: 25,
+                fontSize: widget.width * largeFontRate,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: primaryFontColor,
               ),
             ),
             leading: IconButton(
               onPressed: () => Navigator.of(context).pop(),
               icon: Icon(
                 Icons.arrow_back_ios_new,
-                color: Colors.black87,
+                color: primaryFontColor,
               ),
             ),
             backgroundColor: backgroundColor,
             elevation: 0,
           ),
           body: Container(
-            padding: const EdgeInsets.all(35),
+            padding: EdgeInsets.all(widget.width * regularPadRate),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Spacer(flex: 35),
-                const Text(
-                  "Infomation",
-                  style: TextStyle(
-                    fontSize: 65,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(flex: 1),
-                const Text(
-                  "Provide us more details to find out approriate centers",
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                Padding(
+                  padding: EdgeInsets.all(widget.width * 0.01),
+                  child: Text(
+                    "Điền thông tin ",
+                    style: TextStyle(
+                      color: primaryFontColor,
+                      fontSize: widget.width * extraLargeFontRate,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const Spacer(flex: 3),
+                Padding(
+                  padding: EdgeInsets.all(widget.width * 0.01),
+                  child: Text(
+                    "để chúng tôi giúp bạn tìm ra trung tâm phù hợp",
+                    style: TextStyle(
+                      color: lightFontColor,
+                      fontSize: widget.width * largeFontRate,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const Spacer(flex: 10),
                 GestureDetector(
                   onTap: () => selectSingleTime(
                     context,
@@ -163,20 +171,21 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                             child: Container(
                               height: widget.height * 0.3,
                               width: widget.width * 0.7,
-                              padding: EdgeInsets.all(widget.width * 0.05),
+                              padding:
+                                  EdgeInsets.all(widget.width * smallPadRate),
                               child: Column(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(
-                                    "Choose booking area",
+                                    "Chọn khu vực",
                                     style: TextStyle(
-                                      fontSize: 25,
+                                      fontSize: widget.width * regularFontRate,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
+                                      color: primaryFontColor,
                                     ),
                                   ),
-                                  Container(
+                                  SizedBox(
                                     width: widget.width * 0.5,
                                     child: DropdownButton<Area>(
                                       isExpanded: true,
@@ -188,7 +197,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                                             );
                                           }).toList() ??
                                           [
-                                            DropdownMenuItem(
+                                            const DropdownMenuItem(
                                                 child:
                                                     CircularProgressIndicator())
                                           ],
@@ -203,10 +212,10 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                                           districtValue = null;
                                         });
                                       },
-                                      hint: Text("City"),
+                                      hint: const Text("Tỉnh/Thành phố"),
                                     ),
                                   ),
-                                  Container(
+                                  SizedBox(
                                     width: widget.width * 0.5,
                                     child: DropdownButton<Districts>(
                                       isExpanded: true,
@@ -222,7 +231,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                                           districtValue = value;
                                         });
                                       },
-                                      hint: Text("District"),
+                                      hint: const Text("Quận/Huyện"),
                                     ),
                                   ),
                                   Opacity(
@@ -240,7 +249,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                                               Navigator.pop(context, result);
                                             }
                                           : () {},
-                                      child: Text(
+                                      child: const Text(
                                         "Confirm",
                                         style: TextStyle(
                                           color: Colors.white,
@@ -272,7 +281,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                     readOnly: true,
                     controller: _areaController,
                     decoration: InputDecoration(
-                      labelText: "Area",
+                      labelText: "Location",
                       prefixIcon: Icon(
                         Icons.location_on,
                         color: primaryColor,
@@ -284,7 +293,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                 ),
                 const Spacer(flex: 30),
                 Text(
-                  "*Notice: Your booking time will be rounded to a half or an hour.",
+                  "*Lưu ý: thời gian đặt chỗ của bạn sẽ được làm tròn tới phút 30 hoặc một tiếng để tiện cho việc xếp lịch và tính tiền.",
                   style: TextStyle(
                     fontStyle: FontStyle.italic,
                     color: primaryColor,
@@ -303,11 +312,18 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                               _areaController.text != "")
                           ? () => BlocProvider.of<SearchBloc>(context).add(
                               SearchCenter(
-                                  from!, to!, cityCode!, districtCode!, 0))
+                                  (state as FillingInformation).requests,
+                                  from!,
+                                  to!,
+                                  cityCode!,
+                                  districtCode!,
+                                  0))
                           : () {},
-                      child: const Text(
+                      child: Text(
                         "Confirm",
-                        style: TextStyle(color: Colors.white, fontSize: 20),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: widget.width * regularFontRate),
                       ),
                       style: ButtonStyle(
                         shape:

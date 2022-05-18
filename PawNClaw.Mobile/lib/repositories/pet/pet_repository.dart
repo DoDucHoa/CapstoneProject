@@ -17,7 +17,7 @@ class PetRepository implements BasePetRepository {
         'Authorization': 'Bearer ' + pref.get("jwtToken").toString()
       };
       final String _url =
-          "https://pawnclawdevelopmentapi.azurewebsites.net/api/pets/11";
+          "https://pawnclawdevelopmentapi.azurewebsites.net/api/pets/$customerId";
       var response = await _dio.get(
         _url,
       );

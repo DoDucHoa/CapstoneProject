@@ -27,7 +27,7 @@ class _PetCardState extends State<PetCard> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Container(
+        SizedBox(
           width: widget.width,
           height: widget.height * 0.2,
         ),
@@ -54,17 +54,17 @@ class _PetCardState extends State<PetCard> {
               Text(
                 widget.pet.name!,
                 style: TextStyle(
-                  fontSize: 22,
+                  fontSize: widget.width * regularFontRate,
                   fontWeight: FontWeight.w800,
-                  color: Colors.black87.withOpacity(0.6),
+                  color: primaryFontColor,
                 ),
               ),
               Text(
                 widget.pet.breedName!,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: widget.width * smallFontRate,
                   fontWeight: FontWeight.w300,
-                  color: Colors.black54,
+                  color: lightFontColor,
                 ),
               ),
               RichText(
@@ -73,16 +73,16 @@ class _PetCardState extends State<PetCard> {
                     WidgetSpan(
                       child: Icon(
                         Icons.cake,
-                        size: 16,
+                        size: widget.width * smallFontRate,
                         color: primaryColor,
                       ),
                     ),
                     TextSpan(
-                      text: DateFormat.yMd().format(widget.pet.birth!),
+                      text: " " + DateFormat.yMd().format(widget.pet.birth!),
                       style: TextStyle(
-                        color: Colors.black54,
+                        color: lightFontColor,
                         fontWeight: FontWeight.w400,
-                        fontSize: 13,
+                        fontSize: widget.width * smallFontRate,
                       ),
                     ),
                   ],
@@ -94,16 +94,16 @@ class _PetCardState extends State<PetCard> {
                     WidgetSpan(
                       child: Icon(
                         Icons.balance,
-                        size: 14,
+                        size: widget.width * smallFontRate,
                         color: primaryColor,
                       ),
                     ),
                     TextSpan(
                       text: " " + widget.pet.weight!.toStringAsFixed(1) + " kg",
                       style: TextStyle(
-                        color: Colors.black54,
+                        color: lightFontColor,
                         fontWeight: FontWeight.w400,
-                        fontSize: 13,
+                        fontSize: widget.width * smallFontRate,
                       ),
                     ),
                   ],
@@ -115,7 +115,7 @@ class _PetCardState extends State<PetCard> {
                     WidgetSpan(
                       child: Icon(
                         Icons.square_foot,
-                        size: 14,
+                        size: widget.width * smallFontRate,
                         color: primaryColor,
                       ),
                     ),
@@ -126,9 +126,9 @@ class _PetCardState extends State<PetCard> {
                           widget.pet.length!.toString() +
                           " cm",
                       style: TextStyle(
-                        color: Colors.black54,
+                        color: lightFontColor,
                         fontWeight: FontWeight.w400,
-                        fontSize: 13,
+                        fontSize: widget.width * smallFontRate,
                       ),
                     ),
                   ],
@@ -176,11 +176,11 @@ class _PetCardState extends State<PetCard> {
                     });
                   },
             child: isSelected
-                ? Icon(
+                ? const Icon(
                     Icons.check,
                     color: Colors.white,
                   )
-                : Icon(
+                : const Icon(
                     Icons.add,
                     color: Colors.white,
                   ),

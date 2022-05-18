@@ -5,8 +5,8 @@ import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 
-import 'components/pet_bubble.dart';
-import 'components/pet_card.dart';
+import '../components/pet_bubble.dart';
+import '../components/pet_card.dart';
 
 class ChoosePetScreen extends StatefulWidget {
   const ChoosePetScreen({
@@ -30,8 +30,8 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
         return Scaffold(
           backgroundColor: backgroundColor,
           appBar: AppBar(
-            title: Text(
-              "Choose Pet",
+            title: const Text(
+              "Chọn pet",
               style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
@@ -52,7 +52,8 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                 side: BorderSide.none,
                               ),
                               child: Container(
-                                padding: EdgeInsets.all(widget.width * 0.05),
+                                padding:
+                                    EdgeInsets.all(widget.width * smallPadRate),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(40),
                                   color: Colors.white,
@@ -65,9 +66,10 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                             MainAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "Your Pet Requests",
+                                            "Yêu cầu của bạn",
                                             style: TextStyle(
-                                              fontSize: 25,
+                                              fontSize: widget.width *
+                                                  regularFontRate,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.black87,
                                             ),
@@ -77,12 +79,13 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                             itemCount: state.requests.length,
                                             itemBuilder:
                                                 (context, requestIndex) {
-                                              return Container(
+                                              return SizedBox(
                                                 width: widget.width * 0.5,
                                                 height: widget.width * 0.2,
                                                 child: ListView.builder(
                                                   shrinkWrap: true,
-                                                  physics: ScrollPhysics(),
+                                                  physics:
+                                                      const ScrollPhysics(),
                                                   itemCount: state
                                                       .requests[requestIndex]
                                                       .length,
@@ -100,9 +103,9 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                               );
                                             },
                                           ),
-                                          Spacer(),
+                                          const Spacer(),
                                           Text(
-                                            "*Notice: Pets in the same request will be placed in the same cage.",
+                                            "*Lưu ý: những em thú cưng thuộc về cùng yêu cầu sẽ được xếp chung một chuồng.",
                                             style: TextStyle(
                                               fontStyle: FontStyle.italic,
                                               color: primaryColor,
@@ -110,7 +113,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                           )
                                         ],
                                       )
-                                    : Center(
+                                    : const Center(
                                         child: CircularProgressIndicator(),
                                       ),
                               ),
@@ -119,16 +122,16 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                     },
                     icon: Icon(
                       Icons.pets,
-                      color: Colors.black87,
-                      size: 30,
+                      color: primaryFontColor,
+                      size: widget.width * largeFontRate,
                     ),
                   ),
                   Positioned(
-                    right: 5,
-                    top: 5,
+                    right: widget.width * 0.00875,
+                    top: widget.width * 0.00875,
                     child: Container(
-                      height: 15,
-                      width: 15,
+                      height: widget.width * regularFontRate,
+                      width: widget.width * regularFontRate,
                       decoration: BoxDecoration(
                         color: primaryColor,
                         borderRadius: BorderRadius.circular(250),
@@ -138,7 +141,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                           state is UpdatePetSelected
                               ? state.requests.length.toString()
                               : "0",
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
@@ -148,7 +151,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
             ],
             leading: IconButton(
               onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(
+              icon: const Icon(
                 Icons.arrow_back_ios_new,
                 color: Colors.black87,
               ),
@@ -169,12 +172,11 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                   children: [
                     Text(
                       state is UpdatePetSelected
-                          ? "Selected pets " +
-                              '(' +
+                          ? "Thú cưng đã chọn (" +
                               state.pets.length.toString() +
                               ')'
-                          : "Selected pets (0)",
-                      style: TextStyle(
+                          : "Thú cưng đã chọn (0)",
+                      style: const TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
@@ -212,70 +214,67 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                     .add(AddPetRequest(state.pets));
                                 setState(() {});
                               },
-                              child: Text(
-                                "Create Request",
+                              child: const Text(
+                                "Tạo yêu cầu",
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
                           ],
                         )
-                      : Center(child: CircularProgressIndicator()),
+                      : const Center(child: CircularProgressIndicator()),
                 ),
               ),
               BlocBuilder<PetBloc, PetState>(
                 builder: (context, state) {
-                  return Container(
-                    child: Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: widget.width * 0.1,
-                              vertical: widget.width * 0.03,
-                            ),
-                            child: Text(
-                              state is PetsLoaded
-                                  ? "Your pets (" +
-                                      state.pets.length.toString() +
-                                      ")"
-                                  : "Your pets (0)",
-                              style: TextStyle(
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
+                  return Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: widget.width * 0.1,
+                            vertical: widget.width * 0.03,
+                          ),
+                          child: Text(
+                            state is PetsLoaded
+                                ? "Thú cưng của bạn (" +
+                                    state.pets.length.toString() +
+                                    ")"
+                                : "Thú cưng của bạn (0)",
+                            style: const TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
                             ),
                           ),
-                          Expanded(
-                            child: BlocBuilder<PetBloc, PetState>(
-                              builder: (context, state) {
-                                return state is PetsLoaded
-                                    ? ListView.builder(
-                                        itemCount: state.pets.length,
-                                        itemBuilder: (context, index) {
-                                          return PetCard(
-                                            pet: state.pets[index],
-                                            width: widget.width,
-                                            height: widget.height,
-                                            onPressed: () {
-                                              BlocProvider.of<SearchBloc>(
-                                                      context)
-                                                  .add(SelectPet(
-                                                      state.pets[index]));
-                                              setState(() {});
-                                            },
-                                          );
-                                        },
-                                      )
-                                    : Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                              },
-                            ),
+                        ),
+                        Expanded(
+                          child: BlocBuilder<PetBloc, PetState>(
+                            builder: (context, state) {
+                              return state is PetsLoaded
+                                  ? ListView.builder(
+                                      itemCount: state.pets.length,
+                                      itemBuilder: (context, index) {
+                                        return PetCard(
+                                          pet: state.pets[index],
+                                          width: widget.width,
+                                          height: widget.height,
+                                          onPressed: () {
+                                            BlocProvider.of<SearchBloc>(context)
+                                                .add(SelectPet(
+                                                    state.pets[index]));
+                                            setState(() {});
+                                          },
+                                        );
+                                      },
+                                    )
+                                  : const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                            },
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -289,11 +288,11 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
             child: FloatingActionButton(
               onPressed: state is UpdatePetSelected && state.requests.isNotEmpty
                   ? () {
-                      BlocProvider.of<SearchBloc>(context).add(ConfirmRequest(
-                          (state as UpdatePetSelected).requests));
+                      BlocProvider.of<SearchBloc>(context)
+                          .add(ConfirmRequest(state.requests));
                     }
                   : () {},
-              child: Icon(
+              child: const Icon(
                 Icons.navigate_next,
                 color: Colors.white,
               ),

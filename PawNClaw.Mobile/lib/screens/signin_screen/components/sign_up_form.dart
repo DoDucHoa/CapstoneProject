@@ -31,21 +31,6 @@ class _SignUpFormState extends State<SignUpForm> {
     super.initState();
   }
 
-  _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDatePickerMode: DatePickerMode.year,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1920),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null && picked != _selectedDate)
-      setState(() {
-        _selectedDate = picked;
-        _birthController.text = DateFormat.yMd().format(picked);
-      });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +42,7 @@ class _SignUpFormState extends State<SignUpForm> {
           children: [
             const Spacer(flex: 35),
             const Text(
-              "Welcome!",
+              "Chào mừng!",
               style: TextStyle(
                 fontSize: 65,
                 fontWeight: FontWeight.bold,
@@ -65,7 +50,7 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
             const Spacer(flex: 1),
             const Text(
-              "Please fill your information to finish signing up",
+              "Hãy điền thông tin của bạn để hoàn tất đăng nhập",
               style: TextStyle(
                 color: Colors.black54,
                 fontSize: 20,
@@ -76,7 +61,7 @@ class _SignUpFormState extends State<SignUpForm> {
             TextField(
               controller: _nameController,
               decoration: InputDecoration(
-                labelText: "Name",
+                labelText: "Tên",
                 errorText: nameError,
                 prefixIcon: Icon(
                   Icons.person,
@@ -91,7 +76,7 @@ class _SignUpFormState extends State<SignUpForm> {
             TextField(
               controller: _phoneController,
               decoration: InputDecoration(
-                labelText: "Phone",
+                labelText: "Số điện thoại",
                 prefixIcon: Icon(
                   Icons.phone,
                   color: primaryColor,
@@ -103,7 +88,7 @@ class _SignUpFormState extends State<SignUpForm> {
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
-                labelText: "Email",
+                labelText: "Địa chỉ email",
                 errorText: emailError,
                 prefixIcon: Icon(
                   Icons.mail,
@@ -122,16 +107,17 @@ class _SignUpFormState extends State<SignUpForm> {
                 final DateTime? picked = await selectSingleDate(context);
                 setState(() {
                   _selectedDate = picked ?? DateTime.now();
-                  _birthController.text = DateFormat.yMd().format(picked!);
+                  _birthController.text =
+                      DateFormat('dd/MM/yyyy').format(picked!);
                 });
               },
               child: TextField(
                 enabled: false,
                 controller: _birthController,
                 decoration: InputDecoration(
-                  labelText: "Birth",
+                  labelText: "Ngày sinh",
                   errorText: InputValidator().isEmpty(_birthController.text),
-                  prefixIcon: Icon(Icons.calendar_month),
+                  prefixIcon: const Icon(Icons.calendar_month),
                 ),
                 readOnly: true,
               ),
