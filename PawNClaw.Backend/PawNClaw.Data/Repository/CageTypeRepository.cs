@@ -21,8 +21,7 @@ namespace PawNClaw.Data.Repository
 
             query = query.Include("Cages")
                             .Include("Prices")
-                            .Where(x => x.CenterId == centerId 
-                                && x.Cages.Any(y => y.IsOnline == true && y.Status == true));
+                            .Where(x => x.CenterId == centerId);
 
             return query.ToList();
         }
