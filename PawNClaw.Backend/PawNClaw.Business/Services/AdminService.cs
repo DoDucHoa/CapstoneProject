@@ -26,7 +26,7 @@ namespace PawNClaw.Business.Services
         {
             var values = _adminRepository.GetAll(includeProperties: _requestParameter.includeProperties);
 
-            values = values.Where(x => x.IdNavigation.RoleCode.Trim().EndsWith("MOD"));
+            values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("MOD"));
 
             if (_requestParameter.Id != null)
             {
@@ -173,6 +173,7 @@ namespace PawNClaw.Business.Services
         {
             try
             {
+                admin.Status = _accountRepository.Get(admin.Id).Status;
                 _adminRepository.Update(admin);
                 _adminRepository.SaveDbChange();
                 return true;
