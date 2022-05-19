@@ -1,4 +1,7 @@
-﻿using PawNClaw.Data.Interface;
+﻿using PawNClaw.Data.Database;
+using PawNClaw.Data.Helper;
+using PawNClaw.Data.Interface;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,6 +54,14 @@ namespace PawNClaw.Business.Services
             }
 
             return true;
+        }
+
+        public PagedList<Booking> GetBookings(BookingRequestParameter bookingRequestParameter, PagingParameter paging)
+        {
+            var values = _bookingRepository.GetBookingForStaff(bookingRequestParameter);
+            return PagedList<Booking>.ToPagedList(values.AsQueryable(),
+            paging.PageNumber,
+            paging.PageSize);
         }
     }
 }
