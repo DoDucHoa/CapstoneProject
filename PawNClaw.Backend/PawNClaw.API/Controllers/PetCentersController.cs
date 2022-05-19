@@ -52,6 +52,14 @@ namespace PawNClaw.API.Controllers
             return Ok(new { data, metadata });
         }
 
+        [HttpPost]
+        [Route("center_detail")]
+        public IActionResult GetCenterByIdWithInclude([FromBody] GetCenterByIdRequestModel model)
+        {
+            var data = _petCenterService.GetDetailById(model.id, model._petRequests);
+            return Ok(data);
+        }
+
         [HttpGet]
         public IActionResult GetCenters(string includeProperties, PagingParameter paging)
         {
