@@ -173,6 +173,7 @@ namespace PawNClaw.Business.Services
         {
             try
             {
+                admin.Status = _accountRepository.Get(admin.Id).Status;
                 _adminRepository.Update(admin);
                 _adminRepository.SaveDbChange();
                 return true;

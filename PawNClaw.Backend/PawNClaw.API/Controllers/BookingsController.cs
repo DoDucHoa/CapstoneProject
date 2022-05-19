@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
+using PawNClaw.Data.Helper;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,14 +25,30 @@ namespace PawNClaw.API.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Owner,Staff")]
-        public IActionResult ConfirmBooking(int id, int statusId)
+        public IActionResult ConfirmBooking(int id, int statusId, string StaffNote)
         {
-            var check = _bookingService.ConfirmBooking(id, statusId);
+            var check = _bookingService.ConfirmBooking(id, statusId, StaffNote);
             if (check)
             {
                 return Ok();
             }
             else return BadRequest();
+        }
+
+        [HttpGet]
+        public IActionResult GetBookingForStaff([FromQuery] BookingRequestParameter bookingRequestParameter, [FromQuery] PagingParameter paging)
+        {
+            var data = _bookingService.GetBookings(bookingRequestParameter, paging);
+            var metadata = new
+            {
+                data.TotalCount,
+                data.PageSize,
+                data.CurrentPage,
+                data.TotalPages,
+                data.HasNext,
+                data.HasPrevious
+            };
+            return Ok(new { data, metadata });
         }
     }
 }

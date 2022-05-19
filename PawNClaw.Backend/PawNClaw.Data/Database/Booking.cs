@@ -45,6 +45,14 @@ namespace PawNClaw.Data.Database
         public int CustomerId { get; set; }
         [Column("center_id")]
         public int CenterId { get; set; }
+        [Column("rating")]
+        public byte? Rating { get; set; }
+        [Column("customer_note")]
+        [StringLength(512)]
+        public string CustomerNote { get; set; }
+        [Column("staff_note")]
+        [StringLength(512)]
+        public string StaffNote { get; set; }
 
         [ForeignKey(nameof(CenterId))]
         [InverseProperty(nameof(PetCenter.Bookings))]

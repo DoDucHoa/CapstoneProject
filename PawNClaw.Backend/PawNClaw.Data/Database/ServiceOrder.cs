@@ -23,6 +23,9 @@ namespace PawNClaw.Data.Database
         public decimal? SellPrice { get; set; }
         [Column("total_price", TypeName = "numeric(19, 5)")]
         public decimal? TotalPrice { get; set; }
+        [Column("note")]
+        [StringLength(512)]
+        public string Note { get; set; }
 
         [ForeignKey(nameof(BookingId))]
         [InverseProperty("ServiceOrders")]

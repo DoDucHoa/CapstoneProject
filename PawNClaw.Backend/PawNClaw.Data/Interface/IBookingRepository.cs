@@ -1,4 +1,5 @@
 ﻿using PawNClaw.Data.Database;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace PawNClaw.Data.Interface
     {
         public IEnumerable<Booking> GetBookingValidSearch(int Id, DateTime _startBooking, DateTime _endBooking);
 
-        public bool ConfirmBooking(int Id, int StatusId);
+        public bool Confirm(int Id, int StatusId);
+
+        public IEnumerable<Booking> GetBookingForStaff(BookingRequestParameter bookingRequestParameter);
     }
 }
