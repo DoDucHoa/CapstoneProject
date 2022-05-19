@@ -8,15 +8,12 @@ import 'package:pawnclaw_mobile_application/models/area.dart';
 import 'package:pawnclaw_mobile_application/repositories/area/area_repository.dart';
 import 'package:intl/intl.dart';
 import 'package:pawnclaw_mobile_application/repositories/center/center_repository.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/choose_location_dialog.dart';
 
 class FillInformationScreen extends StatefulWidget {
   const FillInformationScreen({
     Key? key,
-    required this.height,
-    required this.width,
   }) : super(key: key);
-  final double height;
-  final double width;
 
   @override
   State<FillInformationScreen> createState() => _FillInformationScreenState();
@@ -47,6 +44,8 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
         return Scaffold(
@@ -55,7 +54,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
             title: Text(
               "Thông tin đặt chỗ",
               style: TextStyle(
-                fontSize: widget.width * largeFontRate,
+                fontSize: width * largeFontRate,
                 fontWeight: FontWeight.bold,
                 color: primaryFontColor,
               ),
@@ -71,31 +70,31 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
             elevation: 0,
           ),
           body: Container(
-            padding: EdgeInsets.all(widget.width * regularPadRate),
+            padding: EdgeInsets.all(width * regularPadRate),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Spacer(flex: 35),
                 Padding(
-                  padding: EdgeInsets.all(widget.width * 0.01),
+                  padding: EdgeInsets.all(width * 0.01),
                   child: Text(
                     "Điền thông tin ",
                     style: TextStyle(
                       color: primaryFontColor,
-                      fontSize: widget.width * extraLargeFontRate,
+                      fontSize: width * extraLargeFontRate,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 const Spacer(flex: 3),
                 Padding(
-                  padding: EdgeInsets.all(widget.width * 0.01),
+                  padding: EdgeInsets.all(width * 0.01),
                   child: Text(
                     "để chúng tôi giúp bạn tìm ra trung tâm phù hợp",
                     style: TextStyle(
                       color: lightFontColor,
-                      fontSize: widget.width * largeFontRate,
+                      fontSize: width * largeFontRate,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -159,108 +158,8 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                   onTap: () => showCupertinoDialog(
                       context: context,
                       builder: (context) {
-                        Area? cityValue;
-                        Districts? districtValue;
-                        List<Districts>? districts;
-                        return StatefulBuilder(
-                          builder: (context, setState) => Dialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            backgroundColor: Colors.white,
-                            child: Container(
-                              height: widget.height * 0.3,
-                              width: widget.width * 0.7,
-                              padding:
-                                  EdgeInsets.all(widget.width * smallPadRate),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(
-                                    "Chọn khu vực",
-                                    style: TextStyle(
-                                      fontSize: widget.width * regularFontRate,
-                                      fontWeight: FontWeight.bold,
-                                      color: primaryFontColor,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: widget.width * 0.5,
-                                    child: DropdownButton<Area>(
-                                      isExpanded: true,
-                                      value: cityValue,
-                                      items: cities?.map((e) {
-                                            return DropdownMenuItem(
-                                              child: Text(e.name!),
-                                              value: e,
-                                            );
-                                          }).toList() ??
-                                          [
-                                            const DropdownMenuItem(
-                                                child:
-                                                    CircularProgressIndicator())
-                                          ],
-                                      onChanged: (value) async {
-                                        var districtsOfCity =
-                                            await AreaRepository()
-                                                .getDistrictsByArea(
-                                                    value!.code!);
-                                        setState(() {
-                                          cityValue = value;
-                                          districts = districtsOfCity;
-                                          districtValue = null;
-                                        });
-                                      },
-                                      hint: const Text("Tỉnh/Thành phố"),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: widget.width * 0.5,
-                                    child: DropdownButton<Districts>(
-                                      isExpanded: true,
-                                      value: districtValue,
-                                      items: districts?.map((e) {
-                                        return DropdownMenuItem(
-                                          child: Text(e.name!),
-                                          value: e,
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          districtValue = value;
-                                        });
-                                      },
-                                      hint: const Text("Quận/Huyện"),
-                                    ),
-                                  ),
-                                  Opacity(
-                                    opacity: (cityValue != null &&
-                                            districtValue != null)
-                                        ? 1
-                                        : 0.3,
-                                    child: ElevatedButton(
-                                      onPressed: (cityValue != null &&
-                                              districtValue != null)
-                                          ? () {
-                                              Map<Area, Districts> result = {
-                                                cityValue!: districtValue!
-                                              };
-                                              Navigator.pop(context, result);
-                                            }
-                                          : () {},
-                                      child: const Text(
-                                        "Confirm",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                        return ChooseLocationDialog(
+                          cities: cities,
                         );
                       }).then<Map>(
                     ((value) {
@@ -323,7 +222,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                         "Confirm",
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: widget.width * regularFontRate),
+                            fontSize: width * regularFontRate),
                       ),
                       style: ButtonStyle(
                         shape:

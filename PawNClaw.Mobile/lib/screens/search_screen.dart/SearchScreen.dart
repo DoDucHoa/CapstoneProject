@@ -4,10 +4,8 @@ import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart'
 import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
-import 'package:pawnclaw_mobile_application/common/constants.dart';
-import 'package:pawnclaw_mobile_application/models/area.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/choose_pet_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/show_center.dart';
-import 'subscreens/choose_pet_screen.dart';
 import 'subscreens/fill_information_screen.dart';
 
 class SearchScreen extends StatefulWidget {

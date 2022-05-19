@@ -4,19 +4,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/pet_bubble.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/pet_requests_dialog.dart';
 
-import '../components/pet_bubble.dart';
 import '../components/pet_card.dart';
 
 class ChoosePetScreen extends StatefulWidget {
   const ChoosePetScreen({
     Key? key,
-    required this.width,
-    required this.height,
   }) : super(key: key);
-
-  final double width;
-  final double height;
 
   @override
   State<ChoosePetScreen> createState() => _ChoosePetScreenState();
@@ -25,6 +21,8 @@ class ChoosePetScreen extends StatefulWidget {
 class _ChoosePetScreenState extends State<ChoosePetScreen> {
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
         return Scaffold(
@@ -46,92 +44,24 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                       showCupertinoDialog(
                           context: context,
                           builder: (context) {
-                            return Dialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40),
-                                side: BorderSide.none,
-                              ),
-                              child: Container(
-                                padding:
-                                    EdgeInsets.all(widget.width * smallPadRate),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(40),
-                                  color: Colors.white,
-                                ),
-                                height: widget.height * 0.7,
-                                width: widget.width * 0.7,
-                                child: state is UpdatePetSelected
-                                    ? Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Yêu cầu của bạn",
-                                            style: TextStyle(
-                                              fontSize: widget.width *
-                                                  regularFontRate,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                          ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: state.requests.length,
-                                            itemBuilder:
-                                                (context, requestIndex) {
-                                              return SizedBox(
-                                                width: widget.width * 0.5,
-                                                height: widget.width * 0.2,
-                                                child: ListView.builder(
-                                                  shrinkWrap: true,
-                                                  physics:
-                                                      const ScrollPhysics(),
-                                                  itemCount: state
-                                                      .requests[requestIndex]
-                                                      .length,
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  itemBuilder:
-                                                      ((context, index) {
-                                                    return SelectedPetBubble(
-                                                        width: widget.width,
-                                                        pet: state.requests[
-                                                                requestIndex]
-                                                            [index]);
-                                                  }),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                          const Spacer(),
-                                          Text(
-                                            "*Lưu ý: những em thú cưng thuộc về cùng yêu cầu sẽ được xếp chung một chuồng.",
-                                            style: TextStyle(
-                                              fontStyle: FontStyle.italic,
-                                              color: primaryColor,
-                                            ),
-                                          )
-                                        ],
-                                      )
-                                    : const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                              ),
-                            );
+                            return PetRequestsDialog(
+                                requests: state is UpdatePetSelected
+                                    ? state.requests
+                                    : []);
                           });
                     },
                     icon: Icon(
                       Icons.pets,
                       color: primaryFontColor,
-                      size: widget.width * largeFontRate,
+                      size: width * largeFontRate,
                     ),
                   ),
                   Positioned(
-                    right: widget.width * 0.00875,
-                    top: widget.width * 0.00875,
+                    right: width * 0.00875,
+                    top: width * 0.00875,
                     child: Container(
-                      height: widget.width * regularFontRate,
-                      width: widget.width * regularFontRate,
+                      height: width * regularFontRate,
+                      width: width * regularFontRate,
                       decoration: BoxDecoration(
                         color: primaryColor,
                         borderRadius: BorderRadius.circular(250),
@@ -151,9 +81,9 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
             ],
             leading: IconButton(
               onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(
+              icon: Icon(
                 Icons.arrow_back_ios_new,
-                color: Colors.black87,
+                color: primaryFontColor,
               ),
             ),
             backgroundColor: backgroundColor,
@@ -164,8 +94,8 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: widget.width * 0.1,
-                  vertical: widget.width * 0.03,
+                  horizontal: width * 0.1,
+                  vertical: width * 0.03,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -176,10 +106,10 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                               state.pets.length.toString() +
                               ')'
                           : "Thú cưng đã chọn (0)",
-                      style: const TextStyle(
-                        fontSize: 25,
+                      style: TextStyle(
+                        fontSize: width * largeFontRate,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: primaryFontColor,
                       ),
                     ),
                   ],
@@ -191,9 +121,9 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                     : false,
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: widget.width * 0.1,
+                    horizontal: width * regularPadRate,
                   ),
-                  height: widget.width * 0.35,
+                  height: width * 0.35,
                   child: state is UpdatePetSelected
                       ? Column(
                           children: [
@@ -203,7 +133,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                 scrollDirection: Axis.horizontal,
                                 itemBuilder: (context, index) =>
                                     SelectedPetBubble(
-                                  width: widget.width,
+                                  width: width,
                                   pet: state.pets[index],
                                 ),
                               ),
@@ -232,8 +162,8 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(
-                            horizontal: widget.width * 0.1,
-                            vertical: widget.width * 0.03,
+                            horizontal: width * regularPadRate,
+                            vertical: width * smallPadRate,
                           ),
                           child: Text(
                             state is PetsLoaded
@@ -241,10 +171,10 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                     state.pets.length.toString() +
                                     ")"
                                 : "Thú cưng của bạn (0)",
-                            style: const TextStyle(
-                              fontSize: 25,
+                            style: TextStyle(
+                              fontSize: width * largeFontRate,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: primaryFontColor,
                             ),
                           ),
                         ),
@@ -257,8 +187,6 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                       itemBuilder: (context, index) {
                                         return PetCard(
                                           pet: state.pets[index],
-                                          width: widget.width,
-                                          height: widget.height,
                                           onPressed: () {
                                             BlocProvider.of<SearchBloc>(context)
                                                 .add(SelectPet(

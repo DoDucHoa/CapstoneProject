@@ -3,17 +3,12 @@ import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/SearchScreen.dart';
 
 class HomeBody extends StatelessWidget {
-  const HomeBody({
-    Key? key,
-    required this.width,
-    required this.height,
-  }) : super(key: key);
-
-  final double width;
-  final double height;
+  const HomeBody({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: width * 0.075),
       child: SingleChildScrollView(
@@ -24,7 +19,7 @@ class HomeBody extends StatelessWidget {
               "Khuyến mãi",
               style: TextStyle(
                 fontWeight: FontWeight.w800,
-                fontSize: width * smallFontRate,
+                fontSize: width * regularFontRate,
                 color: lightFontColor,
               ),
             ),
@@ -40,7 +35,7 @@ class HomeBody extends StatelessWidget {
               "Tính năng",
               style: TextStyle(
                 fontWeight: FontWeight.w800,
-                fontSize: width * smallFontRate,
+                fontSize: width * regularFontRate,
                 color: lightFontColor,
               ),
             ),

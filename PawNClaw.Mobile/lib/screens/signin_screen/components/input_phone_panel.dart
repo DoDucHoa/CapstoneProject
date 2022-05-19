@@ -21,27 +21,30 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
-        padding: const EdgeInsets.all(35),
+        padding: EdgeInsets.all(width * regularPadRate),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Spacer(flex: 35),
-            const Text(
+            Text(
               "Đăng nhập",
               style: TextStyle(
-                fontSize: 65,
+                color: primaryFontColor,
+                fontSize: width * extraLargeFontRate,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const Spacer(flex: 1),
-            const Text(
+            Text(
               "để sử dụng dịch vụ của bạn",
               style: TextStyle(
-                color: Colors.black54,
-                fontSize: 20,
+                color: lightFontColor,
+                fontSize: width * largeFontRate,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -96,9 +99,10 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
                               .add(VerifyPhonenumber(phoneController.text));
                         }
                       : () {},
-                  child: const Text(
+                  child: Text(
                     "Xác thực số điện thoại của bạn",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: TextStyle(
+                        color: Colors.white, fontSize: width * regularFontRate),
                   ),
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
