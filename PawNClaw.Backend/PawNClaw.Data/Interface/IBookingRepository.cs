@@ -11,6 +11,6 @@ namespace PawNClaw.Data.Interface
     {
         public IEnumerable<Booking> GetBookingValidSearch(int Id, DateTime _startBooking, DateTime _endBooking);
 
-        public bool ConfirmBooking(int Id, int StatusId);
+        public bool Confirm(int Id, int StatusId);
     }
 }

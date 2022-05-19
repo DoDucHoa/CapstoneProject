@@ -91,7 +91,7 @@ namespace PawNClaw.API.Controllers
             return Ok(new { data, metadata });
         }
 
-        [HttpGet("{name}")]
+        [HttpGet("name/{name}")]
         public IActionResult GetCenterByName(string name, PagingParameter paging)
         {
             var data = _petCenterService.GetByName(name, paging);
@@ -109,7 +109,7 @@ namespace PawNClaw.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Create(PetCenterRequestParameter petCenterRequestParameter)
+        public IActionResult Create([FromBody] PetCenterRequestParameter petCenterRequestParameter)
         {
             PetCenter petCenter = new PetCenter
             {
@@ -133,7 +133,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        public IActionResult Update(PetCenterRequestParameter petCenterRequestParameter)
+        public IActionResult Update([FromBody] PetCenterRequestParameter petCenterRequestParameter)
         {
 
             PetCenter petCenter = _petCenterService.GetById((int)petCenterRequestParameter.Id);
