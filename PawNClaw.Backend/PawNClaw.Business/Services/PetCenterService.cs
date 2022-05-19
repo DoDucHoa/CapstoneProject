@@ -36,9 +36,19 @@ namespace PawNClaw.Business.Services
         }
 
         //Get By Brand Id
-        public PagedList<PetCenter> GetByOwner(int id, PagingParameter paging)
+        public PagedList<PetCenter> GetByBrand(int id, PagingParameter paging)
         {
             var values = _petCenterRepository.GetAll(x => x.BrandId == id);
+
+            return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
+            paging.PageNumber,
+            paging.PageSize);
+        }
+
+        //Get By Name
+        public PagedList<PetCenter> GetByName(string name, PagingParameter paging)
+        {
+            var values = _petCenterRepository.GetAll(x => x.Name.Contains(name));
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,

@@ -31,6 +31,9 @@ namespace PawNClaw.Data.Database
         public int CenterId { get; set; }
         [Column("duration", TypeName = "numeric(19, 5)")]
         public decimal? Duration { get; set; }
+        [Column("note")]
+        [StringLength(512)]
+        public string Note { get; set; }
 
         [ForeignKey(nameof(BookingId))]
         [InverseProperty("BookingDetails")]
