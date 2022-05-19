@@ -5,17 +5,15 @@ import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 class CenterCard extends StatelessWidget {
   const CenterCard({
     required this.center,
-    required this.width,
-    required this.height,
     Key? key,
   }) : super(key: key);
 
   final petCenter.Center center;
-  final double width;
-  final double height;
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Stack(children: [
       Container(
         width: width,

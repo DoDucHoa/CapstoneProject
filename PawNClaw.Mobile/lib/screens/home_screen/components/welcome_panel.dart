@@ -3,19 +3,14 @@ import 'package:pawnclaw_mobile_application/common/components/elevated_container
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 
 class WelcomePanel extends StatelessWidget {
-  const WelcomePanel({
-    Key? key,
-    required this.height,
-    required this.width,
-    required this.username,
-  }) : super(key: key);
+  const WelcomePanel({Key? key, required this.username}) : super(key: key);
 
-  final double height;
-  final double width;
   final String username;
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Stack(
       fit: StackFit.passthrough,
       children: [

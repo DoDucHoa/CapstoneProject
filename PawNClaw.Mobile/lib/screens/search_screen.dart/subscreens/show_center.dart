@@ -9,12 +9,7 @@ import '../components/center_card.dart';
 class AvailableCenterScreen extends StatefulWidget {
   const AvailableCenterScreen({
     Key? key,
-    required this.width,
-    required this.height,
   }) : super(key: key);
-
-  final double width;
-  final double height;
 
   @override
   State<AvailableCenterScreen> createState() => _ShowAvailableCenterState();
@@ -23,6 +18,8 @@ class AvailableCenterScreen extends StatefulWidget {
 class _ShowAvailableCenterState extends State<AvailableCenterScreen> {
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
         return Scaffold(
@@ -31,9 +28,9 @@ class _ShowAvailableCenterState extends State<AvailableCenterScreen> {
             title: Text(
               "Khách sạn thú cưng",
               style: TextStyle(
-                fontSize: widget.width * largeFontRate,
+                fontSize: width * largeFontRate,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: primaryFontColor,
               ),
             ),
             leading: IconButton(
@@ -50,8 +47,6 @@ class _ShowAvailableCenterState extends State<AvailableCenterScreen> {
             itemCount: (state as SearchCompleted).centers.length,
             itemBuilder: ((context, index) {
               return CenterCard(
-                width: widget.width,
-                height: widget.height,
                 center: state.centers[index],
               );
             }),

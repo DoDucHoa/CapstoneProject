@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
 import 'package:intl/intl.dart';
 
 class PetCard extends StatefulWidget {
-  const PetCard(
-      {Key? key,
-      required this.width,
-      required this.height,
-      required this.pet,
-      required this.onPressed})
+  const PetCard({Key? key, required this.pet, required this.onPressed})
       : super(key: key);
 
-  final double width;
-  final double height;
   final VoidCallback onPressed;
   final Pet pet;
 
@@ -23,26 +18,30 @@ class PetCard extends StatefulWidget {
 
 class _PetCardState extends State<PetCard> {
   var isSelected = false;
+  var isValid = true;
+
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Stack(
       children: [
         SizedBox(
-          width: widget.width,
-          height: widget.height * 0.2,
+          width: width,
+          height: height * 0.2,
         ),
         Container(
           margin: EdgeInsets.symmetric(
-            horizontal: widget.width * 0.1,
-            vertical: widget.width * 0.1,
+            horizontal: width * 0.1,
+            vertical: width * 0.1,
           ),
           padding: EdgeInsets.only(
-            left: widget.width * 0.415,
-            top: widget.width * 0.015,
-            bottom: widget.width * 0.015,
+            left: width * 0.415,
+            top: width * 0.015,
+            bottom: width * 0.015,
           ),
-          height: widget.width * 0.3,
-          width: widget.width,
+          height: width * 0.3,
+          width: width,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(15),
@@ -54,7 +53,7 @@ class _PetCardState extends State<PetCard> {
               Text(
                 widget.pet.name!,
                 style: TextStyle(
-                  fontSize: widget.width * regularFontRate,
+                  fontSize: width * regularFontRate,
                   fontWeight: FontWeight.w800,
                   color: primaryFontColor,
                 ),
@@ -62,7 +61,7 @@ class _PetCardState extends State<PetCard> {
               Text(
                 widget.pet.breedName!,
                 style: TextStyle(
-                  fontSize: widget.width * smallFontRate,
+                  fontSize: width * smallFontRate,
                   fontWeight: FontWeight.w300,
                   color: lightFontColor,
                 ),
@@ -73,7 +72,7 @@ class _PetCardState extends State<PetCard> {
                     WidgetSpan(
                       child: Icon(
                         Icons.cake,
-                        size: widget.width * smallFontRate,
+                        size: width * smallFontRate,
                         color: primaryColor,
                       ),
                     ),
@@ -82,7 +81,7 @@ class _PetCardState extends State<PetCard> {
                       style: TextStyle(
                         color: lightFontColor,
                         fontWeight: FontWeight.w400,
-                        fontSize: widget.width * smallFontRate,
+                        fontSize: width * smallFontRate,
                       ),
                     ),
                   ],
@@ -94,7 +93,7 @@ class _PetCardState extends State<PetCard> {
                     WidgetSpan(
                       child: Icon(
                         Icons.balance,
-                        size: widget.width * smallFontRate,
+                        size: width * smallFontRate,
                         color: primaryColor,
                       ),
                     ),
@@ -103,7 +102,7 @@ class _PetCardState extends State<PetCard> {
                       style: TextStyle(
                         color: lightFontColor,
                         fontWeight: FontWeight.w400,
-                        fontSize: widget.width * smallFontRate,
+                        fontSize: width * smallFontRate,
                       ),
                     ),
                   ],
@@ -115,7 +114,7 @@ class _PetCardState extends State<PetCard> {
                     WidgetSpan(
                       child: Icon(
                         Icons.square_foot,
-                        size: widget.width * smallFontRate,
+                        size: width * smallFontRate,
                         color: primaryColor,
                       ),
                     ),
@@ -128,7 +127,7 @@ class _PetCardState extends State<PetCard> {
                       style: TextStyle(
                         color: lightFontColor,
                         fontWeight: FontWeight.w400,
-                        fontSize: widget.width * smallFontRate,
+                        fontSize: width * smallFontRate,
                       ),
                     ),
                   ],
@@ -138,11 +137,11 @@ class _PetCardState extends State<PetCard> {
           ),
         ),
         Positioned(
-          left: widget.width * 0.1,
-          top: widget.width * 0.05,
+          left: width * 0.1,
+          top: width * 0.05,
           child: Container(
-            height: widget.width * 0.4,
-            width: widget.width * 0.4,
+            height: width * 0.4,
+            width: width * 0.4,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
               color: Colors.white,
@@ -154,15 +153,15 @@ class _PetCardState extends State<PetCard> {
           ),
         ),
         Positioned(
-          right: widget.width * 0.1 - widget.height * 0.042,
-          top: widget.height * 0.085,
+          right: width * 0.1 - height * 0.042,
+          top: height * 0.085,
           child: ElevatedButton(
             style: ButtonStyle(
               shape: MaterialStateProperty.all<CircleBorder>(
                 CircleBorder(
                   side: BorderSide(
                     color: primaryColor,
-                    width: widget.height * 0.04,
+                    width: height * 0.04,
                   ),
                 ),
               ),
@@ -170,10 +169,32 @@ class _PetCardState extends State<PetCard> {
             onPressed: isSelected
                 ? () {}
                 : () {
-                    widget.onPressed();
-                    setState(() {
-                      isSelected = true;
-                    });
+                    var state = BlocProvider.of<SearchBloc>(context).state;
+                    if (state is UpdatePetSelected && state.pets.isNotEmpty) {
+                      for (var pet in state.pets) {
+                        if (pet.petTypeCode != widget.pet.petTypeCode) {
+                          setState(() {
+                            isValid = false;
+                          });
+                          break;
+                        }
+                      }
+                    } else if (state is UpdatePetSelected &&
+                        state.pets.isEmpty) {
+                      setState(() {
+                        isValid = true;
+                      });
+                    }
+                    if (isValid) {
+                      widget.onPressed();
+                      setState(() {
+                        isSelected = true;
+                      });
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              "Không thể chọn 2 thú cưng khác loài trong cùng một yêu cầu.")));
+                    }
                   },
             child: isSelected
                 ? const Icon(

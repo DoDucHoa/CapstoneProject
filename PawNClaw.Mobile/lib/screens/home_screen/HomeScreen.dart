@@ -32,9 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  WelcomePanel(
-                      height: height, width: width, username: state.user.name!),
-                  HomeBody(width: width, height: height),
+                  WelcomePanel(username: state.user.name!),
+                  const HomeBody(),
                 ],
               ),
             ),

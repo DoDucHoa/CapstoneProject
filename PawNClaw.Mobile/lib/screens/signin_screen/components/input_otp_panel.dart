@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
+import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pinput/pinput.dart';
 
 class InputOTPPanel extends StatefulWidget {
@@ -39,37 +40,36 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
-        padding: const EdgeInsets.all(35),
+        padding: EdgeInsets.all(width * regularPadRate),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Spacer(flex: 35),
-            const Text(
+            Text(
               "Nhập OTP",
               style: TextStyle(
-                fontSize: 65,
+                color: primaryFontColor,
+                fontSize: width * extraLargeFontRate,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const Spacer(flex: 1),
-            const Text(
+            Text(
               "để xác thực tài khoản của bạn",
               style: TextStyle(
-                color: Colors.black54,
-                fontSize: 20,
+                color: lightFontColor,
+                fontSize: width * largeFontRate,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            // TextField(
-            //   controller: otpController,
-            //   onChanged: (value) {},
-            // ),
             const Spacer(flex: 1),
             Padding(
-              padding: const EdgeInsets.all(5),
+              padding: EdgeInsets.all(width * smallPadRate),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -111,9 +111,10 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
                         otpController.text,
                         widget.phoneNumber));
                   },
-                  child: const Text(
+                  child: Text(
                     "Xác nhận",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: TextStyle(
+                        color: Colors.white, fontSize: width * regularFontRate),
                   ),
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(

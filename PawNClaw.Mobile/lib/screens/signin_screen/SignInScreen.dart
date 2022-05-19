@@ -38,7 +38,8 @@ class _SignInScreenState extends State<SignInScreen> {
         if (state is Authenticated) {
           return const HomeScreen();
         } else
-          return Scaffold(body: LoadingIndicator(loadingText: "Vui lòng đợi"));
+          return const Scaffold(
+              body: LoadingIndicator(loadingText: "Vui lòng đợi"));
       },
     );
   }
