@@ -102,6 +102,7 @@ namespace PawNClaw.Data.Repository
                 .Include("CageTypes.Cages").FirstOrDefault();
 
             center.CageTypes = center.CageTypes.Where(x => x.Height >= PetSizes.Height && x.Width >= PetSizes.Width).ToList();
+            center.Cages = null;
 
             return center;
         }
