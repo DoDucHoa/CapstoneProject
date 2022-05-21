@@ -91,7 +91,29 @@ class CenterCard extends StatelessWidget {
         ),
       ),
       Positioned(
-        child: const Icon(Icons.star_border_outlined, size: 18),
+        child: Row(
+          children: [
+            Icon(
+              Icons.star,
+              size: width * smallFontRate,
+              color: primaryColor,
+            ),
+            Text(
+              center.rating.toString(),
+              style: TextStyle(
+                color: primaryFontColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              '(' + center.ratingCount.toString() + ')',
+              style: TextStyle(
+                color: lightFontColor,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
         bottom: width * 0.1,
         right: width * 0.15,
       )
