@@ -4,6 +4,7 @@ class Center {
   String? _address;
   String? _phone;
   int? _rating;
+  int? _ratingCount;
   bool? _status;
   int? _brandId;
   String? _openTime;
@@ -16,6 +17,7 @@ class Center {
       String? address,
       String? phone,
       int? rating,
+      int? ratingCount,
       bool? status,
       int? brandId,
       String? openTime,
@@ -35,6 +37,9 @@ class Center {
     }
     if (rating != null) {
       this._rating = rating;
+    }
+    if (ratingCount != null) {
+      this._ratingCount = ratingCount;
     }
     if (status != null) {
       this._status = status;
@@ -63,6 +68,8 @@ class Center {
   set phone(String? phone) => _phone = phone;
   int? get rating => _rating;
   set rating(int? rating) => _rating = rating;
+  int? get ratingCount => _ratingCount;
+  set ratingCount(int? ratingCount) => _ratingCount = ratingCount;
   bool? get status => _status;
   set status(bool? status) => _status = status;
   int? get brandId => _brandId;
@@ -80,6 +87,7 @@ class Center {
     _address = json['address'];
     _phone = json['phone'];
     _rating = json['rating'];
+    _ratingCount = json['ratingCount'];
     _status = json['status'];
     _brandId = json['brandId'];
     _openTime = json['openTime'];
@@ -94,6 +102,7 @@ class Center {
     data['address'] = this._address;
     data['phone'] = this._phone;
     data['rating'] = this._rating;
+    data['ratingCount'] = this._ratingCount;
     data['status'] = this._status;
     data['brandId'] = this._brandId;
     data['openTime'] = this._openTime;

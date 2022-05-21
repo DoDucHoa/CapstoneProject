@@ -4,7 +4,7 @@ import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart'
 import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
-import 'package:pawnclaw_mobile_application/screens/search_screen.dart/choose_pet_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/choose_pet_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/show_center.dart';
 import 'subscreens/fill_information_screen.dart';
 
@@ -28,20 +28,18 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
     return BlocProvider(
       create: (context) => SearchBloc()..add(InitSearch()),
       child: BlocBuilder<SearchBloc, SearchState>(
         builder: (context, state) {
           if (state is FillingInformation) {
-            return FillInformationScreen(height: height, width: width);
+            return const FillInformationScreen();
           }
           if (state is SearchInitial || state is UpdatePetSelected) {
-            return ChoosePetScreen(width: width, height: height);
+            return const ChoosePetScreen();
           }
           if (state is SearchCompleted) {
-            return AvailableCenterScreen(height: height, width: width);
+            return const AvailableCenterScreen();
           }
           return const Scaffold(
               backgroundColor: Colors.white,
