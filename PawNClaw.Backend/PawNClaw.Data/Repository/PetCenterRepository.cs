@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PawNClaw.Data.Database;
+using PawNClaw.Data.DataObject;
 using PawNClaw.Data.Interface;
 using System;
 using System.Collections.Generic;
@@ -94,7 +95,7 @@ namespace PawNClaw.Data.Repository
         }
 
         //Get Pet Center Detail
-        public PetCenter GetPetCenterById(int id, PetSizeCage PetSizes)
+        public PetCenterData GetPetCenterById(int id, PetSizeCage PetSizes)
         {
             var center = _dbSet.Where(x => x.Id == id)
                 .Include("Services")
@@ -104,7 +105,12 @@ namespace PawNClaw.Data.Repository
             center.CageTypes = center.CageTypes.Where(x => x.Height >= PetSizes.Height && x.Width >= PetSizes.Width).ToList();
             center.Cages = null;
 
-            return center;
+            PetCenterData petCenter = new PetCenterData
+            {
+                PetCenter = center
+            };
+
+            return petCenter;
         }
     }
 }
