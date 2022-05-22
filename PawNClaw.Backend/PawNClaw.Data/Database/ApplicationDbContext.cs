@@ -82,8 +82,6 @@ namespace PawNClaw.Data.Database
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
-
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Admin)
                     .HasForeignKey<Admin>(d => d.Id)
@@ -246,8 +244,6 @@ namespace PawNClaw.Data.Database
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
-
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Customer)
                     .HasForeignKey<Customer>(d => d.Id)
@@ -345,8 +341,6 @@ namespace PawNClaw.Data.Database
             modelBuilder.Entity<Owner>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
 
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Owner)
@@ -591,6 +585,12 @@ namespace PawNClaw.Data.Database
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__ServiceOr__booki__72910220");
 
+                entity.HasOne(d => d.Pet)
+                    .WithMany(p => p.ServiceOrders)
+                    .HasForeignKey(d => d.PetId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ServiceOr__pet_i__66EA454A");
+
                 entity.HasOne(d => d.ServiceCodeNavigation)
                     .WithMany(p => p.ServiceOrders)
                     .HasForeignKey(d => d.ServiceCode)
@@ -630,8 +630,6 @@ namespace PawNClaw.Data.Database
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.ModifyDate).HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
 
                 entity.HasOne(d => d.Center)
                     .WithMany(p => p.staff)
@@ -673,6 +671,12 @@ namespace PawNClaw.Data.Database
 
                 entity.Property(e => e.SupplyTypeCode).IsUnicode(false);
 
+                entity.HasOne(d => d.Center)
+                    .WithMany(p => p.Supplies)
+                    .HasForeignKey(d => d.CenterId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Supplies__center__65F62111");
+
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.SupplyCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
@@ -702,6 +706,12 @@ namespace PawNClaw.Data.Database
                     .HasForeignKey(d => d.BookingId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__SupplyOrd__booki__6DCC4D03");
+
+                entity.HasOne(d => d.Pet)
+                    .WithMany(p => p.SupplyOrders)
+                    .HasForeignKey(d => d.PetId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__SupplyOrd__pet_i__67DE6983");
 
                 entity.HasOne(d => d.SupplyCodeNavigation)
                     .WithMany(p => p.SupplyOrders)

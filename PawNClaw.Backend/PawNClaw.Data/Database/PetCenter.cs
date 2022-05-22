@@ -18,6 +18,7 @@ namespace PawNClaw.Data.Database
             Cages = new HashSet<Cage>();
             GeneralLedgers = new HashSet<GeneralLedger>();
             Services = new HashSet<Service>();
+            Supplies = new HashSet<Supply>();
             Vouchers = new HashSet<Voucher>();
             staff = new HashSet<Staff>();
         }
@@ -55,6 +56,9 @@ namespace PawNClaw.Data.Database
         [Column("close_time")]
         [StringLength(32)]
         public string CloseTime { get; set; }
+        [Column("description")]
+        [StringLength(512)]
+        public string Description { get; set; }
 
         [ForeignKey(nameof(BrandId))]
         [InverseProperty("PetCenters")]
@@ -77,6 +81,8 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<GeneralLedger> GeneralLedgers { get; set; }
         [InverseProperty(nameof(Service.Center))]
         public virtual ICollection<Service> Services { get; set; }
+        [InverseProperty(nameof(Supply.Center))]
+        public virtual ICollection<Supply> Supplies { get; set; }
         [InverseProperty(nameof(Voucher.Center))]
         public virtual ICollection<Voucher> Vouchers { get; set; }
         [InverseProperty(nameof(Staff.Center))]
