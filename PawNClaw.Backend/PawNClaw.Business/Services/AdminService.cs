@@ -169,11 +169,15 @@ namespace PawNClaw.Business.Services
         }
 
         //Update Admin  
-        public bool Update(Admin admin)
+        public bool Update(Admin admin, string Phone)
         {
             try
             {
                 admin.Status = _accountRepository.Get(admin.Id).Status;
+                Account account = _accountRepository.Get(admin.Id);
+                account.Phone = Phone;
+                _accountRepository.Update(account);
+                _accountRepository.SaveDbChange();
                 _adminRepository.Update(admin);
                 _adminRepository.SaveDbChange();
                 return true;
