@@ -67,7 +67,6 @@ namespace PawNClaw.API.Controllers
             var adminDb = _adminService.GetAdminById(id);
             adminDb.Email = admin.Email;
             adminDb.Name = admin.Name;
-            adminDb.Status = admin.Status;
 
             if (_adminService.Update(adminDb, admin.Phone))
             {
@@ -81,6 +80,18 @@ namespace PawNClaw.API.Controllers
         public IActionResult Delete(int id)
         {
             if (_adminService.Delete(id))
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+
+
+        [HttpPut("restore/{id}")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Restore(int id)
+        {
+            if (_adminService.Restore(id))
             {
                 return Ok();
             }

@@ -43,7 +43,12 @@ namespace PawNClaw.Data.Database
         [Column("supply_type_code")]
         [StringLength(32)]
         public string SupplyTypeCode { get; set; }
+        [Column("center_id")]
+        public int CenterId { get; set; }
 
+        [ForeignKey(nameof(CenterId))]
+        [InverseProperty(nameof(PetCenter.Supplies))]
+        public virtual PetCenter Center { get; set; }
         [ForeignKey(nameof(CreateUser))]
         [InverseProperty(nameof(Staff.SupplyCreateUserNavigations))]
         public virtual Staff CreateUserNavigation { get; set; }

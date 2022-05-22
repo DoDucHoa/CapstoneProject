@@ -26,10 +26,15 @@ namespace PawNClaw.Data.Database
         [Column("note")]
         [StringLength(512)]
         public string Note { get; set; }
+        [Column("pet_id")]
+        public int PetId { get; set; }
 
         [ForeignKey(nameof(BookingId))]
         [InverseProperty("ServiceOrders")]
         public virtual Booking Booking { get; set; }
+        [ForeignKey(nameof(PetId))]
+        [InverseProperty("ServiceOrders")]
+        public virtual Pet Pet { get; set; }
         [ForeignKey(nameof(ServiceCode))]
         [InverseProperty(nameof(Service.ServiceOrders))]
         public virtual Service ServiceCodeNavigation { get; set; }

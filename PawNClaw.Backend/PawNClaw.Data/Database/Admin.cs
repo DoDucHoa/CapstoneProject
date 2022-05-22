@@ -38,8 +38,6 @@ namespace PawNClaw.Data.Database
         [Column("email")]
         [StringLength(256)]
         public string Email { get; set; }
-        [Column("status")]
-        public bool? Status { get; set; }
         [Column("gender")]
         public byte? Gender { get; set; }
 

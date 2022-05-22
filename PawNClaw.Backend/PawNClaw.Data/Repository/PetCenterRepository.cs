@@ -100,6 +100,8 @@ namespace PawNClaw.Data.Repository
             var center = _dbSet.Where(x => x.Id == id)
                 .Include("Services")
                 .Include("CageTypes")
+                .Include("Supplies")
+                .Include("Supplies.SupplyTypeCodeNavigation")
                 .Include("CageTypes.Cages").FirstOrDefault();
 
             center.CageTypes = center.CageTypes.Where(x => x.Height >= PetSizes.Height && x.Width >= PetSizes.Width).ToList();
