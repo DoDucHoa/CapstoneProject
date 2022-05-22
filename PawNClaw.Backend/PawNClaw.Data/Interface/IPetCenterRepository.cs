@@ -1,5 +1,4 @@
 ﻿using PawNClaw.Data.Database;
-using PawNClaw.Data.DataObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +18,6 @@ namespace PawNClaw.Data.Interface
         public IEnumerable<PetCenter> SearchPetCenterQueryNonBooking(string City, string District,
             string StartBooking, string EndBooking, List<PetSizeCage> PetSizes);
 
-        public PetCenterData GetPetCenterById(int id, PetSizeCage PetSizes);
+        public PetCenter GetPetCenterById(int id, PetSizeCage PetSizes);
     }
 }

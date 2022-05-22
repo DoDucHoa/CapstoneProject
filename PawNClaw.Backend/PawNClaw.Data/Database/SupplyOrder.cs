@@ -11,9 +11,8 @@ namespace PawNClaw.Data.Database
     public partial class SupplyOrder
     {
         [Key]
-        [Column("supply_code")]
-        [StringLength(32)]
-        public string SupplyCode { get; set; }
+        [Column("supply_id")]
+        public int SupplyId { get; set; }
         [Key]
         [Column("booking_id")]
         public int BookingId { get; set; }
@@ -35,8 +34,8 @@ namespace PawNClaw.Data.Database
         [ForeignKey(nameof(PetId))]
         [InverseProperty("SupplyOrders")]
         public virtual Pet Pet { get; set; }
-        [ForeignKey(nameof(SupplyCode))]
-        [InverseProperty(nameof(Supply.SupplyOrders))]
-        public virtual Supply SupplyCodeNavigation { get; set; }
+        [ForeignKey(nameof(SupplyId))]
+        [InverseProperty("SupplyOrders")]
+        public virtual Supply Supply { get; set; }
     }
 }
