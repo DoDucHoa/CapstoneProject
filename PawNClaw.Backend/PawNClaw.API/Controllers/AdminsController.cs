@@ -69,7 +69,7 @@ namespace PawNClaw.API.Controllers
             adminDb.Name = admin.Name;
             adminDb.Status = admin.Status;
 
-            if (_adminService.Update(adminDb))
+            if (_adminService.Update(adminDb, admin.Phone))
             {
                 return Ok();
             }
