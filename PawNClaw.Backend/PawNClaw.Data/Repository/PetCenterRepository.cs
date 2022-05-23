@@ -139,7 +139,7 @@ namespace PawNClaw.Data.Repository
                     CloseTime = x.CloseTime,
                     Description = x.Description,
                     BrandId = x.BrandId,
-                    CageTypes = (ICollection<CageType>) x.CageTypes
+                    CageTypes = (ICollection<CageType>)x.CageTypes
                     .Where(cageType => cageType.Height >= petSize.Height && cageType.Width >= petSize.Width
                         && cageType.IsSingle == petSize.IsSingle)
                     .Select(cagetype => cagetype.Cages
