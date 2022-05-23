@@ -36,7 +36,6 @@ namespace PawNClaw.Data.Repository
         public IEnumerable<PetCenter> SearchPetCenter(string City, string District)
         {
             IQueryable<PetCenter> query = _dbSet;
-
             return query.ToList();
         }
 
