@@ -45,6 +45,6 @@ export default function useTable(props) {
 
 // ----------------------------------------------------------------------
 
-export function emptyRows(page, rowsPerPage, arrayLength) {
-  return page > 0 ? Math.max(0, (1 + page) * rowsPerPage - arrayLength) : 0;
+export function emptyRows(page, rowsPerPage, totalRow) {
+  return page > 0 ? Math.max(0, (1 + page) * rowsPerPage - totalRow) : 0;
 }

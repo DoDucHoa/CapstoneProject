@@ -1,61 +1,70 @@
 import PropTypes from 'prop-types';
-
 import * as Yup from 'yup';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useSnackbar } from 'notistack';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 // form
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { LoadingButton } from '@mui/lab';
-import { Box, Card, Grid, Stack, Switch, Typography, FormControlLabel, Button } from '@mui/material';
+import { Box, Card, Grid, Stack, Typography, Button } from '@mui/material';
 // utils
 import { fData } from '../../../utils/formatNumber';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
+// hooks
+import useAuth from '../../../hooks/useAuth';
 // components
 import Label from '../../../components/Label';
-import { FormProvider, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
+import { FormProvider, RHFSelect, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
+import { createAdmin, updateAdmin } from '../../../pages/dashboard/Admin/useAdminAPI';
 
 // ----------------------------------------------------------------------
 
+const specialString = 'Awz@******ÿ123';
+
 AdminNewEditForm.propTypes = {
   isEdit: PropTypes.bool,
-  currentUser: PropTypes.object,
+  adminData: PropTypes.object,
 };
 
-export default function AdminNewEditForm({ isEdit, currentUser }) {
+export default function AdminNewEditForm({ isEdit, adminData }) {
   const navigate = useNavigate();
-
+  const { accountInfo, register, changePassword } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email(),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    createUser: Yup.number().required(),
-    avatarUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
+    name: Yup.string().required('Bắt buộc nhập'),
+    email: Yup.string().required('Bắt buộc nhập').email(),
+    password: Yup.string()
+      .required('Bắt buộc nhập')
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&ÿ])[A-Za-z\d@$!%*?&ÿ]{6,}$/,
+        'Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt'
+      ),
+    confirmPassword: Yup.string()
+      .required('Bắt buộc nhập')
+      .oneOf([Yup.ref('password'), null], 'Mật khẩu không khớp'),
+    phoneNumber: Yup.string(),
+    createdUser: Yup.number().required(),
+    gender: Yup.number().required(),
+    avatarUrl: Yup.mixed(),
   });
 
   const defaultValues = useMemo(
     () => ({
-      name: currentUser?.name || '',
-      email: currentUser?.email || '',
-      phoneNumber: currentUser?.phoneNumber || '',
-      address: currentUser?.address || '',
-      country: currentUser?.country || '',
-      state: currentUser?.state || '',
-      city: currentUser?.city || '',
-      zipCode: currentUser?.zipCode || '',
-      avatarUrl: currentUser?.avatarUrl || '',
-      isVerified: currentUser?.isVerified || true,
-      status: currentUser?.status,
-      company: currentUser?.company || '',
-      role: currentUser?.role || '',
+      name: adminData?.name || '',
+      email: adminData?.email || '',
+      password: isEdit ? specialString : '',
+      confirmPassword: isEdit ? specialString : '',
+      phoneNumber: adminData?.phone || '',
+      createdUser: adminData?.createdUser || 0,
+      gender: adminData?.gender || 1,
+      avatarUrl: adminData?.avatarUrl || '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentUser]
+    [adminData]
   );
 
   const methods = useForm({
@@ -66,7 +75,6 @@ export default function AdminNewEditForm({ isEdit, currentUser }) {
   const {
     reset,
     watch,
-    control,
     setValue,
     handleSubmit,
     formState: { isSubmitting },
@@ -75,21 +83,34 @@ export default function AdminNewEditForm({ isEdit, currentUser }) {
   const values = watch();
 
   useEffect(() => {
-    if (isEdit && currentUser) {
+    if (isEdit && adminData) {
       reset(defaultValues);
     }
     if (!isEdit) {
       reset(defaultValues);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEdit, currentUser]);
+  }, [isEdit, adminData]);
 
   const onSubmit = async () => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      if (!isEdit) {
+        await Promise.all([
+          createAdmin(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender), // create account on Backend
+          register(values.email, values.password), // create account on Firebase
+        ]);
+      } else {
+        updateAdmin(accountInfo.id, values.name, values.phoneNumber, values.gender);
+
+        // change password on Firebase
+        if (values.password !== specialString) {
+          changePassword(values.password);
+        }
+      }
+
       reset();
-      enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
-      navigate(PATH_DASHBOARD.user.list);
+      enqueueSnackbar(!isEdit ? 'Tạo mới thành công!' : 'Cập nhật thành công!');
+      navigate(PATH_DASHBOARD.admin.list);
     } catch (error) {
       console.error(error);
     }
@@ -118,10 +139,10 @@ export default function AdminNewEditForm({ isEdit, currentUser }) {
           <Card sx={{ py: 10, px: 3 }}>
             {isEdit && (
               <Label
-                color={values.status !== 'active' ? 'error' : 'success'}
+                color={adminData.status !== 'true' ? 'error' : 'success'}
                 sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
               >
-                {values.status}
+                {adminData.status !== 'true' ? 'Đã khóa' : 'Hoạt động'}
               </Label>
             )}
 
@@ -142,42 +163,12 @@ export default function AdminNewEditForm({ isEdit, currentUser }) {
                       color: 'text.secondary',
                     }}
                   >
-                    Allowed *.jpeg, *.jpg, *.png, *.gif
-                    <br /> max size of {fData(3145728)}
+                    Định dạng *.jpeg, *.jpg, *.png, *.gif
+                    <br /> Dung lượng tối đa: {fData(3145728)}
                   </Typography>
                 }
               />
             </Box>
-
-            {isEdit && (
-              <FormControlLabel
-                labelPlacement="start"
-                control={
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => (
-                      <Switch
-                        {...field}
-                        checked={field.value !== 'active'}
-                        onChange={(event) => field.onChange(event.target.checked ? 'banned' : 'active')}
-                      />
-                    )}
-                  />
-                }
-                label={
-                  <>
-                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                      Banned
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Apply disable account
-                    </Typography>
-                  </>
-                }
-                sx={{ mx: 0, mb: 3, width: 1, justifyContent: 'space-between' }}
-              />
-            )}
           </Card>
         </Grid>
 
@@ -191,17 +182,30 @@ export default function AdminNewEditForm({ isEdit, currentUser }) {
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
               }}
             >
-              <RHFTextField name="name" label="Full Name" />
-              <RHFTextField name="email" label="Email Address" />
-              <RHFTextField name="phoneNumber" label="Phone Number" />
+              <RHFTextField name="name" label="Họ và tên" />
+              <RHFTextField name="email" label="Email" />
+              <RHFTextField name="phoneNumber" label="Số điện thoại" />
+              <RHFSelect name="gender" label="Giới tính">
+                <option key="1" value="1">
+                  Nam
+                </option>
+                <option key="2" value="2">
+                  Nữ
+                </option>
+                <option key="3" value="3">
+                  Khác
+                </option>
+              </RHFSelect>
+              <RHFTextField name="password" label="Mật khẩu" type="password" />
+              <RHFTextField name="confirmPassword" label="Nhập lại mật khẩu" type="password" />
             </Box>
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
               <Button to={PATH_DASHBOARD.admin.list} color="error" variant="contained" component={RouterLink}>
-                Cancel
+                Hủy
               </Button>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!isEdit ? 'Create' : 'Save Changes'}
+                {!isEdit ? 'Tạo' : 'Cập nhật'}
               </LoadingButton>
             </Stack>
           </Card>

@@ -52,7 +52,7 @@ export default function AdminTableRow({ row, onEditRow, onDeleteRow }) {
           color={(status === false && 'error') || 'success'}
           sx={{ textTransform: 'capitalize' }}
         >
-          {status ? 'active' : 'banned'}
+          {status ? 'Hoạt động' : 'Đã khóa'}
         </Label>
       </TableCell>
 
@@ -70,17 +70,17 @@ export default function AdminTableRow({ row, onEditRow, onDeleteRow }) {
                 }}
               >
                 <Iconify icon={'eva:edit-fill'} />
-                Edit
+                Sửa
               </MenuItem>
               <MenuItem
                 onClick={() => {
                   onDeleteRow();
                   handleCloseMenu();
                 }}
-                sx={{ color: 'error.main' }}
+                sx={{ color: status ? 'error.main' : 'success.main' }}
               >
                 <Iconify icon={status ? 'eva:slash-outline' : 'eva:checkmark-square-outline'} />
-                {status ? 'Ban' : 'Unban'}
+                {status ? 'Khóa' : 'Mở khóa'}
               </MenuItem>
             </>
           }

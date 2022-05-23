@@ -7,8 +7,9 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  updatePassword,
 } from 'firebase/auth';
-import { getFirestore, collection, doc, getDoc, setDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 //
 import { FIREBASE_API } from '../config';
 
@@ -78,8 +79,9 @@ const AuthContext = createContext({
   ...initialState,
   method: 'firebase',
   login: () => Promise.resolve(),
-  register: () => Promise.resolve(),
+  register: (email, password) => Promise.resolve(email, password),
   logout: () => Promise.resolve(),
+  changePassword: (password) => Promise.resolve(password),
 });
 
 // ----------------------------------------------------------------------
@@ -165,16 +167,7 @@ function AuthProvider({ children }) {
     }
   };
 
-  const register = (email, password, firstName, lastName) =>
-    createUserWithEmailAndPassword(AUTH, email, password).then(async (res) => {
-      const userRef = doc(collection(DB, 'users'), res.user?.uid);
-
-      await setDoc(userRef, {
-        uid: res.user?.uid,
-        email,
-        displayName: `${firstName} ${lastName}`,
-      });
-    });
+  const register = (email, password) => createUserWithEmailAndPassword(AUTH, email, password);
 
   const logout = () => {
     signOut(AUTH);
@@ -182,6 +175,8 @@ function AuthProvider({ children }) {
     setAccountInfoSession(null);
     dispatch({ type: 'LOGOUT' });
   };
+
+  const changePassword = (password) => updatePassword(AUTH.currentUser, password);
 
   return (
     <AuthContext.Provider
@@ -206,6 +201,7 @@ function AuthProvider({ children }) {
         login,
         register,
         logout,
+        changePassword,
       }}
     >
       {children}
