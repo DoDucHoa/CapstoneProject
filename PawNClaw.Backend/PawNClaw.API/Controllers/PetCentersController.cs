@@ -56,7 +56,7 @@ namespace PawNClaw.API.Controllers
         [Route("center_detail")]
         public IActionResult GetCenterByIdWithInclude([FromBody] GetCenterByIdRequestModel model)
         {
-            var data = _petCenterService.GetDetailById(model.id, model._petRequests);
+            var data = _petCenterService.GetDetailById(model.id, model._petRequests, model.StartBooking, model.EndBooking);
             return Ok(data);
         }
 
