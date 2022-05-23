@@ -37,9 +37,6 @@ namespace PawNClaw.Data.Repository
         {
             IQueryable<PetCenter> query = _dbSet;
 
-            query = query.Include("Location").Include("Bookings").Include("CageTypes").Where(x => x.Location.CityCode.Trim().Equals(City)
-                                            && x.Location.DistrictCode.Trim().Equals(District));
-
             return query.ToList();
         }
 
