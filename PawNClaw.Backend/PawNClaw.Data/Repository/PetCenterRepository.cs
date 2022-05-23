@@ -64,7 +64,6 @@ namespace PawNClaw.Data.Repository
                         CenterId = cagetype.CenterId
                     })
                 });
-                
             return query.ToList();
         }
 
