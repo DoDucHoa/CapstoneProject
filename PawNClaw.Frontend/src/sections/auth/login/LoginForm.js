@@ -65,11 +65,11 @@ export default function LoginForm() {
       <Stack spacing={3}>
         {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
 
-        <RHFTextField name="email" label="Email address" />
+        <RHFTextField name="email" label="Tài khoản" />
 
         <RHFTextField
           name="password"
-          label="Password"
+          label="Mật khẩu"
           type={showPassword ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
@@ -84,14 +84,14 @@ export default function LoginForm() {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        <RHFCheckbox name="remember" label="Remember me" />
+        <RHFCheckbox name="remember" label="Nhớ mật khẩu" />
         <Link component={RouterLink} variant="subtitle2" to={PATH_AUTH.resetPassword}>
-          Forgot password?
+          Quên mật khẩu?
         </Link>
       </Stack>
 
       <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
-        Login
+        Đăng Nhập
       </LoadingButton>
     </FormProvider>
   );
