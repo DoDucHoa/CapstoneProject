@@ -60,6 +60,8 @@ namespace PawNClaw.Data.Database
         [StringLength(512)]
         public string Description { get; set; }
 
+        public int RatingCount { get => _getRatingCount(this.Bookings); }
+
         [ForeignKey(nameof(BrandId))]
         [InverseProperty("PetCenters")]
         public virtual Brand Brand { get; set; }
@@ -87,5 +89,18 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<Voucher> Vouchers { get; set; }
         [InverseProperty(nameof(Staff.Center))]
         public virtual ICollection<Staff> staff { get; set; }
+
+        private int _getRatingCount(ICollection<Booking> Bookings)
+        {
+            int count = 0;
+            foreach (var booking in Bookings)
+            {
+                if (booking.Rating.HasValue)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using PawNClaw.Data.Database;
-using PawNClaw.Data.DataObject;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
@@ -39,7 +38,7 @@ namespace PawNClaw.Business.Services
         }
 
         //Get By Id With Cage Service and Supply
-        public PetCenterData GetDetailById(int id, List<List<PetRequestParameter>> _petRequests)
+        public PetCenter GetDetailById(int id, List<List<PetRequestParameter>> _petRequests)
         {
             List<PetSizeCage> PetSizes = new List<PetSizeCage>();
 

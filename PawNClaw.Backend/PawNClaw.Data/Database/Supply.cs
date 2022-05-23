@@ -16,9 +16,8 @@ namespace PawNClaw.Data.Database
         }
 
         [Key]
-        [Column("code")]
-        [StringLength(32)]
-        public string Code { get; set; }
+        [Column("id")]
+        public int Id { get; set; }
         [Required]
         [Column("name")]
         [StringLength(256)]
@@ -58,7 +57,7 @@ namespace PawNClaw.Data.Database
         [ForeignKey(nameof(SupplyTypeCode))]
         [InverseProperty(nameof(SupplyType.Supplies))]
         public virtual SupplyType SupplyTypeCodeNavigation { get; set; }
-        [InverseProperty(nameof(SupplyOrder.SupplyCodeNavigation))]
+        [InverseProperty(nameof(SupplyOrder.Supply))]
         public virtual ICollection<SupplyOrder> SupplyOrders { get; set; }
     }
 }

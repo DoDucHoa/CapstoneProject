@@ -11,9 +11,8 @@ namespace PawNClaw.Data.Database
     public partial class ServiceOrder
     {
         [Key]
-        [Column("service_code")]
-        [StringLength(32)]
-        public string ServiceCode { get; set; }
+        [Column("service_id")]
+        public int ServiceId { get; set; }
         [Key]
         [Column("booking_id")]
         public int BookingId { get; set; }
@@ -35,8 +34,8 @@ namespace PawNClaw.Data.Database
         [ForeignKey(nameof(PetId))]
         [InverseProperty("ServiceOrders")]
         public virtual Pet Pet { get; set; }
-        [ForeignKey(nameof(ServiceCode))]
-        [InverseProperty(nameof(Service.ServiceOrders))]
-        public virtual Service ServiceCodeNavigation { get; set; }
+        [ForeignKey(nameof(ServiceId))]
+        [InverseProperty("ServiceOrders")]
+        public virtual Service Service { get; set; }
     }
 }
