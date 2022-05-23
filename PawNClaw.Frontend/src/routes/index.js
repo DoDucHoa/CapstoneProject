@@ -71,6 +71,7 @@ export default function Router() {
             { element: <Navigate to="/dashboard/admin/list" replace />, index: true },
             { path: 'list', element: <AdminList /> },
             { path: 'new', element: <AdminCreate /> },
+            { path: ':id/edit', element: <AdminCreate /> },
           ],
         },
       ],
