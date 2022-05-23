@@ -38,7 +38,33 @@ namespace PawNClaw.Data.Repository
             IQueryable<PetCenter> query = _dbSet;
 
             query = query.Include("Location").Include("CageTypes").Where(x => x.Location.CityCode.Trim().Equals(City)
-                                            && x.Location.DistrictCode.Trim().Equals(District));
+                                            && x.Location.DistrictCode.Trim().Equals(District))
+                .Select(x => new PetCenter
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Address = x.Address,
+                    Phone = x.Phone,
+                    Rating = x.Rating,
+                    CreateDate = x.CreateDate,
+                    Status = x.Status,
+                    OpenTime = x.OpenTime,
+                    CloseTime = x.CloseTime,
+                    Description = x.Description,
+                    BrandId = x.BrandId,
+                    CageTypes = (ICollection<CageType>)x.CageTypes.Select(cagetype => new CageType
+                    {
+                        Id = cagetype.Id,
+                        TypeName = cagetype.TypeName,
+                        Description = cagetype.Description,
+                        Height = cagetype.Height,
+                        Width = cagetype.Width,
+                        Length = cagetype.Length,
+                        IsSingle = cagetype.IsSingle,
+                        Status = cagetype.Status,
+                        CenterId = cagetype.CenterId
+                    })
+                });
 
             return query.ToList();
         }
@@ -115,7 +141,7 @@ namespace PawNClaw.Data.Repository
                     CloseTime = x.CloseTime,
                     Description = x.Description,
                     BrandId = x.BrandId,
-                    CageTypes = (ICollection<CageType>) x.CageTypes
+                    CageTypes = (ICollection<CageType>)x.CageTypes
                     .Where(cageType => cageType.Height >= petSize.Height && cageType.Width >= petSize.Width
                         && cageType.IsSingle == petSize.IsSingle)
                     .Select(cagetype => cagetype.Cages
