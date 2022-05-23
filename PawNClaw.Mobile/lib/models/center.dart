@@ -10,6 +10,9 @@ class Center {
   String? _openTime;
   String? _closeTime;
   String? _brand;
+  List<CageTypes>? _cageTypes;
+  List<Services>? _services;
+  List<Supplies>? _supplies;
 
   Center(
       {int? id,
@@ -22,7 +25,10 @@ class Center {
       int? brandId,
       String? openTime,
       String? closeTime,
-      String? brand}) {
+      String? brand,
+      List<CageTypes>? cageTypes,
+      List<Services>? services,
+      List<Supplies>? supplies}) {
     if (id != null) {
       this._id = id;
     }
@@ -56,6 +62,15 @@ class Center {
     if (brand != null) {
       this._brand = brand;
     }
+    if (cageTypes != null) {
+      this._cageTypes = cageTypes;
+    }
+    if (supplies != null) {
+      this._supplies = supplies;
+    }
+    if (services != null) {
+      this._services = services;
+    }
   }
 
   int? get id => _id;
@@ -80,6 +95,12 @@ class Center {
   set closeTime(String? closeTime) => _closeTime = closeTime;
   String? get brand => _brand;
   set brand(String? brand) => _brand = brand;
+  List<CageTypes>? get cageTypes => _cageTypes;
+  set cageTypes(List<CageTypes>? cageTypes) => _cageTypes = cageTypes;
+  List<Services>? get services => _services;
+  set services(List<Services>? services) => _services = services;
+  List<Supplies>? get supplies => _supplies;
+  set supplies(List<Supplies>? supplies) => _supplies = supplies;
 
   Center.fromJson(Map<String, dynamic> json) {
     _id = json['id'];
@@ -93,6 +114,24 @@ class Center {
     _openTime = json['openTime'];
     _closeTime = json['closeTime'];
     _brand = json['brand'];
+    if (json['cageTypes'] != null) {
+      _cageTypes = <CageTypes>[];
+      json['cageTypes'].forEach((v) {
+        _cageTypes!.add(new CageTypes.fromJson(v));
+      });
+    }
+    if (json['services'] != null) {
+      _services = <Services>[];
+      json['services'].forEach((v) {
+        _services!.add(new Services.fromJson(v));
+      });
+    }
+    if (json['supplies'] != null) {
+      _supplies = <Supplies>[];
+      json['supplies'].forEach((v) {
+        _supplies!.add(new Supplies.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -108,6 +147,180 @@ class Center {
     data['openTime'] = this._openTime;
     data['closeTime'] = this._closeTime;
     data['brand'] = this._brand;
+    if (this._cageTypes != null) {
+      data['cageTypes'] = this._cageTypes!.map((v) => v.toJson()).toList();
+    }
+    if (this._services != null) {
+      data['services'] = this._services!.map((v) => v.toJson()).toList();
+    }
+    if (this._supplies != null) {
+      data['supplies'] = this._supplies!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class CageTypes {
+  int? id;
+  String? typeName;
+  String? description;
+  double? height;
+  int? width;
+  double? length;
+  bool? isSingle;
+  List<Cages>? cages;
+  // double? price;
+
+  CageTypes({
+    this.id,
+    this.typeName,
+    this.description,
+    this.height,
+    this.width,
+    this.length,
+    this.isSingle,
+    this.cages,
+    // this.price
+  });
+
+  CageTypes.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    typeName = json['typeName'];
+    description = json['description'];
+    height = json['height'];
+    width = json['width'];
+    length = json['length'];
+    isSingle = json['isSingle'];
+    if (json['cages'] != null) {
+      cages = <Cages>[];
+      json['cages'].forEach((v) {
+        cages!.add(new Cages.fromJson(v));
+      });
+    }
+    // if (json['prices'] != null) {
+    //   prices = <Null>[];
+    //   json['prices'].forEach((v) {
+    //     prices!.add(new Null.fromJson(v));
+    //   });
+    // }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['typeName'] = this.typeName;
+    data['description'] = this.description;
+    data['height'] = this.height;
+    data['width'] = this.width;
+    data['length'] = this.length;
+    data['isSingle'] = this.isSingle;
+    if (this.cages != null) {
+      data['cages'] = this.cages!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Cages {
+  String? code;
+  int? centerId;
+  String? name;
+  String? color;
+
+  Cages({
+    this.code,
+    this.centerId,
+    this.name,
+    this.color,
+  });
+
+  Cages.fromJson(Map<String, dynamic> json) {
+    code = json['code'];
+    centerId = json['centerId'];
+    name = json['name'];
+    color = json['color'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['code'] = this.code;
+    data['centerId'] = this.centerId;
+    data['name'] = this.name;
+    data['color'] = this.color;
+
+    return data;
+  }
+}
+
+class Services {
+  int? id;
+  String? description;
+  double? sellPrice;
+  int? discountPrice;
+
+  Services({
+    this.id,
+    this.description,
+    this.sellPrice,
+    this.discountPrice,
+  });
+
+  Services.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    description = json['description'];
+    sellPrice = json['sellPrice'];
+    discountPrice = json['discountPrice'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['description'] = this.description;
+    data['sellPrice'] = this.sellPrice;
+    data['discountPrice'] = this.discountPrice;
+
+    return data;
+  }
+}
+
+class Supplies {
+  int? id;
+  String? name;
+  double? sellPrice;
+  int? discountPrice;
+  int? quantity;
+  bool? status;
+  String? supplyTypeCode;
+
+  Supplies({
+    this.id,
+    this.name,
+    this.sellPrice,
+    this.discountPrice,
+    this.quantity,
+    this.status,
+    this.supplyTypeCode,
+  });
+
+  Supplies.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    sellPrice = json['sellPrice'];
+    discountPrice = json['discountPrice'];
+    quantity = json['quantity'];
+    status = json['status'];
+    supplyTypeCode = json['supplyTypeCode'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['sellPrice'] = this.sellPrice;
+    data['discountPrice'] = this.discountPrice;
+    data['quantity'] = this.quantity;
+    data['status'] = this.status;
+    data['supplyTypeCode'] = this.supplyTypeCode;
     return data;
   }
 }

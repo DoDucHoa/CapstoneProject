@@ -107,6 +107,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                       setState(
                         () {
                           from = date;
+                          print(date.toString());
                           _fromController.text =
                               DateFormat("dd/MM/yyyy, h:mm a").format(date);
                         },
