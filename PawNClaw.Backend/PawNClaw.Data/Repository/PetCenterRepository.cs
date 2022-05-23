@@ -29,7 +29,7 @@ namespace PawNClaw.Data.Repository
         {
             IQueryable<PetCenter> query = _dbSet;
 
-            query = query.Include("Location").Include("CageTypes").Where(x => x.Location.CityCode.Trim().Equals(City)
+            query = query.Include("Location").Include("Bookings").Include("CageTypes").Where(x => x.Location.CityCode.Trim().Equals(City)
                                             && x.Location.DistrictCode.Trim().Equals(District));
 
             return query.ToList();
@@ -91,6 +91,21 @@ namespace PawNClaw.Data.Repository
                     && TimeSpan.ParseExact(x.OpenTime, "HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) < _endBooking.TimeOfDay
                     && TimeSpan.ParseExact(x.CloseTime, "HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) > _endBooking.TimeOfDay);
             return query.ToList();
+        }
+
+        //Get Pet Center Detail
+        public PetCenter GetPetCenterById(int id, PetSizeCage PetSizes)
+        {
+            var center = _dbSet.Where(x => x.Id == id)
+                .Include("Services")
+                .Include("CageTypes")
+                .Include("Supplies")
+                .Include("CageTypes.Cages").FirstOrDefault();
+
+            center.CageTypes = center.CageTypes.Where(x => x.Height >= PetSizes.Height && x.Width >= PetSizes.Width).ToList();
+            center.Cages = null;
+
+            return center;
         }
     }
 }

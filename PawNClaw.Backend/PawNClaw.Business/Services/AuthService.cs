@@ -86,7 +86,6 @@ namespace PawNClaw.Business.Services
 
             Customer customerToDb = new Customer();
             customerToDb.Name = _customer.Name;
-            customerToDb.Status = true;
             customerToDb.Birth = _customer.Birth;
 
             try

@@ -6,7 +6,7 @@ import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart'
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 
 class InputPhonePanel extends StatefulWidget {
-  InputPhonePanel({Key? key}) : super(key: key);
+  const InputPhonePanel({Key? key}) : super(key: key);
 
   @override
   State<InputPhonePanel> createState() => _InputPhonePanelState();
@@ -21,27 +21,30 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
-        padding: const EdgeInsets.all(35),
+        padding: EdgeInsets.all(width * regularPadRate),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Spacer(flex: 35),
-            const Text(
-              "Sign in",
+            Text(
+              "Đăng nhập",
               style: TextStyle(
-                fontSize: 65,
+                color: primaryFontColor,
+                fontSize: width * extraLargeFontRate,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const Spacer(flex: 1),
-            const Text(
-              "to booking your service",
+            Text(
+              "để sử dụng dịch vụ của bạn",
               style: TextStyle(
-                color: Colors.black54,
-                fontSize: 20,
+                color: lightFontColor,
+                fontSize: width * largeFontRate,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -76,7 +79,7 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
                   signed: true, decimal: true),
               cursorColor: Colors.black,
               inputDecoration: InputDecoration(
-                hintText: 'Phone Number',
+                hintText: 'Số điện thoại',
                 hintStyle: TextStyle(
                   color: Colors.grey.shade500,
                   fontSize: 16,
@@ -96,9 +99,10 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
                               .add(VerifyPhonenumber(phoneController.text));
                         }
                       : () {},
-                  child: const Text(
-                    "Verify your phone number",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  child: Text(
+                    "Xác thực số điện thoại của bạn",
+                    style: TextStyle(
+                        color: Colors.white, fontSize: width * regularFontRate),
                   ),
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(

@@ -77,7 +77,6 @@ namespace PawNClaw.Business.Services
             try
             {
                 var objFromDb = _ownerRepository.Get(id);
-                objFromDb.Status = false;
                 if (objFromDb != null)
                 {
                     _ownerRepository.Update(objFromDb);
@@ -98,7 +97,6 @@ namespace PawNClaw.Business.Services
             try
             {
                 var objFromDb = _ownerRepository.Get(id);
-                objFromDb.Status = true;
                 if (objFromDb != null)
                 {
                     _ownerRepository.Update(objFromDb);

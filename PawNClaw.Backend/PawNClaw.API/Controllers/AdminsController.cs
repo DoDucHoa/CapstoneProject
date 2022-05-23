@@ -51,7 +51,7 @@ namespace PawNClaw.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public IActionResult Add([FromBody] Admin admin)
+        public IActionResult Add([FromBody] CreateAdminParameter admin)
         {
             if (_adminService.Add(admin) != -1)
             {
@@ -67,9 +67,8 @@ namespace PawNClaw.API.Controllers
             var adminDb = _adminService.GetAdminById(id);
             adminDb.Email = admin.Email;
             adminDb.Name = admin.Name;
-            adminDb.Status = admin.Status;
 
-            if (_adminService.Update(adminDb))
+            if (_adminService.Update(adminDb, admin.Phone))
             {
                 return Ok();
             }
@@ -81,6 +80,18 @@ namespace PawNClaw.API.Controllers
         public IActionResult Delete(int id)
         {
             if (_adminService.Delete(id))
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+
+
+        [HttpPut("restore/{id}")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Restore(int id)
+        {
+            if (_adminService.Restore(id))
             {
                 return Ok();
             }

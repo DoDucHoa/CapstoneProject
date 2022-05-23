@@ -53,6 +53,15 @@ namespace PawNClaw.Data.Database
         public virtual DbSet<VoucherType> VoucherTypes { get; set; }
         public virtual DbSet<Ward> Wards { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=pawnclaw.database.windows.net;Database=PawNClaw;User Id=pawnclaw;Password=Sa123321");
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
@@ -81,8 +90,6 @@ namespace PawNClaw.Data.Database
             modelBuilder.Entity<Admin>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
 
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Admin)
@@ -246,8 +253,6 @@ namespace PawNClaw.Data.Database
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
-
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Customer)
                     .HasForeignKey<Customer>(d => d.Id)
@@ -345,8 +350,6 @@ namespace PawNClaw.Data.Database
             modelBuilder.Entity<Owner>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
 
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Owner)
@@ -548,11 +551,6 @@ namespace PawNClaw.Data.Database
 
             modelBuilder.Entity<Service>(entity =>
             {
-                entity.HasKey(e => e.Code)
-                    .HasName("PK__Services__357D4CF8AD9AFFC6");
-
-                entity.Property(e => e.Code).IsUnicode(false);
-
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.DiscountPrice).HasDefaultValueSql("((0))");
@@ -565,37 +563,41 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.Services)
                     .HasForeignKey(d => d.CenterId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Services__center__42E1EEFE");
+                    .HasConstraintName("FK__Services__center__093F5D4E");
 
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.ServiceCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Services__create__40F9A68C");
+                    .HasConstraintName("FK__Services__create__075714DC");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.ServiceModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Services__modify__41EDCAC5");
+                    .HasConstraintName("FK__Services__modify__084B3915");
             });
 
             modelBuilder.Entity<ServiceOrder>(entity =>
             {
-                entity.HasKey(e => new { e.ServiceCode, e.BookingId })
+                entity.HasKey(e => new { e.ServiceId, e.BookingId })
                     .HasName("PK_ServiceOrder");
-
-                entity.Property(e => e.ServiceCode).IsUnicode(false);
 
                 entity.HasOne(d => d.Booking)
                     .WithMany(p => p.ServiceOrders)
                     .HasForeignKey(d => d.BookingId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ServiceOr__booki__72910220");
+                    .HasConstraintName("FK__ServiceOr__booki__0D0FEE32");
 
-                entity.HasOne(d => d.ServiceCodeNavigation)
+                entity.HasOne(d => d.Pet)
                     .WithMany(p => p.ServiceOrders)
-                    .HasForeignKey(d => d.ServiceCode)
+                    .HasForeignKey(d => d.PetId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ServiceOr__servi__719CDDE7");
+                    .HasConstraintName("FK__ServiceOr__pet_i__0E04126B");
+
+                entity.HasOne(d => d.Service)
+                    .WithMany(p => p.ServiceOrders)
+                    .HasForeignKey(d => d.ServiceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ServiceOr__servi__0C1BC9F9");
             });
 
             modelBuilder.Entity<SponsorBanner>(entity =>
@@ -631,8 +633,6 @@ namespace PawNClaw.Data.Database
 
                 entity.Property(e => e.ModifyDate).HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
-
                 entity.HasOne(d => d.Center)
                     .WithMany(p => p.staff)
                     .HasForeignKey(d => d.CenterId)
@@ -658,11 +658,6 @@ namespace PawNClaw.Data.Database
 
             modelBuilder.Entity<Supply>(entity =>
             {
-                entity.HasKey(e => e.Code)
-                    .HasName("PK__Supplies__357D4CF860E33C7E");
-
-                entity.Property(e => e.Code).IsUnicode(false);
-
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.DiscountPrice).HasDefaultValueSql("((0))");
@@ -673,41 +668,51 @@ namespace PawNClaw.Data.Database
 
                 entity.Property(e => e.SupplyTypeCode).IsUnicode(false);
 
+                entity.HasOne(d => d.Center)
+                    .WithMany(p => p.Supplies)
+                    .HasForeignKey(d => d.CenterId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Supplies__center__7BE56230");
+
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.SupplyCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Supplies__create__503BEA1C");
+                    .HasConstraintName("FK__Supplies__create__7908F585");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.SupplyModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Supplies__modify__51300E55");
+                    .HasConstraintName("FK__Supplies__modify__79FD19BE");
 
                 entity.HasOne(d => d.SupplyTypeCodeNavigation)
                     .WithMany(p => p.Supplies)
                     .HasForeignKey(d => d.SupplyTypeCode)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Supplies__supply__5224328E");
+                    .HasConstraintName("FK__Supplies__supply__7AF13DF7");
             });
 
             modelBuilder.Entity<SupplyOrder>(entity =>
             {
-                entity.HasKey(e => new { e.SupplyCode, e.BookingId })
+                entity.HasKey(e => new { e.SupplyId, e.BookingId })
                     .HasName("PK_SupplyOrder");
-
-                entity.Property(e => e.SupplyCode).IsUnicode(false);
 
                 entity.HasOne(d => d.Booking)
                     .WithMany(p => p.SupplyOrders)
                     .HasForeignKey(d => d.BookingId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__SupplyOrd__booki__6DCC4D03");
+                    .HasConstraintName("FK__SupplyOrd__booki__7EC1CEDB");
 
-                entity.HasOne(d => d.SupplyCodeNavigation)
+                entity.HasOne(d => d.Pet)
                     .WithMany(p => p.SupplyOrders)
-                    .HasForeignKey(d => d.SupplyCode)
+                    .HasForeignKey(d => d.PetId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__SupplyOrd__suppl__6EC0713C");
+                    .HasConstraintName("FK__SupplyOrd__pet_i__00AA174D");
+
+                entity.HasOne(d => d.Supply)
+                    .WithMany(p => p.SupplyOrders)
+                    .HasForeignKey(d => d.SupplyId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__SupplyOrd__suppl__7FB5F314");
             });
 
             modelBuilder.Entity<SupplyType>(entity =>

@@ -16,9 +16,8 @@ namespace PawNClaw.Data.Database
         }
 
         [Key]
-        [Column("code")]
-        [StringLength(32)]
-        public string Code { get; set; }
+        [Column("id")]
+        public int Id { get; set; }
         [Required]
         [Column("description")]
         [StringLength(512)]
@@ -49,7 +48,7 @@ namespace PawNClaw.Data.Database
         [ForeignKey(nameof(ModifyUser))]
         [InverseProperty(nameof(Staff.ServiceModifyUserNavigations))]
         public virtual Staff ModifyUserNavigation { get; set; }
-        [InverseProperty(nameof(ServiceOrder.ServiceCodeNavigation))]
+        [InverseProperty(nameof(ServiceOrder.Service))]
         public virtual ICollection<ServiceOrder> ServiceOrders { get; set; }
     }
 }

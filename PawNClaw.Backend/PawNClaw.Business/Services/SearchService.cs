@@ -251,10 +251,22 @@ namespace PawNClaw.Business.Services
 
             values = validOCCenter;
 
-            foreach (var item in values)
+            values = values.Select(center => new PetCenter
             {
-                Console.WriteLine("Center is valid: " + item.Id);
-            }
+                Id = center.Id,
+                Name = center.Name,
+                Address = center.Address,
+                Phone = center.Phone,
+                Rating = center.Rating,
+                CreateDate = center.CreateDate,
+                Status = center.Status,
+                OpenTime = center.OpenTime,
+                CloseTime = center.CloseTime,
+                Description = center.Description,
+                BrandId = center.BrandId
+            });
+
+            
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
@@ -452,6 +464,23 @@ namespace PawNClaw.Business.Services
             //END Check valid cage for pet
 
             values = validOCCenter;
+
+            values = values.Select(center => new PetCenter
+            {
+                Id = center.Id,
+                Name = center.Name,
+                Address = center.Address,
+                Phone = center.Phone,
+                Rating = center.Rating,
+                CreateDate = center.CreateDate,
+                Status = center.Status,
+                OpenTime = center.OpenTime,
+                CloseTime = center.CloseTime,
+                Description = center.Description,
+                BrandId = center.BrandId
+            });
+
+
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
