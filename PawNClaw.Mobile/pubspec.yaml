@@ -45,7 +45,13 @@ dependencies:
   flutter_snake_navigationbar: ^0.6.1
   shared_preferences: ^2.0.15
   flutter_datetime_picker: ^1.5.1
-
+  font_awesome_flutter: ^10.1.0
+  dotted_line:
+  intl:
+  carousel_slider:
+  smooth_page_indicator:
+  readmore:
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
