@@ -167,7 +167,6 @@ namespace PawNClaw.Data.Repository
                 .Include(x => x.CageTypes)
                 .ThenInclude(cagetype => cagetype.Prices)
                 .Include(x => x.Supplies)
-                .ThenInclude(supplies => supplies.SupplyTypeCodeNavigation)
                 .Select(x => new PetCenter
                 {
                     Id = x.Id,
@@ -193,7 +192,8 @@ namespace PawNClaw.Data.Repository
                         IsSingle = cagetype.IsSingle,
                         Status = cagetype.Status,
                         CenterId = cagetype.CenterId,
-                        TotalPrice = _priceRepository.checkTotalPriceOfCageType(cagetype.Id, StartBooking, EndBooking)
+                        TotalPrice = _priceRepository.checkTotalPriceOfCageType(cagetype.Id, StartBooking, EndBooking),
+                        Cages = cagetype.Cages
                     }),
                     Supplies = (ICollection<Supply>)x.Supplies.Where(s => s.Quantity > 0 && s.Status == true)
                     .Select(s => new Supply
@@ -203,7 +203,7 @@ namespace PawNClaw.Data.Repository
                         SellPrice = s.SellPrice,
                         DiscountPrice = s.DiscountPrice,
                         Quantity = s.Quantity,
-                        SupplyTypeCodeNavigation = s.SupplyTypeCodeNavigation
+                        SupplyTypeCode = s.SupplyTypeCode
                     }),
                     Services = (ICollection<Service>)x.Services.Where(ser => ser.Status == true)
                 })
