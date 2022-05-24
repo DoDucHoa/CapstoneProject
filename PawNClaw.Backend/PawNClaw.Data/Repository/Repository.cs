@@ -104,6 +104,12 @@ namespace PawNClaw.Data.Repository
             return (_db.SaveChanges() >= 0);
         }
 
+        public async Task<bool> SaveDbChangeAsync()
+        {
+            var values = await _db.SaveChangesAsync();
+            return values >= 0;
+        }
+
         public void Remove(int id)
         {
             T entity = _dbSet.Find(id);

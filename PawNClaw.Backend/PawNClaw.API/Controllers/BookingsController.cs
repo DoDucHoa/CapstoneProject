@@ -50,5 +50,16 @@ namespace PawNClaw.API.Controllers
             };
             return Ok(new { data, metadata });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateBooking([FromBody] BookingControllerParameter bookingControllerParameter)
+        {
+            await _bookingService.CreateBooking(bookingControllerParameter.bookingCreateParameter,
+                bookingControllerParameter.bookingDetailCreateParameters,
+                bookingControllerParameter.serviceOrderCreateParameters,
+                bookingControllerParameter.supplyOrderCreateParameters);
+
+            return Ok();
+        }
     }
 }
