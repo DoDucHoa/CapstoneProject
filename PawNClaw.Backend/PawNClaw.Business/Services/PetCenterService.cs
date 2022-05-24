@@ -1,4 +1,5 @@
-﻿using PawNClaw.Data.Database;
+﻿using PawNClaw.Data.Const;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
@@ -53,12 +54,12 @@ namespace PawNClaw.Business.Services
                     {
                         throw new Exception();
                     }
-                    if (Height < (decimal)(_pet.Height + 5))
+                    if (Height < (decimal)(_pet.Height + SearchConst.HeightAdd))
                     {
-                        Height = (decimal)(_pet.Height + 5);
+                        Height = (decimal)(_pet.Height + SearchConst.HeightAdd);
                     }
 
-                    Width += (decimal)Math.Round((((double)_pet.Length) + ((double)_pet.Height)) / (5 / 2), 0);
+                    Width += (decimal)Math.Round((((double)_pet.Length) + ((double)_pet.Height)) / SearchConst.WidthRatio, 0);
                     Count += 1;
                 }
 
