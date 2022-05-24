@@ -39,7 +39,7 @@ namespace PawNClaw.Data.Database
         [StringLength(256)]
         public string Email { get; set; }
         [Column("gender")]
-        public int? Gender { get; set; }
+        public byte? Gender { get; set; }
 
         [ForeignKey(nameof(Id))]
         [InverseProperty(nameof(Account.Admin))]
