@@ -43,7 +43,8 @@ namespace PawNClaw.Business.Services
             if (Status == true)
             {
                 values = values.Where(x => x.IdNavigation.Status == true);
-            } else
+            }
+            else
             {
                 values = values.Where(x => x.IdNavigation.Status == false);
             }
@@ -57,6 +58,8 @@ namespace PawNClaw.Business.Services
                             values = values.OrderBy(d => d.Name);
                         else if (_requestParameter.dir == "desc")
                             values = values.OrderByDescending(d => d.Name);
+                        break;
+                    default:
                         break;
                 }
             }
@@ -72,12 +75,13 @@ namespace PawNClaw.Business.Services
 
             values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("MOD"));
 
-            
-
+            // lọc theo name
             if (!string.IsNullOrWhiteSpace(Name))
             {
                 values = values.Where(x => x.Name.Trim().Equals(Name));
             }
+
+            // lọc theo status
             if (Status == true)
             {
                 values = values.Where(x => x.IdNavigation.Status == true);
@@ -87,6 +91,7 @@ namespace PawNClaw.Business.Services
                 values = values.Where(x => x.IdNavigation.Status == false);
             }
 
+            // sort
             if (!string.IsNullOrWhiteSpace(sort))
             {
                 switch (sort)
@@ -109,8 +114,11 @@ namespace PawNClaw.Business.Services
                         else if (dir == "desc")
                             values = values.OrderByDescending(d => d.Email);
                         break;
+                    default:
+                        break;
                 }
-            } else
+            }
+            else
             {
                 if (dir == "asc")
                     values = values.OrderBy(d => d.Name);
