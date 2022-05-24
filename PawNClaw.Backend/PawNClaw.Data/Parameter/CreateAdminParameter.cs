@@ -11,7 +11,7 @@ namespace PawNClaw.Data.Parameter
         public string UserName { get; set; }
         public int CreatedUser { get; set; }
         public string Phone { get; set; }
-        public int Gender { get; set; }
+        public byte Gender { get; set; }
         public readonly string RoleCode = "MOD";
         public string Name { get; set; }
     }
