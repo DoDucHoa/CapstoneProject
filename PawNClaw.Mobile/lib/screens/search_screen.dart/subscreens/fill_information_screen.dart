@@ -157,6 +157,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                 const Spacer(flex: 3),
                 GestureDetector(
                   onTap: () => showCupertinoDialog(
+                      barrierDismissible: false,
                       context: context,
                       builder: (context) {
                         return ChooseLocationDialog(

@@ -1,3 +1,5 @@
+import 'cage_type.dart';
+
 class Center {
   int? _id;
   String? _name;
@@ -160,103 +162,11 @@ class Center {
   }
 }
 
-class CageTypes {
-  int? id;
-  String? typeName;
-  String? description;
-  double? height;
-  int? width;
-  double? length;
-  bool? isSingle;
-  List<Cages>? cages;
-  // double? price;
-
-  CageTypes({
-    this.id,
-    this.typeName,
-    this.description,
-    this.height,
-    this.width,
-    this.length,
-    this.isSingle,
-    this.cages,
-    // this.price
-  });
-
-  CageTypes.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    typeName = json['typeName'];
-    description = json['description'];
-    height = json['height'];
-    width = json['width'];
-    length = json['length'];
-    isSingle = json['isSingle'];
-    if (json['cages'] != null) {
-      cages = <Cages>[];
-      json['cages'].forEach((v) {
-        cages!.add(new Cages.fromJson(v));
-      });
-    }
-    // if (json['prices'] != null) {
-    //   prices = <Null>[];
-    //   json['prices'].forEach((v) {
-    //     prices!.add(new Null.fromJson(v));
-    //   });
-    // }
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['typeName'] = this.typeName;
-    data['description'] = this.description;
-    data['height'] = this.height;
-    data['width'] = this.width;
-    data['length'] = this.length;
-    data['isSingle'] = this.isSingle;
-    if (this.cages != null) {
-      data['cages'] = this.cages!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
-}
-
-class Cages {
-  String? code;
-  int? centerId;
-  String? name;
-  String? color;
-
-  Cages({
-    this.code,
-    this.centerId,
-    this.name,
-    this.color,
-  });
-
-  Cages.fromJson(Map<String, dynamic> json) {
-    code = json['code'];
-    centerId = json['centerId'];
-    name = json['name'];
-    color = json['color'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['code'] = this.code;
-    data['centerId'] = this.centerId;
-    data['name'] = this.name;
-    data['color'] = this.color;
-
-    return data;
-  }
-}
-
 class Services {
   int? id;
   String? description;
   double? sellPrice;
-  int? discountPrice;
+  double? discountPrice;
 
   Services({
     this.id,
@@ -287,7 +197,7 @@ class Supplies {
   int? id;
   String? name;
   double? sellPrice;
-  int? discountPrice;
+  double? discountPrice;
   int? quantity;
   bool? status;
   String? supplyTypeCode;

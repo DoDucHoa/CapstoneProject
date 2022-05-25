@@ -87,18 +87,14 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
                       input.length == 6
                           ? setState(() {
                               isValid = true;
-
                             })
                           : setState(() {
                               isValid = false;
                             });
-                            
                     },
                     // onCompleted: ((value) {
                     //   print(value)
                     // }),
-                    
-                    
                   ),
                   Text(
                     widget.error ?? "",

@@ -25,14 +25,7 @@ class HomeBody extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ConfirmBooking(),
-                  ),
-                );
-              },
+              onTap: () {},
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: width * 0.05),
                 width: width * 0.85,

@@ -37,7 +37,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           event.cityCode,
           event.districtCode,
           event.pageNumber);
-      center != null ? emit(SearchCompleted(center)) : emit(Loading());
+      center != null
+          ? emit(SearchCompleted(
+              center, event.requests, event.timeFrom, event.timeTo))
+          : emit(Loading());
     });
   }
 }

@@ -48,8 +48,8 @@ class CenterRepository implements BaseCenterRepository {
   }
 
   @override
-  Future<Center?> getCenterDetail(
-      List<List<Pet>> requests, int centerId) async {
+  Future<Center?> getCenterDetail(List<List<Pet>> requests, int centerId,
+      DateTime timeFrom, DateTime timeTo) async {
     // TODO: implement getCenterDetail
     final pref = await SharedPreferences.getInstance();
     try {
@@ -61,13 +61,16 @@ class CenterRepository implements BaseCenterRepository {
         "_petRequests": [
           for (var items in requests) [for (var item in items) item.toJson()]
         ],
+        "startBooking": DateFormat('yyyy-MM-dd HH:mm:ss').format(timeFrom),
+        "endBooking": DateFormat('yyyy-MM-dd HH:mm:ss').format(timeTo),
       };
       const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/petcenters/center_detail";
       var response = await _dio.post(_url, data: requestBody);
-      final centers = Center.fromJson(response.data);
-      print(centers);
-      return centers;
+      final center = Center.fromJson(response.data);
+      print(requestBody);
+      print(response.data);
+      return center;
     } catch (e) {
       print(e);
       return null;
