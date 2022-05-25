@@ -54,12 +54,13 @@ namespace PawNClaw.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromBody] BookingControllerParameter bookingControllerParameter)
         {
-            await _bookingService.CreateBooking(bookingControllerParameter.bookingCreateParameter,
+            var data = await _bookingService.CreateBooking(bookingControllerParameter.bookingCreateParameter,
                 bookingControllerParameter.bookingDetailCreateParameters,
                 bookingControllerParameter.serviceOrderCreateParameters,
                 bookingControllerParameter.supplyOrderCreateParameters);
 
-            return Ok();
+            return Ok(data);
+
         }
     }
 }

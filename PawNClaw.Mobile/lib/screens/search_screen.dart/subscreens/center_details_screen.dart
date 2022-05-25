@@ -107,9 +107,6 @@ class _CenterDetailsState extends State<CenterDetails> {
                                   //   center.![0].picture.toString(),
                                   //   width: width,
                                   //   fit: BoxFit.cover,
-
-                                  ////campaign name
-
                                   Container(
                                     height: appbarSize - 5,
                                     decoration: const BoxDecoration(
@@ -149,6 +146,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                             children: [
                                               SizedBox(
                                                 height: 65 / 2 - 10,
+
                                               ),
                                               Row(
                                                 children: [
@@ -325,7 +323,6 @@ class _CenterDetailsState extends State<CenterDetails> {
                                 bottomRight: Radius.circular(10)),
                           ),
                         ),
-
                         //buildContent(context)
                       ];
                     },
@@ -434,8 +431,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                 ),
                                 shrinkWrap: true,
                                 physics: ClampingScrollPhysics(),
-                              ),
-                              //cageTypeList(FAKE_CAGETYPES, context),
+                              ),        //cageTypeList(FAKE_CAGETYPES, context),
                             ),
                           ),
                           SingleChildScrollView(

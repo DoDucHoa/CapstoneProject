@@ -9,7 +9,6 @@ import 'package:pawnclaw_mobile_application/models/pet.dart';
 import 'package:pawnclaw_mobile_application/repositories/booking.dart/booking_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/booking_screen/components/booking_item_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/booking_success_screen.dart';
-
 import 'components/booking_cage_card.dart';
 
 class ConfirmBooking extends StatefulWidget {
@@ -462,6 +461,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                             await BookingRepository().createBooking(request);
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => BookingSuccess()));
+
                         //booking button
                       },
                       style: ButtonStyle(

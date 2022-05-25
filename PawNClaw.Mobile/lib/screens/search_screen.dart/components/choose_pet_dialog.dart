@@ -61,7 +61,7 @@ class _ChoosePetDialogState extends State<ChoosePetDialog> {
                   items: pets.map((e) {
                     return DropdownMenuItem(
                       child: SizedBox(
-                        height: height * 0.25,
+                        height: height * 0.3,
                         child: PetBubbleCard(width: width, pet: e),
                       ),
                       value: e,

@@ -1,5 +1,5 @@
-import 'dart:ui';
 
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
 
