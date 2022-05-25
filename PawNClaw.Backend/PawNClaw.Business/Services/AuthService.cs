@@ -1,4 +1,5 @@
 ﻿using FirebaseAdmin.Auth;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
@@ -27,10 +28,12 @@ namespace PawNClaw.Business.Services
         private readonly ICustomerRepository _customerRepository;
         private readonly IPhotoRepository _photoRepository;
 
+        private readonly ApplicationDbContext _db;
+
         public AuthService(IAccountRepository userInfoRepository, IRoleRepository roleRepository,
             IAdminRepository adminRepository, IOwnerRepository ownerRepository,
             IStaffRepository staffRepository, ICustomerRepository customerRepository,
-            IPhotoRepository photoRepository)
+            IPhotoRepository photoRepository, ApplicationDbContext db)
         {
             _repository = userInfoRepository;
             _roleRepository = roleRepository;
@@ -39,10 +42,11 @@ namespace PawNClaw.Business.Services
             _staffRepository = staffRepository;
             _customerRepository = customerRepository;
             _photoRepository = photoRepository;
+            _db = db;
         }
 
         //register
-        public async Task<LoginViewModel> Register(LoginRequestModel loginrequestmodel, AccountRequestParameter _account, CustomerRequestParameter _customer)
+        public async Task<LoginViewModel> Register(LoginRequestModel loginrequestmodel, AccountCreateParameter _account, CustomerCreateParameter _customer)
         {
 
             var userViewModel = await VerifyFirebaseTokenIdRegister(loginrequestmodel.IdToken, _account, _customer);
@@ -61,7 +65,7 @@ namespace PawNClaw.Business.Services
         }
 
         //verify for register
-        public async Task<LoginViewModel> VerifyFirebaseTokenIdRegister(string idtoken, AccountRequestParameter _account, CustomerRequestParameter _customer)
+        public async Task<LoginViewModel> VerifyFirebaseTokenIdRegister(string idtoken, AccountCreateParameter _account, CustomerCreateParameter _customer)
         {
             FirebaseToken decodedtoken;
             try
@@ -86,26 +90,30 @@ namespace PawNClaw.Business.Services
 
             Customer customerToDb = new Customer();
             customerToDb.Name = _customer.Name;
-            customerToDb.Birth = _customer.Birth;
 
-            try
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                if (_repository.GetFirstOrDefault(x => x.UserName.Trim().Equals(accountToDb.UserName)) != null
-                    || _repository.GetFirstOrDefault(x => x.Phone.Trim().Equals(accountToDb.Phone)) != null)
+                try
                 {
+                    if (_repository.GetFirstOrDefault(x => x.UserName.Trim().Equals(accountToDb.UserName)) != null
+                        || _repository.GetFirstOrDefault(x => x.Phone.Trim().Equals(accountToDb.Phone)) != null)
+                    {
+                        throw new Exception();
+                    }
+                    _repository.Add(accountToDb);
+                    _repository.SaveDbChange();
+                    customerToDb.Id = accountToDb.Id;
+                    _customerRepository.Add(customerToDb);
+                    _customerRepository.SaveDbChange();
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
                     throw new Exception();
                 }
-                _repository.Add(accountToDb);
-                _repository.SaveDbChange();
-                customerToDb.Id = accountToDb.Id;
-                _customerRepository.Add(customerToDb);
-                _customerRepository.SaveDbChange();
             }
-            catch
-            {
-                throw new Exception();
-            }
-
 
             // query account table in db
             var account = new Account();
