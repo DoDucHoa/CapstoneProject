@@ -1,4 +1,5 @@
 import 'package:pawnclaw_mobile_application/models/review.dart';
+import 'package:pawnclaw_mobile_application/models/voucher.dart';
 
 import 'cage_type.dart';
 import 'cage.dart';
@@ -37,3 +38,10 @@ List<Review> FAKE_REVIEWS = [
 
 ]
 ;
+
+List<Voucher> FAKE_VOUCHERS = [
+  Voucher(value: 10000, minCondition: 50000, startDate: '23/05/2022', expireDate: '28/05/2022'),
+  Voucher(value: 20000, minCondition: 70000, startDate: '23/05/2022', expireDate: '28/05/2022'),
+  Voucher(value: 50000, minCondition: 150000, startDate: '23/05/2022', expireDate: '28/05/2022'),
+  Voucher(value: 80000, minCondition: 250000, startDate: '23/05/2022', expireDate: '28/05/2022'),
+];

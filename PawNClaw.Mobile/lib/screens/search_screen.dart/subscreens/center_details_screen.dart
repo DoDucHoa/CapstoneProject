@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/common/constants.dart';
@@ -5,6 +6,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pawnclaw_mobile_application/models/fake_data.dart';
 import 'package:pawnclaw_mobile_application/models/cage.dart';
 import 'package:pawnclaw_mobile_application/models/cage_type.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/center_slider.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/center_info_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/confirm_booking.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/vouchers_screen.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../components/catergory_card.dart';
 import '../components/review_card.dart';
@@ -22,6 +28,8 @@ class CenterDetails extends StatelessWidget {
     double appbarSize = height * 0.5;
 
     int cartcount = 2;
+
+    int activeIndex = 0;
 
     return Scaffold(
         backgroundColor: frameColor,
@@ -177,7 +185,12 @@ class CenterDetails extends StatelessWidget {
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             10))),
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Vouchers()));
+                                            },
                                             icon: Image.asset(
                                               'lib/assets/coupon.png',
                                               width: 30,
@@ -223,7 +236,11 @@ class CenterDetails extends StatelessWidget {
                       IconButton(
                           onPressed: () {}, icon: Icon(Icons.search_rounded)),
                       IconButton(
-                          onPressed: () {}, icon: Icon(Icons.info_outline)),
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => CenterInfo(center: center,)));
+                          },
+                          icon: Icon(Icons.info_outline)),
                     ],
                     bottom: TabBar(
                       tabs: [
@@ -261,27 +278,43 @@ class CenterDetails extends StatelessWidget {
                   child: TabBarView(children: [
                     SingleChildScrollView(
                         scrollDirection: Axis.vertical,
-                        child: Container(
-                            child:
-                                //       Wrap(
-                                // spacing: 12,
-                                // runSpacing: 8,
-                                // children:
-                                ListView.separated(
-                          itemBuilder: (context, index) {
-                            return CatergoryCard(
-                              id: FAKE_CAGETYPES[index].id,
-                              name: FAKE_CAGETYPES[index].name,
-                              size: size,
-                            );
-                          },
-                          itemCount: FAKE_CAGETYPES.length,
-                          separatorBuilder: (context, index) => const SizedBox(
-                            height: 8,
-                          ),
-                          shrinkWrap: true,
-                          physics: ClampingScrollPhysics(),
-                        )
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              //       Wrap(
+                              // spacing: 12,
+                              // runSpacing: 8,
+                              // children:
+                              ListView.separated(
+                                itemBuilder: (context, index) {
+                                  return CatergoryCard(
+                                    id: FAKE_CAGETYPES[index].id,
+                                    name: FAKE_CAGETYPES[index].name,
+                                    size: size,
+                                  );
+                                },
+                                itemCount: FAKE_CAGETYPES.length,
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(
+                                  height: 8,
+                                ),
+                                shrinkWrap: true,
+                                physics: ClampingScrollPhysics(),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(15, 15, 10, 10),
+                                child: Text(
+                                  'CƠ SỞ VẬT CHẤT',
+                                  style: TextStyle(
+                                      color: lightFontColor,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                              ),
+
+                              CenterSlider(size: size),
+                              SizedBox(height: 80)
+                            ]
                             //cageTypeList(FAKE_CAGETYPES, context),
                             )),
                     Text(
@@ -300,10 +333,12 @@ class CenterDetails extends StatelessWidget {
                                 // children:
                                 ListView.separated(
                           itemBuilder: (context, index) {
-                            return ReviewCard(review:FAKE_REVIEWS[index]);
+                            return ReviewCard(review: FAKE_REVIEWS[index]);
                           },
                           itemCount: FAKE_REVIEWS.length,
-                          separatorBuilder: (context, index) => const SizedBox(height: 8,),
+                          separatorBuilder: (context, index) => const SizedBox(
+                            height: 8,
+                          ),
                           shrinkWrap: true,
                           physics: ClampingScrollPhysics(),
                         )
@@ -311,14 +346,13 @@ class CenterDetails extends StatelessWidget {
                             )),
                   ])),
             )),
-        
         floatingActionButton: FloatingActionButton.extended(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             onPressed: () {
-              //booking button
+                Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ConfirmBooking()));
             },
-            
             icon: Container(
                 padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5 / 2),
                 decoration: BoxDecoration(
@@ -344,7 +378,6 @@ class CenterDetails extends StatelessWidget {
               ],
             ))));
   }
-
 }
 
 class LineIndicator extends Decoration {

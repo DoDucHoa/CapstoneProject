@@ -48,10 +48,11 @@ class CatergoryCard extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return CageCard(cage: cageslist[index]);
                   },
+                  itemCount: cageslist.length,
                   separatorBuilder: (context, index) => const Divider(
                         color: lightFontColor,
                       ),
-                  itemCount: cageslist.length,
+                  
                   shrinkWrap: true,
                   physics: ClampingScrollPhysics(),)
               // Column(

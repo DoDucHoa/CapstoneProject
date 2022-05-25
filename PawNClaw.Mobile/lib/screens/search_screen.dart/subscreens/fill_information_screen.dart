@@ -49,7 +49,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: backgroundColor,
+          backgroundColor: frameColor,
           appBar: AppBar(
             title: Text(
               "Thông tin đặt chỗ",
@@ -91,7 +91,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                 Padding(
                   padding: EdgeInsets.all(width * 0.01),
                   child: Text(
-                    "để chúng tôi giúp bạn tìm ra trung tâm phù hợp",
+                    "để chúng tôi giúp bạn tìm kiếm trung tâm phù hợp",
                     style: TextStyle(
                       color: lightFontColor,
                       fontSize: width * largeFontRate,
