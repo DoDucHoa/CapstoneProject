@@ -83,13 +83,13 @@ namespace PawNClaw.Business.Services
         }
 
         public async Task<Booking> CreateBooking(BookingCreateParameter bookingCreateParameter, 
+
             List<BookingDetailCreateParameter> bookingDetailCreateParameters,
             List<ServiceOrderCreateParameter> serviceOrderCreateParameters,
             List<SupplyOrderCreateParameter> supplyOrderCreateParameters)
         {
 
             int Id = 0;
-
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 //Create Booking
@@ -110,7 +110,7 @@ namespace PawNClaw.Business.Services
                     _bookingRepository.Add(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();
                     Id = bookingToDb.Id;
-                }
+}
                 catch
                 {
                     transaction.Rollback();
@@ -239,6 +239,6 @@ namespace PawNClaw.Business.Services
             var values = _bookingRepository.GetBookingForCustomer(Id);
 
             return values;
-        }
+}
     }
 }

@@ -106,7 +106,7 @@ namespace PawNClaw.Data.Repository
                         CenterId = bookingdetail.CenterId,
                         Duration = bookingdetail.Duration,
                         Note = bookingdetail.Note,
-                        PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
+                   PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
                         .Select(pet => new PetBookingDetail { 
                             BookingId = pet.BookingId,
                             Line = pet.Line,

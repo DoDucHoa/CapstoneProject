@@ -22,7 +22,6 @@ class _VouchersState extends State<Vouchers> {
           shadowColor: Colors.white,
           title: Text(
             'Ưu đãi dành cho bạn',
-            
           ),
           backgroundColor: Colors.white,
         ),
@@ -30,20 +29,20 @@ class _VouchersState extends State<Vouchers> {
           scrollDirection: Axis.vertical,
           child: Padding(
             padding: EdgeInsets.all(10),
-            child: ListView.separated(
-              itemBuilder: ((context, index) {
-                return VoucherCard(
-                  voucher: FAKE_VOUCHERS[index],
-                  size: 180,
-                );
-              }),
-              itemCount: FAKE_VOUCHERS.length,
-              separatorBuilder: (context, index) => const SizedBox(
-                height: 8,
-              ),
-              shrinkWrap: true,
-              physics: ClampingScrollPhysics(),
-            ),
+            // child: ListView.separated(
+            //   itemBuilder: ((context, index) {
+            //     return VoucherCard(
+            //       voucher: FAKE_VOUCHERS[index],
+            //       size: 180,
+            //     );
+            //   }),
+            //   itemCount: FAKE_VOUCHERS.length,
+            //   separatorBuilder: (context, index) => const SizedBox(
+            //     height: 8,
+            //   ),
+            //   shrinkWrap: true,
+            //   physics: ClampingScrollPhysics(),
+            // ),
           ),
         ));
   }

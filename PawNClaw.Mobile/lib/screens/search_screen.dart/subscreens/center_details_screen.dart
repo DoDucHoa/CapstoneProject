@@ -1,31 +1,18 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/booking/booking_bloc.dart';
-import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
-import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/common/constants.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pawnclaw_mobile_application/models/fake_data.dart';
-import 'package:pawnclaw_mobile_application/models/cage.dart';
-import 'package:pawnclaw_mobile_application/models/cage_type.dart';
-import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/center_slider.dart';
-import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/center_info_screen.dart';
-import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/confirm_booking.dart';
-import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/vouchers_screen.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
-import 'package:pawnclaw_mobile_application/repositories/booking.dart/booking_repository.dart';
 import 'package:pawnclaw_mobile_application/repositories/center/center_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/booking_screen/confirm_booking.dart';
-import 'package:pawnclaw_mobile_application/screens/home_screen/HomeScreen.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/center_slider.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/item_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/supplytype_card.dart';
-import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/cage_details_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/service_detail_screen.dart';
-import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/supply_detail_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/vouchers_screen.dart';
 
 import '../components/catergory_card.dart';
 import '../components/review_card.dart';
@@ -120,9 +107,6 @@ class _CenterDetailsState extends State<CenterDetails> {
                                   //   center.![0].picture.toString(),
                                   //   width: width,
                                   //   fit: BoxFit.cover,
-
-                                  ////campaign name
-
                                   Container(
                                     height: appbarSize - 5,
                                     decoration: const BoxDecoration(
@@ -162,6 +146,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                             children: [
                                               SizedBox(
                                                 height: 65 / 2 - 10,
+
                                               ),
                                               Row(
                                                 children: [
@@ -256,7 +241,11 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                                   BorderRadius
                                                                       .circular(
                                                                           10))),
-                                                  onPressed: () {},
+                                                  onPressed: () => Navigator.of(
+                                                          context)
+                                                      .push(MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              Vouchers())),
                                                   icon: Image.asset(
                                                     'lib/assets/coupon.png',
                                                     width: 30,
@@ -264,7 +253,6 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                   label: Container(
                                                       padding:
                                                           EdgeInsets.fromLTRB(
-
                                                               10, 15, 5, 15),
                                                       child: Row(
                                                         children: [
@@ -335,8 +323,6 @@ class _CenterDetailsState extends State<CenterDetails> {
                                 bottomRight: Radius.circular(10)),
                           ),
                         ),
-
-
                         //buildContent(context)
                       ];
                     },
@@ -347,34 +333,50 @@ class _CenterDetailsState extends State<CenterDetails> {
                         child: TabBarView(children: [
                           SingleChildScrollView(
                               scrollDirection: Axis.vertical,
-                              child: Container(
-                                  child:
-                                      //       Wrap(
-                                      // spacing: 12,
-                                      // runSpacing: 8,
-                                      // children:
-                                      ListView.separated(
-                                itemBuilder: (context, index) {
-                                  var cageType = center?.cageTypes?[index];
-                                  // return CatergoryCard(
-                                  //   cageType: cageTypes[index],
-                                  //   size: size,
-                                  // );
-                                  return Padding(
-                                      padding: const EdgeInsets.all(20),
-                                      child: CatergoryCard(
-                                          cageType: cageType!, size: size));
-                                },
-                                itemCount: center?.cageTypes?.length ?? 0,
-                                separatorBuilder: (context, index) =>
-                                    const SizedBox(
-                                  height: 8,
-                                ),
-                                shrinkWrap: true,
-                                physics: ClampingScrollPhysics(),
-                              )
-                                  //cageTypeList(FAKE_CAGETYPES, context),
-                                  )),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      child:
+                                          //       Wrap(
+                                          // spacing: 12,
+                                          // runSpacing: 8,
+                                          // children:
+                                          ListView.separated(
+                                    itemBuilder: (context, index) {
+                                      var cageType = center?.cageTypes?[index];
+                                      // return CatergoryCard(
+                                      //   cageType: cageTypes[index],
+                                      //   size: size,
+                                      // );
+                                      return CatergoryCard(
+                                          cageType: cageType!, size: size);
+                                    },
+                                    itemCount: center?.cageTypes?.length ?? 0,
+                                    separatorBuilder: (context, index) =>
+                                        const SizedBox(
+                                      height: 8,
+                                    ),
+                                    shrinkWrap: true,
+                                    physics: ClampingScrollPhysics(),
+                                  )
+                                      //cageTypeList(FAKE_CAGETYPES, context),
+                                      ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.fromLTRB(15, 15, 10, 10),
+                                    child: Text(
+                                      'CƠ SỞ VẬT CHẤT',
+                                      style: TextStyle(
+                                          color: lightFontColor,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                  ),
+                                  CenterSlider(size: size),
+                                  SizedBox(height: 80)
+                                ],
+                              )),
                           SingleChildScrollView(
                             scrollDirection: Axis.vertical,
                             child: Container(
@@ -386,12 +388,10 @@ class _CenterDetailsState extends State<CenterDetails> {
                                   ListView.separated(
                                 itemBuilder: (context, index) {
                                   var supplies = center?.supplies;
-                                  return Padding(
-                                      padding: const EdgeInsets.all(20),
-                                      child: SupplyTypeCard(
-                                          supplyType: supplyType[index],
-                                          size: size,
-                                          supplies: supplies ?? []));
+                                  return SupplyTypeCard(
+                                      supplyType: supplyType[index],
+                                      size: size,
+                                      supplies: supplies ?? []);
                                 },
                                 itemCount: supplyType.length,
                                 separatorBuilder: (context, index) =>
@@ -408,6 +408,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                           SingleChildScrollView(
                             scrollDirection: Axis.vertical,
                             child: Container(
+                              color: Colors.white,
                               child:
                                   //       Wrap(
                                   // spacing: 12,
@@ -416,16 +417,11 @@ class _CenterDetailsState extends State<CenterDetails> {
                                   ListView.separated(
                                 itemBuilder: (context, index) {
                                   var service = center?.services?[index];
-                                  return Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: ItemCard(
-                                      name: service?.description ?? "",
-                                      sellPrice: service?.sellPrice ?? 0,
-                                      discountPrice:
-                                          service?.discountPrice ?? 0,
-                                      redirect:
-                                          ServiceDetails(service: service!),
-                                    ),
+                                  return ItemCard(
+                                    name: service?.description ?? "",
+                                    sellPrice: service?.sellPrice ?? 0,
+                                    discountPrice: service?.discountPrice ?? 0,
+                                    redirect: ServiceDetails(service: service!),
                                   );
                                 },
                                 itemCount: center?.services?.length ?? 0,
@@ -435,8 +431,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                 ),
                                 shrinkWrap: true,
                                 physics: ClampingScrollPhysics(),
-                              ),
-                              //cageTypeList(FAKE_CAGETYPES, context),
+                              ),        //cageTypeList(FAKE_CAGETYPES, context),
                             ),
                           ),
                           SingleChildScrollView(
