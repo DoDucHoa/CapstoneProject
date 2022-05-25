@@ -82,11 +82,13 @@ namespace PawNClaw.Business.Services
             paging.PageSize);
         }
 
-        public async Task CreateBooking(BookingCreateParameter bookingCreateParameter, 
+        public async Task<Booking> CreateBooking(BookingCreateParameter bookingCreateParameter, 
             List<BookingDetailCreateParameter> bookingDetailCreateParameters,
             List<ServiceOrderCreateParameter> serviceOrderCreateParameters,
             List<SupplyOrderCreateParameter> supplyOrderCreateParameters)
         {
+
+            int Id = 0;
 
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
@@ -107,6 +109,7 @@ namespace PawNClaw.Business.Services
                 {
                     _bookingRepository.Add(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();
+                    Id = bookingToDb.Id;
                 }
                 catch
                 {
@@ -233,7 +236,10 @@ namespace PawNClaw.Business.Services
             }
 
             //Return Booking
-            //var values = _bookingRepository.GetBookingForCustomer(bookingToDb.Id);
+
+            var values = _bookingRepository.GetBookingForCustomer(Id);
+
+            return values;
         }
     }
 }

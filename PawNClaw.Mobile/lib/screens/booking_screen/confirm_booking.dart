@@ -8,7 +8,10 @@ import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/models/pet.dart';
 import 'package:pawnclaw_mobile_application/repositories/booking.dart/booking_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/booking_screen/components/booking_item_card.dart';
+<<<<<<< HEAD
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/booking_success_screen.dart';
+=======
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
 
 import 'components/booking_cage_card.dart';
 
@@ -460,8 +463,12 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                             (state as BookingUpdated).booking;
                         var result =
                             await BookingRepository().createBooking(request);
+<<<<<<< HEAD
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => BookingSuccess()));
+=======
+                        print(result);
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
                         //booking button
                       },
                       style: ButtonStyle(

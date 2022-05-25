@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 import 'dart:ui';
 
+=======
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
 import 'package:flutter/material.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
 
@@ -15,6 +18,7 @@ class PetBubbleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     double height = MediaQuery.of(context).size.height;
     return SizedBox(
       height: height * 0.15,
@@ -34,6 +38,20 @@ class PetBubbleCard extends StatelessWidget {
           ),
         ],
       ),
+=======
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.all(width * 0.02),
+          child: CircleAvatar(
+            backgroundImage: AssetImage('lib/assets/cat_avatar0.png'),
+          ),
+        ),
+        Text(pet.name!),
+      ],
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
     );
   }
 }

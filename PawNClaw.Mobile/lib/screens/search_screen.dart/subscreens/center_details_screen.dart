@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/booking/booking_bloc.dart';
+<<<<<<< HEAD
+=======
+import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
+import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/fake_data.dart';
@@ -13,6 +18,20 @@ import 'package:pawnclaw_mobile_application/screens/search_screen.dart/component
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/supplytype_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/service_detail_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/vouchers_screen.dart';
+<<<<<<< HEAD
+=======
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:pawnclaw_mobile_application/models/pet.dart';
+import 'package:pawnclaw_mobile_application/repositories/booking.dart/booking_repository.dart';
+import 'package:pawnclaw_mobile_application/repositories/center/center_repository.dart';
+import 'package:pawnclaw_mobile_application/screens/booking_screen/confirm_booking.dart';
+import 'package:pawnclaw_mobile_application/screens/home_screen/HomeScreen.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/item_card.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/supplytype_card.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/cage_details_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/service_detail_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/supply_detail_screen.dart';
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
 
 import '../components/catergory_card.dart';
 import '../components/review_card.dart';
@@ -107,9 +126,15 @@ class _CenterDetailsState extends State<CenterDetails> {
                                   //   center.![0].picture.toString(),
                                   //   width: width,
                                   //   fit: BoxFit.cover,
+<<<<<<< HEAD
 
                                   ////campaign name
 
+=======
+
+                                  ////campaign name
+
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
                                   Container(
                                     height: appbarSize - 5,
                                     decoration: const BoxDecoration(
@@ -149,6 +174,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                             children: [
                                               SizedBox(
                                                 height: 65 / 2 - 10,
+<<<<<<< HEAD
                                               ),
                                               Row(
                                                 children: [
@@ -189,6 +215,48 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                   )
                                                 ],
                                               ),
+=======
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: width * 2 / 3,
+                                                    child: Text(
+                                                      center?.name ?? "",
+                                                      style: const TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(child: SizedBox()),
+                                                  Icon(
+                                                    Icons.star_rate_rounded,
+                                                    color: lightPrimaryColor,
+                                                  ),
+                                                  Text(
+                                                    center?.rating!
+                                                            .toString() ??
+                                                        "",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                                  ),
+                                                  Text(
+                                                    ' (' +
+                                                        (center?.rating!
+                                                                .toString() ??
+                                                            "") +
+                                                        ')',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        color: lightFontColor),
+                                                  )
+                                                ],
+                                              ),
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
                                               SizedBox(
                                                 height: 5,
                                               ),
@@ -243,11 +311,15 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                                   BorderRadius
                                                                       .circular(
                                                                           10))),
+<<<<<<< HEAD
                                                   onPressed: () => Navigator.of(
                                                           context)
                                                       .push(MaterialPageRoute(
                                                           builder: (context) =>
                                                               Vouchers())),
+=======
+                                                  onPressed: () {},
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
                                                   icon: Image.asset(
                                                     'lib/assets/coupon.png',
                                                     width: 30,
@@ -255,6 +327,10 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                   label: Container(
                                                       padding:
                                                           EdgeInsets.fromLTRB(
+<<<<<<< HEAD
+=======
+
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
                                                               10, 15, 5, 15),
                                                       child: Row(
                                                         children: [
@@ -326,6 +402,10 @@ class _CenterDetailsState extends State<CenterDetails> {
                           ),
                         ),
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
                         //buildContent(context)
                       ];
                     },
@@ -336,6 +416,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                         child: TabBarView(children: [
                           SingleChildScrollView(
                               scrollDirection: Axis.vertical,
+<<<<<<< HEAD
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -397,12 +478,34 @@ class _CenterDetailsState extends State<CenterDetails> {
                                       supplies: supplies ?? []);
                                 },
                                 itemCount: supplyType.length,
+=======
+                              child: Container(
+                                  child:
+                                      //       Wrap(
+                                      // spacing: 12,
+                                      // runSpacing: 8,
+                                      // children:
+                                      ListView.separated(
+                                itemBuilder: (context, index) {
+                                  var cageType = center?.cageTypes?[index];
+                                  // return CatergoryCard(
+                                  //   cageType: cageTypes[index],
+                                  //   size: size,
+                                  // );
+                                  return Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: CatergoryCard(
+                                          cageType: cageType!, size: size));
+                                },
+                                itemCount: center?.cageTypes?.length ?? 0,
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
                                 separatorBuilder: (context, index) =>
                                     const SizedBox(
                                   height: 8,
                                 ),
                                 shrinkWrap: true,
                                 physics: ClampingScrollPhysics(),
+<<<<<<< HEAD
                               ),
 
                               //cageTypeList(FAKE_CAGETYPES, context),
@@ -412,6 +515,61 @@ class _CenterDetailsState extends State<CenterDetails> {
                             scrollDirection: Axis.vertical,
                             child: Container(
                               color: Colors.white,
+=======
+                              )
+                                  //cageTypeList(FAKE_CAGETYPES, context),
+                                  )),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Container(
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
+                              child:
+                                  //       Wrap(
+                                  // spacing: 12,
+                                  // runSpacing: 8,
+                                  // children:
+                                  ListView.separated(
+                                itemBuilder: (context, index) {
+<<<<<<< HEAD
+                                  var service = center?.services?[index];
+                                  return ItemCard(
+                                    name: service?.description ?? "",
+                                    sellPrice: service?.sellPrice ?? 0,
+                                    discountPrice: service?.discountPrice ?? 0,
+                                    redirect: ServiceDetails(service: service!),
+                                  );
+                                },
+                                itemCount: center?.services?.length ?? 0,
+=======
+                                  var supplies = center?.supplies;
+                                  return Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: SupplyTypeCard(
+                                          supplyType: supplyType[index],
+                                          size: size,
+                                          supplies: supplies ?? []));
+                                },
+                                itemCount: supplyType.length,
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(
+                                  height: 8,
+                                ),
+                                shrinkWrap: true,
+                                physics: ClampingScrollPhysics(),
+                              ),
+<<<<<<< HEAD
+=======
+
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
+                              //cageTypeList(FAKE_CAGETYPES, context),
+                            ),
+                          ),
+                          SingleChildScrollView(
+<<<<<<< HEAD
+=======
+                            scrollDirection: Axis.vertical,
+                            child: Container(
                               child:
                                   //       Wrap(
                                   // spacing: 12,
@@ -420,11 +578,16 @@ class _CenterDetailsState extends State<CenterDetails> {
                                   ListView.separated(
                                 itemBuilder: (context, index) {
                                   var service = center?.services?[index];
-                                  return ItemCard(
-                                    name: service?.description ?? "",
-                                    sellPrice: service?.sellPrice ?? 0,
-                                    discountPrice: service?.discountPrice ?? 0,
-                                    redirect: ServiceDetails(service: service!),
+                                  return Padding(
+                                    padding: const EdgeInsets.all(20),
+                                    child: ItemCard(
+                                      name: service?.description ?? "",
+                                      sellPrice: service?.sellPrice ?? 0,
+                                      discountPrice:
+                                          service?.discountPrice ?? 0,
+                                      redirect:
+                                          ServiceDetails(service: service!),
+                                    ),
                                   );
                                 },
                                 itemCount: center?.services?.length ?? 0,
@@ -439,6 +602,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                             ),
                           ),
                           SingleChildScrollView(
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
                               scrollDirection: Axis.vertical,
                               child: Container(
                                   child:

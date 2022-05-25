@@ -34,7 +34,11 @@ class ItemCard extends StatelessWidget {
                   child: redirect,
                 ))),
         child: Container(
+<<<<<<< HEAD
           padding: EdgeInsets.symmetric(horizontal: 10),
+=======
+          padding: EdgeInsets.symmetric(vertical: 10),
+>>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
           child: Stack(children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
