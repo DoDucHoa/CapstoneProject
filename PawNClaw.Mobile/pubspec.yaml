@@ -51,6 +51,8 @@ dependencies:
   carousel_slider:
   smooth_page_indicator:
   readmore:
+  im_stepper:
+  percent_indicator:
   
 dev_dependencies:
   flutter_test:

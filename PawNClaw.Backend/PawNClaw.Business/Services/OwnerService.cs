@@ -1,13 +1,17 @@
 ﻿using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace PawNClaw.Business.Services
 {
     public class OwnerService
     {
-        private IOwnerRepository _ownerRepository;
+        IOwnerRepository _ownerRepository;
 
         public OwnerService(IOwnerRepository ownerRepository)
         {
@@ -47,10 +51,9 @@ namespace PawNClaw.Business.Services
         }
 
         //Get Id
-        public Owner GetById(int id)
+        public Owner GetOwnerById(int id)
         {
             var value = _ownerRepository.GetFirstOrDefault(x => x.Id == id);
-
             return value;
         }
 

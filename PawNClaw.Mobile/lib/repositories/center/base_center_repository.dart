@@ -9,4 +9,6 @@ abstract class BaseCenterRepository {
       String city,
       String district,
       int PageNumber);
+  Future<Center?> getCenterDetail(List<List<Pet>> requests, int centerId,
+      DateTime timeFrom, DateTime timeTo);
 }

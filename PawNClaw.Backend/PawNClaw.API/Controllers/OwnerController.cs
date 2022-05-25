@@ -1,8 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
+using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PawNClaw.API.Controllers
 {
@@ -12,7 +19,6 @@ namespace PawNClaw.API.Controllers
     public class OwnerController : ControllerBase
     {
         private readonly OwnerService _OwnerService;
-
         public OwnerController(OwnerService OwnerService)
         {
             _OwnerService = OwnerService;
@@ -34,25 +40,25 @@ namespace PawNClaw.API.Controllers
             };
             return Ok(new { data, metadata });
         }
+        
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,Mod")]
+        public IActionResult GetOwnerById(int id)
+        {
+            var data = _OwnerService.GetOwnerById(id);
+            return Ok(data);
+        }
+        /*
 
         [HttpPost]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Add([FromBody] CreateOwnerParameter owner)
+        public IActionResult Add([FromBody] CreateAdminParameter admin)
         {
-            //if (_OwnerService.Add(owner) != -1)
-            //{
-            //    return Ok();
-            //}
+            if (_OwnerService.Add(admin) != -1)
+            {
+                return Ok();
+            }
             return BadRequest();
-        }
-
-        /*
-        [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Mod")]
-        public IActionResult GetAdminById(int id)
-        {
-            var data = _OwnerService.GetAdminById(id);
-            return Ok(data);
         }
 
         [HttpPut("{id}")]
@@ -80,6 +86,7 @@ namespace PawNClaw.API.Controllers
             }
             return BadRequest();
         }
+
 
         [HttpPut("restore/{id}")]
         [Authorize(Roles = "Admin,Mod")]

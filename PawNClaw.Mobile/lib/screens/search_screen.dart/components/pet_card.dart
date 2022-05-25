@@ -26,29 +26,30 @@ class _PetCardState extends State<PetCard> {
     double width = MediaQuery.of(context).size.width;
     return Stack(
       children: [
-        SizedBox(
-          width: width,
-          height: height * 0.2,
-        ),
+        // SizedBox(
+        //   width: width,
+        //   height: height * 0.2,
+        // ),
         Container(
           margin: EdgeInsets.symmetric(
-            horizontal: width * 0.1,
-            vertical: width * 0.1,
+            horizontal: width * smallPadRate,
+            vertical: width * extraSmallPadRate,
           ),
           padding: EdgeInsets.only(
-            left: width * 0.415,
-            top: width * 0.015,
+            left: width * smallPadRate * 2 + width * 0.2,
+            top: width * smallPadRate,
             bottom: width * 0.015,
           ),
-          height: width * 0.3,
+          height: width * 0.5,
           width: width,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(15),
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 widget.pet.name!,
@@ -58,6 +59,9 @@ class _PetCardState extends State<PetCard> {
                   color: primaryFontColor,
                 ),
               ),
+              SizedBox(
+                height: 5,
+              ),
               Text(
                 widget.pet.breedName!,
                 style: TextStyle(
@@ -65,6 +69,9 @@ class _PetCardState extends State<PetCard> {
                   fontWeight: FontWeight.w300,
                   color: lightFontColor,
                 ),
+              ),
+              SizedBox(
+                height: 10,
               ),
               RichText(
                 text: TextSpan(
@@ -87,63 +94,64 @@ class _PetCardState extends State<PetCard> {
                   ],
                 ),
               ),
-              RichText(
-                text: TextSpan(
-                  children: [
-                    WidgetSpan(
-                      child: Icon(
-                        Icons.balance,
-                        size: width * smallFontRate,
-                        color: primaryColor,
-                      ),
-                    ),
-                    TextSpan(
-                      text: " " + widget.pet.weight!.toStringAsFixed(1) + " kg",
-                      style: TextStyle(
-                        color: lightFontColor,
-                        fontWeight: FontWeight.w400,
-                        fontSize: width * smallFontRate,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              RichText(
-                text: TextSpan(
-                  children: [
-                    WidgetSpan(
-                      child: Icon(
-                        Icons.square_foot,
-                        size: width * smallFontRate,
-                        color: primaryColor,
-                      ),
-                    ),
-                    TextSpan(
-                      text: " H: " +
-                          widget.pet.height!.toString() +
-                          "cm - L: " +
-                          widget.pet.length!.toString() +
-                          " cm",
-                      style: TextStyle(
-                        color: lightFontColor,
-                        fontWeight: FontWeight.w400,
-                        fontSize: width * smallFontRate,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
+              // RichText(
+              //   text: TextSpan(
+              //     children: [
+              //       WidgetSpan(
+              //         child: Icon(
+              //           Icons.balance,
+              //           size: width * smallFontRate,
+              //           color: primaryColor,
+              //         ),
+              //       ),
+              //       TextSpan(
+              //         text: " " + widget.pet.weight!.toStringAsFixed(1) + " kg",
+              //         style: TextStyle(
+              //           color: lightFontColor,
+              //           fontWeight: FontWeight.w400,
+              //           fontSize: width * smallFontRate,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // RichText(
+              //   text: TextSpan(
+              //     children: [
+              //       WidgetSpan(
+              //         child: Icon(
+              //           Icons.square_foot,
+              //           size: width * smallFontRate,
+              //           color: primaryColor,
+              //         ),
+              //       ),
+              //       TextSpan(
+              //         text: " H: " +
+              //             widget.pet.height!.toString() +
+              //             "cm - L: " +
+              //             widget.pet.length!.toString() +
+              //             " cm",
+              //         style: TextStyle(
+              //           color: lightFontColor,
+              //           fontWeight: FontWeight.w400,
+              //           fontSize: width * smallFontRate,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ),
         Positioned(
-          left: width * 0.1,
-          top: width * 0.05,
+          left: width * regularPadRate,
+          top: width * mediumPadRate,
           child: Container(
-            height: width * 0.4,
-            width: width * 0.4,
+            height: width * 0.2,
+            width: width * 0.2,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(width * 0.2),
               color: Colors.white,
               image: DecorationImage(
                 image: AssetImage('lib/assets/cat_avatar0.png'),
@@ -153,59 +161,123 @@ class _PetCardState extends State<PetCard> {
           ),
         ),
         Positioned(
-          right: width * 0.1 - height * 0.042,
-          top: height * 0.085,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              shape: MaterialStateProperty.all<CircleBorder>(
-                CircleBorder(
-                  side: BorderSide(
-                    color: primaryColor,
-                    width: height * 0.04,
-                  ),
-                ),
+            top: width * (smallPadRate * 2 + 0.2),
+            child: Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: width * smallPadRate * 2,
+                vertical: width * extraSmallPadRate,
               ),
-            ),
-            onPressed: isSelected
-                ? () {}
-                : () {
-                    var state = BlocProvider.of<SearchBloc>(context).state;
-                    if (state is UpdatePetSelected && state.pets.isNotEmpty) {
-                      for (var pet in state.pets) {
-                        if (pet.petTypeCode != widget.pet.petTypeCode) {
-                          setState(() {
-                            isValid = false;
-                          });
-                          break;
-                        }
-                      }
-                    } else if (state is UpdatePetSelected &&
-                        state.pets.isEmpty) {
-                      setState(() {
-                        isValid = true;
-                      });
-                    }
-                    if (isValid) {
-                      widget.onPressed();
-                      setState(() {
-                        isSelected = true;
-                      });
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              "Không thể chọn 2 thú cưng khác loài trong cùng một yêu cầu.")));
-                    }
-                  },
-            child: isSelected
-                ? const Icon(
-                    Icons.check,
-                    color: Colors.white,
-                  )
-                : const Icon(
-                    Icons.add,
-                    color: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: width * smallPadRate),
+              height: width * regularPadRate,
+              width: width * (1 - regularPadRate * 2),
+              decoration: BoxDecoration(
+                color: frameColor,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        WidgetSpan(
+                          child: Image.asset(
+                            'lib/assets/weight-icon.png',
+                            height: width * smallFontRate,
+                            //color: primaryColor,
+                          ),
+                        ),
+                        TextSpan(
+                          text: " " +
+                              widget.pet.weight!.toStringAsFixed(1) +
+                              " kg",
+                          style: TextStyle(
+                            color: lightFontColor,
+                            fontWeight: FontWeight.w400,
+                            fontSize: width * smallFontRate,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-          ),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        WidgetSpan(
+                          child: Icon(
+                            Icons.square_foot,
+                            size: width * smallFontRate,
+                            color: primaryColor,
+                          ),
+                        ),
+                        TextSpan(
+                          text: " H: " +
+                              widget.pet.height!.toString() +
+                              "cm - L: " +
+                              widget.pet.length!.toString() +
+                              " cm",
+                          style: TextStyle(
+                            color: lightFontColor,
+                            fontWeight: FontWeight.w400,
+                            fontSize: width * smallFontRate,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )),
+
+        Positioned(
+          right: width * smallPadRate,
+          top: width * smallPadRate,
+          child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: (isSelected) ? primaryColor : disableColor,
+                shape: CircleBorder(
+                    side: BorderSide(
+                  width: 1,
+                  strokeAlign: StrokeAlign.outside,
+                  color: (isSelected) ? primaryColor : disableColor,
+                )),
+              ),
+              onPressed: isSelected
+                  ? () {}
+                  : () {
+                      var state = BlocProvider.of<SearchBloc>(context).state;
+                      if (state is UpdatePetSelected && state.pets.isNotEmpty) {
+                        for (var pet in state.pets) {
+                          if (pet.petTypeCode != widget.pet.petTypeCode) {
+                            setState(() {
+                              isValid = false;
+                            });
+                            break;
+                          }
+                        }
+                      } else if (state is UpdatePetSelected &&
+                          state.pets.isEmpty) {
+                        setState(() {
+                          isValid = true;
+                        });
+                      }
+                      if (isValid) {
+                        widget.onPressed();
+                        setState(() {
+                          isSelected = true;
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                "Không thể chọn 2 thú cưng khác loài trong cùng một yêu cầu.")));
+                      }
+                    },
+              child: const Icon(
+                Icons.send,
+                color: Colors.white,
+                size: 15,
+              )),
         ),
       ],
     );
