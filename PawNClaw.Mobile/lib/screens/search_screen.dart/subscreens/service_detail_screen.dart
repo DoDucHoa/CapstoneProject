@@ -1,34 +1,27 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pawnclaw_mobile_application/blocs/booking/booking_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
-import 'package:pawnclaw_mobile_application/models/cage_type.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/models/pet.dart';
-import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/choose_request_dialog.dart';
-import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/pet_bubble.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/choose_pet_dialog.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:readmore/readmore.dart';
 
-import '../../../models/cage.dart';
 import '../../../models/fake_data.dart';
 
-class CageDetails extends StatefulWidget {
-  final CageTypes cageType;
-  final Cages cage;
-  const CageDetails({required this.cageType, required this.cage, Key? key})
-      : super(key: key);
+class ServiceDetails extends StatefulWidget {
+  final petCenter.Services service;
+  const ServiceDetails({required this.service, Key? key}) : super(key: key);
 
   @override
-  State<CageDetails> createState() => _CageDetailsState();
+  State<ServiceDetails> createState() => _ServiceDetailsState();
 }
 
-class _CageDetailsState extends State<CageDetails> {
+class _ServiceDetailsState extends State<ServiceDetails> {
   int activeIndex = 0;
 
   @override
@@ -37,9 +30,7 @@ class _CageDetailsState extends State<CageDetails> {
     var requests = (state as BookingUpdated).requests;
     Size size = MediaQuery.of(context).size;
     double appbarSize = size.height * 0.35;
-    CageTypes cageType = widget.cageType;
-    Cages cage = widget.cage;
-
+    petCenter.Services service = widget.service;
     return Scaffold(
         body: NestedScrollView(
       headerSliverBuilder: (context, value) {
@@ -100,7 +91,7 @@ class _CageDetailsState extends State<CageDetails> {
           )
         ];
       },
-      body: buildContent(cageType, cage, size, context, requests!),
+      body: buildContent(service, size, context, requests!),
     ));
   }
 
@@ -112,10 +103,8 @@ class _CageDetailsState extends State<CageDetails> {
       );
 }
 
-Widget buildContent(CageTypes cageType, Cages cage, Size size,
-    BuildContext context, List<List<Pet>> requests) {
-  double height = MediaQuery.of(context).size.height;
-  double width = MediaQuery.of(context).size.width;
+Widget buildContent(petCenter.Services service, Size size, BuildContext context,
+    List<List<Pet>> requests) {
   return Container(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
     Container(
@@ -131,7 +120,7 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            cage.name!,
+            service.description!,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           SizedBox(
@@ -143,7 +132,9 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
                 NumberFormat.currency(
                   decimalDigits: 0,
                   symbol: '',
-                ).format(cageType.totalPrice),
+                ).format(service.discountPrice == 0
+                    ? service.sellPrice
+                    : service.discountPrice),
                 //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
                 style: TextStyle(fontSize: 15),
               ),
@@ -180,7 +171,7 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
             ),
             ReadMoreText(
               // cage.description,
-              cageType.description!,
+              "This is description...",
               style: TextStyle(
                 fontSize: 15,
                 color: lightFontColor,
@@ -203,13 +194,13 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
             barrierDismissible: false,
             context: context,
             builder: (context) {
-              return ChooseRequestDialog(requests: requests);
+              return ChoosePetDialog(requests: requests);
             },
           ).then((value) {
             BlocProvider.of<BookingBloc>(context).add(
-              SelectCage(
-                  price: cageType.totalPrice!,
-                  cageCode: cage.code!,
+              SelectService(
+                  sellPrice: service.sellPrice!,
+                  serviceId: service.id!,
                   petId: value),
             );
           }),
@@ -222,7 +213,9 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
               'Thêm vào giỏ hàng - ' +
                   NumberFormat.currency(
                           decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
-                      .format(cageType.totalPrice),
+                      .format(service.discountPrice == 0
+                          ? service.sellPrice
+                          : service.discountPrice),
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
             Expanded(child: SizedBox(height: 45)),

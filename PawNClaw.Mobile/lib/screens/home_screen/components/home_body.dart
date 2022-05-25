@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
+import 'package:pawnclaw_mobile_application/screens/booking_screen/confirm_booking.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/SearchScreen.dart';
 
 class HomeBody extends StatelessWidget {
@@ -23,13 +24,16 @@ class HomeBody extends StatelessWidget {
                 color: lightFontColor,
               ),
             ),
-            Container(
-              margin: EdgeInsets.symmetric(vertical: width * 0.05),
-              width: width * 0.85,
-              height: height * 0.18,
-              decoration: BoxDecoration(
-                  color: Colors.black26,
-                  borderRadius: BorderRadius.circular(15)),
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: width * 0.05),
+                width: width * 0.85,
+                height: height * 0.18,
+                decoration: BoxDecoration(
+                    color: Colors.black26,
+                    borderRadius: BorderRadius.circular(15)),
+              ),
             ),
             Text(
               "Tính năng",

@@ -19,14 +19,31 @@ namespace PawNClaw.Business.Services
         }
 
         //Get All
-        public PagedList<Owner> GetAll(int id, string includeProperties, PagingParameter paging)
+        public PagedList<Owner> GetModerators(string Name, bool? Status, string dir, string sort, PagingParameter paging)
         {
-            var values = _ownerRepository.GetAll(includeProperties: includeProperties);
+            var values = _ownerRepository.GetAll(includeProperties: "IdNavigation");
 
-            if (id > 0)
+            values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("OWN"));
+
+            // lọc theo name
+            if (!string.IsNullOrWhiteSpace(Name))
             {
-                values = values.Where(x => x.Id == id);
+                values = values.Where(x => x.Name.Trim().Equals(Name));
             }
+
+            // lọc theo status
+            if (Status != null)
+            {
+                if (Status == true)
+                    values = values.Where(x => x.IdNavigation.Status == true);
+                else
+                    values = values.Where(x => x.IdNavigation.Status == false);
+            }
+
+            if (dir == "asc")
+                values = values.OrderBy(d => d.Name);
+            else
+                values = values.OrderByDescending(d => d.Name);
 
             return PagedList<Owner>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,

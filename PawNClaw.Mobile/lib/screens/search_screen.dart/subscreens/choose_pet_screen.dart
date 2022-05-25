@@ -26,7 +26,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: backgroundColor,
+          backgroundColor: frameColor,
           appBar: AppBar(
             title: const Text(
               "Chọn pet",
@@ -50,11 +50,10 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                     : []);
                           });
                     },
-                    icon: Icon(
-                      Icons.pets,
-                      color: primaryFontColor,
-                      size: width * largeFontRate,
-                    ),
+                    icon: Image.asset('lib/assets/black-paw.png'
+                        // color: primaryFontColor,
+                        // size: width * largeFontRate,
+                        ),
                   ),
                   Positioned(
                     right: width * 0.00875,
@@ -94,7 +93,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: width * 0.1,
+                  horizontal: width * smallPadRate,
                   vertical: width * 0.03,
                 ),
                 child: Row(
@@ -107,11 +106,36 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                               ')'
                           : "Thú cưng đã chọn (0)",
                       style: TextStyle(
-                        fontSize: width * largeFontRate,
+                        fontSize: width * regularFontRate,
                         fontWeight: FontWeight.bold,
                         color: primaryFontColor,
                       ),
                     ),
+                    Visibility(
+                        visible: state is UpdatePetSelected
+                            ? (state.pets.isNotEmpty ? true : false)
+                            : false,
+                        child: Container(
+                            height: width * (largeFontRate + extraSmallPadRate),
+                            child: state is UpdatePetSelected
+                                ? ElevatedButton(
+                                    onPressed: () {
+                                      BlocProvider.of<SearchBloc>(context)
+                                          .add(AddPetRequest(state.pets));
+                                      setState(() {});
+                                    },
+                                    child: const Text(
+                                      "Tạo chuồng",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                        primary: primaryColor,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15))),
+                                  )
+                                : Text('')))
                   ],
                 ),
               ),
@@ -123,7 +147,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                   padding: EdgeInsets.symmetric(
                     horizontal: width * regularPadRate,
                   ),
-                  height: width * 0.35,
+                  height: height * 0.1,
                   child: state is UpdatePetSelected
                       ? Column(
                           children: [
@@ -136,17 +160,6 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                   width: width,
                                   pet: state.pets[index],
                                 ),
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                BlocProvider.of<SearchBloc>(context)
-                                    .add(AddPetRequest(state.pets));
-                                setState(() {});
-                              },
-                              child: const Text(
-                                "Tạo yêu cầu",
-                                style: TextStyle(color: Colors.white),
                               ),
                             ),
                           ],
@@ -162,7 +175,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(
-                            horizontal: width * regularPadRate,
+                            horizontal: width * smallPadRate,
                             vertical: width * smallPadRate,
                           ),
                           child: Text(
@@ -172,7 +185,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                     ")"
                                 : "Thú cưng của bạn (0)",
                             style: TextStyle(
-                              fontSize: width * largeFontRate,
+                              fontSize: width * regularFontRate,
                               fontWeight: FontWeight.bold,
                               color: primaryFontColor,
                             ),
@@ -206,7 +219,21 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                     ),
                   );
                 },
-              )
+              ),
+              Container(
+                  margin: EdgeInsets.all(width*smallPadRate),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),color: primaryBackgroundColor,border: Border.all(width: 1.5, style: BorderStyle.solid, color: primaryColor)),
+                  child: TextButton(
+                      onPressed: () {
+                        //create pet
+                      },
+                      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                          Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),color: primaryColor),child: Icon(Icons.add, color: Colors.white,)),
+                          SizedBox(width: width*smallPadRate,),
+                          Text('Thêm thú cưng', style: TextStyle(fontSize: width*regularFontRate),),
+                        ]),
+                      ))
+
             ],
           ),
           floatingActionButton: Opacity(
