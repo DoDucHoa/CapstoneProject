@@ -51,10 +51,9 @@ namespace PawNClaw.Business.Services
         }
 
         //Get Id
-        public Owner GetById(int id)
+        public Owner GetOwnerById(int id)
         {
             var value = _ownerRepository.GetFirstOrDefault(x => x.Id == id);
-
             return value;
         }
 
