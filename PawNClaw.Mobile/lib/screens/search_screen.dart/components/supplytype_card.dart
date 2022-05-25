@@ -1,27 +1,31 @@
-import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:dotted_line/dotted_line.dart';
-import 'package:pawnclaw_mobile_application/models/cage.dart';
-import 'package:pawnclaw_mobile_application/models/cage_type.dart';
-import 'package:pawnclaw_mobile_application/models/fake_data.dart';
+import 'package:pawnclaw_mobile_application/models/center.dart';
+import 'package:pawnclaw_mobile_application/screens/home_screen/HomeScreen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/item_card.dart';
-import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/cage_details_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/supply_detail_screen.dart';
 
-import 'cage_card.dart';
-
-class CatergoryCard extends StatelessWidget {
-  final CageTypes cageType;
+class SupplyTypeCard extends StatelessWidget {
+  final String supplyType;
   final Size size;
-  const CatergoryCard({Key? key, required this.cageType, required this.size})
+  final List<Supplies> supplies;
+  const SupplyTypeCard(
+      {Key? key,
+      required this.supplyType,
+      required this.size,
+      required this.supplies})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    List<Supplies> suppliesByType = supplies
+        .where(
+          (supply) => supply.supplyTypeCode == supplyType,
+        )
+        .toList();
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8),
       width: size.width,
@@ -33,7 +37,7 @@ class CatergoryCard extends StatelessWidget {
         padding: EdgeInsets.all(15),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
-            cageType.typeName!.toUpperCase(),
+            supplyType.toUpperCase(),
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
           ),
           SizedBox(
@@ -47,21 +51,20 @@ class CatergoryCard extends StatelessWidget {
           ),
           ListView.separated(
             itemBuilder: (context, index) {
-              var cage = cageType.cages?[index];
+              var supply = suppliesByType[index];
               return ItemCard(
-                name: cage?.name ?? "",
-                sellPrice: cageType.totalPrice ?? 0,
-                discountPrice: 0,
-                redirect: CageDetails(
-                  cageType: cageType,
-                  cage: cage!,
+                name: supply.name!,
+                sellPrice: supply.sellPrice!,
+                discountPrice: supply.discountPrice!,
+                redirect: SupplyDetails(
+                  supply: supply,
                 ),
               );
             },
             separatorBuilder: (context, index) => const Divider(
               color: lightFontColor,
             ),
-            itemCount: cageType.cages!.length,
+            itemCount: suppliesByType.length,
             shrinkWrap: true,
             physics: ClampingScrollPhysics(),
           )

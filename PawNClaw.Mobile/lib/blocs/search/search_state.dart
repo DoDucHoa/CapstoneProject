@@ -47,10 +47,13 @@ class FillingInformation extends SearchState {
 
 class SearchCompleted extends SearchState {
   final List<Center> centers;
-
-  const SearchCompleted(this.centers);
+  final List<List<Pet>> requests;
+  final DateTime bookingDate;
+  final DateTime endDate;
+  const SearchCompleted(
+      this.centers, this.requests, this.bookingDate, this.endDate);
 
   @override
   // TODO: implement props
-  List<Object> get props => [centers];
+  List<Object> get props => [centers, requests, bookingDate, endDate];
 }

@@ -17,4 +17,6 @@ const double smallFontRate = 0.035;
 
 //Padding rate (by width of devie)
 double regularPadRate = 0.1;
+double mediumPadRate = 0.075;
 double smallPadRate = 0.05;
+double extraSmallPadRate = 0.025;
