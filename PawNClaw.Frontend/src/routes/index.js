@@ -64,7 +64,7 @@ export default function Router() {
       ),
       children: [
         { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
-        { path: 'booking', element: <GeneralBooking /> },
+        { path: 'bookingchart', element: <GeneralBooking /> },
         {
           path: 'admin',
           children: [
