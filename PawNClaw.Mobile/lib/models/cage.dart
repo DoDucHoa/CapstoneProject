@@ -1,18 +1,30 @@
-class Cage {
-  final int id;
-  final String name;
-  final double price;
-  double? discount;
-  final String imageUrl;
-  final String description;
-  final int cagetype;
+class Cages {
+  String? code;
+  int? centerId;
+  String? name;
+  String? color;
 
-  Cage(
-      {required this.id,
-      required this.name,
-      required this.price,
-      this.discount,
-      required this.imageUrl,
-      required this.description,
-      required this.cagetype});
+  Cages({
+    this.code,
+    this.centerId,
+    this.name,
+    this.color,
+  });
+
+  Cages.fromJson(Map<String, dynamic> json) {
+    code = json['code'];
+    centerId = json['centerId'];
+    name = json['name'];
+    color = json['color'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['code'] = this.code;
+    data['centerId'] = this.centerId;
+    data['name'] = this.name;
+    data['color'] = this.color;
+
+    return data;
+  }
 }

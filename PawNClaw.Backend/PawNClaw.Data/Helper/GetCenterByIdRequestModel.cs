@@ -11,5 +11,7 @@ namespace PawNClaw.Data.Helper
     {
         public int id { get; set; }
         public List<List<PetRequestParameter>> _petRequests { get; set; }
+        public string StartBooking { get; set; }
+        public string EndBooking { get; set; }
     }
 }

@@ -27,16 +27,21 @@ class ReviewCard extends StatelessWidget {
                   Positioned(
                     bottom: 0,
                     right: 10,
-                    child: Row(children: [
-                      Icon(
-                      Icons.star_rate_rounded,
-                      color: lightFontColor,
-                      size: 16,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.star_rate_rounded,
+                          color: lightFontColor,
+                          size: 16,
+                        ),
+                        Text(
+                          review.rating.toString(),
+                          style: TextStyle(
+                              fontWeight: FontWeight.w700, fontSize: 13),
+                        ),
+                      ],
                     ),
-                    Text(
-                      review.rating!.toString(),
-                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-                    ),],),),
+                  ),
                   Row(children: [
                     SizedBox(
                       width: 5,

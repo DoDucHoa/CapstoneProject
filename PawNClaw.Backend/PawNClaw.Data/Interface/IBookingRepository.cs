@@ -15,5 +15,7 @@ namespace PawNClaw.Data.Interface
         public bool Confirm(int Id, int StatusId);
 
         public IEnumerable<Booking> GetBookingForStaff(BookingRequestParameter bookingRequestParameter);
+
+        public Booking GetBookingForCustomer(int BookingId);
     }
 }

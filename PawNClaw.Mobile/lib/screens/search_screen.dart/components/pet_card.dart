@@ -161,74 +161,74 @@ class _PetCardState extends State<PetCard> {
           ),
         ),
         Positioned(
-          top: width*(smallPadRate*2 + 0.2),
+            top: width * (smallPadRate * 2 + 0.2),
             child: Container(
               margin: EdgeInsets.symmetric(
-            horizontal: width * smallPadRate*2,
-            vertical: width * extraSmallPadRate,
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: width*smallPadRate
-          ),
-          height: width*regularPadRate,
-          width: width*(1 - regularPadRate*2),
-          decoration: BoxDecoration(
-            color: frameColor,
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              RichText(
-                text: TextSpan(
-                  children: [
-                    WidgetSpan(
-                      child: Image.asset(
-                        'lib/assets/weight-icon.png',
-                        height: width * smallFontRate,
-                        //color: primaryColor,
-                      ),
-                    ),
-                    TextSpan(
-                      text: " " + widget.pet.weight!.toStringAsFixed(1) + " kg",
-                      style: TextStyle(
-                        color: lightFontColor,
-                        fontWeight: FontWeight.w400,
-                        fontSize: width * smallFontRate,
-                      ),
-                    ),
-                  ],
-                ),
+                horizontal: width * smallPadRate * 2,
+                vertical: width * extraSmallPadRate,
               ),
-              RichText(
-                text: TextSpan(
-                  children: [
-                    WidgetSpan(
-                      child: Icon(
-                        Icons.square_foot,
-                        size: width * smallFontRate,
-                        color: primaryColor,
-                      ),
-                    ),
-                    TextSpan(
-                      text: " H: " +
-                          widget.pet.height!.toString() +
-                          "cm - L: " +
-                          widget.pet.length!.toString() +
-                          " cm",
-                      style: TextStyle(
-                        color: lightFontColor,
-                        fontWeight: FontWeight.w400,
-                        fontSize: width * smallFontRate,
-                      ),
-                    ),
-                  ],
-                ),
+              padding: EdgeInsets.symmetric(horizontal: width * smallPadRate),
+              height: width * regularPadRate,
+              width: width * (1 - regularPadRate * 2),
+              decoration: BoxDecoration(
+                color: frameColor,
+                borderRadius: BorderRadius.circular(15),
               ),
-            ],
-          ),
-        )),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        WidgetSpan(
+                          child: Image.asset(
+                            'lib/assets/weight-icon.png',
+                            height: width * smallFontRate,
+                            //color: primaryColor,
+                          ),
+                        ),
+                        TextSpan(
+                          text: " " +
+                              widget.pet.weight!.toStringAsFixed(1) +
+                              " kg",
+                          style: TextStyle(
+                            color: lightFontColor,
+                            fontWeight: FontWeight.w400,
+                            fontSize: width * smallFontRate,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        WidgetSpan(
+                          child: Icon(
+                            Icons.square_foot,
+                            size: width * smallFontRate,
+                            color: primaryColor,
+                          ),
+                        ),
+                        TextSpan(
+                          text: " H: " +
+                              widget.pet.height!.toString() +
+                              "cm - L: " +
+                              widget.pet.length!.toString() +
+                              " cm",
+                          style: TextStyle(
+                            color: lightFontColor,
+                            fontWeight: FontWeight.w400,
+                            fontSize: width * smallFontRate,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )),
 
         Positioned(
           right: width * smallPadRate,

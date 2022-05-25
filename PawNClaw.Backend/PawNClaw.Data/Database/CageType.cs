@@ -48,6 +48,8 @@ namespace PawNClaw.Data.Database
         [Column("center_id")]
         public int CenterId { get; set; }
 
+        public string TotalPrice { get; set; }
+
         [ForeignKey(nameof(CenterId))]
         [InverseProperty(nameof(PetCenter.CageTypes))]
         public virtual PetCenter Center { get; set; }
