@@ -38,7 +38,7 @@ class _ChoosePetDialogState extends State<ChoosePetDialog> {
         ),
         backgroundColor: Colors.white,
         child: Container(
-          height: height * 0.3,
+          height: height * 0.35,
           width: width * 0.7,
           padding: EdgeInsets.all(width * smallPadRate),
           child: Column(
@@ -55,13 +55,13 @@ class _ChoosePetDialogState extends State<ChoosePetDialog> {
               SizedBox(
                 width: width * 0.5,
                 child: DropdownButton<Pet>(
-                  itemHeight: height * 0.1,
+                  itemHeight: height * 0.25,
                   isExpanded: true,
                   value: pet,
                   items: pets.map((e) {
                     return DropdownMenuItem(
                       child: SizedBox(
-                        height: height * 0.3,
+                        height: height * 0.25,
                         child: PetBubbleCard(width: width, pet: e),
                       ),
                       value: e,
@@ -84,7 +84,7 @@ class _ChoosePetDialogState extends State<ChoosePetDialog> {
                         }
                       : () {},
                   child: const Text(
-                    "Confirm",
+                    "Xác nhận",
                     style: TextStyle(
                       color: Colors.white,
                     ),

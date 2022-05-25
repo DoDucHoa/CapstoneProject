@@ -678,7 +678,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                 ],
               ),
             ),
-            
+
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: width * mediumPadRate,
@@ -686,8 +686,8 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
               ),
               child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => BookingSuccess()));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => BookingSuccess()));
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
