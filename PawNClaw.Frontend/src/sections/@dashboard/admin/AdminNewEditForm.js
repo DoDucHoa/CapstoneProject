@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import * as Yup from 'yup';
-import { useCallback, useEffect, useMemo } from 'react';
 import { useSnackbar } from 'notistack';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 // form
@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { LoadingButton } from '@mui/lab';
-import { Box, Card, Grid, Stack, Typography, Button } from '@mui/material';
+import { Box, Card, Grid, Stack, Typography, Button, InputAdornment, IconButton } from '@mui/material';
 // utils
 import { fData } from '../../../utils/formatNumber';
 // routes
@@ -19,6 +19,7 @@ import useAuth from '../../../hooks/useAuth';
 import Label from '../../../components/Label';
 import { FormProvider, RHFSelect, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
 import { createAdmin, updateAdmin } from '../../../pages/dashboard/Admin/useAdminAPI';
+import Iconify from '../../../components/Iconify';
 
 // ----------------------------------------------------------------------
 
@@ -33,6 +34,9 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
   const navigate = useNavigate();
   const { accountInfo, register, changePassword } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Bắt buộc nhập'),
@@ -183,7 +187,11 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
               }}
             >
               <RHFTextField name="name" label="Họ và tên" />
-              <RHFTextField name="email" label="Email" />
+              {isEdit ? (
+                <RHFTextField name="email" label="Email" disabled />
+              ) : (
+                <RHFTextField name="email" label="Email" />
+              )}
               <RHFTextField name="phoneNumber" label="Số điện thoại" />
               <RHFSelect name="gender" label="Giới tính">
                 <option key="1" value="1">
@@ -196,8 +204,38 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
                   Khác
                 </option>
               </RHFSelect>
-              <RHFTextField name="password" label="Mật khẩu" type="password" />
-              <RHFTextField name="confirmPassword" label="Nhập lại mật khẩu" type="password" />
+              <RHFTextField
+                name="password"
+                label="Mật khẩu"
+                type={showPassword ? 'text' : 'password'}
+                InputProps={
+                  !isEdit && {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                          <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }
+                }
+              />
+              <RHFTextField
+                name="confirmPassword"
+                label="Nhập lại mật khẩu"
+                type={showConfirmPassword ? 'text' : 'password'}
+                InputProps={
+                  !isEdit && {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
+                          <Iconify icon={showConfirmPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }
+                }
+              />
             </Box>
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>

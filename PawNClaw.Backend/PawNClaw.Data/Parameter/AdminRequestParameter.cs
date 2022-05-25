@@ -13,7 +13,6 @@ namespace PawNClaw.Data.Parameter
         public string Email { get; set; } = null;
         public bool? Status { get; set; } = null;
         public string Phone { get; set; } = null;
-
         public string dir { get; set; } = "asc";
         public string sort { get; set; } = null;
         public string fields { get; set; } = null;

@@ -107,6 +107,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                       setState(
                         () {
                           from = date;
+                          print(date.toString());
                           _fromController.text =
                               DateFormat("dd/MM/yyyy, h:mm a").format(date);
                         },
@@ -156,6 +157,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                 const Spacer(flex: 3),
                 GestureDetector(
                   onTap: () => showCupertinoDialog(
+                      barrierDismissible: false,
                       context: context,
                       builder: (context) {
                         return ChooseLocationDialog(

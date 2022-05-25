@@ -2,18 +2,14 @@
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PawNClaw.Business.Services
 {
     public class AdminService
     {
-        IAdminRepository _adminRepository;
-        IAccountRepository _accountRepository;
+        private IAdminRepository _adminRepository;
+        private IAccountRepository _accountRepository;
 
         public AdminService(IAdminRepository adminRepository, IAccountRepository accountRepository)
         {
@@ -43,7 +39,8 @@ namespace PawNClaw.Business.Services
             if (Status == true)
             {
                 values = values.Where(x => x.IdNavigation.Status == true);
-            } else
+            }
+            else
             {
                 values = values.Where(x => x.IdNavigation.Status == false);
             }
@@ -57,6 +54,9 @@ namespace PawNClaw.Business.Services
                             values = values.OrderBy(d => d.Name);
                         else if (_requestParameter.dir == "desc")
                             values = values.OrderByDescending(d => d.Name);
+                        break;
+
+                    default:
                         break;
                 }
             }
@@ -72,21 +72,22 @@ namespace PawNClaw.Business.Services
 
             values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("MOD"));
 
-            
-
+            // lọc theo name
             if (!string.IsNullOrWhiteSpace(Name))
             {
                 values = values.Where(x => x.Name.Trim().Equals(Name));
             }
-            if (Status == true)
+
+            // lọc theo status
+            if (Status != null)
             {
-                values = values.Where(x => x.IdNavigation.Status == true);
-            }
-            else
-            {
-                values = values.Where(x => x.IdNavigation.Status == false);
+                if (Status == true)
+                    values = values.Where(x => x.IdNavigation.Status == true);
+                else
+                    values = values.Where(x => x.IdNavigation.Status == false);
             }
 
+            // sort
             if (!string.IsNullOrWhiteSpace(sort))
             {
                 switch (sort)
@@ -97,20 +98,26 @@ namespace PawNClaw.Business.Services
                         else if (dir == "desc")
                             values = values.OrderByDescending(d => d.Name);
                         break;
+
                     case "Id":
                         if (dir == "asc")
                             values = values.OrderBy(d => d.Id);
                         else if (dir == "desc")
                             values = values.OrderByDescending(d => d.Id);
                         break;
+
                     case "Email":
                         if (dir == "asc")
                             values = values.OrderBy(d => d.Email);
                         else if (dir == "desc")
                             values = values.OrderByDescending(d => d.Email);
                         break;
+
+                    default:
+                        break;
                 }
-            } else
+            }
+            else
             {
                 if (dir == "asc")
                     values = values.OrderBy(d => d.Name);
@@ -122,7 +129,8 @@ namespace PawNClaw.Business.Services
             paging.PageNumber,
             paging.PageSize);
         }
-        //Get Admin by Id  
+
+        //Get Admin by Id
         public Admin GetAdminById(int id)
         {
             return _adminRepository.GetAll().FirstOrDefault(x => x.Id == id);
@@ -166,7 +174,7 @@ namespace PawNClaw.Business.Services
             }
         }
 
-        //Update Admin  
+        //Update Admin
         public bool Update(Admin admin, string Phone)
         {
             try

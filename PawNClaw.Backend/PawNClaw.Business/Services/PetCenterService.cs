@@ -1,4 +1,5 @@
-﻿using PawNClaw.Data.Database;
+﻿using PawNClaw.Data.Const;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
@@ -38,7 +39,7 @@ namespace PawNClaw.Business.Services
         }
 
         //Get By Id With Cage Service and Supply
-        public PetCenter GetDetailById(int id, List<List<PetRequestParameter>> _petRequests)
+        public PetCenter GetDetailById(int id, List<List<PetRequestParameter>> _petRequests, string StartBooking, string EndBooking)
         {
             List<PetSizeCage> PetSizes = new List<PetSizeCage>();
 
@@ -53,12 +54,12 @@ namespace PawNClaw.Business.Services
                     {
                         throw new Exception();
                     }
-                    if (Height < (decimal)(_pet.Height + 5))
+                    if (Height < (decimal)(_pet.Height + SearchConst.HeightAdd))
                     {
-                        Height = (decimal)(_pet.Height + 5);
+                        Height = (decimal)(_pet.Height + SearchConst.HeightAdd);
                     }
 
-                    Width += (decimal)Math.Round((((double)_pet.Length) + ((double)_pet.Height)) / (5 / 2), 0);
+                    Width += (decimal)Math.Round((((double)_pet.Length) + ((double)_pet.Height)) / SearchConst.WidthRatio, 0);
                     Count += 1;
                 }
 
@@ -76,7 +77,7 @@ namespace PawNClaw.Business.Services
                 IsSingle = true
             };
 
-            var value = _petCenterRepository.GetPetCenterById(id, petSizeCages);
+            var value = _petCenterRepository.GetPetCenterById(id, petSizeCages, StartBooking, EndBooking);
             return value;
         }
 

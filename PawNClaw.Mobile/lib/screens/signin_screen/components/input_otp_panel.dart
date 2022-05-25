@@ -19,7 +19,7 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
   TextEditingController otpController = TextEditingController();
   late String verificationId;
   bool isValid = false;
-  
+
   @override
   void initState() {
     // TODO: implement initState
@@ -78,8 +78,6 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
                   Pinput(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     closeKeyboardWhenCompleted: true,
-                    // androidSmsAutofillMethod:
-                    //     AndroidSmsAutofillMethod.smsUserConsentApi,
                     length: 6,
                     controller: otpController,
                     textCapitalization: TextCapitalization.characters,
@@ -89,18 +87,14 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
                       input.length == 6
                           ? setState(() {
                               isValid = true;
-
                             })
                           : setState(() {
                               isValid = false;
                             });
-                            
                     },
                     // onCompleted: ((value) {
                     //   print(value)
                     // }),
-                    
-                    
                   ),
                   Text(
                     widget.error ?? "",
