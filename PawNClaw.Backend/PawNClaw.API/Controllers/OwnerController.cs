@@ -40,14 +40,15 @@ namespace PawNClaw.API.Controllers
             };
             return Ok(new { data, metadata });
         }
-        /*
+        
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult GetAdminById(int id)
+        public IActionResult GetOwnerById(int id)
         {
-            var data = _OwnerService.GetAdminById(id);
+            var data = _OwnerService.GetOwnerById(id);
             return Ok(data);
         }
+        /*
 
         [HttpPost]
         [Authorize(Roles = "Admin,Mod")]
