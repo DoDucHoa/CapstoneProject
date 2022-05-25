@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
@@ -10,6 +11,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pawnclaw_mobile_application/models/fake_data.dart';
 import 'package:pawnclaw_mobile_application/models/cage.dart';
 import 'package:pawnclaw_mobile_application/models/cage_type.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/center_slider.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/center_info_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/confirm_booking.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/vouchers_screen.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
 import 'package:pawnclaw_mobile_application/repositories/booking.dart/booking_repository.dart';
 import 'package:pawnclaw_mobile_application/repositories/center/center_repository.dart';
@@ -69,7 +75,6 @@ class _CenterDetailsState extends State<CenterDetails> {
     // int cartcount = 2;
     var auth = BlocProvider.of<AuthBloc>(context).state;
     int customerId = (auth as Authenticated).user.id!;
-
     return BlocProvider(
         create: (context) => BookingBloc()
           ..add(
@@ -115,7 +120,6 @@ class _CenterDetailsState extends State<CenterDetails> {
                                   //   center.![0].picture.toString(),
                                   //   width: width,
                                   //   fit: BoxFit.cover,
-                                  // ),
 
                                   ////campaign name
 
@@ -260,6 +264,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                   label: Container(
                                                       padding:
                                                           EdgeInsets.fromLTRB(
+
                                                               10, 15, 5, 15),
                                                       child: Row(
                                                         children: [
@@ -331,6 +336,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                           ),
                         ),
 
+
                         //buildContent(context)
                       ];
                     },
@@ -395,6 +401,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                 shrinkWrap: true,
                                 physics: ClampingScrollPhysics(),
                               ),
+
                               //cageTypeList(FAKE_CAGETYPES, context),
                             ),
                           ),

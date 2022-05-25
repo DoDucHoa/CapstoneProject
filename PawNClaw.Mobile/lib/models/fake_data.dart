@@ -1,4 +1,5 @@
 import 'package:pawnclaw_mobile_application/models/review.dart';
+import 'package:pawnclaw_mobile_application/models/voucher.dart';
 
 // import 'cage_type.dart';
 // import 'cage.dart';
@@ -45,3 +46,4 @@ List<Review> FAKE_REVIEWS = [
       description: 'A Sudden Warm Rainstorm Washes Down In Sweet Hyphens.',
       rating: 5),
 ];
+

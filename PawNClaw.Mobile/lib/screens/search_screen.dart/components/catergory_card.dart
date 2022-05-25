@@ -24,6 +24,8 @@ class CatergoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8),
+
+
       width: size.width,
       decoration: BoxDecoration(
         color: Colors.white,
