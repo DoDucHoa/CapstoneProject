@@ -13,6 +13,7 @@ namespace PawNClaw.Data.Database
         public Service()
         {
             ServiceOrders = new HashSet<ServiceOrder>();
+            ServicePrices = new HashSet<ServicePrice>();
         }
 
         [Key]
@@ -50,5 +51,7 @@ namespace PawNClaw.Data.Database
         public virtual Staff ModifyUserNavigation { get; set; }
         [InverseProperty(nameof(ServiceOrder.Service))]
         public virtual ICollection<ServiceOrder> ServiceOrders { get; set; }
+        [InverseProperty(nameof(ServicePrice.Service))]
+        public virtual ICollection<ServicePrice> ServicePrices { get; set; }
     }
 }
