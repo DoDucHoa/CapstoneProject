@@ -14,18 +14,13 @@ namespace PawNClaw.Data.Repository
     {
 
         PriceRepository _priceRepository;
-        public class CageUsed
-        {
-            string CageCode { get; set; }
-            string CenterId { get; set; }
-        }
 
         public class PetSizeCage
         {
             public decimal Height { get; set; }
             public decimal Width { get; set; }
+            public decimal Weight { get; set; }
             public bool IsSingle { get; set; } = true;
-            public CageUsed CageUsed { get; set; }
         }
 
         public PetCenterRepository(ApplicationDbContext db, PriceRepository priceRepository) : base(db)
@@ -206,6 +201,19 @@ namespace PawNClaw.Data.Repository
                         SupplyTypeCode = s.SupplyTypeCode
                     }),
                     Services = (ICollection<Service>)x.Services.Where(ser => ser.Status == true)
+                    .Select(ser => new Service
+                    {
+                        Id = ser.Id,
+                        Description = ser.Description,
+                        ServicePrices = (ICollection<ServicePrice>)ser.ServicePrices
+                        .Select(price => new ServicePrice
+                        {
+                            Id = price.Id,
+                            Price = price.Price,
+                            MinWeight = price.MinWeight,
+                            MaxWeight = price.MaxWeight
+                        })
+                    })
                 })
                 .SingleOrDefault(x => x.Id == id);
 
