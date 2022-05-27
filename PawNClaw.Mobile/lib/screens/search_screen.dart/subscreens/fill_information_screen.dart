@@ -114,19 +114,33 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                       );
                     },
                   ),
-                  child: TextField(
-                    enabled: false,
-                    readOnly: true,
-                    controller: _fromController,
-                    decoration: InputDecoration(
-                      labelText: "From",
-                      prefixIcon: Icon(
-                        Icons.access_time_filled,
-                        color: primaryColor,
-                      ),
-                      border: InputBorder.none,
-                    ),
-                  ),
+                  child: Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.symmetric(vertical:2),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: TextField(
+                        enabled: false,
+                        readOnly: true,
+                        controller: _fromController,
+                        decoration: InputDecoration(
+                          labelText: "From",
+                          prefixIcon: Container(
+                              width: 30,
+                              height: 30,
+                              margin: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color: primaryBackgroundColor,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Icon(
+                                Icons.access_time_filled,
+                                color: primaryColor,
+                                size: 20,
+                              )),
+                          border: InputBorder.none,
+                        ),
+                      )),
                 ),
                 const Spacer(flex: 3),
                 GestureDetector(
@@ -142,17 +156,33 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                       );
                     },
                   ),
-                  child: TextField(
-                    enabled: false,
-                    controller: _toController,
-                    decoration: InputDecoration(
-                      labelText: "To",
-                      prefixIcon:
-                          Icon(Icons.access_time_filled, color: primaryColor),
-                      border: InputBorder.none,
-                    ),
-                    readOnly: true,
-                  ),
+                  child: Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.symmetric(vertical:2),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: TextField(
+                        enabled: false,
+                        controller: _toController,
+                        decoration: InputDecoration(
+                          labelText: "To",
+                          prefixIcon: Container(
+                              width: 30,
+                              height: 30,
+                              margin: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color: primaryBackgroundColor,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Icon(
+                                Icons.access_time_filled,
+                                color: primaryColor,
+                                size: 20,
+                              )),
+                          border: InputBorder.none,
+                        ),
+                        readOnly: true,
+                      )),
                 ),
                 const Spacer(flex: 3),
                 GestureDetector(
@@ -177,20 +207,33 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                       return a;
                     }),
                   ),
-                  child: TextField(
+                  child: Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.symmetric(vertical:2),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: TextField(
                     enabled: false,
                     readOnly: true,
                     controller: _areaController,
                     decoration: InputDecoration(
                       labelText: "Location",
-                      prefixIcon: Icon(
+                      prefixIcon:Container(
+                              width: 30,
+                              height: 30,
+                              margin: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color: primaryBackgroundColor,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Icon(
                         Icons.location_on,
                         color: primaryColor,
-                      ),
+                      )),
                       border: InputBorder.none,
                     ),
                     autofocus: false,
-                  ),
+                  )),
                 ),
                 const Spacer(flex: 30),
                 Text(
@@ -199,6 +242,9 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                     fontStyle: FontStyle.italic,
                     color: primaryColor,
                   ),
+                ),
+                SizedBox(
+                  height: 15,
                 ),
                 Center(
                   child: Opacity(
@@ -220,17 +266,19 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                                   districtCode!,
                                   0))
                           : () {},
-                      child: Text(
-                        "Confirm",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: width * regularFontRate),
-                      ),
+                      child: Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            "Xác nhận",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: width * regularFontRate),
+                          )),
                       style: ButtonStyle(
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(40.0),
+                            borderRadius: BorderRadius.circular(15.0),
                           ),
                         ),
                       ),

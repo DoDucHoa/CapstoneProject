@@ -47,3 +47,9 @@ List<Review> FAKE_REVIEWS = [
       rating: 5),
 ];
 
+List<Voucher> FAKE_VOUCHERS = [
+  Voucher(value: 10000, minCondition: 50000, startDate: '1/5/2022', expireDate: '30/5/2022'),
+  Voucher(value: 20000, minCondition: 70000, startDate: '1/5/2022', expireDate: '30/5/2022'),
+  Voucher(value: 30000, minCondition: 100000, startDate: '1/5/2022', expireDate: '30/5/2022'),
+  Voucher(value: 50000, minCondition: 200000, startDate: '1/5/2022', expireDate: '30/5/2022'),
+];

@@ -53,6 +53,7 @@ dependencies:
   readmore:
   im_stepper:
   percent_indicator:
+  dotted_border:
   
 dev_dependencies:
   flutter_test:
