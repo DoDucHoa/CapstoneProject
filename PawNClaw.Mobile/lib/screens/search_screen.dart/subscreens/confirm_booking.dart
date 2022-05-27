@@ -561,14 +561,18 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "THÔNG TIN HÓA ĐƠN",
-                    style: TextStyle(
-                      color: primaryFontColor,
-                      fontWeight: FontWeight.w600,
-                      fontSize: width * regularFontRate,
+                  Row(children: [
+                    Text(
+                      "CHI PHÍ DỰ KIẾN",
+                      style: TextStyle(
+                        color: primaryFontColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: width * regularFontRate,
+                      ),
                     ),
-                  ),
+                    SizedBox(width:5 ),
+                    Icon(Icons.info_rounded, color: primaryColor,)
+                  ]),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

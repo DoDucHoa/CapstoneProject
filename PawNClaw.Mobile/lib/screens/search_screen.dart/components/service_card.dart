@@ -8,23 +8,22 @@ import 'package:pawnclaw_mobile_application/models/cage.dart';
 import 'package:pawnclaw_mobile_application/models/cage_type.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart';
 
-import '../subscreens/cage_details_screen.dart';
-
-class ItemCard extends StatelessWidget {
-  final String name;
-  final double sellPrice;
-  final double discountPrice;
+class ServiceCard extends StatefulWidget {
+  final Services service;
   final Widget redirect;
-  const ItemCard(
-      {Key? key,
-      required this.name,
-      required this.sellPrice,
-      required this.discountPrice,
-      required this.redirect})
+
+  const ServiceCard({required this.redirect, required this.service, Key? key})
       : super(key: key);
 
   @override
+  State<ServiceCard> createState() => _ServiceCardState();
+}
+
+class _ServiceCardState extends State<ServiceCard> {
+  @override
   Widget build(BuildContext context) {
+    Services service = widget.service;
+    Widget redirect = widget.redirect;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return InkWell(
@@ -34,13 +33,15 @@ class ItemCard extends StatelessWidget {
                   child: redirect,
                 ))),
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(color: Colors.white,
+          borderRadius: BorderRadius.circular(15)),
+          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           child: Stack(children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  service.description??"",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
                 SizedBox(
@@ -52,28 +53,30 @@ class ItemCard extends StatelessWidget {
                       NumberFormat.currency(
                         decimalDigits: 0,
                         symbol: '',
-                      ).format(discountPrice == 0 ? sellPrice : discountPrice),
+                      ).format((service.discountPrice??0) == 0
+                          ? service.sellPrice??0
+                          : service.discountPrice??0),
                       //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
                       style: TextStyle(fontSize: 13),
                     ),
                     SizedBox(
                       width: 5,
                     ),
-                    if (discountPrice > 0)
+                    if ((service.discountPrice??0) > 0)
                       Text(
                         NumberFormat.currency(
                           decimalDigits: 0,
                           symbol: '',
-                        ).format(sellPrice),
+                        ).format(service.sellPrice??0),
                         style: TextStyle(
                             fontSize: 13,
                             color: lightFontColor,
                             decoration: TextDecoration.lineThrough),
                       ),
                     SizedBox(
-                      width: 5,
+                      width: 5, 
                     ),
-                    if (discountPrice > 0)
+                    if ((service.discountPrice??0) > 0)
                       Padding(
                           padding: const EdgeInsets.only(right: 5, bottom: 5),
                           child: Container(

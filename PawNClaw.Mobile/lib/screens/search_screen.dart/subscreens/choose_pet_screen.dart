@@ -1,3 +1,4 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -221,19 +222,46 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                 },
               ),
               Container(
-                  margin: EdgeInsets.all(width*smallPadRate),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),color: primaryBackgroundColor,border: Border.all(width: 1.5, style: BorderStyle.solid, color: primaryColor)),
-                  child: TextButton(
-                      onPressed: () {
-                        //create pet
-                      },
-                      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                          Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),color: primaryColor),child: Icon(Icons.add, color: Colors.white,)),
-                          SizedBox(width: width*smallPadRate,),
-                          Text('Thêm thú cưng', style: TextStyle(fontSize: width*regularFontRate),),
-                        ]),
-                      ))
-
+                  margin: EdgeInsets.all(width * smallPadRate),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: primaryBackgroundColor,
+                      // border: Border.all(
+                      //     width: 1.5,
+                      //     style: BorderStyle.solid,
+                      //     color: primaryColor)
+                      ),
+                  child: DottedBorder(
+                      color: primaryColor,
+                      radius: Radius.circular(15),
+                      borderType: BorderType.RRect,
+                      strokeWidth: 2,
+                      dashPattern: [5, 2],
+                      child: TextButton(
+                        onPressed: () {
+                          //create pet
+                        },
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: primaryColor),
+                                  child: Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                  )),
+                              SizedBox(
+                                width: width * smallPadRate,
+                              ),
+                              Text(
+                                'Thêm thú cưng',
+                                style: TextStyle(
+                                    fontSize: width * regularFontRate),
+                              ),
+                            ]),
+                      )))
             ],
           ),
           floatingActionButton: Opacity(

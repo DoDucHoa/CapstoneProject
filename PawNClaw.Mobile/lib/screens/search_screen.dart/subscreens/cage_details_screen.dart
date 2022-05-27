@@ -156,6 +156,7 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
         ],
       ),
     ),
+    
     SizedBox(
       height: 15,
     ),
