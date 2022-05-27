@@ -11,6 +11,7 @@ namespace PawNClaw.Data.Parameter
         public DateTime? CreateTime { get; set; }
         public DateTime? StartBooking { get; set; }
         public DateTime? EndBooking { get; set; }
+        public decimal? Total { get; set; }
         public int StatusId { get; set; } = 1;
         public string VoucherCode { get; set; }
         public int CustomerId { get; set; }

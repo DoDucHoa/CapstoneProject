@@ -103,6 +103,7 @@ namespace PawNClaw.Business.Services
                     CreateTime = bookingCreateParameter.CreateTime,
                     StartBooking = bookingCreateParameter.StartBooking,
                     EndBooking = bookingCreateParameter.EndBooking,
+                    Total = bookingCreateParameter.Total,
                     StatusId = bookingCreateParameter.StatusId,
                     VoucherCode = bookingCreateParameter.VoucherCode,
                     CustomerId = bookingCreateParameter.CustomerId,
