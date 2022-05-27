@@ -44,6 +44,7 @@ namespace PawNClaw.Data.Database
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<ServiceOrder> ServiceOrders { get; set; }
+        public virtual DbSet<ServicePrice> ServicePrices { get; set; }
         public virtual DbSet<SponsorBanner> SponsorBanners { get; set; }
         public virtual DbSet<Staff> Staffs { get; set; }
         public virtual DbSet<Supply> Supplies { get; set; }
@@ -589,6 +590,27 @@ namespace PawNClaw.Data.Database
                     .HasForeignKey(d => d.ServiceId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__ServiceOr__servi__0C1BC9F9");
+            });
+
+            modelBuilder.Entity<ServicePrice>(entity =>
+            {
+                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
+
+                entity.HasOne(d => d.CreateUserNavigation)
+                    .WithMany(p => p.ServicePriceCreateUserNavigations)
+                    .HasForeignKey(d => d.CreateUser)
+                    .HasConstraintName("FK__ServicePr__creat__11D4A34F");
+
+                entity.HasOne(d => d.ModifyUserNavigation)
+                    .WithMany(p => p.ServicePriceModifyUserNavigations)
+                    .HasForeignKey(d => d.ModifyUser)
+                    .HasConstraintName("FK__ServicePr__modif__12C8C788");
+
+                entity.HasOne(d => d.Service)
+                    .WithMany(p => p.ServicePrices)
+                    .HasForeignKey(d => d.ServiceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ServicePr__servi__13BCEBC1");
             });
 
             modelBuilder.Entity<SponsorBanner>(entity =>
