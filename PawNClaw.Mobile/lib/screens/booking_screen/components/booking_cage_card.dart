@@ -78,10 +78,19 @@ class BookingCageCard extends StatelessWidget {
                       ],
                     )
                   : Center(
-                      child: CircleAvatar(
-                        backgroundImage:
-                            AssetImage('lib/assets/cat_avatar0.png'),
-                      ),
+                      child: Container(
+                          height: height * 0.05,
+                          width: height * 0.05,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(height),
+                              border: Border.all(
+                                  color: Colors.white,
+                                  width: 3,
+                                  strokeAlign: StrokeAlign.outside)),
+                          child: CircleAvatar(
+                            backgroundImage:
+                                AssetImage('lib/assets/cat_avatar0.png'),
+                          )),
                     ),
             ),
             SizedBox(

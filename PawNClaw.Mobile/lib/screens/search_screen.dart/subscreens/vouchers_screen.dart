@@ -28,21 +28,21 @@ class _VouchersState extends State<Vouchers> {
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Padding(
-            padding: EdgeInsets.all(10),
-            // child: ListView.separated(
-            //   itemBuilder: ((context, index) {
-            //     return VoucherCard(
-            //       voucher: FAKE_VOUCHERS[index],
-            //       size: 180,
-            //     );
-            //   }),
-            //   itemCount: FAKE_VOUCHERS.length,
-            //   separatorBuilder: (context, index) => const SizedBox(
-            //     height: 8,
-            //   ),
-            //   shrinkWrap: true,
-            //   physics: ClampingScrollPhysics(),
-            // ),
+            padding: EdgeInsets.all(15),
+            child: ListView.separated(
+              itemBuilder: ((context, index) {
+                return VoucherCard(
+                  voucher: FAKE_VOUCHERS[index],
+                  size: 180,
+                );
+              }),
+              itemCount: FAKE_VOUCHERS.length,
+              separatorBuilder: (context, index) => const SizedBox(
+                height: 15,
+              ),
+              shrinkWrap: true,
+              physics: ClampingScrollPhysics(),
+            ),
           ),
         ));
   }
