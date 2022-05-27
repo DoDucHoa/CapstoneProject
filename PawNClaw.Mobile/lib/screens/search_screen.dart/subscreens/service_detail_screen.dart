@@ -203,6 +203,8 @@ Widget buildContent(petCenter.Services service, Size size, BuildContext context,
                   serviceId: service.id!,
                   petId: value),
             );
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Thêm dịch vụ thành công.")));
           }),
           child: Row(children: [
             Expanded(

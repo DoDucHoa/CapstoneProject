@@ -212,6 +212,8 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
                   cageCode: cage.code!,
                   petId: value),
             );
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Thêm chuồng thành công.")));
           }),
           child: Row(children: [
             Expanded(

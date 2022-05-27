@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
+import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
+import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/track_booking_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class BookingSuccess extends StatefulWidget {
-  const BookingSuccess({Key? key}) : super(key: key);
+  const BookingSuccess({required this.center, required this.booking, Key? key})
+      : super(key: key);
 
+  final petCenter.Center center;
+  final BookingRequestModel booking;
   @override
   State<BookingSuccess> createState() => _BookingSuccessState();
 }
@@ -30,7 +35,7 @@ class _BookingSuccessState extends State<BookingSuccess> {
       body: Container(
           padding: EdgeInsets.symmetric(vertical: width * regularPadRate),
           margin: EdgeInsets.symmetric(
-              vertical: width/3, horizontal: width * regularPadRate),
+              vertical: width / 3, horizontal: width * regularPadRate),
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(15)),
           child: Column(
@@ -51,7 +56,7 @@ class _BookingSuccessState extends State<BookingSuccess> {
                             valueColor:
                                 AlwaysStoppedAnimation<Color>(primaryColor),
                             strokeWidth: 15,
-                            
+
                             // radius: width / 4,
                             // lineWidth: 18,
                             // percent: double.parse(value.toString()),
@@ -81,7 +86,6 @@ class _BookingSuccessState extends State<BookingSuccess> {
                       ))),
               SizedBox(
                 height: width * smallPadRate,
-                
               ),
               Text('Congratulations!'),
               Padding(
@@ -92,7 +96,10 @@ class _BookingSuccessState extends State<BookingSuccess> {
                 child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => TrackBooking()));
+                          builder: (context) => TrackBooking(
+                                center: widget.center,
+                                booking: widget.booking,
+                              )));
                     },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
