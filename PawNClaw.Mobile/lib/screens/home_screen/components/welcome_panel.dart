@@ -77,8 +77,8 @@ class WelcomePanel extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.all(width * 0.01),
-                        height: width * regularFontRate * 1.5,
+                        padding: EdgeInsets.symmetric(vertical: width * 0.02, horizontal: width*0.04),
+                        height: width * regularFontRate * 1.8,
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(15),
@@ -87,15 +87,28 @@ class WelcomePanel extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: width * regularFontRate * 0.5,
+                            Container(
+                              padding: EdgeInsets.all(2),
+                              margin: EdgeInsets.only(right: 2),
+                              height: width * smallFontRate * 1.4,
+                              width: width * smallFontRate * 1.4,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Center(
+                                  child: Text('2',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: lightPrimaryColor,
+                                        fontWeight: FontWeight.w700
+                                      ))),
                             ),
                             Text(
                               " Lịch hẹn",
                               style: TextStyle(
-                                fontSize: width * regularFontRate,
+                                fontSize: 15,
                                 color: Colors.white,
+                                 fontWeight: FontWeight.w700
                               ),
                             ),
                           ],
@@ -137,7 +150,7 @@ class WelcomePanel extends StatelessWidget {
                   color: primaryColor,
                 ),
                 hintText: "Tìm kiếm trung tâm thú cưng",
-                hintStyle: TextStyle(color: lightFontColor),
+                hintStyle: TextStyle(color: lightFontColor, fontWeight: FontWeight.w600, fontSize: 15),
                 border: InputBorder.none,
               ),
             ),

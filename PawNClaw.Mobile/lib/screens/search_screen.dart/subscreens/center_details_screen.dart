@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/booking/booking_bloc.dart';
+<<<<<<< HEAD
+=======
+import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
+>>>>>>> af1e2b92beb18521f88728e1fbbee7149af6a1b5
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/fake_data.dart';
@@ -10,6 +14,7 @@ import 'package:pawnclaw_mobile_application/repositories/center/center_repositor
 import 'package:pawnclaw_mobile_application/screens/booking_screen/confirm_booking.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/center_slider.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/item_card.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/service_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/supplytype_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/service_detail_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/vouchers_screen.dart';
@@ -75,7 +80,8 @@ class _CenterDetailsState extends State<CenterDetails> {
           ),
         child:
             BlocBuilder<BookingBloc, BookingState>(builder: (context, state) {
-          return Scaffold(
+             return (center != null) ?
+           Scaffold(
               backgroundColor: frameColor,
               body: DefaultTabController(
                   length: 4,
@@ -382,6 +388,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                               )),
                           SingleChildScrollView(
                             scrollDirection: Axis.vertical,
+<<<<<<< HEAD
                             child: Container(
                               child:
                                   //       Wrap(
@@ -407,11 +414,47 @@ class _CenterDetailsState extends State<CenterDetails> {
 
                               //cageTypeList(FAKE_CAGETYPES, context),
                             ),
+=======
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    child:
+                                        //       Wrap(
+                                        // spacing: 12,
+                                        // runSpacing: 8,
+                                        // children:
+                                        ListView.separated(
+                                      itemBuilder: (context, index) {
+                                        var supplies = center?.supplies;
+                                        return SupplyTypeCard(
+                                            supplyType: supplyType[index],
+                                            size: size,
+                                            supplies: supplies ?? []);
+                                      },
+                                      itemCount: supplyType.length,
+                                      separatorBuilder: (context, index) =>
+                                          const SizedBox(
+                                        height: 8,
+                                      ),
+                                      shrinkWrap: true,
+                                      physics: ClampingScrollPhysics(),
+                                    ),
+                                    
+                                    //cageTypeList(FAKE_CAGETYPES, context),
+                                  ),
+                                  SizedBox(height: width*0.3,),
+                                ]),
+>>>>>>> af1e2b92beb18521f88728e1fbbee7149af6a1b5
                           ),
                           SingleChildScrollView(
                             scrollDirection: Axis.vertical,
                             child: Container(
+<<<<<<< HEAD
                               color: Colors.white,
+=======
+                              //color: Colors.white,
+>>>>>>> af1e2b92beb18521f88728e1fbbee7149af6a1b5
                               child:
                                   //       Wrap(
                                   // spacing: 12,
@@ -420,10 +463,8 @@ class _CenterDetailsState extends State<CenterDetails> {
                                   ListView.separated(
                                 itemBuilder: (context, index) {
                                   var service = center?.services?[index];
-                                  return ItemCard(
-                                    name: service?.description ?? "",
-                                    sellPrice: service?.sellPrice ?? 0,
-                                    discountPrice: service?.discountPrice ?? 0,
+                                  return ServiceCard(
+                                    service: service?? new petCenter.Services(),
                                     redirect: ServiceDetails(service: service!),
                                   );
                                 },
@@ -507,7 +548,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                         width: width / 5 + 10,
                       ),
                     ],
-                  ))));
+                  )))): LoadingIndicator(loadingText: 'Vui lòng chờ');
         }));
   }
 }
