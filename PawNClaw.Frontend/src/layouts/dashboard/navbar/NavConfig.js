@@ -12,7 +12,7 @@ const ICONS = {
   admin: getIcon('ic_admin'),
   owner: getIcon('ic_owner'),
   booking: getIcon('ic_booking'),
-  dashboard: getIcon('ic_dashboard'),
+  chart: getIcon('ic_chart'),
 };
 
 const navConfig = [
@@ -20,7 +20,7 @@ const navConfig = [
   // ----------------------------------------------------------------------
   {
     subheader: 'general',
-    items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.booking }],
+    items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
   },
 
   // BOOKING
