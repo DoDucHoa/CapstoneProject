@@ -187,11 +187,9 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
               }}
             >
               <RHFTextField name="name" label="Họ và tên" />
-              {isEdit ? (
-                <RHFTextField name="email" label="Email" disabled />
-              ) : (
-                <RHFTextField name="email" label="Email" />
-              )}
+
+              <RHFTextField name="email" label="Email" disabled={isEdit} />
+
               <RHFTextField name="phoneNumber" label="Số điện thoại" />
               <RHFSelect name="gender" label="Giới tính">
                 <option key="1" value="1">

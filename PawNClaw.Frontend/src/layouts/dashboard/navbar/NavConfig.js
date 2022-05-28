@@ -9,9 +9,10 @@ import SvgIconStyle from '../../../components/SvgIconStyle';
 const getIcon = (name) => <SvgIconStyle src={`/icons/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
 const ICONS = {
-  user: getIcon('ic_user'),
+  admin: getIcon('ic_admin'),
+  owner: getIcon('ic_owner'),
   booking: getIcon('ic_booking'),
-  dashboard: getIcon('ic_dashboard'),
+  chart: getIcon('ic_chart'),
 };
 
 const navConfig = [
@@ -19,19 +20,31 @@ const navConfig = [
   // ----------------------------------------------------------------------
   {
     subheader: 'general',
-    items: [{ title: 'booking', path: PATH_DASHBOARD.general.booking, icon: ICONS.booking }],
+    items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
+  },
+
+  // BOOKING
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'booking',
+    items: [{ title: 'Lịch Đặt', path: PATH_DASHBOARD.booking.calendar, icon: ICONS.booking }],
   },
 
   // MANAGEMENT
   // ----------------------------------------------------------------------
   {
-    subheader: 'management',
+    subheader: 'Quản Lý',
     items: [
       // MODERATOR
       {
-        title: 'Moderator',
+        title: 'Người điều hành',
         path: PATH_DASHBOARD.admin.list,
-        icon: ICONS.user,
+        icon: ICONS.admin,
+      },
+      {
+        title: 'Chủ trung tâm',
+        path: PATH_DASHBOARD.admin.list,
+        icon: ICONS.owner,
       },
     ],
   },
