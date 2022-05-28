@@ -1,21 +1,21 @@
 ﻿using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
+using PawNClaw.Data.Parameter;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PawNClaw.Business.Services
 {
     public class OwnerService
     {
-        IOwnerRepository _ownerRepository;
+        private IOwnerRepository _ownerRepository;
+        private IAccountRepository _accountRepository;
 
-        public OwnerService(IOwnerRepository ownerRepository)
+        public OwnerService(IOwnerRepository ownerRepository, IAccountRepository accountRepository)
         {
             _ownerRepository = ownerRepository;
+            _accountRepository = accountRepository;
         }
 
         //Get All
@@ -58,25 +58,55 @@ namespace PawNClaw.Business.Services
         }
 
         //Add
-        public int Add(Owner owner)
+        public int Add(CreateOwnerParameter owner)
         {
+            Owner ownerToDB = new Owner
+            {
+                Email = owner.UserName,
+                Name = owner.Name
+                //Gender = owner.Gender
+            };
+
+            Account accountToDb = new Account
+            {
+                UserName = owner.UserName,
+                CreatedUser = owner.CreatedUser,
+                Phone = owner.Phone,
+                RoleCode = owner.RoleCode,
+                Status = true
+            };
+
             try
             {
-                _ownerRepository.Add(owner);
+                if (_accountRepository.GetFirstOrDefault(x => x.UserName.Trim().Equals(accountToDb.UserName)) != null)
+                    return -1;
+
+                _accountRepository.Add(accountToDb);
+                _accountRepository.SaveDbChange();
+
+                ownerToDB.Id = accountToDb.Id;
+
+                _ownerRepository.Add(ownerToDB);
                 _ownerRepository.SaveDbChange();
-                return owner.Id;
+                var id = ownerToDB.Id;
+                return id;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("This is error: " + ex.Message);
                 return -1;
             }
         }
 
         //Update
-        public bool Update(Owner owner)
+        public bool Update(Owner owner, string Phone)
         {
             try
             {
+                Account account = _accountRepository.Get(owner.Id);
+                account.Phone = Phone;
+                _accountRepository.Update(account);
+                _accountRepository.SaveDbChange();
                 _ownerRepository.Update(owner);
                 _ownerRepository.SaveDbChange();
                 return true;
@@ -92,11 +122,12 @@ namespace PawNClaw.Business.Services
         {
             try
             {
-                var objFromDb = _ownerRepository.Get(id);
-                if (objFromDb != null)
+                var accountFromDb = _accountRepository.Get(id);
+                if (accountFromDb != null)
                 {
-                    _ownerRepository.Update(objFromDb);
-                    _ownerRepository.SaveDbChange();
+                    accountFromDb.Status = false;
+                    _accountRepository.Update(accountFromDb);
+                    _accountRepository.SaveDbChange();
                     return true;
                 }
             }
@@ -112,11 +143,12 @@ namespace PawNClaw.Business.Services
         {
             try
             {
-                var objFromDb = _ownerRepository.Get(id);
-                if (objFromDb != null)
+                var accountFromDb = _accountRepository.Get(id);
+                if (accountFromDb != null)
                 {
-                    _ownerRepository.Update(objFromDb);
-                    _ownerRepository.SaveDbChange();
+                    accountFromDb.Status = true;
+                    _accountRepository.Update(accountFromDb);
+                    _accountRepository.SaveDbChange();
                     return true;
                 }
             }
