@@ -20,12 +20,15 @@ namespace PawNClaw.Business.Services
         IServiceOrderRepository _serviceOrderRepository;
         ISupplyOrderRepository _supplyOrderRepository;
         ISupplyRepository _supplyRepository;
+        IServicePriceRepository _servicePriceRepository;
+        IPetRepository _petRepository;
 
         private readonly ApplicationDbContext _db;
 
         public BookingService(IBookingRepository bookingRepository, IBookingDetailRepository bookingDetailRepository, 
             IPetBookingDetailRepository petBookingDetailRepository, IServiceOrderRepository serviceOrderRepository, 
             ISupplyOrderRepository supplyOrderRepository, ISupplyRepository supplyRepository,
+            IServicePriceRepository servicePriceRepository, IPetRepository petRepository,
             ApplicationDbContext db)
         {
             _bookingRepository = bookingRepository;
@@ -34,6 +37,8 @@ namespace PawNClaw.Business.Services
             _serviceOrderRepository = serviceOrderRepository;
             _supplyOrderRepository = supplyOrderRepository;
             _supplyRepository = supplyRepository;
+            _servicePriceRepository = servicePriceRepository;
+            _petRepository = petRepository;
             _db = db;
         }
 
@@ -98,6 +103,7 @@ namespace PawNClaw.Business.Services
                     CreateTime = bookingCreateParameter.CreateTime,
                     StartBooking = bookingCreateParameter.StartBooking,
                     EndBooking = bookingCreateParameter.EndBooking,
+                    Total = bookingCreateParameter.Total,
                     StatusId = bookingCreateParameter.StatusId,
                     VoucherCode = bookingCreateParameter.VoucherCode,
                     CustomerId = bookingCreateParameter.CustomerId,
@@ -173,12 +179,19 @@ namespace PawNClaw.Business.Services
                 {
                     foreach (var serviceOrder in serviceOrderCreateParameters)
                     {
+
+                        var pet = _petRepository.Get(serviceOrder.PetId);
+
+                        decimal servicePrice = _servicePriceRepository.GetFirstOrDefault(x => x.ServiceId == serviceOrder.ServiceId 
+                                                                        && x.MinWeight <= pet.Weight 
+                                                                        && x.MaxWeight >= pet.Weight).Price;
+
                         ServiceOrder serviceOrderToDb = new ServiceOrder()
                         {
                             ServiceId = serviceOrder.ServiceId,
                             BookingId = bookingToDb.Id,
                             Quantity = serviceOrder.Quantity,
-                            SellPrice = serviceOrder.SellPrice,
+                            SellPrice = servicePrice,
                             TotalPrice = serviceOrder.Quantity * serviceOrder.SellPrice,
                             Note = serviceOrder.Note,
                             PetId = serviceOrder.PetId
@@ -202,6 +215,7 @@ namespace PawNClaw.Business.Services
                 {
                     foreach (var supplyOrder in supplyOrderCreateParameters)
                     {
+
                         SupplyOrder supplyOrderToDb = new SupplyOrder()
                         {
                             SupplyId = supplyOrder.SupplyId,
@@ -221,6 +235,13 @@ namespace PawNClaw.Business.Services
                             var supply = _supplyRepository.Get(supplyOrder.SupplyId);
 
                             supply.Quantity = (int)(supply.Quantity - supplyOrder.Quantity);
+
+                            if (supply.Quantity < 0)
+                            {
+                                transaction.Rollback();
+                                throw new Exception();
+                            }
+
                             _supplyRepository.Update(supply);
                             await _supplyRepository.SaveDbChangeAsync();
                         }

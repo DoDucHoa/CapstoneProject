@@ -8,10 +8,8 @@ import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/models/pet.dart';
 import 'package:pawnclaw_mobile_application/repositories/booking.dart/booking_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/booking_screen/components/booking_item_card.dart';
-<<<<<<< HEAD
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/booking_success_screen.dart';
-=======
->>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/vouchers_screen.dart';
 
 import 'components/booking_cage_card.dart';
 
@@ -35,9 +33,16 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
     petCenter.Center center = widget.center;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    int LineOfBill = 3;
+    bool haveDiscount = false;
+    
     return BlocBuilder<BookingBloc, BookingState>(
       builder: (context, state) {
         if (state is BookingUpdated) {
+if(state.booking.getTotalSupply() > 0 ) LineOfBill++;
+if(state.booking.getTotalService() > 0 ) LineOfBill++;
+// if(state.booking.getTotal() > 0 ) LineOfBill++;
+
           List<Pet> pets = [];
           state.requests!.forEach(
             (element) => element.forEach((pet) {
@@ -106,7 +111,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                   children: [
                                     WidgetSpan(
                                       child: Icon(
-                                        Icons.location_on,
+                                        Icons.location_on_rounded,
                                         size: width * regularFontRate,
                                         color: primaryColor,
                                       ),
@@ -114,7 +119,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                     TextSpan(
                                       text: center.address ?? "",
                                       style: TextStyle(
-                                        color: primaryColor,
+                                        color: lightFontColor,
                                         fontWeight: FontWeight.w400,
                                         fontSize: width * smallFontRate,
                                       ),
@@ -173,8 +178,11 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                     ),
                                   ),
                                   Text(
-                                    state.booking.bookingCreateParameter!
-                                        .startBooking!,
+                                    DateFormat('HH:mm, dd/MM/yyyy').format(
+                                        DateTime.parse(state
+                                            .booking
+                                            .bookingCreateParameter!
+                                            .startBooking!)),
                                     style: TextStyle(
                                       color: primaryFontColor,
                                       fontWeight: FontWeight.w500,
@@ -199,8 +207,11 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                     ),
                                   ),
                                   Text(
-                                    state.booking.bookingCreateParameter!
-                                        .endBooking!,
+                                    DateFormat('HH:mm, dd/MM/yyyy').format(
+                                        DateTime.parse(state
+                                            .booking
+                                            .bookingCreateParameter!
+                                            .endBooking!)),
                                     style: TextStyle(
                                       color: primaryFontColor,
                                       fontWeight: FontWeight.w500,
@@ -258,45 +269,43 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: width * smallPadRate,
-                      vertical: width * smallPadRate * 0.5,
-                    ),
-                    margin: EdgeInsets.symmetric(
-                      horizontal: width * mediumPadRate,
-                      vertical: width * smallPadRate,
-                    ),
-                    width: width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black12),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(
-                          Icons.card_giftcard,
-                          color: primaryColor,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: width * smallPadRate),
-                          child: Text(
-                            "Áp dụng ưu đãi",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
+                      // padding: EdgeInsets.symmetric(
+                      //   horizontal: width * smallPadRate,
+                      //   vertical: width * smallPadRate * 0.5,
+                      // ),
+                      margin: EdgeInsets.symmetric(
+                        horizontal: width * mediumPadRate,
+                        vertical: width * smallPadRate,
+                      ),
+                      //width: width,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.white,
+                        // border: Border.all(color: Colors.black12),
+                      ),
+                      child: OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10))),
+                          onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => Vouchers())),
+                          icon: Image.asset(
+                            'lib/assets/coupon.png',
+                            width: 30,
                           ),
-                        ),
-                        Spacer(),
-                        Icon(
-                          Icons.navigate_next,
-                          color: primaryColor,
-                        ),
-                      ],
-                    ),
-                  ),
+                          label: Container(
+                              padding: EdgeInsets.fromLTRB(10, 15, 5, 15),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Bạn có 4 ưu đãi',
+                                    style: TextStyle(color: primaryFontColor),
+                                  ),
+                                  Expanded(child: SizedBox()),
+                                  Icon(Icons.keyboard_double_arrow_right),
+                                ],
+                              )))),
                   Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: width * smallPadRate,
@@ -304,7 +313,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                     margin:
                         EdgeInsets.symmetric(horizontal: width * mediumPadRate),
                     width: width,
-                    height: height * 0.3,
+                    height: height * 0.065*LineOfBill,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
                       color: Colors.white,
@@ -313,16 +322,71 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          "THÔNG TIN HÓA ĐƠN",
-                          style: TextStyle(
-                            color: primaryFontColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: width * regularFontRate,
-                          ),
-                        ),
                         Row(
+                          children: [
+                            Text(
+                              "CHI PHÍ DỰ KIẾN",
+                              style: TextStyle(
+                                color: primaryFontColor,
+                                fontWeight: FontWeight.w600,
+                                fontSize: width * regularFontRate,
+                              ),
+                            ),
+                            // SizedBox(
+                            //   width: 5,
+                            // ),
+                            IconButton(
+                              //color: Colors.white,
+                              // padding: EdgeInsets.all(0),
+
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(15)),
+                                            ),
+                                            padding: EdgeInsets.all(20),
+                                            width: width * 0.5,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  'Chi phí trên được tính theo dự kiến, có thể thay đổi trong quá trình trung tâm cung cấp dịch vụ.',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Text('Đóng'))
+                                              ],
+                                            ),
+                                          ),
+                                        ));
+                              },
+                              icon: Icon(
+                                Icons.info_rounded,
+                                color: primaryColor,
+                                size: 18,
+                              ),
+                            )
+                          ],
+                        ),
+                        (state.booking.getTotalService() > 0)? Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
@@ -345,7 +409,8 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                               ),
                             )
                           ],
-                        ),
+                        ):SizedBox(height: 0,),
+                        (state.booking.getTotalSupply() > 0 )?
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -369,7 +434,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                               ),
                             )
                           ],
-                        ),
+                        ):SizedBox(height: 0,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -398,7 +463,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                             )
                           ],
                         ),
-                        Row(
+                        (haveDiscount) ? Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
@@ -417,13 +482,13 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                               ),
                             )
                           ],
-                        ),
+                        ):SizedBox(height: 0,),
                         Container(
                           width: width,
                           height: 1.5,
                           color: Colors.black12,
                         ),
-                        Row(
+                        Padding(padding: EdgeInsets.symmetric(vertical: 5), child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
@@ -447,7 +512,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                               ),
                             )
                           ],
-                        ),
+                        )),
                       ],
                     ),
                   ),
@@ -463,12 +528,8 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                             (state as BookingUpdated).booking;
                         var result =
                             await BookingRepository().createBooking(request);
-<<<<<<< HEAD
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => BookingSuccess()));
-=======
-                        print(result);
->>>>>>> 174cd908c0b68b71cb05b7230ac1e95e35a736b9
                         //booking button
                       },
                       style: ButtonStyle(

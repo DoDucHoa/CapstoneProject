@@ -37,10 +37,10 @@ class CenterCard extends StatelessWidget {
             child: Stack(children: [
               Container(
                 width: width,
-                height: height * 0.25,
+                height: height * 0.3,
                 margin: EdgeInsets.symmetric(
-                  horizontal: width * regularPadRate,
-                  vertical: width * smallPadRate,
+                  horizontal: width * smallPadRate,
+                  vertical: width * extraSmallPadRate,
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
@@ -59,8 +59,8 @@ class CenterCard extends StatelessWidget {
                   children: [
                     Center(
                       child: Container(
-                        height: height * 0.15,
-                        width: width * 0.75,
+                        height: height * 0.18,
+                        width: width *(1 - smallPadRate*2 - extraSmallPadRate*2),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           image: DecorationImage(
@@ -88,7 +88,7 @@ class CenterCard extends StatelessWidget {
                               children: [
                                 WidgetSpan(
                                   child: Icon(
-                                    Icons.location_on,
+                                    Icons.location_on_rounded,
                                     size: width * regularFontRate,
                                     color: primaryColor,
                                   ),
@@ -96,7 +96,7 @@ class CenterCard extends StatelessWidget {
                                 TextSpan(
                                   text: center.address,
                                   style: TextStyle(
-                                    color: primaryColor,
+                                    color: lightFontColor,
                                     fontWeight: FontWeight.w400,
                                     fontSize: width * smallFontRate,
                                   ),
@@ -114,8 +114,8 @@ class CenterCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(
-                      Icons.star,
-                      size: width * smallFontRate,
+                      Icons.star_rate_rounded,
+                      size: width * regularFontRate,
                       color: primaryColor,
                     ),
                     Text(
@@ -134,8 +134,8 @@ class CenterCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                bottom: width * 0.1,
-                right: width * 0.15,
+                bottom: width * 0.07,
+                right: width *smallPadRate*2,
               )
             ]));
       },

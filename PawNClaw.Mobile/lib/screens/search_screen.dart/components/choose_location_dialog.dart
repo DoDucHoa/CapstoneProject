@@ -99,7 +99,7 @@ class _ChooseLocationDialogState extends State<ChooseLocationDialog> {
                         }
                       : () {},
                   child: const Text(
-                    "Confirm",
+                    "Xác nhận",
                     style: TextStyle(
                       color: Colors.white,
                     ),

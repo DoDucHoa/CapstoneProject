@@ -22,6 +22,8 @@ namespace PawNClaw.Data.Database
             PriceTypeModifyUserNavigations = new HashSet<PriceType>();
             ServiceCreateUserNavigations = new HashSet<Service>();
             ServiceModifyUserNavigations = new HashSet<Service>();
+            ServicePriceCreateUserNavigations = new HashSet<ServicePrice>();
+            ServicePriceModifyUserNavigations = new HashSet<ServicePrice>();
             SupplyCreateUserNavigations = new HashSet<Supply>();
             SupplyModifyUserNavigations = new HashSet<Supply>();
             VoucherCreateUserNavigations = new HashSet<Voucher>();
@@ -74,6 +76,10 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<Service> ServiceCreateUserNavigations { get; set; }
         [InverseProperty(nameof(Service.ModifyUserNavigation))]
         public virtual ICollection<Service> ServiceModifyUserNavigations { get; set; }
+        [InverseProperty(nameof(ServicePrice.CreateUserNavigation))]
+        public virtual ICollection<ServicePrice> ServicePriceCreateUserNavigations { get; set; }
+        [InverseProperty(nameof(ServicePrice.ModifyUserNavigation))]
+        public virtual ICollection<ServicePrice> ServicePriceModifyUserNavigations { get; set; }
         [InverseProperty(nameof(Supply.CreateUserNavigation))]
         public virtual ICollection<Supply> SupplyCreateUserNavigations { get; set; }
         [InverseProperty(nameof(Supply.ModifyUserNavigation))]
