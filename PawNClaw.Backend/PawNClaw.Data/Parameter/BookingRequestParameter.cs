@@ -12,6 +12,8 @@ namespace PawNClaw.Data.Parameter
         public int? StatusId { get; set; } = null;
         public int? CustomerId { get; set; } = null;
         public int? CenterId { get; set; } = null;
+        public int? Month { get; set; } = null;
+        public int? Year { get; set; } = null;
 
         public string dir { get; set; } = "asc";
         public string sort { get; set; } = "CreateTime";

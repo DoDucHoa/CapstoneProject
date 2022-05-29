@@ -36,19 +36,11 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetBookingForStaff([FromQuery] BookingRequestParameter bookingRequestParameter, [FromQuery] PagingParameter paging)
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult GetBookingForStaff([FromQuery] BookingRequestParameter bookingRequestParameter)
         {
-            var data = _bookingService.GetBookings(bookingRequestParameter, paging);
-            var metadata = new
-            {
-                data.TotalCount,
-                data.PageSize,
-                data.CurrentPage,
-                data.TotalPages,
-                data.HasNext,
-                data.HasPrevious
-            };
-            return Ok(new { data, metadata });
+            var data = _bookingService.GetBookings(bookingRequestParameter);
+            return Ok(data);
         }
 
         [HttpPost]
