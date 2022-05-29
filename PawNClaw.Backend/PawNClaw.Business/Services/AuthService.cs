@@ -183,7 +183,7 @@ namespace PawNClaw.Business.Services
             var userViewModel = await VerifyFirebaseTokenId(loginRequestModel.IdToken, loginRequestModel.deviceId, loginRequestModel.SignInMethod);
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Name, userViewModel.Name != null ? userViewModel.Name : ""),
+                new(ClaimTypes.Name, userViewModel.Name ?? ""),
                 new(ClaimTypes.Email, userViewModel.UserName),
                 new(ClaimTypes.Role, userViewModel.Role),
             };
