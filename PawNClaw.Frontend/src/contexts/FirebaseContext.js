@@ -7,7 +7,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  updatePassword,
+  // updatePassword,
 } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 //
@@ -176,7 +176,7 @@ function AuthProvider({ children }) {
     dispatch({ type: 'LOGOUT' });
   };
 
-  const changePassword = (password) => updatePassword(AUTH.currentUser, password);
+  // const changePassword = (password) => updatePassword(AUTH.currentUser, password);
 
   return (
     <AuthContext.Provider
@@ -201,7 +201,7 @@ function AuthProvider({ children }) {
         login,
         register,
         logout,
-        changePassword,
+        // changePassword,
       }}
     >
       {children}

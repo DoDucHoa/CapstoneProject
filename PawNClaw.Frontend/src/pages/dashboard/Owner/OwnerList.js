@@ -38,10 +38,10 @@ import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { TableEmptyRows, TableHeadCustom, TableNoData } from '../../../components/table';
 
 // sections
-import { AdminTableRow, AdminTableToolbar } from '../../../sections/@dashboard/admin/list';
+import { OwnerTableRow, OwnerTableToolbar } from '../../../sections/@dashboard/owner/list';
 
 // API
-import { getAdmins, banAdmin, unbanAdmin } from './useAdminAPI';
+import { getOwners, banOwner, unbanOwner } from './useOwnerAPI';
 
 // ----------------------------------------------------------------------
 
@@ -87,24 +87,24 @@ export default function UserList() {
     setPage(0);
   };
 
-  const getAdminData = async () => {
-    const response = await getAdmins(page, rowsPerPage, filterStatus, searchRequest);
+  const getOwnerData = async () => {
+    const response = await getOwners(page, rowsPerPage, filterStatus, searchRequest);
     const { data, metadata } = response;
 
-    const admins = data.map((admin, index) => ({
-      id: admin.id,
+    const owners = data.map((owner, index) => ({
+      id: owner.id,
       avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`,
-      name: admin.name,
-      email: admin.email,
-      phoneNumber: admin.idNavigation.phone,
-      status: admin.idNavigation.status,
+      name: owner.name,
+      email: owner.email,
+      phoneNumber: owner.idNavigation.phone,
+      status: owner.idNavigation.status,
     }));
-    setTableData(admins);
+    setTableData(owners);
     setMetadata(metadata);
   };
 
   useEffect(() => {
-    getAdminData();
+    getOwnerData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, rowsPerPage, filterStatus, searchRequest]);
 
@@ -126,13 +126,13 @@ export default function UserList() {
   };
 
   const handleBanAdmin = async (id) => {
-    await banAdmin(id);
-    await getAdminData();
+    await banOwner(id);
+    await getOwnerData();
   };
 
   const handleUnbanAdmin = async (id) => {
-    await unbanAdmin(id);
-    await getAdminData();
+    await unbanOwner(id);
+    await getOwnerData();
   };
   const handleOpenBanDialog = (idAdmin) => {
     setSelectIdAdmin(idAdmin);
@@ -151,11 +151,11 @@ export default function UserList() {
 
   return (
     <>
-      <Page title="Người điều hành">
+      <Page title="Chủ trung tâm">
         <Container maxWidth={themeStretch ? false : 'lg'}>
           <HeaderBreadcrumbs
-            heading="Danh sách người điều hành"
-            links={[{ name: 'Trang chủ', href: PATH_DASHBOARD.root }, { name: 'Danh sách người điều hành' }]}
+            heading="Danh sách chủ trung tâm"
+            links={[{ name: 'Trang chủ', href: PATH_DASHBOARD.root }, { name: 'Danh sách chủ trung tâm' }]}
             action={
               <Button
                 variant="contained"
@@ -163,7 +163,7 @@ export default function UserList() {
                 to={PATH_DASHBOARD.admin.new}
                 startIcon={<Iconify icon={'eva:plus-fill'} />}
               >
-                Thêm mới người điều hành
+                Thêm mới chủ trung tâm
               </Button>
             }
           />
@@ -185,7 +185,7 @@ export default function UserList() {
             <Divider />
 
             {/* Filter dữ liệu */}
-            <AdminTableToolbar
+            <OwnerTableToolbar
               filterName={filterName}
               onFilterName={handleFilterName}
               onEnterPress={handleSearchRequest}
@@ -199,7 +199,7 @@ export default function UserList() {
 
                   <TableBody>
                     {tableData.map((row) => (
-                      <AdminTableRow
+                      <OwnerTableRow
                         key={row.id}
                         row={row}
                         onEditRow={() => handleEditRow(row.id)}

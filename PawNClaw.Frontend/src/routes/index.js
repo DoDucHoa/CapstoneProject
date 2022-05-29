@@ -75,6 +75,15 @@ export default function Router() {
           ],
         },
         {
+          path: 'owner',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/owner/list" replace />, index: true },
+            { path: 'list', element: <OwnerList /> },
+            { path: 'new', element: <OwnerCreate /> },
+            { path: ':id/edit', element: <OwnerCreate /> },
+          ],
+        },
+        {
           path: 'booking',
           children: [
             { path: '', element: <Navigate to="/dashboard/booking/calendar" replace />, index: true },
@@ -135,6 +144,10 @@ const NotFound = Loadable(lazy(() => import('../pages/Page404')));
 // ADMIN
 const AdminList = Loadable(lazy(() => import('../pages/dashboard/Admin/AdminList')));
 const AdminCreate = Loadable(lazy(() => import('../pages/dashboard/Admin/AdminCreate')));
+
+// OWNER
+const OwnerList = Loadable(lazy(() => import('../pages/dashboard/Owner/OwnerList')));
+const OwnerCreate = Loadable(lazy(() => import('../pages/dashboard/Owner/OwnerCreate')));
 
 // BOOKING CALENDAR
 const BookingCalendar = Loadable(lazy(() => import('../pages/dashboard/Calendar')));

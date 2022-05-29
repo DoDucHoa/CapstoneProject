@@ -4,15 +4,10 @@ using Microsoft.IdentityModel.Tokens;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
-using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -48,7 +43,6 @@ namespace PawNClaw.Business.Services
         //register
         public async Task<LoginViewModel> Register(LoginRequestModel loginrequestmodel, AccountCreateParameter _account, CustomerCreateParameter _customer)
         {
-
             var userViewModel = await VerifyFirebaseTokenIdRegister(loginrequestmodel.IdToken, _account, _customer);
             var claims = new List<Claim>
             {
@@ -91,7 +85,6 @@ namespace PawNClaw.Business.Services
             Customer customerToDb = new Customer();
             customerToDb.Name = _customer.Name;
 
-
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 try
@@ -119,7 +112,6 @@ namespace PawNClaw.Business.Services
             var account = new Account();
             try
             {
-
                 account = _repository.GetFirstOrDefault(x => x.Phone.Equals(user.PhoneNumber));
 
                 //Not in database
@@ -161,7 +153,6 @@ namespace PawNClaw.Business.Services
             {
                 throw new Exception();
             }
-
 
             var loginViewModel = new LoginViewModel
             {
@@ -219,11 +210,16 @@ namespace PawNClaw.Business.Services
                     case "Email":
                         account = _repository.GetFirstOrDefault(x => x.UserName.Equals(user.Email));
                         break;
+
                     case "Google":
                         account = _repository.GetFirstOrDefault(x => x.UserName.Equals(user.Email));
                         break;
+
                     case "Phone":
                         account = _repository.GetFirstOrDefault(x => x.Phone.Equals(user.PhoneNumber));
+                        break;
+
+                    default:
                         break;
                 }
 
@@ -256,7 +252,7 @@ namespace PawNClaw.Business.Services
             string Name = null;
             string Email = null;
             string Url = null;
-            Photo photo = new Photo();
+            Photo photo = new();
             //Get data for loginViewModel
             try
             {
@@ -273,6 +269,7 @@ namespace PawNClaw.Business.Services
                             Url = photo.Url;
                         }
                         break;
+
                     case "MOD":
                         Name = _adminRepository.Get(account.Id).Name;
                         Email = _adminRepository.Get(account.Id).Email;
@@ -283,6 +280,7 @@ namespace PawNClaw.Business.Services
                             Url = photo.Url;
                         }
                         break;
+
                     case "OWN":
                         Name = _ownerRepository.Get(account.Id).Name;
                         Email = _ownerRepository.Get(account.Id).Email;
@@ -293,8 +291,10 @@ namespace PawNClaw.Business.Services
                             Url = photo.Url;
                         }
                         break;
+
                     case "STF":
                         break;
+
                     case "CUS":
                         Name = _customerRepository.Get(account.Id).Name;
                         Email = account.UserName;
@@ -304,6 +304,9 @@ namespace PawNClaw.Business.Services
                         {
                             Url = photo.Url;
                         }
+                        break;
+
+                    default:
                         break;
                 }
             }
@@ -353,7 +356,6 @@ namespace PawNClaw.Business.Services
             var tokenStr = tokenHandler.WriteToken(token);
 
             return tokenStr;
-
         }
 
         //public string GenerateRefreshToken()
