@@ -58,19 +58,32 @@ namespace PawNClaw.Data.Repository
             {
                 query = query.Where(x => x.StatusId == bookingRequestParameter.StatusId);
             }
-
-            if (bookingRequestParameter.includeProperties != null)
+            if (bookingRequestParameter.Year.HasValue)
             {
-                foreach (var includeProp in bookingRequestParameter.includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(includeProp);
-                }
+                query = query.Where(x => x.StartBooking.Value.Year == bookingRequestParameter.Year
+                                && x.EndBooking.Value.Year == bookingRequestParameter.Year);
+            }
+            if (bookingRequestParameter.Month.HasValue)
+            {
+                query = query.Where(x => x.StartBooking.Value.Month == bookingRequestParameter.Month
+                                && x.EndBooking.Value.Month == bookingRequestParameter.Month);
             }
 
             if (bookingRequestParameter.dir == "asc")
                 query = query.OrderBy(d => d.CreateTime);
             else if (bookingRequestParameter.dir == "desc")
                 query = query.OrderByDescending(d => d.CreateTime);
+
+            query = query
+                .Include(x => x.Customer)
+                .Select(x => new Booking
+                {
+                    Id = x.Id,
+                    StartBooking = x.StartBooking,
+                    EndBooking = x.EndBooking,
+                    StatusId = x.StatusId,
+                    Customer = x.Customer
+                });
 
             return query.ToList();
         }
@@ -107,7 +120,8 @@ namespace PawNClaw.Data.Repository
                         Duration = bookingdetail.Duration,
                         Note = bookingdetail.Note,
                         PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
-                        .Select(pet => new PetBookingDetail { 
+                        .Select(pet => new PetBookingDetail
+                        {
                             BookingId = pet.BookingId,
                             Line = pet.Line,
                             PetId = pet.PetId
