@@ -173,7 +173,7 @@ export default function Calendar() {
               initialDate={date}
               initialView={view}
               dayMaxEventRows={3}
-              eventDisplay="block"
+              eventDisplay="list-item"
               headerToolbar={false}
               allDayMaintainDuration
               eventResizableFromStart

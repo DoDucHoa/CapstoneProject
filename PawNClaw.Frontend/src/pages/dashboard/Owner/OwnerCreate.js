@@ -33,13 +33,13 @@ export default function UserCreate() {
   }, [id, isEdit]);
 
   return (
-    <Page title="Người điều hành">
+    <Page title="Chủ trung tâm">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading={!isEdit ? 'Thêm mới người điều hành' : 'Sửa thông tin người điều hành'}
+          heading={!isEdit ? 'Thêm mới chủ trung tâm' : 'Sửa thông tin chủ trung tâm'}
           links={[
             { name: 'Trang chủ', href: PATH_DASHBOARD.root },
-            { name: 'Danh sách người điều hành', href: PATH_DASHBOARD.admin.list },
+            { name: 'Danh sách chủ trung tâm', href: PATH_DASHBOARD.owner.list },
             { name: !isEdit ? 'Thêm mới' : 'Sửa' },
           ]}
         />

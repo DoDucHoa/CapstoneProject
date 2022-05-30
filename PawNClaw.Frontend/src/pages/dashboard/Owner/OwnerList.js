@@ -160,7 +160,7 @@ export default function UserList() {
               <Button
                 variant="contained"
                 component={RouterLink}
-                to={PATH_DASHBOARD.admin.new}
+                to={PATH_DASHBOARD.owner.new}
                 startIcon={<Iconify icon={'eva:plus-fill'} />}
               >
                 Thêm mới chủ trung tâm
