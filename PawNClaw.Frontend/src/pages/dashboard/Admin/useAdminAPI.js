@@ -1,15 +1,16 @@
 import axios from '../../../utils/axios';
 
-const adminURL = '/api/admins';
+const URL = '/api/admins';
 
 const getAdmin = async (idAdmin) => {
-  const response = await axios.get(`${adminURL}/${idAdmin}`);
+  const response = await axios.get(`${URL}/${idAdmin}`);
   return response.data;
 };
 
-const getAdmins = async (page, rowsPerPage, filterStatus) => {
-  const response = await axios.get(adminURL, {
+const getAdmins = async (page, rowsPerPage, filterStatus, searchName) => {
+  const response = await axios.get(URL, {
     params: {
+      Name: searchName,
       PageSize: rowsPerPage,
       PageNumber: page,
       Status: filterStatus,
@@ -19,7 +20,7 @@ const getAdmins = async (page, rowsPerPage, filterStatus) => {
 };
 
 const createAdmin = async (userName, createdUser, phone, name, gender) => {
-  const response = await axios.post(adminURL, {
+  const response = await axios.post(URL, {
     userName,
     createdUser,
     phone,
@@ -30,7 +31,7 @@ const createAdmin = async (userName, createdUser, phone, name, gender) => {
 };
 
 const updateAdmin = async (idAdmin, name, phone, gender) => {
-  const response = await axios.put(adminURL, {
+  const response = await axios.put(URL, {
     name,
     phone,
     gender,
@@ -39,12 +40,12 @@ const updateAdmin = async (idAdmin, name, phone, gender) => {
 };
 
 const banAdmin = async (idAdmin) => {
-  const response = await axios.delete(`${adminURL}/${idAdmin}`);
+  const response = await axios.delete(`${URL}/${idAdmin}`);
   return response.data;
 };
 
 const unbanAdmin = async (idAdmin) => {
-  const response = await axios.put(`${adminURL}/${idAdmin}`);
+  const response = await axios.put(`${URL}/restore/${idAdmin}`);
   return response.data;
 };
 

@@ -60,14 +60,14 @@ namespace PawNClaw.Business.Services
         //Add
         public int Add(CreateOwnerParameter owner)
         {
-            Owner ownerToDB = new Owner
+            Owner ownerToDB = new()
             {
                 Email = owner.UserName,
                 Name = owner.Name
                 //Gender = owner.Gender
             };
 
-            Account accountToDb = new Account
+            Account accountToDb = new()
             {
                 UserName = owner.UserName,
                 CreatedUser = owner.CreatedUser,

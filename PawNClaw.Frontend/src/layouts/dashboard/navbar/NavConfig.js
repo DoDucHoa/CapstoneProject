@@ -43,7 +43,7 @@ const navConfig = [
       },
       {
         title: 'Chủ trung tâm',
-        path: PATH_DASHBOARD.admin.list,
+        path: PATH_DASHBOARD.owner.list,
         icon: ICONS.owner,
       },
     ],

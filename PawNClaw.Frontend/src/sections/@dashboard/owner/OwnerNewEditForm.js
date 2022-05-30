@@ -18,7 +18,7 @@ import useAuth from '../../../hooks/useAuth';
 // components
 import Label from '../../../components/Label';
 import { FormProvider, RHFSelect, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
-import { createAdmin, updateAdmin } from '../../../pages/dashboard/Admin/useAdminAPI';
+import { createOwner, updateOwner } from '../../../pages/dashboard/Owner/useOwnerAPI';
 import Iconify from '../../../components/Iconify';
 
 // ----------------------------------------------------------------------
@@ -100,11 +100,11 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
     try {
       if (!isEdit) {
         await Promise.all([
-          createAdmin(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender), // create account on Backend
+          createOwner(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender), // create account on Backend
           register(values.email, values.password), // create account on Firebase
         ]);
       } else {
-        updateAdmin(accountInfo.id, values.name, values.phoneNumber, values.gender);
+        updateOwner(accountInfo.id, values.name, values.phoneNumber, values.gender);
 
         // change password on Firebase
         // if (values.password !== specialString) {
@@ -202,7 +202,6 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
                   Khác
                 </option>
               </RHFSelect>
-
               {!isEdit && (
                 <>
                   <RHFTextField
