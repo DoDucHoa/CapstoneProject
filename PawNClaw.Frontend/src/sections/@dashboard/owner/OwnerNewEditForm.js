@@ -113,8 +113,8 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
       }
 
       reset();
-      enqueueSnackbar(!isEdit ? 'Tạo mới thành công!' : 'Cập nhật thành công!');
-      navigate(PATH_DASHBOARD.admin.list);
+      enqueueSnackbar(!isEdit ? 'Tạo mới thành công' : 'Cập nhật thành công');
+      navigate(PATH_DASHBOARD.owner.list);
     } catch (error) {
       console.error(error);
     }
@@ -241,7 +241,7 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
             </Box>
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
-              <Button to={PATH_DASHBOARD.admin.list} color="error" variant="contained" component={RouterLink}>
+              <Button to={PATH_DASHBOARD.owner.list} color="error" variant="contained" component={RouterLink}>
                 Hủy
               </Button>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

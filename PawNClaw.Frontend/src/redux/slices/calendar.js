@@ -104,8 +104,18 @@ export function getEvents() {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('/api/calendar/events');
-      dispatch(slice.actions.getEventsSuccess(response.data.events));
+      const response = await axios.get('/api/bookings');
+
+      const bookingData = response.data.map((booking) => ({
+        id: booking.id,
+        title: booking.customer.name,
+        start: booking.startBooking,
+        end: booking.endBooking,
+        color: booking.color,
+        textColor: booking.textColor,
+      }));
+
+      dispatch(slice.actions.getEventsSuccess(bookingData));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

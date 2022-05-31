@@ -19,7 +19,7 @@ export default function OwnerTableToolbar({ filterName, onFilterName, onEnterPre
         value={filterName}
         onChange={(event) => onFilterName(event.target.value)}
         onKeyPress={(event) => event.key === 'Enter' && onEnterPress(event.target.value)}
-        placeholder="Tìm chủ cửa hàng..."
+        placeholder="Tìm chủ trung tâm..."
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
