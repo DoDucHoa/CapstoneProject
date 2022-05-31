@@ -260,5 +260,12 @@ namespace PawNClaw.Business.Services
 
             return values;
         }
+
+        public IEnumerable<Booking> GetBookingsByCustomerId(int id)
+        {
+            var values = _bookingRepository.GetAll(x => x.CustomerId == id);
+
+            return values;
+        }
     }
 }

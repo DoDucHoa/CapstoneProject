@@ -43,6 +43,14 @@ namespace PawNClaw.API.Controllers
             return Ok(data);
         }
 
+        [HttpGet("customer/{id}")]
+        [Authorize(Roles = "Owner,Staff,Customer")]
+        public IActionResult GetBookingByCustomerId([FromQuery] int id)
+        {
+            var data = _bookingService.GetBookingsByCustomerId(id);
+            return Ok(data);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromBody] BookingControllerParameter bookingControllerParameter)
         {
