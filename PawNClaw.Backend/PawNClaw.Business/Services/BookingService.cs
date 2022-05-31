@@ -267,5 +267,12 @@ namespace PawNClaw.Business.Services
 
             return values;
         }
+
+        public Booking GetBookingById(int id)
+        {
+            var values = _bookingRepository.GetBookingForCustomer(id);
+
+            return values;
+        }
     }
 }
