@@ -51,11 +51,19 @@ namespace PawNClaw.API.Controllers
             return Ok(data);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("for-customer/{id}")]
         [Authorize(Roles = "Owner,Staff,Customer")]
         public IActionResult GetBookingById(int id)
         {
             var data = _bookingService.GetBookingById(id);
+            return Ok(data);
+        }
+
+        [HttpGet("for-staff/{id}")]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult GetBookingByIdForStaff(int id)
+        {
+            var data = _bookingService.GetBookingByIdForStaff(id);
             return Ok(data);
         }
 
