@@ -25,9 +25,11 @@ namespace PawNClaw.API.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Owner,Staff")]
-        public IActionResult ConfirmBooking(int id, int statusId, string StaffNote)
+        public IActionResult ConfirmBooking([FromBody] UpdateStatusBookingParameter updateStatusParameter)
         {
-            var check = _bookingService.ConfirmBooking(id, statusId, StaffNote);
+            var check = _bookingService.ConfirmBooking(updateStatusParameter.id, 
+                                                        updateStatusParameter.statusId,
+                                                        updateStatusParameter.staffNote);
             if (check)
             {
                 return Ok();
