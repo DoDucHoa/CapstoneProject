@@ -17,5 +17,7 @@ namespace PawNClaw.Data.Interface
         public IEnumerable<Booking> GetBookingForStaff(BookingRequestParameter bookingRequestParameter);
 
         public Booking GetBookingForCustomer(int BookingId);
+
+        public Booking GetBookingForStaff(int BookingId);
     }
 }
