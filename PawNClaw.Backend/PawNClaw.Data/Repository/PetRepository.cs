@@ -25,5 +25,33 @@ namespace PawNClaw.Data.Repository
 
             return query.ToList();
         }
+
+        public bool UpdatePetForStaff(int id, decimal? Weight, decimal? Lenght, decimal? Height)
+        {
+            Pet query = _dbSet.Find(id);
+
+            if (Weight != null)
+            {
+                query.Weight = (decimal)Weight;
+            }
+            if (Lenght != null)
+            {
+                query.Length = (decimal)Lenght;
+            }
+            if (Height != null)
+            {
+                query.Height = (decimal)Height;
+            }
+
+            try
+            {
+                _dbSet.Update(query);
+                return (_db.SaveChanges() >= 0);
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

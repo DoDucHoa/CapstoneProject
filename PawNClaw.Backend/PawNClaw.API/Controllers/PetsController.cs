@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Helper;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +36,25 @@ namespace PawNClaw.API.Controllers
                 data.HasPrevious
             };
             return Ok(new { data, metadata });
+        }
+
+        [HttpPut]
+        [Authorize("Staff")]
+        public IActionResult UpdatePetForStaff(UpdatePetRequestParameter updatePetRequestParameter)
+        {
+            var values = _petService.UpdatePetForStaff(updatePetRequestParameter.Id,
+                                                        updatePetRequestParameter.Weight,
+                                                        updatePetRequestParameter.Length,
+                                                        updatePetRequestParameter.Height);
+
+            if (values)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }
