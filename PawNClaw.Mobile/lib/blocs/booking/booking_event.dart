@@ -54,14 +54,14 @@ class SelectSupply extends BookingEvent {
 }
 
 class SelectService extends BookingEvent {
-  final double sellPrice;
+  final List<ServicePrices> prices;
   final int serviceId;
   final int petId;
 
   const SelectService(
-      {required this.sellPrice, required this.serviceId, required this.petId});
+      {required this.prices, required this.serviceId, required this.petId});
 
   @override
   // TODO: implement props
-  List<Object> get props => [sellPrice, serviceId, petId];
+  List<Object> get props => [prices, serviceId, petId];
 }

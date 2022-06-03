@@ -39,6 +39,7 @@ class _TrackBookingState extends State<TrackBooking> {
 
   @override
   Widget build(BuildContext context) {
+    BookingRequestModel booking = widget.booking;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -121,7 +122,9 @@ class _TrackBookingState extends State<TrackBooking> {
                   ],
                 ),
               ),
-              BookingInfoCard(),
+              BookingInfoCard(
+                booking: booking,
+              ),
               Container(
                   height: width / 4 * 5,
                   child: Row(

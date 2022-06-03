@@ -141,7 +141,10 @@ class BookingItemCard extends StatelessWidget {
                     NumberFormat.currency(
                           decimalDigits: 0,
                           symbol: '',
-                        ).format(services[index].sellPrice) +
+                        ).format(bookingServices
+                            .firstWhere((element) =>
+                                element.serviceId == services[index].id)
+                            .totalPrice) +
                         "đ",
                     style: TextStyle(
                       color: primaryFontColor,

@@ -2,15 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:intl/intl.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
+import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
 
 class BookingInfoCard extends StatelessWidget {
-  const BookingInfoCard({Key? key}) : super(key: key);
+  const BookingInfoCard({required this.booking, Key? key}) : super(key: key);
+
+  final BookingRequestModel booking;
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    bool haveDiscount = false;
     return Container(
       child: Column(children: [
         Container(
@@ -27,7 +32,7 @@ class BookingInfoCard extends StatelessWidget {
         ),
         Container(
             color: primaryBackgroundColor,
-            padding: EdgeInsets.all(width*smallPadRate),
+            padding: EdgeInsets.all(width * smallPadRate),
             child: Column(
               children: [
                 Container(
@@ -72,7 +77,10 @@ class BookingInfoCard extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  "03:00 PM, 11/05/2022",
+                                  DateFormat('HH:mm, dd/MM/yyyy').format(
+                                      DateTime.parse(booking
+                                          .bookingCreateParameter!
+                                          .startBooking!)),
                                   style: TextStyle(
                                     color: primaryFontColor,
                                     fontWeight: FontWeight.w500,
@@ -96,7 +104,10 @@ class BookingInfoCard extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  "03:00 PM, 11/05/2022",
+                                  DateFormat('HH:mm, dd/MM/yyyy').format(
+                                      DateTime.parse(booking
+                                          .bookingCreateParameter!
+                                          .endBooking!)),
                                   style: TextStyle(
                                     color: primaryFontColor,
                                     fontWeight: FontWeight.w500,
@@ -176,7 +187,7 @@ class BookingInfoCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "THÔNG TIN HÓA ĐƠN",
+                        "CHI PHÍ DỰ KIẾN",
                         style: TextStyle(
                           color: primaryFontColor,
                           fontWeight: FontWeight.w600,
@@ -194,7 +205,11 @@ class BookingInfoCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "200.000 đ",
+                            NumberFormat.currency(
+                                  decimalDigits: 0,
+                                  symbol: '',
+                                ).format(booking.getTotalService()) +
+                                "đ",
                             style: TextStyle(
                               color: primaryFontColor,
                               fontWeight: FontWeight.w500,
@@ -214,7 +229,11 @@ class BookingInfoCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "200.000 đ",
+                            NumberFormat.currency(
+                                  decimalDigits: 0,
+                                  symbol: '',
+                                ).format(booking.getTotalSupply()) +
+                                "đ",
                             style: TextStyle(
                               color: primaryFontColor,
                               fontWeight: FontWeight.w500,
@@ -227,14 +246,22 @@ class BookingInfoCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Chi phí khách sạn x 2 giờ",
+                            "Chi phí khách sạn x " +
+                                booking.bookingDetailCreateParameters!.first
+                                    .duration!
+                                    .toStringAsFixed(0) +
+                                " giờ",
                             style: TextStyle(
                               color: primaryFontColor,
                               fontSize: width * regularFontRate * 0.8,
                             ),
                           ),
                           Text(
-                            "200.000 đ",
+                            NumberFormat.currency(
+                                  decimalDigits: 0,
+                                  symbol: '',
+                                ).format(booking.getTotalCage()) +
+                                "đ",
                             style: TextStyle(
                               color: primaryFontColor,
                               fontWeight: FontWeight.w500,
@@ -243,26 +270,30 @@ class BookingInfoCard extends StatelessWidget {
                           )
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Giảm giá",
-                            style: TextStyle(
-                              color: primaryFontColor,
-                              fontSize: width * regularFontRate * 0.8,
+                      (haveDiscount)
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Giảm giá",
+                                  style: TextStyle(
+                                    color: primaryFontColor,
+                                    fontSize: width * regularFontRate * 0.8,
+                                  ),
+                                ),
+                                Text(
+                                  "-200.000 đ",
+                                  style: TextStyle(
+                                    color: primaryFontColor,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: width * regularFontRate * 0.8,
+                                  ),
+                                )
+                              ],
+                            )
+                          : SizedBox(
+                              height: 0,
                             ),
-                          ),
-                          Text(
-                            "-200.000 đ",
-                            style: TextStyle(
-                              color: primaryFontColor,
-                              fontWeight: FontWeight.w500,
-                              fontSize: width * regularFontRate * 0.8,
-                            ),
-                          )
-                        ],
-                      ),
                       Container(
                         width: width,
                         height: 1.5,
@@ -280,7 +311,11 @@ class BookingInfoCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "400.000 đ",
+                            NumberFormat.currency(
+                                  decimalDigits: 0,
+                                  symbol: '',
+                                ).format(booking.getTotal()) +
+                                "đ",
                             style: TextStyle(
                               color: primaryFontColor,
                               fontWeight: FontWeight.w800,
@@ -294,13 +329,12 @@ class BookingInfoCard extends StatelessWidget {
                 ),
               ],
             )),
-            Container(
+        Container(
           color: primaryBackgroundColor,
           height: 15,
           child: ClipRRect(
             borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15)),
+                topLeft: Radius.circular(15), topRight: Radius.circular(15)),
             child: Container(
               color: Colors.white,
             ),

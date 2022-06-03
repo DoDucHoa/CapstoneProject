@@ -67,6 +67,7 @@ class BookingCreateParameter {
   String? endBooking;
   int? statusId;
   // Null? voucherCode;
+  double? total;
   int? customerId;
   int? centerId;
   String? customerNote;
@@ -77,6 +78,7 @@ class BookingCreateParameter {
       this.endBooking,
       this.statusId,
       // this.voucherCode,
+      this.total,
       this.customerId,
       this.centerId,
       this.customerNote});
@@ -88,6 +90,7 @@ class BookingCreateParameter {
     data['endBooking'] = this.endBooking;
     data['statusId'] = this.statusId;
     // data['voucherCode'] = this.voucherCode;
+    data['total'] = this.total;
     data['customerId'] = this.customerId;
     data['centerId'] = this.centerId;
     data['customerNote'] = this.customerNote;

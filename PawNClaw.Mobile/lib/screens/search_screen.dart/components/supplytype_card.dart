@@ -27,11 +27,7 @@ class SupplyTypeCard extends StatelessWidget {
         )
         .toList();
     return Container(
-<<<<<<< HEAD
-      padding: EdgeInsets.symmetric(vertical: 10),
-=======
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
->>>>>>> af1e2b92beb18521f88728e1fbbee7149af6a1b5
       width: size.width,
       decoration: BoxDecoration(
         color: Colors.white,
