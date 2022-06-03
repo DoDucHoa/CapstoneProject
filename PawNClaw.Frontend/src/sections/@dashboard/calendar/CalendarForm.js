@@ -1,101 +1,72 @@
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import merge from 'lodash/merge';
-import { isBefore } from 'date-fns';
 import { useSnackbar } from 'notistack';
 // form
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
-import { Box, Stack, Button, Tooltip, TextField, IconButton, DialogActions } from '@mui/material';
-import { LoadingButton, MobileDateTimePicker } from '@mui/lab';
+import {
+  Box,
+  Button,
+  DialogActions,
+  Grid,
+  Typography,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  MenuItem,
+} from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 // redux
 import { useDispatch } from '../../../redux/store';
-import { createEvent, updateEvent, deleteEvent } from '../../../redux/slices/calendar';
+import { updateBookingStatus } from '../../../redux/slices/calendar';
 // components
-import Iconify from '../../../components/Iconify';
-import { ColorSinglePicker } from '../../../components/color-utils';
-import { FormProvider, RHFTextField, RHFSwitch } from '../../../components/hook-form';
+import Scrollbar from '../../../components/Scrollbar';
+import { FormProvider, RHFSelect, RHFTextField } from '../../../components/hook-form';
+import { fDateTimeSuffix } from '../../../utils/formatTime';
+import { fCurrency, fNumber } from '../../../utils/formatNumber';
 
 // ----------------------------------------------------------------------
-
-const COLOR_OPTIONS = [
-  '#00AB55', // theme.palette.primary.main,
-  '#1890FF', // theme.palette.info.main,
-  '#54D62C', // theme.palette.success.main,
-  '#FFC107', // theme.palette.warning.main,
-  '#FF4842', // theme.palette.error.main
-  '#04297A', // theme.palette.info.darker
-  '#7A0C2E', // theme.palette.error.darker
-];
-
-const getInitialValues = (event, range) => {
-  const _event = {
-    title: '',
-    description: '',
-    textColor: '#1890FF',
-    allDay: false,
-    start: range ? new Date(range.start) : new Date(),
-    end: range ? new Date(range.end) : new Date(),
-  };
-
-  if (event || range) {
-    return merge({}, _event, event);
-  }
-
-  return _event;
-};
 
 // ----------------------------------------------------------------------
 
 CalendarForm.propTypes = {
-  event: PropTypes.object,
-  range: PropTypes.object,
+  selectedEvent: PropTypes.object,
   onCancel: PropTypes.func,
+  bookingStatuses: PropTypes.array,
 };
 
-export default function CalendarForm({ event, range, onCancel }) {
+export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses }) {
   const { enqueueSnackbar } = useSnackbar();
-
   const dispatch = useDispatch();
-
-  const isCreating = Object.keys(event).length === 0;
+  const { startBooking, endBooking, total, customerNote, serviceOrders, supplyOrders } = selectedEvent;
 
   const EventSchema = Yup.object().shape({
-    title: Yup.string().max(255).required('Title is required'),
-    description: Yup.string().max(5000),
+    id: Yup.number(),
+    statusId: Yup.number().required('Bắt buộc nhập'),
   });
 
   const methods = useForm({
     resolver: yupResolver(EventSchema),
-    defaultValues: getInitialValues(event, range),
+    defaultValues: { id: selectedEvent.id, statusId: selectedEvent.statusId, staffNote: '' },
   });
 
   const {
     reset,
-    watch,
-    control,
+    // watch,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
+  // const values = watch();
+
   const onSubmit = async (data) => {
     try {
-      const newEvent = {
-        title: data.title,
-        description: data.description,
-        textColor: data.textColor,
-        allDay: data.allDay,
-        start: data.start,
-        end: data.end,
-      };
-      if (event.id) {
-        dispatch(updateEvent(event.id, newEvent));
-        enqueueSnackbar('Update success!');
-      } else {
-        enqueueSnackbar('Create success!');
-        dispatch(createEvent(newEvent));
-      }
+      dispatch(updateBookingStatus(data));
+      enqueueSnackbar('Cập nhật thành công!');
       onCancel();
       reset();
     } catch (error) {
@@ -103,88 +74,178 @@ export default function CalendarForm({ event, range, onCancel }) {
     }
   };
 
-  const handleDelete = async () => {
-    if (!event.id) return;
-    try {
-      onCancel();
-      dispatch(deleteEvent(event.id));
-      enqueueSnackbar('Delete success!');
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const values = watch();
-
-  const isDateError = isBefore(new Date(values.end), new Date(values.start));
-
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      <Stack spacing={3} sx={{ p: 3 }}>
-        <RHFTextField name="title" label="Title" />
+      <Grid container spacing={3} sx={{ p: 3 }}>
+        <Grid item xs={6} sm={6}>
+          <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
+            Thời điểm bắt đầu
+          </Typography>
+          <Typography variant="body2">{fDateTimeSuffix(startBooking)}</Typography>
+        </Grid>
 
-        <RHFTextField name="description" label="Description" multiline rows={4} />
+        <Grid item xs={6} sm={6}>
+          <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
+            Thời điểm kết thúc
+          </Typography>
+          <Typography variant="body2">{fDateTimeSuffix(endBooking)}</Typography>
+        </Grid>
 
-        <RHFSwitch name="allDay" label="All day" />
+        <Grid item xs={12}>
+          <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
+            Ghi chú khách hàng
+          </Typography>
+          <Typography variant="body2">{customerNote || ''}</Typography>
+        </Grid>
+      </Grid>
 
-        <Controller
-          name="start"
-          control={control}
-          render={({ field }) => (
-            <MobileDateTimePicker
-              {...field}
-              label="Start date"
-              inputFormat="dd/MM/yyyy hh:mm a"
-              renderInput={(params) => <TextField {...params} fullWidth />}
-            />
-          )}
-        />
+      {supplyOrders.length > 0 && (
+        <Box sx={{ px: 3 }}>
+          <Typography paragraph variant="overline" sx={{ color: 'green' }}>
+            Đồ ăn, thức uống
+          </Typography>
+          <Scrollbar>
+            <TableContainer sx={{ minWidth: 300 }}>
+              <Table>
+                <TableHead
+                  sx={{
+                    borderBottom: (theme) => `solid 1px ${theme.palette.divider}`,
+                    '& th': { backgroundColor: 'transparent' },
+                  }}
+                >
+                  <TableRow>
+                    <TableCell align="center" width={40}>
+                      Stt
+                    </TableCell>
+                    <TableCell align="left">Mô tả</TableCell>
+                    <TableCell align="right">Số lượng</TableCell>
+                    <TableCell align="right">Giá bán</TableCell>
+                    <TableCell align="right">Tổng cộng</TableCell>
+                  </TableRow>
+                </TableHead>
 
-        <Controller
-          name="end"
-          control={control}
-          render={({ field }) => (
-            <MobileDateTimePicker
-              {...field}
-              label="End date"
-              inputFormat="dd/MM/yyyy hh:mm a"
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  fullWidth
-                  error={!!isDateError}
-                  helperText={isDateError && 'End date must be later than start date'}
-                />
-              )}
-            />
-          )}
-        />
+                <TableBody>
+                  {supplyOrders.map((row, index) => (
+                    <TableRow
+                      key={index}
+                      sx={{
+                        borderBottom: (theme) => `solid 1px ${theme.palette.divider}`,
+                      }}
+                    >
+                      <TableCell align="center">{index + 1}</TableCell>
+                      <TableCell align="left">
+                        <Box sx={{ maxWidth: 560 }}>
+                          <Typography variant="subtitle2">{row.supply.name}</Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell align="right">{fNumber(row.quantity)}</TableCell>
+                      <TableCell align="right">{fCurrency(row.sellPrice)}</TableCell>
+                      <TableCell align="right">{fCurrency(row.totalPrice)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Scrollbar>
+        </Box>
+      )}
 
-        <Controller
-          name="textColor"
-          control={control}
-          render={({ field }) => (
-            <ColorSinglePicker value={field.value} onChange={field.onChange} colors={COLOR_OPTIONS} />
-          )}
-        />
-      </Stack>
+      {serviceOrders.length > 0 && (
+        <Box sx={{ px: 3, mt: 5 }}>
+          <Typography paragraph variant="overline" sx={{ color: 'blue' }}>
+            Dịch vụ
+          </Typography>
+          <Scrollbar>
+            <TableContainer sx={{ minWidth: 300 }}>
+              <Table>
+                <TableHead
+                  sx={{
+                    borderBottom: (theme) => `solid 1px ${theme.palette.divider}`,
+                    '& th': { backgroundColor: 'transparent' },
+                  }}
+                >
+                  <TableRow>
+                    <TableCell align="center" width={40}>
+                      Stt
+                    </TableCell>
+                    <TableCell align="left">Mô tả</TableCell>
+                    <TableCell align="right">Số lượng</TableCell>
+                    <TableCell align="right">Giá bán</TableCell>
+                    <TableCell align="right">Tổng cộng</TableCell>
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {serviceOrders.map((row, index) => (
+                    <TableRow
+                      key={index}
+                      sx={{
+                        borderBottom: (theme) => `solid 1px ${theme.palette.divider}`,
+                      }}
+                    >
+                      <TableCell align="center">{index + 1}</TableCell>
+                      <TableCell align="left">
+                        <Box sx={{ maxWidth: 560 }}>
+                          <Typography variant="subtitle2">{row.service.description}</Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell align="right">{fNumber(row.quantity)}</TableCell>
+                      <TableCell align="right">{fCurrency(row.sellPrice)}</TableCell>
+                      <TableCell align="right">{fCurrency(row.totalPrice)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Scrollbar>
+        </Box>
+      )}
+      <Grid container spacing={3} sx={{ p: 3 }}>
+        <Grid item xs={12}>
+          <Typography variant="h6">Tổng tiền</Typography>
+          <Typography variant="body2">{fCurrency(total)} đồng</Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <RHFTextField name="staffNote" label="Ghi chú của nhân viên" multiline rows={3} />
+        </Grid>
+        {bookingStatuses.length > 0 && (
+          <Grid item xs={4}>
+            <RHFSelect
+              fullWidth
+              name="statusId"
+              label="Trạng thái Booking"
+              InputLabelProps={{ shrink: true }}
+              SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
+            >
+              {bookingStatuses.map((option) => (
+                <MenuItem
+                  key={option.id}
+                  value={option.id}
+                  sx={{
+                    mx: 1,
+                    my: 0.5,
+                    borderRadius: 0.75,
+                    typography: 'body2',
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {option.name}
+                </MenuItem>
+              ))}
+            </RHFSelect>
+          </Grid>
+        )}
+      </Grid>
 
       <DialogActions>
-        {!isCreating && (
-          <Tooltip title="Delete Event">
-            <IconButton onClick={handleDelete}>
-              <Iconify icon="eva:trash-2-outline" width={20} height={20} />
-            </IconButton>
-          </Tooltip>
-        )}
         <Box sx={{ flexGrow: 1 }} />
 
         <Button variant="outlined" color="inherit" onClick={onCancel}>
-          Cancel
+          Hủy
         </Button>
 
         <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-          Add
+          Xác Nhận
         </LoadingButton>
       </DialogActions>
     </FormProvider>
