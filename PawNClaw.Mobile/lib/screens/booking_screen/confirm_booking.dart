@@ -10,7 +10,6 @@ import 'package:pawnclaw_mobile_application/repositories/booking.dart/booking_re
 import 'package:pawnclaw_mobile_application/screens/booking_screen/components/booking_item_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/booking_success_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/vouchers_screen.dart';
-
 import 'components/booking_cage_card.dart';
 
 class ConfirmBooking extends StatefulWidget {
@@ -35,12 +34,12 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
     double width = MediaQuery.of(context).size.width;
     int LineOfBill = 3;
     bool haveDiscount = false;
-    
+
     return BlocBuilder<BookingBloc, BookingState>(
       builder: (context, state) {
         if (state is BookingUpdated) {
-if(state.booking.getTotalSupply() > 0 ) LineOfBill++;
-if(state.booking.getTotalService() > 0 ) LineOfBill++;
+          if (state.booking.getTotalSupply() > 0) LineOfBill++;
+          if (state.booking.getTotalService() > 0) LineOfBill++;
 // if(state.booking.getTotal() > 0 ) LineOfBill++;
 
           List<Pet> pets = [];
@@ -313,7 +312,7 @@ if(state.booking.getTotalService() > 0 ) LineOfBill++;
                     margin:
                         EdgeInsets.symmetric(horizontal: width * mediumPadRate),
                     width: width,
-                    height: height * 0.065*LineOfBill,
+                    height: height * 0.065 * LineOfBill,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
                       color: Colors.white,
@@ -386,55 +385,66 @@ if(state.booking.getTotalService() > 0 ) LineOfBill++;
                             )
                           ],
                         ),
-                        (state.booking.getTotalService() > 0)? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Dịch vụ",
-                              style: TextStyle(
-                                color: primaryFontColor,
-                                fontSize: width * regularFontRate * 0.8,
+                        (state.booking.getTotalService() > 0)
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Dịch vụ",
+                                    style: TextStyle(
+                                      color: primaryFontColor,
+                                      fontSize: width * regularFontRate * 0.8,
+                                    ),
+                                  ),
+                                  Text(
+                                    NumberFormat.currency(
+                                          decimalDigits: 0,
+                                          symbol: '',
+                                        ).format(
+                                            state.booking.getTotalService()) +
+                                        "đ",
+                                    style: TextStyle(
+                                      color: primaryFontColor,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: width * regularFontRate * 0.8,
+                                    ),
+                                  )
+                                ],
+                              )
+                            : SizedBox(
+                                height: 0,
                               ),
-                            ),
-                            Text(
-                              NumberFormat.currency(
-                                    decimalDigits: 0,
-                                    symbol: '',
-                                  ).format(state.booking.getTotalService()) +
-                                  "đ",
-                              style: TextStyle(
-                                color: primaryFontColor,
-                                fontWeight: FontWeight.w500,
-                                fontSize: width * regularFontRate * 0.8,
+                        (state.booking.getTotalSupply() > 0)
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Đồ dùng",
+                                    style: TextStyle(
+                                      color: primaryFontColor,
+                                      fontSize: width * regularFontRate * 0.8,
+                                    ),
+                                  ),
+                                  Text(
+                                    NumberFormat.currency(
+                                          decimalDigits: 0,
+                                          symbol: '',
+                                        ).format(
+                                            state.booking.getTotalSupply()) +
+                                        "đ",
+                                    style: TextStyle(
+                                      color: primaryFontColor,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: width * regularFontRate * 0.8,
+                                    ),
+                                  )
+                                ],
+                              )
+                            : SizedBox(
+                                height: 0,
                               ),
-                            )
-                          ],
-                        ):SizedBox(height: 0,),
-                        (state.booking.getTotalSupply() > 0 )?
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Đồ dùng",
-                              style: TextStyle(
-                                color: primaryFontColor,
-                                fontSize: width * regularFontRate * 0.8,
-                              ),
-                            ),
-                            Text(
-                              NumberFormat.currency(
-                                    decimalDigits: 0,
-                                    symbol: '',
-                                  ).format(state.booking.getTotalSupply()) +
-                                  "đ",
-                              style: TextStyle(
-                                color: primaryFontColor,
-                                fontWeight: FontWeight.w500,
-                                fontSize: width * regularFontRate * 0.8,
-                              ),
-                            )
-                          ],
-                        ):SizedBox(height: 0,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -463,56 +473,63 @@ if(state.booking.getTotalService() > 0 ) LineOfBill++;
                             )
                           ],
                         ),
-                        (haveDiscount) ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Giảm giá",
-                              style: TextStyle(
-                                color: primaryFontColor,
-                                fontSize: width * regularFontRate * 0.8,
+                        (haveDiscount)
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Giảm giá",
+                                    style: TextStyle(
+                                      color: primaryFontColor,
+                                      fontSize: width * regularFontRate * 0.8,
+                                    ),
+                                  ),
+                                  Text(
+                                    "-0 đ",
+                                    style: TextStyle(
+                                      color: primaryFontColor,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: width * regularFontRate * 0.8,
+                                    ),
+                                  )
+                                ],
+                              )
+                            : SizedBox(
+                                height: 0,
                               ),
-                            ),
-                            Text(
-                              "-0 đ",
-                              style: TextStyle(
-                                color: primaryFontColor,
-                                fontWeight: FontWeight.w500,
-                                fontSize: width * regularFontRate * 0.8,
-                              ),
-                            )
-                          ],
-                        ):SizedBox(height: 0,),
                         Container(
                           width: width,
                           height: 1.5,
                           color: Colors.black12,
                         ),
-                        Padding(padding: EdgeInsets.symmetric(vertical: 5), child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Tổng tiền",
-                              style: TextStyle(
-                                color: primaryFontColor,
-                                fontSize: width * regularFontRate * 0.8,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Text(
-                              NumberFormat.currency(
-                                    decimalDigits: 0,
-                                    symbol: '',
-                                  ).format(state.booking.getTotal()) +
-                                  "đ",
-                              style: TextStyle(
-                                color: primaryFontColor,
-                                fontWeight: FontWeight.w800,
-                                fontSize: width * regularFontRate * 0.8,
-                              ),
-                            )
-                          ],
-                        )),
+                        Padding(
+                            padding: EdgeInsets.symmetric(vertical: 5),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Tổng tiền",
+                                  style: TextStyle(
+                                    color: primaryFontColor,
+                                    fontSize: width * regularFontRate * 0.8,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  NumberFormat.currency(
+                                        decimalDigits: 0,
+                                        symbol: '',
+                                      ).format(state.booking.getTotal()) +
+                                      "đ",
+                                  style: TextStyle(
+                                    color: primaryFontColor,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: width * regularFontRate * 0.8,
+                                  ),
+                                )
+                              ],
+                            )),
                       ],
                     ),
                   ),
@@ -526,10 +543,17 @@ if(state.booking.getTotalService() > 0 ) LineOfBill++;
                         var state = BlocProvider.of<BookingBloc>(context).state;
                         BookingRequestModel request =
                             (state as BookingUpdated).booking;
+                        request.bookingCreateParameter!.total =
+                            request.getTotal();
+                        print(request.bookingCreateParameter!.total);
                         var result =
                             await BookingRepository().createBooking(request);
+                        print(result);
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => BookingSuccess()));
+                            builder: (context) => BookingSuccess(
+                                  center: widget.center,
+                                  booking: state.booking,
+                                )));
                         //booking button
                       },
                       style: ButtonStyle(

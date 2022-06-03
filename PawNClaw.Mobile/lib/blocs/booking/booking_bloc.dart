@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
 import 'package:intl/intl.dart';
+import 'package:pawnclaw_mobile_application/models/center.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
 
 part 'booking_event.dart';
@@ -72,12 +73,27 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     );
     on<SelectService>(
       (event, emit) {
+        List<Pet> pets = [];
+        (state as BookingUpdated).requests!.forEach((element) {
+          element.forEach((pet) {
+            pets.add(pet);
+          });
+        });
+        Pet pet = pets.firstWhere((element) => element.id == event.petId);
+        double price = 0;
+        event.prices.forEach((element) {
+          if (element.minWeight! <= pet.weight! &&
+              element.maxWeight! > pet.weight!) {
+            price = element.price!;
+          }
+        });
+        print(price);
         BookingRequestModel booking = (state as BookingUpdated).booking;
         ServiceOrderCreateParameters serviceOrder =
             new ServiceOrderCreateParameters(
+                sellPrice: price,
+                totalPrice: price,
                 petId: event.petId,
-                sellPrice: event.sellPrice,
-                totalPrice: event.sellPrice,
                 serviceId: event.serviceId,
                 quantity: 1);
         bool isExisted = false;
@@ -85,7 +101,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
           if (element.serviceId == serviceOrder.serviceId &&
               element.petId == serviceOrder.petId) {
             element.quantity = element.quantity! + 1;
-            element.totalPrice = element.totalPrice! + element.sellPrice!;
+            element.sellPrice = price;
+            element.totalPrice = element.totalPrice! + price;
             isExisted = true;
             print("Updated");
           }

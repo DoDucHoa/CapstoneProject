@@ -120,7 +120,7 @@ Widget buildContent(petCenter.Services service, Size size, BuildContext context,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            service.description!,
+            service.description ?? "",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           SizedBox(
@@ -130,11 +130,17 @@ Widget buildContent(petCenter.Services service, Size size, BuildContext context,
             children: [
               Text(
                 NumberFormat.currency(
-                  decimalDigits: 0,
-                  symbol: '',
-                ).format(service.discountPrice == 0
-                    ? service.sellPrice
-                    : service.discountPrice),
+                      decimalDigits: 0,
+                      symbol: '',
+                    ).format((service.servicePrices![0].price ?? 0)) +
+                    " ~ " +
+                    NumberFormat.currency(
+                      decimalDigits: 0,
+                      symbol: '',
+                    ).format((service
+                            .servicePrices![service.servicePrices!.length - 1]
+                            .price ??
+                        0)),
                 //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
                 style: TextStyle(fontSize: 15),
               ),
@@ -199,10 +205,12 @@ Widget buildContent(petCenter.Services service, Size size, BuildContext context,
           ).then((value) {
             BlocProvider.of<BookingBloc>(context).add(
               SelectService(
-                  sellPrice: service.sellPrice!,
+                  prices: service.servicePrices!,
                   serviceId: service.id!,
                   petId: value),
             );
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Thêm dịch vụ thành công.")));
           }),
           child: Row(children: [
             Expanded(
@@ -210,12 +218,12 @@ Widget buildContent(petCenter.Services service, Size size, BuildContext context,
               height: 45,
             )),
             Text(
-              'Thêm vào giỏ hàng - ' +
-                  NumberFormat.currency(
-                          decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
-                      .format(service.discountPrice == 0
-                          ? service.sellPrice
-                          : service.discountPrice),
+              'Thêm vào giỏ hàng',
+              // NumberFormat.currency(
+              //         decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+              //     .format((service.discountPrice ?? 0) == 0
+              //         ? (service.sellPrice ?? 0)
+              //         : (service.discountPrice ?? 0)),
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
             Expanded(child: SizedBox(height: 45)),

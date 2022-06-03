@@ -1,0 +1,76 @@
+{
+  "project_info": {
+    "project_number": "148857971283",
+    "project_id": "pawnclaw-4b6ba",
+    "storage_bucket": "pawnclaw-4b6ba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148857971283:android:fe316d2321f696e905dca6",
+        "android_client_info": {
+          "package_name": "com.pawnclaw.pawnclaw_mobile_application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "148857971283-b94nicpdif56bfrbo7hhbc3krp7om09d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pawnclaw.pawnclaw_mobile_application",
+            "certificate_hash": "fa19e8055773d1797d23db50e5507781bcf6a3af"
+          }
+        },
+        {
+          "client_id": "148857971283-ravjhkv2d3bpva18ul8j52ihq7kirds5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVXDOw7dMbOilye-6dYHuh49ZaJDXCHbA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "148857971283-ravjhkv2d3bpva18ul8j52ihq7kirds5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148857971283:android:a176301710663ddf05dca6",
+        "android_client_info": {
+          "package_name": "com.pawnclaw.pncstaff_mobile_application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "148857971283-ravjhkv2d3bpva18ul8j52ihq7kirds5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVXDOw7dMbOilye-6dYHuh49ZaJDXCHbA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "148857971283-ravjhkv2d3bpva18ul8j52ihq7kirds5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

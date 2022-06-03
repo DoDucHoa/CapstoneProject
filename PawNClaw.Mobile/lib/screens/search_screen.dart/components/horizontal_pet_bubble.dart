@@ -30,7 +30,6 @@ class PetBubbleCard extends StatelessWidget {
           ),
           Text(
             pet.name!,
-            style: TextStyle(fontSize: 1),
           ),
         ],
       ),

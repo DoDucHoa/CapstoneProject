@@ -203,6 +203,8 @@ Widget buildContent(petCenter.Supplies supply, Size size, BuildContext context,
                   supplyId: supply.id!,
                   petId: value),
             );
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Thêm sản phẩm thành công.")));
           }),
           child: Row(children: [
             Expanded(

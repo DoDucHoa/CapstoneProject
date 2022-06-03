@@ -167,19 +167,26 @@ class Services {
   String? description;
   double? sellPrice;
   double? discountPrice;
+  List<ServicePrices>? servicePrices;
 
-  Services({
-    this.id,
-    this.description,
-    this.sellPrice,
-    this.discountPrice,
-  });
+  Services(
+      {this.id,
+      this.description,
+      this.sellPrice,
+      this.discountPrice,
+      this.servicePrices});
 
   Services.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     description = json['description'];
     sellPrice = json['sellPrice'];
     discountPrice = json['discountPrice'];
+    if (json['servicePrices'] != null) {
+      servicePrices = <ServicePrices>[];
+      json['servicePrices'].forEach((v) {
+        servicePrices!.add(new ServicePrices.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -188,7 +195,35 @@ class Services {
     data['description'] = this.description;
     data['sellPrice'] = this.sellPrice;
     data['discountPrice'] = this.discountPrice;
+    if (this.servicePrices != null) {
+      data['servicePrices'] =
+          this.servicePrices!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
 
+class ServicePrices {
+  int? id;
+  double? price;
+  double? minWeight;
+  double? maxWeight;
+
+  ServicePrices({this.id, this.price, this.minWeight, this.maxWeight});
+
+  ServicePrices.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    price = json['price'];
+    minWeight = json['minWeight'];
+    maxWeight = json['maxWeight'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['price'] = this.price;
+    data['minWeight'] = this.minWeight;
+    data['maxWeight'] = this.maxWeight;
     return data;
   }
 }

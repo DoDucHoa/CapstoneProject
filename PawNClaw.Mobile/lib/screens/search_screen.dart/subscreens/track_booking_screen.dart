@@ -5,11 +5,16 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:im_stepper/main.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
+import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
+import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/booking_info_card.dart';
 
 class TrackBooking extends StatefulWidget {
-  const TrackBooking({Key? key}) : super(key: key);
+  const TrackBooking({required this.center, required this.booking, Key? key})
+      : super(key: key);
 
+  final petCenter.Center center;
+  final BookingRequestModel booking;
   @override
   State<TrackBooking> createState() => _TrackBookingState();
 }
@@ -34,6 +39,7 @@ class _TrackBookingState extends State<TrackBooking> {
 
   @override
   Widget build(BuildContext context) {
+    BookingRequestModel booking = widget.booking;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -82,7 +88,7 @@ class _TrackBookingState extends State<TrackBooking> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Petland veterinary",
+                            widget.center.name!,
                             style: TextStyle(
                               fontSize: width * largeFontRate,
                               fontWeight: FontWeight.w500,
@@ -100,7 +106,7 @@ class _TrackBookingState extends State<TrackBooking> {
                                   ),
                                 ),
                                 TextSpan(
-                                  text: "64A Street",
+                                  text: widget.center.address,
                                   style: TextStyle(
                                     color: lightFontColor,
                                     fontWeight: FontWeight.w600,
@@ -116,7 +122,9 @@ class _TrackBookingState extends State<TrackBooking> {
                   ],
                 ),
               ),
-              BookingInfoCard(),
+              BookingInfoCard(
+                booking: booking,
+              ),
               Container(
                   height: width / 4 * 5,
                   child: Row(
@@ -185,9 +193,10 @@ class _TrackBookingState extends State<TrackBooking> {
 
   Widget buildStatusCard(int activeIndex, double width) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      if (activeIndex > 0) Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: buildPreStatusCard(activeIndex, width)),
+      if (activeIndex > 0)
+        Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: buildPreStatusCard(activeIndex, width)),
       Container(
         padding: EdgeInsets.only(top: 10),
         //margin: EdgeInsets.only(top: lineLength),
@@ -223,7 +232,9 @@ class _TrackBookingState extends State<TrackBooking> {
     for (var i = 0; i < activeIndex; i++) {
       list.add(Container(
         width: width * (1 - mediumPadRate * 3 - regularPadRate),
-        padding: EdgeInsets.only(top: lineLength,bottom: lineLength - 18 - width*extraSmallPadRate),
+        padding: EdgeInsets.only(
+            top: lineLength,
+            bottom: lineLength - 18 - width * extraSmallPadRate),
         //margin: EdgeInsets.only(bottom:(lineLength*currentstatus)/2 - 18 - width*smallPadRate),
         child: Text(STATUSLIST[i],
             style: TextStyle(

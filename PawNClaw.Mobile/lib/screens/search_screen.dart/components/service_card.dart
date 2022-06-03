@@ -33,15 +33,15 @@ class _ServiceCardState extends State<ServiceCard> {
                   child: redirect,
                 ))),
         child: Container(
-          decoration: BoxDecoration(color: Colors.white,
-          borderRadius: BorderRadius.circular(15)),
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(15)),
           padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           child: Stack(children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  service.description??"",
+                  service.description ?? "",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
                 SizedBox(
@@ -51,32 +51,39 @@ class _ServiceCardState extends State<ServiceCard> {
                   children: [
                     Text(
                       NumberFormat.currency(
-                        decimalDigits: 0,
-                        symbol: '',
-                      ).format((service.discountPrice??0) == 0
-                          ? service.sellPrice??0
-                          : service.discountPrice??0),
+                            decimalDigits: 0,
+                            symbol: '',
+                          ).format((service.servicePrices![0].price ?? 0)) +
+                          " ~ " +
+                          NumberFormat.currency(
+                            decimalDigits: 0,
+                            symbol: '',
+                          ).format((service
+                                  .servicePrices![
+                                      service.servicePrices!.length - 1]
+                                  .price ??
+                              0)),
                       //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
                       style: TextStyle(fontSize: 13),
                     ),
                     SizedBox(
                       width: 5,
                     ),
-                    if ((service.discountPrice??0) > 0)
+                    if ((service.discountPrice ?? 0) > 0)
                       Text(
                         NumberFormat.currency(
                           decimalDigits: 0,
                           symbol: '',
-                        ).format(service.sellPrice??0),
+                        ).format(service.sellPrice ?? 0),
                         style: TextStyle(
                             fontSize: 13,
                             color: lightFontColor,
                             decoration: TextDecoration.lineThrough),
                       ),
                     SizedBox(
-                      width: 5, 
+                      width: 5,
                     ),
-                    if ((service.discountPrice??0) > 0)
+                    if ((service.discountPrice ?? 0) > 0)
                       Padding(
                           padding: const EdgeInsets.only(right: 5, bottom: 5),
                           child: Container(
