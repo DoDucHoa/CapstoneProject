@@ -25,5 +25,10 @@ namespace PawNClaw.Business.Services
             paging.PageNumber,
             paging.PageSize);
         }
+
+        public bool UpdatePetForStaff(int id, decimal? Weight, decimal? Lenght, decimal? Height)
+        {
+            return _petRepository.UpdatePetForStaff(id, Weight, Lenght, Height);
+        }
     }
 }

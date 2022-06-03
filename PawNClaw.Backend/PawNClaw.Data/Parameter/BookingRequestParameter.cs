@@ -20,4 +20,11 @@ namespace PawNClaw.Data.Parameter
         public string fields { get; set; } = null;
         public string includeProperties { get; set; } = null;
     }
+
+    public class UpdateStatusBookingParameter
+    {
+        public int id { get; set; }
+        public int statusId { get; set; }
+        public string staffNote { get; set; } = null;
+    }
 }
