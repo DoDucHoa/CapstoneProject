@@ -28,6 +28,8 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
   String? districtCode;
   TextEditingController _fromController = TextEditingController();
   TextEditingController _toController = TextEditingController();
+  String? toTimeError;
+  String? fromTimeError;
 
   @override
   void initState() {
@@ -104,19 +106,28 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                   onTap: () => selectSingleTime(
                     context,
                     (date) {
-                      setState(
-                        () {
-                          from = date;
-                          print(date.toString());
-                          _fromController.text =
-                              DateFormat("dd/MM/yyyy, h:mm a").format(date);
-                        },
-                      );
+                      if (to == null ||
+                          (to != null && to!.compareTo(date) == 1)) {
+                        setState(
+                          () {
+                            from = date;
+                            _fromController.text =
+                                DateFormat("dd/MM/yyyy, h:mm a").format(date);
+                            fromTimeError = null;
+                          },
+                        );
+                      } else {
+                        setState(() {
+                          _fromController.text = "";
+                          fromTimeError =
+                              "Thời gian gửi phải trước thời gian nhận";
+                        });
+                      }
                     },
                   ),
                   child: Container(
                       padding: EdgeInsets.all(5),
-                      margin: EdgeInsets.symmetric(vertical:2),
+                      margin: EdgeInsets.symmetric(vertical: 2),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(15)),
@@ -142,23 +153,42 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                         ),
                       )),
                 ),
+                Visibility(
+                  visible: fromTimeError != null,
+                  child: Text(
+                    fromTimeError ?? "",
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
                 const Spacer(flex: 3),
                 GestureDetector(
                   onTap: () => selectSingleTime(
                     context,
                     (date) {
-                      setState(
-                        () {
-                          to = date;
-                          _toController.text =
-                              DateFormat("dd/MM/yyyy, h:mm a").format(date);
-                        },
-                      );
+                      if (from == null ||
+                          (from != null && from!.compareTo(date) == -1)) {
+                        setState(
+                          () {
+                            to = date;
+                            _toController.text =
+                                DateFormat("dd/MM/yyyy, h:mm a").format(date);
+                            toTimeError = null;
+                          },
+                        );
+                      } else {
+                        setState(() {
+                          _toController.text = "";
+                          toTimeError = "Thời gian nhận phải sau thời gian gửi";
+                        });
+                      }
                     },
                   ),
                   child: Container(
                       padding: EdgeInsets.all(5),
-                      margin: EdgeInsets.symmetric(vertical:2),
+                      margin: EdgeInsets.symmetric(vertical: 2),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(15)),
@@ -183,6 +213,16 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                         ),
                         readOnly: true,
                       )),
+                ),
+                Visibility(
+                  visible: toTimeError != null,
+                  child: Text(
+                    toTimeError ?? "",
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      color: Colors.red,
+                    ),
+                  ),
                 ),
                 const Spacer(flex: 3),
                 GestureDetector(
@@ -209,17 +249,17 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                   ),
                   child: Container(
                       padding: EdgeInsets.all(5),
-                      margin: EdgeInsets.symmetric(vertical:2),
+                      margin: EdgeInsets.symmetric(vertical: 2),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(15)),
                       child: TextField(
-                    enabled: false,
-                    readOnly: true,
-                    controller: _areaController,
-                    decoration: InputDecoration(
-                      labelText: "Location",
-                      prefixIcon:Container(
+                        enabled: false,
+                        readOnly: true,
+                        controller: _areaController,
+                        decoration: InputDecoration(
+                          labelText: "Location",
+                          prefixIcon: Container(
                               width: 30,
                               height: 30,
                               margin: EdgeInsets.all(5),
@@ -227,13 +267,13 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                                   color: primaryBackgroundColor,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Icon(
-                        Icons.location_on,
-                        color: primaryColor,
+                                Icons.location_on,
+                                color: primaryColor,
+                              )),
+                          border: InputBorder.none,
+                        ),
+                        autofocus: false,
                       )),
-                      border: InputBorder.none,
-                    ),
-                    autofocus: false,
-                  )),
                 ),
                 const Spacer(flex: 30),
                 Text(

@@ -99,7 +99,14 @@ class BookingItemCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    supplies[index].name!,
+                    supplies[index].name! +
+                        " x" +
+                        bookingSupplies
+                            .firstWhere((element) =>
+                                element.petId == pet.id &&
+                                element.supplyId == supplies[index].id)
+                            .quantity
+                            .toString(),
                     style: TextStyle(
                       color: primaryFontColor,
                       fontWeight: FontWeight.w500,
@@ -110,7 +117,11 @@ class BookingItemCard extends StatelessWidget {
                     NumberFormat.currency(
                           decimalDigits: 0,
                           symbol: '',
-                        ).format(supplies[index].sellPrice) +
+                        ).format(bookingSupplies
+                            .firstWhere((element) =>
+                                element.petId == pet.id &&
+                                element.supplyId == supplies[index].id)
+                            .totalPrice) +
                         "đ",
                     style: TextStyle(
                       color: primaryFontColor,

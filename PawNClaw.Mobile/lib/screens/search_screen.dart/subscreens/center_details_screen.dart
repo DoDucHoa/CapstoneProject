@@ -501,15 +501,24 @@ class _CenterDetailsState extends State<CenterDetails> {
                   floatingActionButton: FloatingActionButton.extended(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15)),
-                      onPressed: () =>
-                          Navigator.of(context).push(MaterialPageRoute(
+                      onPressed: () => (state as BookingUpdated)
+                              .booking
+                              .bookingDetailCreateParameters!
+                              .isNotEmpty
+                          ? Navigator.of(context).push(MaterialPageRoute(
                               builder: (_) => BlocProvider.value(
                                     value:
                                         BlocProvider.of<BookingBloc>(context),
                                     child: ConfirmBooking(
                                       center: center!,
                                     ),
-                                  ))),
+                                  )))
+                          : ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "Hãy chọn chuồng cho pet trước khi tiến hành đặt lịch."),
+                              ),
+                            ),
                       // onPressed: () async {
 
                       //   var state = BlocProvider.of<BookingBloc>(context).state;
