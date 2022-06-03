@@ -25,9 +25,11 @@ namespace PawNClaw.API.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Owner,Staff")]
-        public IActionResult ConfirmBooking(int id, int statusId, string StaffNote)
+        public IActionResult ConfirmBooking([FromBody] UpdateStatusBookingParameter updateStatusParameter)
         {
-            var check = _bookingService.ConfirmBooking(id, statusId, StaffNote);
+            var check = _bookingService.ConfirmBooking(updateStatusParameter.id, 
+                                                        updateStatusParameter.statusId,
+                                                        updateStatusParameter.staffNote);
             if (check)
             {
                 return Ok();
@@ -36,19 +38,35 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetBookingForStaff([FromQuery] BookingRequestParameter bookingRequestParameter, [FromQuery] PagingParameter paging)
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult GetBookingForStaff([FromQuery] BookingRequestParameter bookingRequestParameter)
         {
-            var data = _bookingService.GetBookings(bookingRequestParameter, paging);
-            var metadata = new
-            {
-                data.TotalCount,
-                data.PageSize,
-                data.CurrentPage,
-                data.TotalPages,
-                data.HasNext,
-                data.HasPrevious
-            };
-            return Ok(new { data, metadata });
+            var data = _bookingService.GetBookings(bookingRequestParameter);
+            return Ok(data);
+        }
+
+        [HttpGet("customer/{id}")]
+        [Authorize(Roles = "Owner,Staff,Customer")]
+        public IActionResult GetBookingByCustomerId(int id)
+        {
+            var data = _bookingService.GetBookingsByCustomerId(id);
+            return Ok(data);
+        }
+
+        [HttpGet("for-customer/{id}")]
+        [Authorize(Roles = "Owner,Staff,Customer")]
+        public IActionResult GetBookingById(int id)
+        {
+            var data = _bookingService.GetBookingById(id);
+            return Ok(data);
+        }
+
+        [HttpGet("for-staff/{id}")]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult GetBookingByIdForStaff(int id)
+        {
+            var data = _bookingService.GetBookingByIdForStaff(id);
+            return Ok(data);
         }
 
         [HttpPost]

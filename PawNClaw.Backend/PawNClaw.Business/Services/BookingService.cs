@@ -79,12 +79,10 @@ namespace PawNClaw.Business.Services
             return true;
         }
 
-        public PagedList<Booking> GetBookings(BookingRequestParameter bookingRequestParameter, PagingParameter paging)
+        public IEnumerable<Booking> GetBookings(BookingRequestParameter bookingRequestParameter)
         {
             var values = _bookingRepository.GetBookingForStaff(bookingRequestParameter);
-            return PagedList<Booking>.ToPagedList(values.AsQueryable(),
-            paging.PageNumber,
-            paging.PageSize);
+            return values;
         }
 
         public async Task<Booking> CreateBooking(BookingCreateParameter bookingCreateParameter, 
@@ -103,6 +101,7 @@ namespace PawNClaw.Business.Services
                     CreateTime = bookingCreateParameter.CreateTime,
                     StartBooking = bookingCreateParameter.StartBooking,
                     EndBooking = bookingCreateParameter.EndBooking,
+                    Total = bookingCreateParameter.Total,
                     StatusId = bookingCreateParameter.StatusId,
                     VoucherCode = bookingCreateParameter.VoucherCode,
                     CustomerId = bookingCreateParameter.CustomerId,
@@ -258,6 +257,27 @@ namespace PawNClaw.Business.Services
             //Return Booking
 
             var values = _bookingRepository.GetBookingForCustomer(Id);
+
+            return values;
+        }
+
+        public IEnumerable<Booking> GetBookingsByCustomerId(int id)
+        {
+            var values = _bookingRepository.GetAll(x => x.CustomerId == id);
+
+            return values;
+        }
+
+        public Booking GetBookingById(int id)
+        {
+            var values = _bookingRepository.GetBookingForCustomer(id);
+
+            return values;
+        }
+
+        public Booking GetBookingByIdForStaff(int id)
+        {
+            var values = _bookingRepository.GetBookingForStaff(id);
 
             return values;
         }

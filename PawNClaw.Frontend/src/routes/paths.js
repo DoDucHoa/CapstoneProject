@@ -35,13 +35,19 @@ export const PATH_PAGE = {
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   general: {
-    booking: path(ROOTS_DASHBOARD, '/booking'),
+    booking: path(ROOTS_DASHBOARD, '/bookingchart'),
   },
   admin: {
     root: path(ROOTS_DASHBOARD, '/admin'),
     list: path(ROOTS_DASHBOARD, '/admin/list'),
     new: path(ROOTS_DASHBOARD, '/admin/new'),
     edit: (id) => path(ROOTS_DASHBOARD, `/admin/${id}/edit`),
+  },
+  owner: {
+    root: path(ROOTS_DASHBOARD, '/owner'),
+    list: path(ROOTS_DASHBOARD, '/owner/list'),
+    new: path(ROOTS_DASHBOARD, '/owner/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/owner/${id}/edit`),
   },
   user: {
     root: path(ROOTS_DASHBOARD, '/user'),
@@ -52,5 +58,11 @@ export const PATH_DASHBOARD = {
     account: path(ROOTS_DASHBOARD, '/user/account'),
     edit: (name) => path(ROOTS_DASHBOARD, `/user/${name}/edit`),
     demoEdit: path(ROOTS_DASHBOARD, `/user/reece-chung/edit`),
+  },
+  booking: {
+    root: path(ROOTS_DASHBOARD, '/booking'),
+    calendar: path(ROOTS_DASHBOARD, '/booking/calendar'),
+    new: path(ROOTS_DASHBOARD, '/booking/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/booking/${id}/edit`),
   },
 };

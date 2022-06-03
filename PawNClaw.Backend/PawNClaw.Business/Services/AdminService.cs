@@ -75,7 +75,7 @@ namespace PawNClaw.Business.Services
             // lọc theo name
             if (!string.IsNullOrWhiteSpace(Name))
             {
-                values = values.Where(x => x.Name.Trim().Equals(Name));
+                values = values.Where(x => x.Name.Trim().Contains(Name));
             }
 
             // lọc theo status

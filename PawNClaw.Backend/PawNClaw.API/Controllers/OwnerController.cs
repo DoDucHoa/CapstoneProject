@@ -1,15 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
-using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
-using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PawNClaw.API.Controllers
 {
@@ -19,6 +12,7 @@ namespace PawNClaw.API.Controllers
     public class OwnerController : ControllerBase
     {
         private readonly OwnerService _OwnerService;
+
         public OwnerController(OwnerService OwnerService)
         {
             _OwnerService = OwnerService;
@@ -40,7 +34,7 @@ namespace PawNClaw.API.Controllers
             };
             return Ok(new { data, metadata });
         }
-        
+
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin,Mod")]
         public IActionResult GetOwnerById(int id)
@@ -48,13 +42,12 @@ namespace PawNClaw.API.Controllers
             var data = _OwnerService.GetOwnerById(id);
             return Ok(data);
         }
-        /*
 
         [HttpPost]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Add([FromBody] CreateAdminParameter admin)
+        public IActionResult Add([FromBody] CreateOwnerParameter owner)
         {
-            if (_OwnerService.Add(admin) != -1)
+            if (_OwnerService.Add(owner) != -1)
             {
                 return Ok();
             }
@@ -63,13 +56,13 @@ namespace PawNClaw.API.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Update(int id, [FromBody] AdminRequestParameter admin)
+        public IActionResult Update(int id, [FromBody] OwnerRequestParameter owner)
         {
-            var adminDb = _OwnerService.GetAdminById(id);
-            adminDb.Email = admin.Email;
-            adminDb.Name = admin.Name;
+            var ownerDb = _OwnerService.GetOwnerById(id);
+            ownerDb.Email = owner.Email;
+            ownerDb.Name = owner.Name;
 
-            if (_OwnerService.Update(adminDb, admin.Phone))
+            if (_OwnerService.Update(ownerDb, owner.Phone))
             {
                 return Ok();
             }
@@ -87,7 +80,6 @@ namespace PawNClaw.API.Controllers
             return BadRequest();
         }
 
-
         [HttpPut("restore/{id}")]
         [Authorize(Roles = "Admin,Mod")]
         public IActionResult Restore(int id)
@@ -98,6 +90,5 @@ namespace PawNClaw.API.Controllers
             }
             return BadRequest();
         }
-        */
     }
 }

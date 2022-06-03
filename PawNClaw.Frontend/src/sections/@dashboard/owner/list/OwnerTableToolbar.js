@@ -5,13 +5,13 @@ import Iconify from '../../../../components/Iconify';
 
 // ----------------------------------------------------------------------
 
-AdminTableToolbar.propTypes = {
+OwnerTableToolbar.propTypes = {
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
   onEnterPress: PropTypes.func,
 };
 
-export default function AdminTableToolbar({ filterName, onFilterName, onEnterPress }) {
+export default function OwnerTableToolbar({ filterName, onFilterName, onEnterPress }) {
   return (
     <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} sx={{ py: 2.5, px: 3 }}>
       <TextField
@@ -19,7 +19,7 @@ export default function AdminTableToolbar({ filterName, onFilterName, onEnterPre
         value={filterName}
         onChange={(event) => onFilterName(event.target.value)}
         onKeyPress={(event) => event.key === 'Enter' && onEnterPress(event.target.value)}
-        placeholder="Tìm người điều hành..."
+        placeholder="Tìm chủ trung tâm..."
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">

@@ -23,4 +23,12 @@ namespace PawNClaw.Data.Parameter
         public string fields { get; set; } = null;
         public string includeProperties { get; set; } = null;
     }
+
+    public class UpdatePetRequestParameter
+    {
+        public int Id { get; set; }
+        public decimal? Weight { get; set; } = null;
+        public decimal? Length { get; set; } = null;
+        public decimal? Height { get; set; } = null;
+    }
 }
