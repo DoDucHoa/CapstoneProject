@@ -155,6 +155,13 @@ namespace PawNClaw.Data.Repository
         //Get Pet Center Detail
         public PetCenter GetPetCenterById(int id, PetSizeCage PetSizes, string StartBooking, string EndBooking)
         {
+
+            DateTime _startBooking = DateTime.ParseExact(StartBooking, SearchConst.DateFormat,
+                                       System.Globalization.CultureInfo.InvariantCulture);
+
+            DateTime _endBooking = DateTime.ParseExact(EndBooking, SearchConst.DateFormat,
+                                       System.Globalization.CultureInfo.InvariantCulture);
+
             var center = _dbSet
                 .Include(x => x.Services)
                 .Include(x => x.CageTypes)
@@ -188,7 +195,15 @@ namespace PawNClaw.Data.Repository
                         Status = cagetype.Status,
                         CenterId = cagetype.CenterId,
                         TotalPrice = _priceRepository.checkTotalPriceOfCageType(cagetype.Id, StartBooking, EndBooking),
-                        Cages = cagetype.Cages
+                        Cages = (ICollection<Cage>)cagetype.Cages.Where(cage => !cage.BookingDetails.Any(bookingdetail =>
+                                ((DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
+                                && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
+                                ||
+                                (DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.StartBooking) >= 0
+                                && DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
+                                ||
+                                (DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
+                                && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))))
                     }),
                     Supplies = (ICollection<Supply>)x.Supplies.Where(s => s.Quantity > 0 && s.Status == true)
                     .Select(s => new Supply
