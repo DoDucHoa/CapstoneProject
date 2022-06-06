@@ -13,6 +13,8 @@ namespace PawNClaw.Data.Database
         public Owner()
         {
             Brands = new HashSet<Brand>();
+            StaffCreateUserNavigations = new HashSet<Staff>();
+            StaffModifyUserNavigations = new HashSet<Staff>();
         }
 
         [Key]
@@ -34,5 +36,9 @@ namespace PawNClaw.Data.Database
         public virtual Account IdNavigation { get; set; }
         [InverseProperty(nameof(Brand.Owner))]
         public virtual ICollection<Brand> Brands { get; set; }
+        [InverseProperty(nameof(Staff.CreateUserNavigation))]
+        public virtual ICollection<Staff> StaffCreateUserNavigations { get; set; }
+        [InverseProperty(nameof(Staff.ModifyUserNavigation))]
+        public virtual ICollection<Staff> StaffModifyUserNavigations { get; set; }
     }
 }

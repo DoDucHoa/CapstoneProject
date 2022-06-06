@@ -276,6 +276,7 @@ namespace PawNClaw.Business.Services
             return values;
         }
 
+        //Get List Booking By Cus ID
         public IEnumerable<Booking> GetBookingsByCustomerId(int id)
         {
             var values = _bookingRepository.GetAll(x => x.CustomerId == id);
@@ -283,6 +284,8 @@ namespace PawNClaw.Business.Services
             return values;
         }
 
+
+        //Get List Booking By ID
         public Booking GetBookingById(int id)
         {
             var values = _bookingRepository.GetBookingForCustomer(id);
@@ -290,9 +293,18 @@ namespace PawNClaw.Business.Services
             return values;
         }
 
+        //Get Booking By ID for Staff
         public Booking GetBookingByIdForStaff(int id)
         {
             var values = _bookingRepository.GetBookingForStaff(id);
+
+            return values;
+        }
+
+        //Get Lisy Booking for Staff Mobile
+        public IEnumerable<Booking> GetBookingsForStaffMobile(int id, int? statusId)
+        {
+            var values = _bookingRepository.GetBookingByCenterIdForStaff(id, statusId);
 
             return values;
         }
