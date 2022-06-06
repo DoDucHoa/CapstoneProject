@@ -9,13 +9,17 @@ import '../../../blocs/booking/booking_bloc.dart';
 import '../../../models/pet.dart';
 
 class ChooseRequestCard extends StatefulWidget {
-  const ChooseRequestCard({required this.requests,required this.refresh, Key? key}) : super(key: key);
+  const ChooseRequestCard(
+      {required this.requests, required this.callback, Key? key})
+      : super(key: key);
 
   final List<List<Pet>> requests;
-  final VoidCallback refresh;
+  final PetsCallback callback;
   @override
   State<ChooseRequestCard> createState() => _ChooseRequestCardState();
 }
+
+typedef void PetsCallback(List<int> val);
 
 class _ChooseRequestCardState extends State<ChooseRequestCard> {
   List<Pet>? pets;
@@ -25,13 +29,11 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    // pets = widget.requests[0];
+    pets = widget.requests[0];
     // List<int> result = [];
     // pets!.forEach(((element) => result.add(element.id!)));
     // print(result);
     // BlocProvider.of<BookingBloc>(context).add(SelectRequest(petId: result));
-
-
     return Container(
       height: height * 0.25,
       width: width,
@@ -50,24 +52,15 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                 onTap: () {
                   pets = widget.requests[index];
                   List<int> result = [];
-                    pets!.forEach(((element) => result.add(element.id!)));
-                    print(result);
-                  BlocProvider.of<BookingBloc>(context)
-                        ..add(SelectRequest(petId: result));
+                  pets!.forEach(((element) => result.add(element.id!)));
                   setState(() {
                     selectedIndex = index;
                     pets = widget.requests[index];
-                    
-                    
-                    //var state = BlocProvider.of<BookingBloc>(context).state;
-                    // print('selected');
-                    // print((state as BookingUpdated).selectedPetIds!);
                   });
-                  var state = BlocProvider.of<BookingBloc>(context).state;
-                  print((state as BookingUpdated).selectedPetIds ?? "0");
-                  
+                  print(result);
+                  widget.callback(result);
+                  print(context.read<BookingBloc>().state);
 
-                  widget.refresh();
                 },
                 child: Stack(children: [
                   selectedIndex == index

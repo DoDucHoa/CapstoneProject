@@ -25,7 +25,7 @@ class BookingCageCard extends StatelessWidget {
     List<CageTypes> cageTypes = center.cageTypes!;
     List<Cages> cages = [];
     request.forEach(((element) => petsId.add(element.id!)));
-    print(petsId.toString());
+    print("petsid : " + petsId.toString());
     var bookingCage = booking.bookingDetailCreateParameters!
         .firstWhere((element) => element.petId.toString() == petsId.toString());
     print(bookingCage.toString());
