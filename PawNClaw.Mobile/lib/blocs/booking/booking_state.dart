@@ -12,9 +12,13 @@ class BookingInitial extends BookingState {}
 class BookingUpdated extends BookingState {
   final BookingRequestModel booking;
   final List<List<Pet>>? requests;
-  const BookingUpdated({required this.booking, this.requests});
+  final List<int>? selectedPetIds;
+  final Pet? selectedPet;
+  const BookingUpdated({required this.booking, this.requests, this.selectedPetIds, this.selectedPet});
 
   @override
   // TODO: implement props
   List<Object> get props => [booking];
 }
+
+

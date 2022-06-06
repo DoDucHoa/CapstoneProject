@@ -59,6 +59,21 @@ class BookingRequestModel {
         this.getTotalSupply() + this.getTotalCage() + this.getTotalService();
     return total;
   }
+
+  int getCartCount() {
+    int count = 0;
+    this.supplyOrderCreateParameters!.forEach((element) {
+      count ++;
+    });
+    this.serviceOrderCreateParameters!.forEach((element) {
+      count ++;
+    });
+    this.bookingDetailCreateParameters!.forEach((element) {
+      count ++;
+    });
+    print('count ${count}');
+    return count;
+  }
 }
 
 class BookingCreateParameter {

@@ -32,7 +32,8 @@ class ItemCard extends StatelessWidget {
             builder: (_) => BlocProvider.value(
                   value: BlocProvider.of<BookingBloc>(context),
                   child: redirect,
-                ))),
+                ))).then((value) =>
+              context.findRootAncestorStateOfType()!.setState(() {})),
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 10),
           child: Stack(children: [
