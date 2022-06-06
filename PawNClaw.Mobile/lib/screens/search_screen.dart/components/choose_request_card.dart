@@ -34,7 +34,6 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
     // pets!.forEach(((element) => result.add(element.id!)));
     // print(result);
     // BlocProvider.of<BookingBloc>(context).add(SelectRequest(petId: result));
-
     return Container(
       height: height * 0.25,
       width: width,
@@ -61,6 +60,7 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                   print(result);
                   widget.callback(result);
                   print(context.read<BookingBloc>().state);
+
                 },
                 child: Stack(children: [
                   selectedIndex == index

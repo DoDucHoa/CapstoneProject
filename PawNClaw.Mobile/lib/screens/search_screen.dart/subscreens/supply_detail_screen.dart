@@ -23,17 +23,12 @@ class SupplyDetails extends StatefulWidget {
 
 class _SupplyDetailsState extends State<SupplyDetails> {
   int activeIndex = 0;
-  int selectedIndex = 0;
-  // late Pet pet;
 
   @override
   Widget build(BuildContext context) {
     var state = BlocProvider.of<BookingBloc>(context).state;
     var requests = (state as BookingUpdated).requests;
-    //var pet = requests![0][0];
     Size size = MediaQuery.of(context).size;
-    double height = size.height;
-    double width = size.width;
     double appbarSize = size.height * 0.35;
     petCenter.Supplies supply = widget.supply;
 

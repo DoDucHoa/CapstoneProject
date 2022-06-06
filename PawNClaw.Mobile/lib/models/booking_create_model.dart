@@ -61,7 +61,6 @@ class BookingRequestModel {
         this.getTotalSupply() + this.getTotalCage() + this.getTotalService();
     return total;
   }
-
   int getCartCount() {
     int count = 0;
     this.supplyOrderCreateParameters!.forEach((element) {

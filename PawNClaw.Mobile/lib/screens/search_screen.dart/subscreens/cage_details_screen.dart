@@ -10,7 +10,6 @@ import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/cage_type.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/models/pet.dart';
-import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/choose_request_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/choose_request_dialog.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/pet_bubble.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -37,7 +36,6 @@ class _CageDetailsState extends State<CageDetails> {
   Widget build(BuildContext context) {
     var state = BlocProvider.of<BookingBloc>(context).state;
     var requests = (state as BookingUpdated).requests;
-    print(requests);
     Size size = MediaQuery.of(context).size;
     double appbarSize = size.height * 0.35;
     CageTypes cageType = widget.cageType;
@@ -154,6 +152,7 @@ class _CageDetailsState extends State<CageDetails> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15))),
             )));
+
   }
 
   Widget buildIndicator() => AnimatedSmoothIndicator(
@@ -312,4 +311,5 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
         //               borderRadius: BorderRadius.circular(15))),
         //     ))
       ]));
+
 }

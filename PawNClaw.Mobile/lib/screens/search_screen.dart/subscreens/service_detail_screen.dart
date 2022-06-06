@@ -23,12 +23,11 @@ class ServiceDetails extends StatefulWidget {
 
 class _ServiceDetailsState extends State<ServiceDetails> {
   int activeIndex = 0;
-  int selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     var state = BlocProvider.of<BookingBloc>(context).state;
     var requests = (state as BookingUpdated).requests;
-
     List<Pet> pets = [];
     requests!.forEach((elements) {
       elements.forEach((element) {
@@ -37,111 +36,63 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     });
 
     Size size = MediaQuery.of(context).size;
-    double height = size.height;
-    double width = size.width;
     double appbarSize = size.height * 0.35;
     petCenter.Services service = widget.service;
     return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (context, value) {
-          return [
-            SliverAppBar(
-              centerTitle: true,
-              backgroundColor: Colors.white,
-              expandedHeight: appbarSize,
-              floating: true,
-              pinned: true,
-              //leading: Icon(Icons.arrow_back),
-              flexibleSpace: FlexibleSpaceBar(
-                  collapseMode: CollapseMode.pin,
-                  background: Stack(
-                    children: [
-                      //campaign image
-                      CarouselSlider.builder(
-                          itemCount: CAGE_PHOTOS.length,
-                          itemBuilder: (context, index, realIndex) {
-                            return Container(
-                                width: size.width,
-                                child: Image.asset(
-                                  CAGE_PHOTOS[index],
-                                  fit: BoxFit.cover,
-                                ));
-                          },
-                          options: CarouselOptions(
-                              height: appbarSize,
-                              viewportFraction: 1,
-                              enableInfiniteScroll: false,
-                              onPageChanged: ((index, reason) {
-                                setState(() => activeIndex = index);
-                              }))),
-                      Positioned(
-                          left: size.width / 3 + 15,
-                          top: appbarSize * (1 - 0.2),
-                          child: Center(
-                            child: buildIndicator(),
-                          )),
-
-                      Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          height: appbarSize * 0.2,
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: const Radius.circular(30.0),
-                                topRight: const Radius.circular(30.0),
-                              ),
-                              color: Colors.white,
-                            ),
-                          )),
-                    ],
-                  )),
-            )
-          ];
-        },
-        body: Container(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(
-            height: 100,
-            width: size.width,
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(15),
-                    bottomRight: Radius.circular(15))),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  service.description ?? "",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
+        body: NestedScrollView(
+      headerSliverBuilder: (context, value) {
+        return [
+          SliverAppBar(
+            centerTitle: true,
+            backgroundColor: Colors.white,
+            expandedHeight: appbarSize,
+            floating: true,
+            pinned: true,
+            //leading: Icon(Icons.arrow_back),
+            flexibleSpace: FlexibleSpaceBar(
+                collapseMode: CollapseMode.pin,
+                background: Stack(
                   children: [
-                    Text(
-                      NumberFormat.currency(
-                            decimalDigits: 0,
-                            symbol: '',
-                          ).format((service.servicePrices![0].price ?? 0)) +
-                          " ~ " +
-                          NumberFormat.currency(
-                            decimalDigits: 0,
-                            symbol: '',
-                          ).format((service
-                                  .servicePrices![
-                                      service.servicePrices!.length - 1]
-                                  .price ??
-                              0)),
-                      //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
-                      style: TextStyle(fontSize: 15),
-                    ),
+                    //campaign image
+                    CarouselSlider.builder(
+                        itemCount: CAGE_PHOTOS.length,
+                        itemBuilder: (context, index, realIndex) {
+                          return Container(
+                              width: size.width,
+                              child: Image.asset(
+                                CAGE_PHOTOS[index],
+                                fit: BoxFit.cover,
+                              ));
+                        },
+                        options: CarouselOptions(
+                            height: appbarSize,
+                            viewportFraction: 1,
+                            enableInfiniteScroll: false,
+                            onPageChanged: ((index, reason) {
+                              setState(() => activeIndex = index);
+                            }))),
+                    Positioned(
+                        left: size.width / 3 + 15,
+                        top: appbarSize * (1 - 0.2),
+                        child: Center(
+                          child: buildIndicator(),
+                        )),
+
+                    Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: appbarSize * 0.2,
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topLeft: const Radius.circular(30.0),
+                              topRight: const Radius.circular(30.0),
+                            ),
+                            color: Colors.white,
+                          ),
+                        )),
                   ],
                 ),
                 // cage.discount! > 0 ?
@@ -319,7 +270,6 @@ class _ServiceDetailsState extends State<ServiceDetails> {
             activeDotColor: lightFontColor, dotHeight: 10, dotWidth: 10),
       );
 }
-
 Widget PetCard(Pet pet, BuildContext context) {
   double height = MediaQuery.of(context).size.height;
   double width = MediaQuery.of(context).size.width;
