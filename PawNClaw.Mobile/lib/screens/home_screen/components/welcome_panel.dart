@@ -81,7 +81,7 @@ class WelcomePanel extends StatelessWidget {
                         height: width * regularFontRate * 1.8,
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -134,7 +134,7 @@ class WelcomePanel extends StatelessWidget {
               CircleAvatar(
                 radius: width * 0.12,
                 backgroundColor: Colors.white,
-                backgroundImage: null,
+                backgroundImage: AssetImage('lib/assets/cus2.png'),
               )
             ],
           ),
@@ -150,7 +150,7 @@ class WelcomePanel extends StatelessWidget {
                   color: primaryColor,
                 ),
                 hintText: "Tìm kiếm trung tâm thú cưng",
-                hintStyle: TextStyle(color: lightFontColor, fontWeight: FontWeight.w600, fontSize: 15),
+                hintStyle: TextStyle(color: lightFontColor, fontWeight: FontWeight.w600, fontSize: 17),
                 border: InputBorder.none,
               ),
             ),

@@ -40,6 +40,15 @@ class SelectCage extends BookingEvent {
   List<Object> get props => [price, cageCode, petId];
 }
 
+class SelectRequest extends BookingEvent {
+  final  List<int> petId;
+
+  const SelectRequest({required this.petId});
+
+  @override
+  List<Object> get props => [petId];
+  }
+
 class SelectSupply extends BookingEvent {
   final double sellPrice;
   final int supplyId;

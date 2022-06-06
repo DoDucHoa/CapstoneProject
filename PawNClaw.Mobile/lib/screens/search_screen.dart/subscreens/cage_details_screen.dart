@@ -10,6 +10,7 @@ import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/cage_type.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/models/pet.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/choose_request_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/choose_request_dialog.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/pet_bubble.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -30,11 +31,16 @@ class CageDetails extends StatefulWidget {
 
 class _CageDetailsState extends State<CageDetails> {
   int activeIndex = 0;
+  
 
   @override
   Widget build(BuildContext context) {
     var state = BlocProvider.of<BookingBloc>(context).state;
     var requests = (state as BookingUpdated).requests;
+
+    List<int> result = [];
+    requests![0].forEach(((element) => result.add(element.id!)));
+    var petId = result;
     Size size = MediaQuery.of(context).size;
     double appbarSize = size.height * 0.35;
     CageTypes cageType = widget.cageType;
@@ -100,8 +106,65 @@ class _CageDetailsState extends State<CageDetails> {
           )
         ];
       },
-      body: buildContent(cageType, cage, size, context, requests!),
-    ));
+      body:  buildContent(cageType, cage, size, context, requests!),
+      
+    ),floatingActionButton:Container(
+        padding: EdgeInsets.only(left: 30),
+        //decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15))),
+        child: ElevatedButton(
+          onPressed: () 
+          {
+            
+           print('add');
+            //print((state as BookingUpdated).selectedPetIds!);
+            BlocProvider.of<BookingBloc>(context).add(
+              SelectCage(
+                  price: cageType.totalPrice!,
+                  cageCode: cage.code!,
+                  petId: (state as BookingUpdated).selectedPetIds == null ? petId! : (state as BookingUpdated).selectedPetIds!,
+            ));
+            
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Thêm chuồng thành công.")));
+            print('cart count' + state.booking.getCartCount().toString());
+            Navigator.of(context).pop();
+
+          },
+          // => showCupertinoDialog(
+          //   barrierDismissible: false,
+          //   context: context,
+          //   builder: (context) {
+          //     return ChooseRequestDialog(requests: requests);
+          //   },
+          // ).then((value) {
+          //   BlocProvider.of<BookingBloc>(context).add(
+          //     SelectCage(
+          //         price: cageType.totalPrice!,
+          //         cageCode: cage.code!,
+          //         petId: value),
+          //   );
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //       SnackBar(content: Text("Thêm chuồng thành công.")));
+          // }),
+          child: Row(children: [
+            Expanded(
+                child: SizedBox(
+              height: 45,
+            )),
+            Text(
+              'Thêm vào giỏ hàng - ' +
+                  NumberFormat.currency(
+                          decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+                      .format(cageType.totalPrice),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+            Expanded(child: SizedBox(height: 45)),
+          ]),
+          style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15))),
+        ))
+    );
   }
 
   Widget buildIndicator() => AnimatedSmoothIndicator(
@@ -117,9 +180,9 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
   double height = MediaQuery.of(context).size.height;
   double width = MediaQuery.of(context).size.width;
   return Container(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
     Container(
-      height: 100,
+      height: 70,
       width: size.width,
       padding: EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
@@ -156,7 +219,22 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
         ],
       ),
     ),
-    
+    SizedBox(
+      height: 15,
+    ),
+    Container(
+      height: 50,
+      width: size.width,
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+      child: Text('THÚ CƯNG', style: TextStyle(fontWeight: FontWeight.w700),),
+    ),
+    ChooseRequestCard(requests: requests, refresh: () => context.findAncestorStateOfType()!.setState(() {
+      
+    }),),
     SizedBox(
       height: 15,
     ),
@@ -195,44 +273,44 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
             )
           ],
         )),
-    Spacer(),
-    Container(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-        //decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15))),
-        child: ElevatedButton(
-          onPressed: () => showCupertinoDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (context) {
-              return ChooseRequestDialog(requests: requests);
-            },
-          ).then((value) {
-            BlocProvider.of<BookingBloc>(context).add(
-              SelectCage(
-                  price: cageType.totalPrice!,
-                  cageCode: cage.code!,
-                  petId: value),
-            );
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Thêm chuồng thành công.")));
-          }),
-          child: Row(children: [
-            Expanded(
-                child: SizedBox(
-              height: 45,
-            )),
-            Text(
-              'Thêm vào giỏ hàng - ' +
-                  NumberFormat.currency(
-                          decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
-                      .format(cageType.totalPrice),
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-            ),
-            Expanded(child: SizedBox(height: 45)),
-          ]),
-          style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15))),
-        ))
+    //SizedBox(height: 40),
+    // Container(
+    //     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+    //     //decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15))),
+    //     child: ElevatedButton(
+    //       onPressed: () => showCupertinoDialog(
+    //         barrierDismissible: false,
+    //         context: context,
+    //         builder: (context) {
+    //           return ChooseRequestDialog(requests: requests);
+    //         },
+    //       ).then((value) {
+    //         BlocProvider.of<BookingBloc>(context).add(
+    //           SelectCage(
+    //               price: cageType.totalPrice!,
+    //               cageCode: cage.code!,
+    //               petId: value),
+    //         );
+    //         ScaffoldMessenger.of(context).showSnackBar(
+    //             SnackBar(content: Text("Thêm chuồng thành công.")));
+    //       }),
+    //       child: Row(children: [
+    //         Expanded(
+    //             child: SizedBox(
+    //           height: 45,
+    //         )),
+    //         Text(
+    //           'Thêm vào giỏ hàng - ' +
+    //               NumberFormat.currency(
+    //                       decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+    //                   .format(cageType.totalPrice),
+    //           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+    //         ),
+    //         Expanded(child: SizedBox(height: 45)),
+    //       ]),
+    //       style: ElevatedButton.styleFrom(
+    //           shape: RoundedRectangleBorder(
+    //               borderRadius: BorderRadius.circular(15))),
+    //     ))
   ]));
 }
