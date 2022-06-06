@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
+using PawNClaw.Data.Const;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
@@ -85,6 +86,7 @@ namespace PawNClaw.Business.Services
             return values;
         }
 
+        //Create Booking
         public async Task<Booking> CreateBooking(BookingCreateParameter bookingCreateParameter, 
             List<BookingDetailCreateParameter> bookingDetailCreateParameters,
             List<ServiceOrderCreateParameter> serviceOrderCreateParameters,
@@ -92,6 +94,19 @@ namespace PawNClaw.Business.Services
         {
 
             int Id = 0;
+
+            if (_bookingRepository.GetAll(x =>
+                                (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)x.StartBooking) <= 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)x.EndBooking) >= 0)
+                                ||
+                                (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)x.StartBooking) >= 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)x.EndBooking) < 0)
+                                ||
+                                (DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)x.StartBooking) > 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)x.EndBooking) <= 0)) != null)
+            {
+                return null;
+            }
 
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
@@ -118,7 +133,7 @@ namespace PawNClaw.Business.Services
                 catch
                 {
                     transaction.Rollback();
-                    throw new Exception();
+                    return null;
                 }
 
 
@@ -147,7 +162,7 @@ namespace PawNClaw.Business.Services
                     catch
                     {
                         transaction.Rollback();
-                        throw new Exception();
+                        return null;
                     }
 
                     foreach (var PetId in bookingDetail.PetId)
@@ -167,7 +182,7 @@ namespace PawNClaw.Business.Services
                         catch
                         {
                             transaction.Rollback();
-                            throw new Exception();
+                            return null;
                         }
                     }
                 }
@@ -203,7 +218,7 @@ namespace PawNClaw.Business.Services
                         catch
                         {
                             transaction.Rollback();
-                            throw new Exception();
+                            return null;
                         }
                     }
                 }
@@ -237,7 +252,7 @@ namespace PawNClaw.Business.Services
                             if (supply.Quantity < 0)
                             {
                                 transaction.Rollback();
-                                throw new Exception();
+                                return null;
                             }
 
                             _supplyRepository.Update(supply);
@@ -246,7 +261,7 @@ namespace PawNClaw.Business.Services
                         catch
                         {
                             transaction.Rollback();
-                            throw new Exception();
+                            return null;
                         }
                     }
                 }

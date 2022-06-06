@@ -84,8 +84,12 @@ namespace PawNClaw.API.Controllers
                 bookingControllerParameter.bookingDetailCreateParameters,
                 bookingControllerParameter.serviceOrderCreateParameters,
                 bookingControllerParameter.supplyOrderCreateParameters);
-
-            return Ok(data);
+            if (data == null)
+            {
+                return BadRequest();
+            }
+            else
+                return Ok(data);
         }
     }
 }

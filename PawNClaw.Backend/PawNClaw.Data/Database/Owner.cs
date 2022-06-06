@@ -28,6 +28,8 @@ namespace PawNClaw.Data.Database
         [Column("email")]
         [StringLength(256)]
         public string Email { get; set; }
+        [Column("gender")]
+        public int? Gender { get; set; }
 
         [ForeignKey(nameof(Id))]
         [InverseProperty(nameof(Account.Owner))]
