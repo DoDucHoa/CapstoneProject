@@ -30,7 +30,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     var requests = (state as BookingUpdated).requests;
 
     List<Pet> pets = [];
-  FAKE_REQUESTS!.forEach((elements) {
+    requests!.forEach((elements) {
       elements.forEach((element) {
         pets.add(element);
       });
@@ -281,9 +281,10 @@ class _ServiceDetailsState extends State<ServiceDetails> {
               // ).then((value) {
               BlocProvider.of<BookingBloc>(context).add(
                 SelectService(
-                    prices: service.servicePrices!,
-                    serviceId: service.id!,
-                    petId: pets[selectedIndex].id!,),
+                  prices: service.servicePrices!,
+                  serviceId: service.id!,
+                  petId: pets[selectedIndex].id!,
+                ),
               );
               ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text("Thêm dịch vụ thành công.")));
@@ -295,11 +296,11 @@ class _ServiceDetailsState extends State<ServiceDetails> {
               )),
               Text(
                 'Thêm vào giỏ hàng' +
-                NumberFormat.currency(
-                        decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
-                    .format((service.discountPrice ?? 0) == 0
-                        ? (service.sellPrice ?? 0)
-                        : (service.discountPrice ?? 0)),
+                    NumberFormat.currency(
+                            decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+                        .format((service.discountPrice ?? 0) == 0
+                            ? (service.sellPrice ?? 0)
+                            : (service.discountPrice ?? 0)),
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
               Expanded(child: SizedBox(height: 45)),
@@ -318,24 +319,26 @@ class _ServiceDetailsState extends State<ServiceDetails> {
             activeDotColor: lightFontColor, dotHeight: 10, dotWidth: 10),
       );
 }
+
 Widget PetCard(Pet pet, BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
-   
-        return Center(
-          child: Container(
-              height: height * 0.05,
-              width: height * 0.05,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(height),
-                  border: Border.all(
-                      color: Colors.white,
-                      width: 3,
-                      strokeAlign: StrokeAlign.outside)),
-              child: CircleAvatar(
-                backgroundImage: AssetImage('lib/assets/cat_avatar0.png'),
-              )),
-        );}
+  double height = MediaQuery.of(context).size.height;
+  double width = MediaQuery.of(context).size.width;
+
+  return Center(
+    child: Container(
+        height: height * 0.05,
+        width: height * 0.05,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(height),
+            border: Border.all(
+                color: Colors.white,
+                width: 3,
+                strokeAlign: StrokeAlign.outside)),
+        child: CircleAvatar(
+          backgroundImage: AssetImage('lib/assets/cat_avatar0.png'),
+        )),
+  );
+}
 
 Widget buildContent(petCenter.Services service, Size size, BuildContext context,
     List<List<Pet>> requests) {
@@ -467,6 +470,4 @@ Widget buildContent(petCenter.Services service, Size size, BuildContext context,
                   borderRadius: BorderRadius.circular(15))),
         ))
   ]));
-
-
 }

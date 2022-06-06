@@ -41,13 +41,13 @@ class SelectCage extends BookingEvent {
 }
 
 class SelectRequest extends BookingEvent {
-  final  List<int> petId;
+  final List<int> petId;
 
   const SelectRequest({required this.petId});
 
   @override
   List<Object> get props => [petId];
-  }
+}
 
 class SelectSupply extends BookingEvent {
   final double sellPrice;

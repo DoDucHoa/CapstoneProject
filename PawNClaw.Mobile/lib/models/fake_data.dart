@@ -49,24 +49,50 @@ List<Review> FAKE_REVIEWS = [
 ];
 
 List<Voucher> FAKE_VOUCHERS = [
-  Voucher(value: 10000, minCondition: 50000, startDate: '1/5/2022', expireDate: '30/5/2022'),
-  Voucher(value: 20000, minCondition: 70000, startDate: '1/5/2022', expireDate: '30/5/2022'),
-  Voucher(value: 30000, minCondition: 100000, startDate: '1/5/2022', expireDate: '30/5/2022'),
-  Voucher(value: 50000, minCondition: 200000, startDate: '1/5/2022', expireDate: '30/5/2022'),
+  Voucher(
+      value: 10000,
+      minCondition: 50000,
+      startDate: '1/5/2022',
+      expireDate: '30/5/2022'),
+  Voucher(
+      value: 20000,
+      minCondition: 70000,
+      startDate: '1/5/2022',
+      expireDate: '30/5/2022'),
+  Voucher(
+      value: 30000,
+      minCondition: 100000,
+      startDate: '1/5/2022',
+      expireDate: '30/5/2022'),
+  Voucher(
+      value: 50000,
+      minCondition: 200000,
+      startDate: '1/5/2022',
+      expireDate: '30/5/2022'),
 ];
 
 List<List<Pet>> FAKE_REQUESTS = [
-  [Pet(id: 0, weight: 0.5, name: 'Pet 1'),
-   Pet(id: 1, weight: 0.5, name: 'Pet 2',)]
-   ,
-   [Pet(id: 2, weight: 0.5, name: 'Pet 3'),
-    Pet(id: 3, weight: 0.5, name: 'Pet 4',
-    ),Pet(id: 4, weight: 0.5, name: 'Pet 5'),],
+  [
+    Pet(id: 0, weight: 0.5, name: 'Pet 1'),
+    Pet(
+      id: 1,
+      weight: 0.5,
+      name: 'Pet 2',
+    )
+  ],
+  [
+    Pet(id: 2, weight: 0.5, name: 'Pet 3'),
+    Pet(
+      id: 3,
+      weight: 0.5,
+      name: 'Pet 4',
+    ),
+    Pet(id: 4, weight: 0.5, name: 'Pet 5'),
+  ],
   // [
   //  Pet(id: 5, weight: 0.5, name: 'Pet 6',)],
   //  [Pet(id: 6, weight: 0.5, name: 'Pet 7'),
   //   Pet(id: 7, weight: 0.5, name: 'Pet 8',),
   //   Pet(id: 8, weight: 0.5, name: 'Pet 9'),
   //   Pet(id: 9, weight: 0.5, name: 'Pet 10'),],
-    
 ];

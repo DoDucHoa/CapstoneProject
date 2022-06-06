@@ -3,12 +3,14 @@ class BookingRequestModel {
   List<BookingDetailCreateParameters>? bookingDetailCreateParameters;
   List<ServiceOrderCreateParameters>? serviceOrderCreateParameters;
   List<SupplyOrderCreateParameters>? supplyOrderCreateParameters;
+  List<int>? selectedPetsIds;
 
   BookingRequestModel(
       {this.bookingCreateParameter,
       this.bookingDetailCreateParameters,
       this.serviceOrderCreateParameters,
-      this.supplyOrderCreateParameters});
+      this.supplyOrderCreateParameters,
+      this.selectedPetsIds});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -59,17 +61,16 @@ class BookingRequestModel {
         this.getTotalSupply() + this.getTotalCage() + this.getTotalService();
     return total;
   }
-
   int getCartCount() {
     int count = 0;
     this.supplyOrderCreateParameters!.forEach((element) {
-      count ++;
+      count++;
     });
     this.serviceOrderCreateParameters!.forEach((element) {
-      count ++;
+      count++;
     });
     this.bookingDetailCreateParameters!.forEach((element) {
-      count ++;
+      count++;
     });
     print('count ${count}');
     return count;

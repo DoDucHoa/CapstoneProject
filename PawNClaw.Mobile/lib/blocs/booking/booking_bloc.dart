@@ -115,13 +115,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       },
     );
 
-    on<SelectRequest>((event, emit){
+    on<SelectRequest>((event, emit) {
       BookingRequestModel booking = (state as BookingUpdated).booking;
-      print('emit');
-      print(event.petId);
-      emit(BookingUpdated(booking: booking,selectedPetIds: event.petId));
-    } );
-    
-    
+      booking.selectedPetsIds = event.petId;
+      emit(BookingUpdated(booking: booking));
+      print("petid : " +
+          (state as BookingUpdated).booking.selectedPetsIds.toString());
+    });
   }
 }

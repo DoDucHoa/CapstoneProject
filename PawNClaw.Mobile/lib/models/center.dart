@@ -268,6 +268,4 @@ class Supplies {
     data['supplyTypeCode'] = this.supplyTypeCode;
     return data;
   }
-
-  
 }

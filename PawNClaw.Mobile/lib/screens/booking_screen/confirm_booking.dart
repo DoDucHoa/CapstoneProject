@@ -5,7 +5,6 @@ import 'package:pawnclaw_mobile_application/blocs/booking/booking_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
-import 'package:pawnclaw_mobile_application/models/fake_data.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
 import 'package:pawnclaw_mobile_application/repositories/booking.dart/booking_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/booking_screen/components/booking_item_card.dart';
@@ -35,6 +34,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
     double width = MediaQuery.of(context).size.width;
     int LineOfBill = 3;
     bool haveDiscount = false;
+
     return BlocBuilder<BookingBloc, BookingState>(
       builder: (context, state) {
         if (state is BookingUpdated) {
@@ -245,11 +245,11 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                         ListView.builder(
                             shrinkWrap: true,
                             physics: ClampingScrollPhysics(),
-                            itemCount: FAKE_REQUESTS.length,
+                            itemCount: state.requests!.length,
                             itemBuilder: (context, index) {
                               return BookingCageCard(
                                 booking: state.booking,
-                                request: FAKE_REQUESTS[index],
+                                request: state.requests![index],
                                 center: center,
                               );
                             }),
