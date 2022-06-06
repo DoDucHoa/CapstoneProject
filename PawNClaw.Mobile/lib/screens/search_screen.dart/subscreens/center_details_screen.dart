@@ -62,8 +62,6 @@ class _CenterDetailsState extends State<CenterDetails> {
     double width = MediaQuery.of(context).size.width;
     double appbarSize = height * 0.5;
 
-    
-   
     var auth = BlocProvider.of<AuthBloc>(context).state;
     int customerId = (auth as Authenticated).user.id!;
     return BlocProvider(
@@ -385,7 +383,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                               height: 0,
                                             );
                                           return CatergoryCard(
-                                              cageType: cageType!, size: size);
+                                              cageType: cageType, size: size);
                                         },
                                         itemCount:
                                             center?.cageTypes?.length ?? 0,
@@ -524,13 +522,14 @@ class _CenterDetailsState extends State<CenterDetails> {
                     child: FloatingActionButton.extended(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15)),
-                        onPressed: () 
-                        // => (state as BookingUpdated)
-                        //         .booking
-                        //         .bookingDetailCreateParameters!
-                        //         .isNotEmpty
-                        //     ? 
-                            => Navigator.of(context).push(MaterialPageRoute(
+                        onPressed: ()
+                            // => (state as BookingUpdated)
+                            //         .booking
+                            //         .bookingDetailCreateParameters!
+                            //         .isNotEmpty
+                            //     ?
+                            =>
+                            Navigator.of(context).push(MaterialPageRoute(
                                 builder: (_) => BlocProvider.value(
                                       value:
                                           BlocProvider.of<BookingBloc>(context),
@@ -538,12 +537,12 @@ class _CenterDetailsState extends State<CenterDetails> {
                                         center: center!,
                                       ),
                                     ))),
-                            // : ScaffoldMessenger.of(context).showSnackBar(
-                            //     SnackBar(
-                            //       content: Text(
-                            //           "Hãy chọn chuồng cho pet trước khi tiến hành đặt lịch."),
-                            //     ),
-                            //   ),
+                        // : ScaffoldMessenger.of(context).showSnackBar(
+                        //     SnackBar(
+                        //       content: Text(
+                        //           "Hãy chọn chuồng cho pet trước khi tiến hành đặt lịch."),
+                        //     ),
+                        //   ),
                         // onPressed: () async {
 
                         //   var state = BlocProvider.of<BookingBloc>(context).state;
@@ -554,20 +553,23 @@ class _CenterDetailsState extends State<CenterDetails> {
                         //   print(result);
                         //   //booking button
                         // },
-                         icon:
-                        //  state == BookingInitial() ? Container(): 
-                          Container(
-                            //margin: EdgeInsets.only(left: 30),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 5 / 2),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            child: Text(
-                               (state as BookingUpdated).booking.getCartCount().toString(),
-                              style: TextStyle(color: primaryColor),
-                            )),
+                        icon:
+                            //  state == BookingInitial() ? Container():
+                            Container(
+                                //margin: EdgeInsets.only(left: 30),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 5, vertical: 5 / 2),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                child: Text(
+                                  (state as BookingUpdated)
+                                      .booking
+                                      .getCartCount()
+                                      .toString(),
+                                  style: TextStyle(color: primaryColor),
+                                )),
                         label: Container(
                             child: Row(
                           children: [
