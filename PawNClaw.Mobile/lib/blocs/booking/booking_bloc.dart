@@ -27,8 +27,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         serviceOrderCreateParameters: [],
         supplyOrderCreateParameters: [],
       );
-      emit(BookingUpdated(
-          booking: booking, requests: event.request, selectedPetIds: []));
+      emit(BookingUpdated(booking: booking, requests: event.request));
     });
     on<SelectCage>((event, emit) {
       BookingRequestModel booking = (state as BookingUpdated).booking;
@@ -43,7 +42,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
               .inHours,
         ),
       );
-      emit(BookingUpdated(booking: booking, selectedPetIds: []));
+      emit(BookingUpdated(booking: booking));
     });
     on<SelectSupply>(
       (event, emit) {
@@ -69,7 +68,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
           booking.supplyOrderCreateParameters!.add(supplyOrder);
           print("Added");
         }
-        emit(BookingUpdated(booking: booking, selectedPetIds: []));
+        emit(BookingUpdated(booking: booking));
       },
     );
     on<SelectService>(
@@ -112,14 +111,17 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
           booking.serviceOrderCreateParameters!.add(serviceOrder);
           print("Added");
         }
-        emit(BookingUpdated(booking: booking, selectedPetIds: []));
+        emit(BookingUpdated(booking: booking));
       },
     );
 
-    on<SelectRequest>((event, emit) {
+    on<SelectRequest>((event, emit){
       BookingRequestModel booking = (state as BookingUpdated).booking;
+      print('emit');
       print(event.petId);
-      emit(BookingUpdated(booking: booking, selectedPetIds: event.petId));
-    });
+      emit(BookingUpdated(booking: booking,selectedPetIds: event.petId));
+    } );
+    
+    
   }
 }
