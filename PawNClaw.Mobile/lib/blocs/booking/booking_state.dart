@@ -14,11 +14,13 @@ class BookingUpdated extends BookingState {
   final List<List<Pet>>? requests;
   final List<int>? selectedPetIds;
   final Pet? selectedPet;
-  const BookingUpdated({required this.booking, this.requests, this.selectedPetIds, this.selectedPet});
+  const BookingUpdated(
+      {required this.booking,
+      this.requests,
+      this.selectedPetIds,
+      this.selectedPet});
 
   @override
   // TODO: implement props
   List<Object> get props => [booking];
 }
-
-

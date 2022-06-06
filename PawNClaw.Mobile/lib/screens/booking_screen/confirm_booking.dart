@@ -245,11 +245,11 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                         ListView.builder(
                             shrinkWrap: true,
                             physics: ClampingScrollPhysics(),
-                            itemCount: FAKE_REQUESTS.length,
+                            itemCount: state.requests!.length,
                             itemBuilder: (context, index) {
                               return BookingCageCard(
                                 booking: state.booking,
-                                request: FAKE_REQUESTS[index],
+                                request: state.requests![index],
                                 center: center,
                               );
                             }),
