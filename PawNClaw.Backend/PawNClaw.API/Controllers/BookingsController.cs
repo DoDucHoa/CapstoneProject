@@ -27,7 +27,7 @@ namespace PawNClaw.API.Controllers
         [Authorize(Roles = "Owner,Staff")]
         public IActionResult ConfirmBooking([FromBody] UpdateStatusBookingParameter updateStatusParameter)
         {
-            var check = _bookingService.ConfirmBooking(updateStatusParameter.id, 
+            var check = _bookingService.ConfirmBooking(updateStatusParameter.id,
                                                         updateStatusParameter.statusId,
                                                         updateStatusParameter.staffNote);
             if (check)
@@ -66,6 +66,14 @@ namespace PawNClaw.API.Controllers
         public IActionResult GetBookingByIdForStaff(int id)
         {
             var data = _bookingService.GetBookingByIdForStaff(id);
+            return Ok(data);
+        }
+
+        [HttpGet("center/{id}")]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult GetBookingByCenterIdForStaff(int id, int statusId)
+        {
+            var data = _bookingService.GetBookingsForStaffMobile(id, statusId);
             return Ok(data);
         }
 
