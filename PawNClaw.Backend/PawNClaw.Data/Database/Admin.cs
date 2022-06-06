@@ -20,8 +20,6 @@ namespace PawNClaw.Data.Database
             PetTypeModifyUserNavigations = new HashSet<PetType>();
             SponsorBannerCreateUserNavigations = new HashSet<SponsorBanner>();
             SponsorBannerModifyUserNavigations = new HashSet<SponsorBanner>();
-            StaffCreateUserNavigations = new HashSet<Staff>();
-            StaffModifyUserNavigations = new HashSet<Staff>();
             SupplyTypeCreateUserNavigations = new HashSet<SupplyType>();
             SupplyTypeModifyUserNavigations = new HashSet<SupplyType>();
             VoucherTypeCreateUserNavigations = new HashSet<VoucherType>();
@@ -60,10 +58,6 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<SponsorBanner> SponsorBannerCreateUserNavigations { get; set; }
         [InverseProperty(nameof(SponsorBanner.ModifyUserNavigation))]
         public virtual ICollection<SponsorBanner> SponsorBannerModifyUserNavigations { get; set; }
-        [InverseProperty(nameof(Staff.CreateUserNavigation))]
-        public virtual ICollection<Staff> StaffCreateUserNavigations { get; set; }
-        [InverseProperty(nameof(Staff.ModifyUserNavigation))]
-        public virtual ICollection<Staff> StaffModifyUserNavigations { get; set; }
         [InverseProperty(nameof(SupplyType.CreateUserNavigation))]
         public virtual ICollection<SupplyType> SupplyTypeCreateUserNavigations { get; set; }
         [InverseProperty(nameof(SupplyType.ModifyUserNavigation))]

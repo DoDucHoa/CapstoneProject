@@ -420,6 +420,12 @@ namespace PawNClaw.Data.Database
 
             modelBuilder.Entity<PetHealthHistory>(entity =>
             {
+                entity.HasOne(d => d.Booking)
+                    .WithMany(p => p.PetHealthHistories)
+                    .HasForeignKey(d => d.BookingId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__PetHealth__booki__26CFC035");
+
                 entity.HasOne(d => d.Pet)
                     .WithMany(p => p.PetHealthHistories)
                     .HasForeignKey(d => d.PetId)
@@ -655,7 +661,7 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.StaffCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Staffs__create_u__09A971A2");
+                    .HasConstraintName("FK__Staffs__create_u__24E777C3");
 
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Staff)
@@ -666,7 +672,7 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.StaffModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Staffs__modify_u__0A9D95DB");
+                    .HasConstraintName("FK__Staffs__modify_u__25DB9BFC");
             });
 
             modelBuilder.Entity<Supply>(entity =>
