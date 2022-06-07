@@ -37,7 +37,9 @@ class _CageDetailsState extends State<CageDetails> {
   Widget build(BuildContext context) {
     var state = BlocProvider.of<BookingBloc>(context).state;
     var requests = (state as BookingUpdated).requests;
-    requests![0].forEach((element) {selectedPetIds.add(element.id!);});
+    requests![0].forEach((element) {
+      selectedPetIds.add(element.id!);
+    });
 
     Size size = MediaQuery.of(context).size;
     double appbarSize = size.height * 0.35;
@@ -113,9 +115,12 @@ class _CageDetailsState extends State<CageDetails> {
               onPressed: () {
                 print(context.read<BookingBloc>().state);
                 BlocProvider.of<BookingBloc>(context).add(SelectCage(
-                    price: cageType.totalPrice!,
-                    cageCode: cage.code!,
-                    petId: state.booking.selectedPetsIds == null ? selectedPetIds : state.booking.selectedPetsIds!,));
+                  price: cageType.totalPrice!,
+                  cageCode: cage.code!,
+                  petId: state.booking.selectedPetsIds == null
+                      ? selectedPetIds
+                      : state.booking.selectedPetsIds!,
+                ));
                 ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Thêm chuồng thành công.")));
                 print('cart count' + state.booking.getCartCount().toString());
@@ -155,7 +160,6 @@ class _CageDetailsState extends State<CageDetails> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15))),
             )));
-
   }
 
   Widget buildIndicator() => AnimatedSmoothIndicator(
@@ -195,54 +199,51 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
                 height: 10,
               ),
               Row(
-                  children: [
+                children: [
+                  Text(
+                    NumberFormat.currency(
+                            decimalDigits: 0, symbol: '', locale: 'vi_vn')
+                        .format(cageType
+                            .totalPrice), //  == 0 ? sellPrice : discountPrice),
+                    //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
+                    style: TextStyle(fontSize: 13),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  if (cageType.totalPrice == 0) //(discountPrice > 0)
                     Text(
                       NumberFormat.currency(
-                                  decimalDigits: 0,
-                                  symbol: '',
-                                  locale: 'vi_vn')
-                              .format(cageType.totalPrice),//  == 0 ? sellPrice : discountPrice),
-                      //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
-                      style: TextStyle(fontSize: 13),
+                              decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+                          .format(0), //sellPrice),
+                      style: TextStyle(
+                          fontSize: 13,
+                          color: lightFontColor,
+                          decoration: TextDecoration.lineThrough),
                     ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    if (cageType.totalPrice == 0)//(discountPrice > 0)
-                      Text(
-                        NumberFormat.currency(
-                                  decimalDigits: 0,
-                                  symbol: 'đ',
-                                  locale: 'vi_vn')
-                              .format(0),//sellPrice),
-                        style: TextStyle(
-                            fontSize: 13,
-                            color: lightFontColor,
-                            decoration: TextDecoration.lineThrough),
-                      ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    if (cageType.totalPrice! == 0)//(discountPrice > 0)
-                      Padding(
-                          padding: const EdgeInsets.only(right: 5, bottom: 5),
-                          child: Container(
-                            padding: EdgeInsets.all(11 * 0.4),
-                            decoration: BoxDecoration(
-                              color: primaryColor,
-                              borderRadius: BorderRadius.circular(15),
-                              //border: Border.all(width: 1),
-                            ),
-                            child: Text(
-                              '  Khuyến mãi  ',
-                              style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                          )),
-                  ],
-                ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  if (cageType.totalPrice! == 0) //(discountPrice > 0)
+                    Padding(
+                        padding: const EdgeInsets.only(right: 5, bottom: 5),
+                        child: Container(
+                          padding: EdgeInsets.all(11 * 0.4),
+                          decoration: BoxDecoration(
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(15),
+                            //border: Border.all(width: 1),
+                          ),
+                          child: Text(
+                            '  Khuyến mãi  ',
+                            style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        )),
+                ],
+              ),
               // cage.discount! > 0 ?
               SizedBox(
                 height: 20,
@@ -351,5 +352,4 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
         //               borderRadius: BorderRadius.circular(15))),
         //     ))
       ]));
-
 }

@@ -65,31 +65,32 @@ class _PetRequestsDialogState extends State<PetRequestsDialog> {
                   }),
               const Spacer(),
               ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                    child: Center(
+                      child: Text(
+                        "ĐÓNG",
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      child: Center(
-                        child: Text(
-                          "ĐÓNG",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    )),
-                    SizedBox(height: 20,),
+                  )),
+              SizedBox(
+                height: 20,
+              ),
               Text(
                 "*Lưu ý: những em thú cưng thuộc về cùng yêu cầu sẽ được xếp chung một chuồng.",
                 style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  color: primaryColor,
-                  fontSize: 11
-                ),
+                    fontStyle: FontStyle.italic,
+                    color: primaryColor,
+                    fontSize: 11),
               )
             ],
           )),

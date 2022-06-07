@@ -60,7 +60,8 @@ class CenterCard extends StatelessWidget {
                     Center(
                       child: Container(
                         height: height * 0.18,
-                        width: width *(1 - smallPadRate*2 - extraSmallPadRate*2),
+                        width: width *
+                            (1 - smallPadRate * 2 - extraSmallPadRate * 2),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           image: DecorationImage(
@@ -135,7 +136,7 @@ class CenterCard extends StatelessWidget {
                   ],
                 ),
                 bottom: width * 0.07,
-                right: width *smallPadRate*2,
+                right: width * smallPadRate * 2,
               )
             ]));
       },
