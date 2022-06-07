@@ -1,4 +1,5 @@
-﻿using PawNClaw.Data.Database;
+﻿using Microsoft.EntityFrameworkCore;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Interface;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,21 @@ namespace PawNClaw.Data.Repository
     {
         public PetBookingDetailRepository(ApplicationDbContext db) : base(db)
         {
+        }
+
+        public IEnumerable<PetBookingDetail> GetPetBookingDetailsByBookingId(int BookingId)
+        {
+            IQueryable<PetBookingDetail> query = _dbSet
+                .Include(x => x.Pet)
+                .Select(x => new PetBookingDetail
+                {
+                    BookingId = x.BookingId,
+                    Line = x.Line,
+                    Pet = x.Pet
+                })
+                .Where(x => x.BookingId == BookingId);
+
+            return query.ToList();
         }
     }
 }
