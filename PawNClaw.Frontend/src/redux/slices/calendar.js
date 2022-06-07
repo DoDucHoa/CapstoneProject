@@ -12,7 +12,6 @@ const initialState = {
   events: [],
   isOpenModal: false,
   selectedEventId: null,
-  selectedRange: null,
   bookingDetails: {},
   bookingStatuses: [],
 };
@@ -80,7 +79,6 @@ const slice = createSlice({
     closeModal(state) {
       state.isOpenModal = false;
       state.selectedEventId = null;
-      state.selectedRange = null;
     },
   },
 });
@@ -122,6 +120,7 @@ export function getBookingDetails(bookingId) {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get(`/api/bookings/for-staff/${bookingId}`);
+
       const bookingDetails = {
         id: response.data.id,
         customer: response.data.customer,

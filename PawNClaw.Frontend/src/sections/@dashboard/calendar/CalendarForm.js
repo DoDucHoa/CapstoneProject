@@ -18,6 +18,7 @@ import {
   TableCell,
   TableBody,
   MenuItem,
+  Divider,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // redux
@@ -101,9 +102,14 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses 
 
       {supplyOrders.length > 0 && (
         <Box sx={{ px: 3 }}>
-          <Typography paragraph variant="overline" sx={{ color: 'green' }}>
-            Đồ ăn, thức uống
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+            <Typography paragraph variant="overline" sx={{ color: 'green' }}>
+              Đồ ăn, thức uống
+            </Typography>
+            <Button variant="contained" color="warning" onClick={onCancel}>
+              Chỉnh sửa
+            </Button>
+          </Box>
           <Scrollbar>
             <TableContainer sx={{ minWidth: 300 }}>
               <Table>
@@ -152,9 +158,14 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses 
 
       {serviceOrders.length > 0 && (
         <Box sx={{ px: 3, mt: 5 }}>
-          <Typography paragraph variant="overline" sx={{ color: 'blue' }}>
-            Dịch vụ
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+            <Typography paragraph variant="overline" sx={{ color: 'blue' }}>
+              Dịch vụ
+            </Typography>
+            <Button variant="contained" color="warning" onClick={onCancel}>
+              Chỉnh sửa
+            </Button>
+          </Box>
           <Scrollbar>
             <TableContainer sx={{ minWidth: 300 }}>
               <Table>
@@ -200,6 +211,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses 
           </Scrollbar>
         </Box>
       )}
+
       <Grid container spacing={3} sx={{ p: 3 }}>
         <Grid item xs={12}>
           <Typography variant="h6">Tổng tiền</Typography>
@@ -208,6 +220,30 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses 
         <Grid item xs={12}>
           <RHFTextField name="staffNote" label="Ghi chú của nhân viên" multiline rows={3} />
         </Grid>
+      </Grid>
+
+      <Divider sx={{ borderStyle: 'dashed', borderColor: 'black', my: 3 }} />
+
+      <Grid container spacing={3} sx={{ p: 3 }}>
+        <Grid item xs={2}>
+          <Typography variant="caption">Tên pet</Typography>
+          <Typography variant="body1">Alice</Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <RHFTextField name="height" type="number" label="Chiều cao (cm)" />
+        </Grid>
+        <Grid item xs={2}>
+          <RHFTextField name="length" type="number" label="Chiều dài (cm)" />
+        </Grid>
+        <Grid item xs={2}>
+          <RHFTextField name="weight" type="number" label="Cân nặng (kg)" />
+        </Grid>
+        <Grid item xs={4}>
+          <RHFTextField name="description" label="Tình trạng sức khỏe" />
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={3} sx={{ p: 3 }}>
         {bookingStatuses.length > 0 && (
           <Grid item xs={4}>
             <RHFSelect
