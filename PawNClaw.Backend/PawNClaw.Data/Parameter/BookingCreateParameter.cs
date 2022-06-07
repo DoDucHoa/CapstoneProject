@@ -54,4 +54,16 @@ namespace PawNClaw.Data.Parameter
         public List<ServiceOrderCreateParameter> serviceOrderCreateParameters { get; set; }
         public List<SupplyOrderCreateParameter> supplyOrderCreateParameters { get; set; }
     }
+
+    public class AddNewServiceOrderParameter
+    {
+        public int BookingId { get; set; }
+        public List<ServiceOrderCreateParameter> serviceOrderCreateParameters { get; set; }
+    }
+
+    public class AddNewSupplyOrderParameter
+    {
+        public int BookingId { get; set; }
+        public List<SupplyOrderCreateParameter> supplyOrderCreateParameters { get; set; }
+    }
 }

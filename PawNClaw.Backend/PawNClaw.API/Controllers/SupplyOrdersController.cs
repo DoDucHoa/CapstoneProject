@@ -23,10 +23,22 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateSupplyOrderForStaff(UpdateSupplyOrderParameter updateSupplyOrderParameter)
+        public async Task<ActionResult> UpdateSupplyOrderForStaff( [FromBody] UpdateSupplyOrderParameter updateSupplyOrderParameter)
         {
             var data = await _supplyOrderService.UpdateSupplyOrderForStaff(updateSupplyOrderParameter);
 
+            if (data)
+            {
+                return Ok();
+            }
+            else
+                return BadRequest();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateSupplyOrder( [FromBody] AddNewSupplyOrderParameter addNewSupplyOrderParameter)
+        {
+            var data = await _supplyOrderService.CreateSupplyOrder(addNewSupplyOrderParameter);
             if (data)
             {
                 return Ok();
