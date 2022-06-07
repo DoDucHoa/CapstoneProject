@@ -10,6 +10,6 @@ namespace PawNClaw.Data.Interface
     public interface IPetRepository : IRepository<Pet>
     {
         public IEnumerable<Pet> GetPetByCustomer(int CusId);
-        public bool UpdatePetForStaff(int id, decimal? Weight, decimal? Lenght, decimal? Height);
+        public bool UpdatePetForStaff(int id, decimal Weight, decimal Lenght, decimal Height);
     }
 }
