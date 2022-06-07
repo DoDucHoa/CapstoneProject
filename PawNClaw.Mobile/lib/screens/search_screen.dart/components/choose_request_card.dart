@@ -35,7 +35,7 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
     // print(result);
     // BlocProvider.of<BookingBloc>(context).add(SelectRequest(petId: result));
     return Container(
-      height: height * 0.25,
+      height: height * 0.2,
       width: width,
       color: Colors.white,
       child: SizedBox(

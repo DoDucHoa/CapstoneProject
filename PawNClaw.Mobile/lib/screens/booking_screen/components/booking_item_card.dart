@@ -19,6 +19,7 @@ class BookingItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     var bookingSupplies = booking.supplyOrderCreateParameters!
         .where((element) => element.petId == pet.id)
         .toList();
@@ -98,31 +99,56 @@ class BookingItemCard extends StatelessWidget {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    supplies[index].name! +
-                        " x" +
-                        bookingSupplies
+                  Text.rich(
+            TextSpan(
+              text: supplies[index].name!,
+              style: TextStyle(
+                      color: primaryFontColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: width * regularFontRate * 0.8,
+                    ),
+              children: <InlineSpan>[
+                TextSpan(
+                  text: " x" +
+                         bookingSupplies
                             .firstWhere((element) =>
                                 element.petId == pet.id &&
                                 element.supplyId == supplies[index].id)
                             .quantity
                             .toString(),
-                    style: TextStyle(
-                      color: primaryFontColor,
+                  style: TextStyle(
+                      color: lightFontColor,
                       fontWeight: FontWeight.w500,
                       fontSize: width * regularFontRate * 0.8,
                     ),
-                  ),
+                )
+              ]
+            )),
+                  // Text(
+                  //   supplies[index].name! +
+                  //       " x" +
+                  //       bookingSupplies
+                  //           .firstWhere((element) =>
+                  //               element.petId == pet.id &&
+                  //               element.supplyId == supplies[index].id)
+                  //           .quantity
+                  //           .toString(),
+                  //   style: TextStyle(
+                  //     color: primaryFontColor,
+                  //     fontWeight: FontWeight.w500,
+                  //     fontSize: width * regularFontRate * 0.8,
+                  //   ),
+                  // ),
                   Text(
-                    NumberFormat.currency(
-                          decimalDigits: 0,
-                          symbol: '',
-                        ).format(bookingSupplies
+                   NumberFormat.currency(
+                                  decimalDigits: 0,
+                                  symbol: 'đ',
+                                  locale: 'vi_vn')
+                              .format(bookingSupplies
                             .firstWhere((element) =>
                                 element.petId == pet.id &&
                                 element.supplyId == supplies[index].id)
-                            .totalPrice) +
-                        "đ",
+                            .totalPrice) ,
                     style: TextStyle(
                       color: primaryFontColor,
                       fontWeight: FontWeight.w500,
@@ -140,23 +166,56 @@ class BookingItemCard extends StatelessWidget {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    services[index].description!,
-                    style: TextStyle(
+                   Text.rich(
+            TextSpan(
+              text: services[index].description!,
+              style: TextStyle(
                       color: primaryFontColor,
                       fontWeight: FontWeight.w500,
                       fontSize: width * regularFontRate * 0.8,
                     ),
-                  ),
+              children: <InlineSpan>[
+                TextSpan(
+                  text: " x" +
+                        bookingServices
+                            .firstWhere((element) =>
+                                element.petId == pet.id &&
+                                element.serviceId == services[index].id)
+                            .quantity
+                            .toString(),
+                  style: TextStyle(
+                      color: lightFontColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: width * regularFontRate * 0.8,
+                    ),
+                )
+              ]
+            )),
+                  // Text(
+                  //   services[index].description!
+                  //   +
+                  //       " x" +
+                  //       bookingServices
+                  //           .firstWhere((element) =>
+                  //               element.petId == pet.id &&
+                  //               element.serviceId == services[index].id)
+                  //           .quantity
+                  //           .toString(),
+                  //   style: TextStyle(
+                  //     color: primaryFontColor,
+                  //     fontWeight: FontWeight.w500,
+                  //     fontSize: width * regularFontRate * 0.8,
+                  //   ),
+                  // ),
                   Text(
                     NumberFormat.currency(
-                          decimalDigits: 0,
-                          symbol: '',
-                        ).format(bookingServices
+                                  decimalDigits: 0,
+                                  symbol: 'đ',
+                                  locale: 'vi_vn')
+                              .format(bookingServices
                             .firstWhere((element) =>
                                 element.serviceId == services[index].id)
-                            .totalPrice) +
-                        "đ",
+                            .totalPrice) ,
                     style: TextStyle(
                       color: primaryFontColor,
                       fontWeight: FontWeight.w500,

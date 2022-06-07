@@ -110,7 +110,7 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                 Container(
-                  height: 70,
+                  height: 80,
                   width: size.width,
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
@@ -133,9 +133,10 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                         children: [
                           Text(
                             NumberFormat.currency(
-                              decimalDigits: 0,
-                              symbol: '',
-                            ).format(supply.discountPrice == 0
+                                  decimalDigits: 0,
+                                  symbol: '',
+                                  locale: 'vi_vn')
+                              .format(supply.discountPrice == 0
                                 ? supply.sellPrice
                                 : supply.discountPrice),
                             //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),

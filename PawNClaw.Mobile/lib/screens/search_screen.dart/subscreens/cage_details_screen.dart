@@ -17,6 +17,7 @@ import 'package:readmore/readmore.dart';
 
 import '../../../models/cage.dart';
 import '../../../models/fake_data.dart';
+import '../components/choose_request_card.dart';
 
 class CageDetails extends StatefulWidget {
   final CageTypes cageType;
@@ -30,12 +31,14 @@ class CageDetails extends StatefulWidget {
 
 class _CageDetailsState extends State<CageDetails> {
   int activeIndex = 0;
-  var selectedPetIds;
+  List<int> selectedPetIds = [];
 
   @override
   Widget build(BuildContext context) {
     var state = BlocProvider.of<BookingBloc>(context).state;
     var requests = (state as BookingUpdated).requests;
+    requests![0].forEach((element) {selectedPetIds.add(element.id!);});
+
     Size size = MediaQuery.of(context).size;
     double appbarSize = size.height * 0.35;
     CageTypes cageType = widget.cageType;
@@ -112,7 +115,7 @@ class _CageDetailsState extends State<CageDetails> {
                 BlocProvider.of<BookingBloc>(context).add(SelectCage(
                     price: cageType.totalPrice!,
                     cageCode: cage.code!,
-                    petId: state.booking.selectedPetsIds!));
+                    petId: state.booking.selectedPetsIds == null ? selectedPetIds : state.booking.selectedPetsIds!,));
                 ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Thêm chuồng thành công.")));
                 print('cart count' + state.booking.getCartCount().toString());
@@ -173,7 +176,7 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
           mainAxisSize: MainAxisSize.min,
           children: [
         Container(
-          height: 70,
+          height: 80,
           width: size.width,
           padding: EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
@@ -192,17 +195,54 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
                 height: 10,
               ),
               Row(
-                children: [
-                  Text(
-                    NumberFormat.currency(
-                      decimalDigits: 0,
-                      symbol: '',
-                    ).format(cageType.totalPrice),
-                    //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
-                    style: TextStyle(fontSize: 15),
-                  ),
-                ],
-              ),
+                  children: [
+                    Text(
+                      NumberFormat.currency(
+                                  decimalDigits: 0,
+                                  symbol: '',
+                                  locale: 'vi_vn')
+                              .format(cageType.totalPrice),//  == 0 ? sellPrice : discountPrice),
+                      //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
+                      style: TextStyle(fontSize: 13),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    if (cageType.totalPrice == 0)//(discountPrice > 0)
+                      Text(
+                        NumberFormat.currency(
+                                  decimalDigits: 0,
+                                  symbol: 'đ',
+                                  locale: 'vi_vn')
+                              .format(0),//sellPrice),
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: lightFontColor,
+                            decoration: TextDecoration.lineThrough),
+                      ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    if (cageType.totalPrice! == 0)//(discountPrice > 0)
+                      Padding(
+                          padding: const EdgeInsets.only(right: 5, bottom: 5),
+                          child: Container(
+                            padding: EdgeInsets.all(11 * 0.4),
+                            decoration: BoxDecoration(
+                              color: primaryColor,
+                              borderRadius: BorderRadius.circular(15),
+                              //border: Border.all(width: 1),
+                            ),
+                            child: Text(
+                              '  Khuyến mãi  ',
+                              style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                          )),
+                  ],
+                ),
               // cage.discount! > 0 ?
               SizedBox(
                 height: 20,

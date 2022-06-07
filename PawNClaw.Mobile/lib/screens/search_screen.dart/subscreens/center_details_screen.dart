@@ -14,6 +14,7 @@ import 'package:pawnclaw_mobile_application/screens/search_screen.dart/component
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/service_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/supplytype_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/service_detail_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/show_vouchers_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/vouchers_screen.dart';
 
 import '../components/catergory_card.dart';
@@ -264,7 +265,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                               .of(context)
                                                           .push(MaterialPageRoute(
                                                               builder: (context) =>
-                                                                  Vouchers())),
+                                                                  ShowVouchers(vouchers:FAKE_VOUCHERS))),
                                                       icon: Image.asset(
                                                         'lib/assets/coupon.png',
                                                         width: 30,
@@ -279,7 +280,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                           child: Row(
                                                             children: [
                                                               Text(
-                                                                'Bạn có 4 ưu đãi',
+                                                                'Bạn có ${FAKE_VOUCHERS.length} ưu đãi',
                                                                 style: TextStyle(
                                                                     color:
                                                                         primaryFontColor),
@@ -503,12 +504,13 @@ class _CenterDetailsState extends State<CenterDetails> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15)),
                           onPressed: ()
-                              // => (state as BookingUpdated)
-                              //         .booking
-                              //         .bookingDetailCreateParameters!
-                              //         .isNotEmpty
-                              //     ?
-                              =>
+                          //ràng buộc chọn đủ số chuồng cho pet trước khi đặt hàng
+                              => ((state as BookingUpdated)
+                                      .booking
+                                      .bookingDetailCreateParameters!
+                                      .isNotEmpty && (state as BookingUpdated).booking.bookingDetailCreateParameters!.length == widget.requests.length)
+                                  ?
+                              // =>
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (_) => BlocProvider.value(
                                         value: BlocProvider.of<BookingBloc>(
@@ -516,13 +518,13 @@ class _CenterDetailsState extends State<CenterDetails> {
                                         child: ConfirmBooking(
                                           center: center!,
                                         ),
-                                      ))),
-                          // : ScaffoldMessenger.of(context).showSnackBar(
-                          //     SnackBar(
-                          //       content: Text(
-                          //           "Hãy chọn chuồng cho pet trước khi tiến hành đặt lịch."),
-                          //     ),
-                          //   ),
+                                      )))
+                          : ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "Hãy chọn đủ chuồng cho pet trước khi tiến hành đặt lịch."),
+                              ),
+                            ),
                           // onPressed: () async {
 
                           //   var state = BlocProvider.of<BookingBloc>(context).state;

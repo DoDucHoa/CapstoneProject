@@ -15,7 +15,9 @@ class ReviewCard extends StatelessWidget {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return InkWell(
-        onTap: () {},
+        onTap: () {
+          
+        },
         child: Container(
             padding: EdgeInsets.symmetric(vertical: 15),
             decoration: BoxDecoration(
