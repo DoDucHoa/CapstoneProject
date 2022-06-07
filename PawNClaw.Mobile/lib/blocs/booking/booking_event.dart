@@ -49,6 +49,15 @@ class SelectRequest extends BookingEvent {
   List<Object> get props => [petId];
 }
 
+class AddVoucher extends BookingEvent {
+  final String voucherCode;
+
+  const AddVoucher({required this.voucherCode});
+
+  @override
+  List<Object> get props => [voucherCode];
+}
+
 class SelectSupply extends BookingEvent {
   final double sellPrice;
   final int supplyId;

@@ -122,5 +122,13 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       print("petid : " +
           (state as BookingUpdated).booking.selectedPetsIds.toString());
     });
+
+     on<AddVoucher>((event, emit) {
+      BookingRequestModel booking = (state as BookingUpdated).booking;
+      print('voucherCode : ' + event.voucherCode);
+      booking.voucherCode = event.voucherCode;
+      emit(BookingUpdated(booking: booking));
+      //print('voucherCode add: ' + (state as BookingUpdated).booking.voucherCode!);
+    });
   }
 }

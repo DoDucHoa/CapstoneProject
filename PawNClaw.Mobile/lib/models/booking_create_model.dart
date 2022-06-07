@@ -4,13 +4,15 @@ class BookingRequestModel {
   List<ServiceOrderCreateParameters>? serviceOrderCreateParameters;
   List<SupplyOrderCreateParameters>? supplyOrderCreateParameters;
   List<int>? selectedPetsIds;
+  String? voucherCode;
 
   BookingRequestModel(
       {this.bookingCreateParameter,
       this.bookingDetailCreateParameters,
       this.serviceOrderCreateParameters,
       this.supplyOrderCreateParameters,
-      this.selectedPetsIds});
+      this.selectedPetsIds,
+      this.voucherCode});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -82,7 +84,7 @@ class BookingCreateParameter {
   String? startBooking;
   String? endBooking;
   int? statusId;
-  // Null? voucherCode;
+  Null? voucherCode;
   double? total;
   int? customerId;
   int? centerId;
@@ -93,7 +95,7 @@ class BookingCreateParameter {
       this.startBooking,
       this.endBooking,
       this.statusId,
-      // this.voucherCode,
+      this.voucherCode,
       this.total,
       this.customerId,
       this.centerId,
@@ -105,7 +107,7 @@ class BookingCreateParameter {
     data['startBooking'] = this.startBooking;
     data['endBooking'] = this.endBooking;
     data['statusId'] = this.statusId;
-    // data['voucherCode'] = this.voucherCode;
+    data['voucherCode'] = this.voucherCode;
     data['total'] = this.total;
     data['customerId'] = this.customerId;
     data['centerId'] = this.centerId;

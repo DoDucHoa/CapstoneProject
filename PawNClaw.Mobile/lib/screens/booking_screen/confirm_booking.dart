@@ -5,6 +5,7 @@ import 'package:pawnclaw_mobile_application/blocs/booking/booking_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
+import 'package:pawnclaw_mobile_application/models/fake_data.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
 import 'package:pawnclaw_mobile_application/repositories/booking.dart/booking_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/booking_screen/components/booking_item_card.dart';
@@ -41,7 +42,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
           if (state.booking.getTotalSupply() > 0) LineOfBill++;
           if (state.booking.getTotalService() > 0) LineOfBill++;
 // if(state.booking.getTotal() > 0 ) LineOfBill++;
-
+          if (state.booking.voucherCode != null) haveDiscount = true;
           List<Pet> pets = [];
           state.requests!.forEach(
             (element) => element.forEach((pet) {
@@ -235,7 +236,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "THÚ CƯNG",
+                          "THÔNG TIN CHUỒNG",
                           style: TextStyle(
                             color: primaryFontColor,
                             fontWeight: FontWeight.w600,
@@ -253,20 +254,73 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                 center: center,
                               );
                             }),
-                        ListView.builder(
-                            shrinkWrap: true,
-                            physics: ClampingScrollPhysics(),
-                            itemCount: pets.length,
-                            itemBuilder: (context, index) {
-                              return BookingItemCard(
-                                booking: state.booking,
-                                pet: pets[index],
-                                center: center,
-                              );
-                            }),
+                        // ListView.builder(
+                        //     shrinkWrap: true,
+                        //     physics: ClampingScrollPhysics(),
+                        //     itemCount: pets.length,
+                        //     itemBuilder: (context, index) {
+                        //       return BookingItemCard(
+                        //         booking: state.booking,
+                        //         pet: pets[index],
+                        //         center: center,
+                        //       );
+                        //     }),
                       ],
                     ),
                   ),
+                  //ẩn petcard khi không có service hoặc supply
+                  (state.booking.getTotalService() > 0 ||
+                          state.booking.getTotalSupply() > 0)
+                      ? SizedBox(
+                          height: width * extraSmallPadRate,
+                        )
+                      : Container(),
+                  //ẩn petcard khi không có service hoặc supply
+                  (state.booking.getTotalService() > 0 ||
+                          state.booking.getTotalSupply() > 0)
+                      ? Container(
+                          padding: EdgeInsets.all(width * mediumPadRate),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "THÚ CƯNG",
+                                style: TextStyle(
+                                  color: primaryFontColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: width * regularFontRate,
+                                ),
+                              ),
+                              // ListView.builder(
+                              //     shrinkWrap: true,
+                              //     physics: ClampingScrollPhysics(),
+                              //     itemCount: state.requests!.length,
+                              //     itemBuilder: (context, index) {
+                              //       return BookingCageCard(
+                              //         booking: state.booking,
+                              //         request: state.requests![index],
+                              //         center: center,
+                              //       );
+                              //     }),
+                              ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: ClampingScrollPhysics(),
+                                  itemCount: pets.length,
+                                  itemBuilder: (context, index) {
+                                    return BookingItemCard(
+                                      booking: state.booking,
+                                      pet: pets[index],
+                                      center: center,
+                                    );
+                                  }),
+                            ],
+                          ),
+                        )
+                      : Container(),
                   Container(
                       // padding: EdgeInsets.symmetric(
                       //   horizontal: width * smallPadRate,
@@ -288,7 +342,13 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                   borderRadius: BorderRadius.circular(10))),
                           onPressed: () => Navigator.of(context).push(
                               MaterialPageRoute(
-                                  builder: (context) => Vouchers())),
+                                  builder: (_) => BlocProvider.value(
+                                      value:
+                                          BlocProvider.of<BookingBloc>(context),
+                                      child: Vouchers())))
+                            ..then((value) => context
+                                .findRootAncestorStateOfType()!
+                                .setState(() {})),
                           icon: Image.asset(
                             'lib/assets/coupon.png',
                             width: 30,
@@ -298,7 +358,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                               child: Row(
                                 children: [
                                   Text(
-                                    'Bạn có 4 ưu đãi',
+                                    'Bạn có ${FAKE_VOUCHERS.length} ưu đãi',
                                     style: TextStyle(color: primaryFontColor),
                                   ),
                                   Expanded(child: SizedBox()),
@@ -399,11 +459,11 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                   ),
                                   Text(
                                     NumberFormat.currency(
-                                          decimalDigits: 0,
-                                          symbol: '',
-                                        ).format(
-                                            state.booking.getTotalService()) +
-                                        "đ",
+                                            decimalDigits: 0,
+                                            symbol: 'đ',
+                                            locale: 'vi_vn')
+                                        .format(
+                                            state.booking.getTotalService()),
                                     style: TextStyle(
                                       color: primaryFontColor,
                                       fontWeight: FontWeight.w500,
@@ -429,11 +489,10 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                   ),
                                   Text(
                                     NumberFormat.currency(
-                                          decimalDigits: 0,
-                                          symbol: '',
-                                        ).format(
-                                            state.booking.getTotalSupply()) +
-                                        "đ",
+                                            decimalDigits: 0,
+                                            symbol: 'đ',
+                                            locale: 'vi_vn')
+                                        .format(state.booking.getTotalSupply()),
                                     style: TextStyle(
                                       color: primaryFontColor,
                                       fontWeight: FontWeight.w500,
@@ -461,10 +520,10 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                             ),
                             Text(
                               NumberFormat.currency(
-                                    decimalDigits: 0,
-                                    symbol: '',
-                                  ).format(state.booking.getTotalCage()) +
-                                  "đ",
+                                      decimalDigits: 0,
+                                      symbol: 'đ',
+                                      locale: 'vi_vn')
+                                  .format(state.booking.getTotalCage()),
                               style: TextStyle(
                                 color: primaryFontColor,
                                 fontWeight: FontWeight.w500,
@@ -486,7 +545,19 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                     ),
                                   ),
                                   Text(
-                                    "-0 đ",
+                                    "- " +
+                                        NumberFormat.currency(
+                                                decimalDigits: 0,
+                                                symbol: 'đ',
+                                                locale: 'vi_vn')
+                                            .format(FAKE_VOUCHERS
+                                                .where((element) =>
+                                                    element.code ==
+                                                    (state as BookingUpdated)
+                                                        .booking
+                                                        .voucherCode)
+                                                .first
+                                                .value),
                                     style: TextStyle(
                                       color: primaryFontColor,
                                       fontWeight: FontWeight.w500,
@@ -518,10 +589,20 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                 ),
                                 Text(
                                   NumberFormat.currency(
-                                        decimalDigits: 0,
-                                        symbol: '',
-                                      ).format(state.booking.getTotal()) +
-                                      "đ",
+                                          decimalDigits: 0,
+                                          symbol: 'đ',
+                                          locale: 'vi_vn')
+                                      .format((haveDiscount)
+                                          ? state.booking.getTotal() -
+                                              FAKE_VOUCHERS
+                                                  .where((element) =>
+                                                      element.code ==
+                                                      (state as BookingUpdated)
+                                                          .booking
+                                                          .voucherCode)
+                                                  .first
+                                                  .value
+                                          : state.booking.getTotal()),
                                   style: TextStyle(
                                     color: primaryFontColor,
                                     fontWeight: FontWeight.w800,

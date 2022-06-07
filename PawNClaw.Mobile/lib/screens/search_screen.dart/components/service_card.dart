@@ -51,14 +51,16 @@ class _ServiceCardState extends State<ServiceCard> {
                   children: [
                     Text(
                       NumberFormat.currency(
-                            decimalDigits: 0,
-                            symbol: '',
-                          ).format((service.servicePrices![0].price ?? 0)) +
+                                  decimalDigits: 0,
+                                  symbol: '',
+                                  locale: 'vi_vn')
+                              .format((service.servicePrices![0].price ?? 0)) +
                           " ~ " +
                           NumberFormat.currency(
-                            decimalDigits: 0,
-                            symbol: '',
-                          ).format((service
+                                  decimalDigits: 0,
+                                  symbol: '',
+                                  locale: 'vi_vn')
+                              .format((service
                                   .servicePrices![
                                       service.servicePrices!.length - 1]
                                   .price ??
@@ -72,9 +74,10 @@ class _ServiceCardState extends State<ServiceCard> {
                     if ((service.discountPrice ?? 0) > 0)
                       Text(
                         NumberFormat.currency(
-                          decimalDigits: 0,
-                          symbol: '',
-                        ).format(service.sellPrice ?? 0),
+                                  decimalDigits: 0,
+                                  symbol: '',
+                                  locale: 'vi_vn')
+                              .format(service.sellPrice ?? 0),
                         style: TextStyle(
                             fontSize: 13,
                             color: lightFontColor,

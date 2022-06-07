@@ -50,33 +50,37 @@ List<Review> FAKE_REVIEWS = [
 
 List<Voucher> FAKE_VOUCHERS = [
   Voucher(
+    code: 'LOVEPET10',
       value: 10000,
       minCondition: 50000,
       startDate: '1/5/2022',
       expireDate: '30/5/2022'),
   Voucher(
+    code: 'LOVEPET20',
       value: 20000,
       minCondition: 70000,
       startDate: '1/5/2022',
       expireDate: '30/5/2022'),
   Voucher(
+    code: 'LOVEPET30',
       value: 30000,
       minCondition: 100000,
       startDate: '1/5/2022',
       expireDate: '30/5/2022'),
   Voucher(
+    code: 'LOVEPET50',
       value: 50000,
-      minCondition: 200000,
+      minCondition: 200000000,
       startDate: '1/5/2022',
       expireDate: '30/5/2022'),
 ];
 
 List<List<Pet>> FAKE_REQUESTS = [
   [
-    Pet(id: 0, weight: 0.5, name: 'Pet 1'),
+    Pet(id: 0, weight: 2, name: 'Pet 1'),
     Pet(
       id: 1,
-      weight: 0.5,
+      weight: 6,
       name: 'Pet 2',
     )
   ],
@@ -84,7 +88,7 @@ List<List<Pet>> FAKE_REQUESTS = [
     Pet(id: 2, weight: 0.5, name: 'Pet 3'),
     Pet(
       id: 3,
-      weight: 0.5,
+      weight: 12,
       name: 'Pet 4',
     ),
     Pet(id: 4, weight: 0.5, name: 'Pet 5'),
