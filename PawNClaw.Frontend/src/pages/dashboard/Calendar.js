@@ -39,7 +39,7 @@ export default function Calendar() {
 
   const [view, setView] = useState(isDesktop ? 'dayGridMonth' : 'listWeek');
 
-  const { events, isOpenModal, bookingDetails, bookingStatuses } = useSelector((state) => state.calendar);
+  const { events, isOpenModal, bookingDetails, bookingStatuses, petData } = useSelector((state) => state.calendar);
 
   useEffect(() => {
     dispatch(getEvents());
@@ -125,7 +125,7 @@ export default function Calendar() {
               initialDate={date}
               initialView={view}
               dayMaxEventRows={3}
-              eventDisplay="list-item"
+              eventDisplay="block"
               headerToolbar={false}
               eventClick={handleSelectEvent}
               height={isDesktop ? 720 : 'auto'}
@@ -140,6 +140,7 @@ export default function Calendar() {
             selectedEvent={bookingDetails || {}}
             onCancel={handleCloseModal}
             bookingStatuses={bookingStatuses}
+            petData={petData}
           />
         </DialogAnimate>
       </Container>

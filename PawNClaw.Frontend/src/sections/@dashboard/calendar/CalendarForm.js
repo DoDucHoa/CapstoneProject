@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { useSnackbar } from 'notistack';
 // form
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import {
@@ -38,12 +38,13 @@ CalendarForm.propTypes = {
   selectedEvent: PropTypes.object,
   onCancel: PropTypes.func,
   bookingStatuses: PropTypes.array,
+  petData: PropTypes.array,
 };
 
-export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses }) {
+export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses, petData }) {
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
-  const { startBooking, endBooking, total, customerNote, serviceOrders, supplyOrders } = selectedEvent;
+  const { id, statusId, startBooking, endBooking, total, customerNote, serviceOrders, supplyOrders } = selectedEvent;
 
   const EventSchema = Yup.object().shape({
     id: Yup.number(),
@@ -52,15 +53,21 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses 
 
   const methods = useForm({
     resolver: yupResolver(EventSchema),
-    defaultValues: { id: selectedEvent.id, statusId: selectedEvent.statusId, staffNote: '' },
+    defaultValues: { id, statusId, staffNote: '', petData },
   });
 
   const {
     reset,
+    control,
     // watch,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
+
+  const { fields } = useFieldArray({
+    control,
+    name: 'petData',
+  });
 
   // const values = watch();
 
@@ -103,8 +110,8 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses 
       {supplyOrders.length > 0 && (
         <Box sx={{ px: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-            <Typography paragraph variant="overline" sx={{ color: 'green' }}>
-              Đồ ăn, thức uống
+            <Typography paragraph variant="overline" sx={{ color: 'red' }}>
+              Đồ dùng
             </Typography>
             <Button variant="contained" color="warning" onClick={onCancel}>
               Chỉnh sửa
@@ -224,24 +231,26 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses 
 
       <Divider sx={{ borderStyle: 'dashed', borderColor: 'black', my: 3 }} />
 
-      <Grid container spacing={3} sx={{ p: 3 }}>
-        <Grid item xs={2}>
-          <Typography variant="caption">Tên pet</Typography>
-          <Typography variant="body1">Alice</Typography>
+      {fields.map((pet, index) => (
+        <Grid container spacing={3} sx={{ p: 3 }} key={index}>
+          <Grid item xs={2}>
+            <Typography variant="caption">Tên pet</Typography>
+            <Typography variant="body1">{pet.name}</Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <RHFTextField name={`petData[${index}].height`} type="number" label="Chiều cao (cm)" />
+          </Grid>
+          <Grid item xs={2}>
+            <RHFTextField name={`petData[${index}].length`} type="number" label="Chiều dài (cm)" />
+          </Grid>
+          <Grid item xs={2}>
+            <RHFTextField name={`petData[${index}].weight`} type="number" label="Cân nặng (kg)" />
+          </Grid>
+          <Grid item xs={4}>
+            <RHFTextField name={`petData[${index}].description`} label="Tình trạng sức khỏe" />
+          </Grid>
         </Grid>
-        <Grid item xs={2}>
-          <RHFTextField name="height" type="number" label="Chiều cao (cm)" />
-        </Grid>
-        <Grid item xs={2}>
-          <RHFTextField name="length" type="number" label="Chiều dài (cm)" />
-        </Grid>
-        <Grid item xs={2}>
-          <RHFTextField name="weight" type="number" label="Cân nặng (kg)" />
-        </Grid>
-        <Grid item xs={4}>
-          <RHFTextField name="description" label="Tình trạng sức khỏe" />
-        </Grid>
-      </Grid>
+      ))}
 
       <Grid container spacing={3} sx={{ p: 3 }}>
         {bookingStatuses.length > 0 && (
