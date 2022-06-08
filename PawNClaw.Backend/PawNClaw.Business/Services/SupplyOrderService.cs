@@ -37,6 +37,13 @@ namespace PawNClaw.Business.Services
                 {
                     try
                     {
+                        if (list.Quantity == 0)
+                        {
+                            _supplyOrderRepository.Remove(updateSupplyOrderParameter.BookingId);
+                            await _supplyOrderRepository.SaveDbChangeAsync();
+                            continue;
+                        }
+
                         var values = _supplyOrderRepository.GetFirstOrDefault(x => x.BookingId == updateSupplyOrderParameter.BookingId
                                                                         && x.SupplyId == list.ServiceId);
 
