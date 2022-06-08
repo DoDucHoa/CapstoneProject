@@ -14,6 +14,7 @@ const initialState = {
   selectedEventId: null,
   bookingDetails: {},
   bookingStatuses: [],
+  petData: [],
 };
 
 const slice = createSlice({
@@ -70,6 +71,12 @@ const slice = createSlice({
       state.isLoading = false;
     },
 
+    // GET PET DATA
+    getPetDataSuccess(state, action) {
+      state.petData = action.payload;
+      state.isLoading = false;
+    },
+
     // OPEN MODAL
     openModal(state) {
       state.isOpenModal = true;
@@ -87,9 +94,16 @@ const slice = createSlice({
 export default slice.reducer;
 
 // Actions
-export const { openModal, closeModal, selectEvent } = slice.actions;
+export const { openModal, closeModal, selectEvent, getBookingStatusesSuccess, getPetDataSuccess } = slice.actions;
 
 // ----------------------------------------------------------------------
+
+const statusColor = {
+  1: 'orange',
+  2: 'blue',
+  3: 'green',
+  4: 'red',
+};
 
 export function getEvents() {
   return async () => {
@@ -101,9 +115,8 @@ export function getEvents() {
         id: booking.id,
         title: booking.customer.name,
         start: booking.startBooking,
-        end: booking.endBooking,
         color: booking.color,
-        textColor: booking.textColor,
+        textColor: statusColor[booking.statusId],
       }));
 
       dispatch(slice.actions.getEventsSuccess(bookingData));
@@ -135,10 +148,22 @@ export function getBookingDetails(bookingId) {
         serviceOrders: response.data.serviceOrders,
         supplyOrders: response.data.supplyOrders,
       };
+
       const bookingStatusesResponse = await axios.get('/api/bookingstatuses');
+      const petDataResponse = await axios.get(`/api/petbookingdetails/booking/${bookingId}`);
+
+      const petData = petDataResponse.data.map((data) => ({
+        id: data.pet.id,
+        name: data.pet.name,
+        weight: data.pet.weight,
+        height: data.pet.height,
+        length: data.pet.length,
+        description: '',
+      }));
 
       dispatch(selectEvent(bookingDetails));
-      dispatch(slice.actions.getBookingStatusesSuccess(bookingStatusesResponse.data));
+      dispatch(getBookingStatusesSuccess(bookingStatusesResponse.data));
+      dispatch(getPetDataSuccess(petData));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -167,6 +192,34 @@ export function deleteEvent(eventId) {
     try {
       await axios.post('/api/calendar/events/delete', { eventId });
       dispatch(slice.actions.deleteEventSuccess({ eventId }));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+// ----------------------------------------------------------------------
+
+export function createPetHealthStatus({ petData, bookingId }) {
+  return async () => {
+    dispatch(slice.actions.startLoading());
+
+    try {
+      petData.map(async (data) => {
+        await axios.post('/api/pethealthhistorys', {
+          isUpdatePet: true,
+          createPetHealthHistoryParameter: {
+            petId: data.id,
+            weight: data.weight,
+            height: data.height,
+            length: data.length,
+            description: data.description,
+            centerName: 'Runolfsson-Dickens',
+            bookingId,
+          },
+        });
+      });
+      dispatch(slice.actions.updateBookingStatusSuccess());
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
