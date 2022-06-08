@@ -40,6 +40,13 @@ namespace PawNClaw.Business.Services
                 {
                     try
                     {
+                        if (list.Quantity == 0)
+                        {
+                            _serviceOrderRepository.Remove(updateServiceOrderParameter.BookingId);
+                            await _serviceOrderRepository.SaveDbChangeAsync();
+                            continue;
+                        }
+
                         var values = _serviceOrderRepository.GetFirstOrDefault(x => x.BookingId == updateServiceOrderParameter.BookingId
                                                                         && x.ServiceId == list.ServiceId);
 
