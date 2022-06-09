@@ -70,6 +70,8 @@ namespace PawNClaw.API
             services.AddTransient<ServiceServices, ServiceServices>();
 
             services.AddTransient<IServicePriceRepository, ServicePriceRepository>();
+            services.AddTransient<ServicePriceService, ServicePriceService>();
+
 
             services.AddTransient<IBookingDetailRepository, BookingDetailRepository>();
             services.AddTransient<BookingDetailService, BookingDetailService>();
