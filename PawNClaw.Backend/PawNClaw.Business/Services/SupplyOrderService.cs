@@ -45,7 +45,7 @@ namespace PawNClaw.Business.Services
                         }
 
                         var values = _supplyOrderRepository.GetFirstOrDefault(x => x.BookingId == updateSupplyOrderParameter.BookingId
-                                                                        && x.SupplyId == list.ServiceId);
+                                                                        && x.SupplyId == list.SupplyId);
 
                         values.Quantity = list.Quantity;
                         values.SellPrice = list.SellPrice;
