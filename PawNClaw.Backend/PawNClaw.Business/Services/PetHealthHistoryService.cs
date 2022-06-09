@@ -45,6 +45,13 @@ namespace PawNClaw.Business.Services
             {
                 try
                 {
+                    var petHealth = _petHealthHistoryRepository.GetFirstOrDefault(x => x.BookingId == createUpdatePetHealthHistoryParameter.createPetHealthHistoryParameter.BookingId);
+                    if (petHealth != null)
+                    {
+                        _petHealthHistoryRepository.Remove(petHealth);
+                        await _petHealthHistoryRepository.SaveDbChangeAsync();
+                    }
+
                     _petHealthHistoryRepository.Add(petHealthHistory);
                     await _petHealthHistoryRepository.SaveDbChangeAsync();
 
