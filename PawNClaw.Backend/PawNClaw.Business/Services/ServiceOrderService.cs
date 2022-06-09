@@ -91,10 +91,12 @@ namespace PawNClaw.Business.Services
                         Price = (decimal)(Price + bookingDetail.Price);
                     }
 
-                    booking.SubTotal = Price;
-                    booking.Total = Price;
+                    var bookingToDb = _bookingRepository.Get(booking.Id);
 
-                    _bookingRepository.Update(booking);
+                    bookingToDb.SubTotal = Price;
+                    bookingToDb.Total = Price;
+
+                    _bookingRepository.Update(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();
                 }
                 catch
@@ -173,10 +175,12 @@ namespace PawNClaw.Business.Services
                         Price = (decimal)(Price + bookingDetail.Price);
                     }
 
-                    booking.SubTotal = Price;
-                    booking.Total = Price;
+                    var bookingToDb = _bookingRepository.Get(booking.Id);
 
-                    _bookingRepository.Update(booking);
+                    bookingToDb.SubTotal = Price;
+                    bookingToDb.Total = Price;
+
+                    _bookingRepository.Update(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();
                 }
                 catch

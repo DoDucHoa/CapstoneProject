@@ -297,13 +297,12 @@ namespace PawNClaw.Business.Services
 
                 try
                 {
-                    var booking = _bookingRepository.GetBookingForCustomer(Id);
 
-                    var serviceOrders = booking.ServiceOrders;
+                    var serviceOrders = bookingToDb.ServiceOrders;
 
-                    var supplyOrders = booking.SupplyOrders;
+                    var supplyOrders = bookingToDb.SupplyOrders;
 
-                    var bookingDetails = booking.BookingDetails;
+                    var bookingDetails = bookingToDb.BookingDetails;
 
                     decimal Price = 0;
 
@@ -322,10 +321,10 @@ namespace PawNClaw.Business.Services
                         Price = (decimal)(Price + bookingDetail.Price);
                     }
 
-                    booking.SubTotal = Price;
-                    booking.Total = Price;
+                    bookingToDb.SubTotal = Price;
+                    bookingToDb.Total = Price;
 
-                    _bookingRepository.Update(booking);
+                    _bookingRepository.Update(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();
                 }
                 catch
