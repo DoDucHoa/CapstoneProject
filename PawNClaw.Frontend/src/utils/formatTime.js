@@ -7,7 +7,7 @@ export function fDate(date) {
 }
 
 export function fDateTime(date) {
-  return format(new Date(date), 'dd MMM yyyy HH:mm');
+  return format(new Date(date), 'dd MMM yyyy, HH:mm');
 }
 
 export function fTimestamp(date) {
@@ -15,7 +15,7 @@ export function fTimestamp(date) {
 }
 
 export function fDateTimeSuffix(date) {
-  return format(new Date(date), 'dd/MM/yyyy HH:mm');
+  return format(new Date(date), 'HH:mm, dd/MM/yyyy');
 }
 
 export function fToNow(date) {
