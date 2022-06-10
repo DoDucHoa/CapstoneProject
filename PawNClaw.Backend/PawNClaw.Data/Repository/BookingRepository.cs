@@ -191,20 +191,7 @@ namespace PawNClaw.Data.Repository
                         {
                             BookingId = pet.BookingId,
                             Line = pet.Line,
-                            Pet = new Pet
-                            {
-                                Id = pet.Pet.Id,
-                                Weight = pet.Pet.Weight,
-                                Length = pet.Pet.Length,
-                                Height = pet.Pet.Height,
-                                Name = pet.Pet.Name,
-                                Birth = pet.Pet.Birth,
-                                CustomerId = pet.Pet.CustomerId,
-                                PetTypeCode = pet.Pet.PetTypeCode,
-                                BreedName = pet.Pet.BreedName,
-                                PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories
-                                .Where(health => health.Id == pet.Pet.PetHealthHistories.Max(x => x.Id))
-                            }
+                            Pet = pet.Pet
                         })
                     }),
                     SupplyOrders = (ICollection<SupplyOrder>)x.SupplyOrders
@@ -237,6 +224,21 @@ namespace PawNClaw.Data.Repository
                         Pet = new Pet
                         {
                             Name = serviceorder.Pet.Name,
+                        }
+                    }),
+                    PetHealthHistories = (ICollection<PetHealthHistory>)x.PetHealthHistories
+                    .Select(health => new PetHealthHistory
+                    {
+                        Id = health.Id,
+                        CheckedDate = health.CheckedDate,
+                        Description = health.Description,
+                        CenterName = health.CenterName,
+                        Length = health.Length,
+                        Weight = health.Weight,
+                        Height = health.Height,
+                        Pet = new Pet
+                        {
+                            Name = health.Pet.Name,
                         }
                     }),
                     Customer = x.Customer
@@ -314,7 +316,7 @@ namespace PawNClaw.Data.Repository
                 .Where(x => x.CenterId == CenterId);
 
             if (StatusId != null)
-            query = query.Where(x => x.StatusId == StatusId);
+                query = query.Where(x => x.StatusId == StatusId);
 
             return query.ToList();
         }
