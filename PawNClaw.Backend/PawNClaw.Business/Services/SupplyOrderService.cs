@@ -47,12 +47,28 @@ namespace PawNClaw.Business.Services
                         var values = _supplyOrderRepository.GetFirstOrDefault(x => x.BookingId == updateSupplyOrderParameter.BookingId
                                                                         && x.SupplyId == list.SupplyId);
 
+                        var oldQuantity = values.Quantity;
+
                         values.Quantity = list.Quantity;
                         values.SellPrice = list.SellPrice;
                         values.TotalPrice = list.Quantity * list.SellPrice;
 
                         _supplyOrderRepository.Update(values);
                         await _supplyOrderRepository.SaveDbChangeAsync();
+
+                        //
+                        var supply = _supplyRepository.Get(list.SupplyId);
+
+                        supply.Quantity = (int)(supply.Quantity - (values.Quantity - oldQuantity));
+
+                        if (supply.Quantity < 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+
+                        _supplyRepository.Update(supply);
+                        await _supplyRepository.SaveDbChangeAsync();
                     }
                     catch
                     {
