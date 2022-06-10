@@ -98,18 +98,22 @@ namespace PawNClaw.Business.Services
 
             int Id = 0;
 
-            if (_bookingRepository.GetAll(x =>
-                                (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)x.StartBooking) <= 0
-                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)x.EndBooking) >= 0)
-                                ||
-                                (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)x.StartBooking) >= 0
-                                && DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)x.EndBooking) < 0)
-                                ||
-                                (DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)x.StartBooking) > 0
-                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)x.EndBooking) <= 0)) != null)
+            foreach (var bookingDetailCreateParameter in bookingDetailCreateParameters)
             {
-                return null;
+                if (_cageRepository.GetAll(cage => cage.Code.Trim().Equals(bookingDetailCreateParameter.CageCode) && cage.BookingDetails.Any(bookingdetail =>
+                                ((DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
+                                ||
+                                (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) >= 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
+                                ||
+                                (DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0)))) != null)
+                {
+                    return null;
+                }
             }
+            
 
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
@@ -375,5 +379,6 @@ namespace PawNClaw.Business.Services
 
             return values;
         }
+
     }
 }
