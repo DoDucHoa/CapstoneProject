@@ -14,9 +14,9 @@ import 'package:pawnclaw_mobile_application/screens/search_screen.dart/component
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/service_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/supplytype_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/service_detail_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/show_vouchers_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/vouchers_screen.dart';
 
-import '../../../models/center.dart';
 import '../components/catergory_card.dart';
 import '../components/review_card.dart';
 
@@ -62,8 +62,6 @@ class _CenterDetailsState extends State<CenterDetails> {
     double width = MediaQuery.of(context).size.width;
     double appbarSize = height * 0.5;
 
-    
-   
     var auth = BlocProvider.of<AuthBloc>(context).state;
     int customerId = (auth as Authenticated).user.id!;
     return BlocProvider(
@@ -267,7 +265,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                               .of(context)
                                                           .push(MaterialPageRoute(
                                                               builder: (context) =>
-                                                                  Vouchers())),
+                                                                  ShowVouchers(vouchers:FAKE_VOUCHERS))),
                                                       icon: Image.asset(
                                                         'lib/assets/coupon.png',
                                                         width: 30,
@@ -282,7 +280,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                           child: Row(
                                                             children: [
                                                               Text(
-                                                                'Bạn có 4 ưu đãi',
+                                                                'Bạn có ${FAKE_VOUCHERS.length} ưu đãi',
                                                                 style: TextStyle(
                                                                     color:
                                                                         primaryFontColor),
@@ -380,27 +378,15 @@ class _CenterDetailsState extends State<CenterDetails> {
                                           //   cageType: cageTypes[index],
                                           //   size: size,
                                           // );
-                                          if (cageType!.cages!.isEmpty)
-                                            return SizedBox(
-                                              height: 0,
-                                            );
                                           return CatergoryCard(
                                               cageType: cageType!, size: size);
                                         },
                                         itemCount:
                                             center?.cageTypes?.length ?? 0,
-                                        separatorBuilder: (context, index) {
-                                          var cageType =
-                                              center?.cageTypes?[index];
-
-                                          if (cageType!.cages!.isEmpty)
-                                            return SizedBox(
-                                              height: 0,
-                                            );
-                                          return SizedBox(
-                                            height: 8,
-                                          );
-                                        },
+                                        separatorBuilder: (context, index) =>
+                                            const SizedBox(
+                                          height: 8,
+                                        ),
                                         shrinkWrap: true,
                                         physics: ClampingScrollPhysics(),
                                       )
@@ -436,13 +422,6 @@ class _CenterDetailsState extends State<CenterDetails> {
                                             ListView.separated(
                                           itemBuilder: (context, index) {
                                             var supplies = center?.supplies;
-                                            if (getSuppliesByType(
-                                                    supplyType[index],
-                                                    supplies!)
-                                                .isEmpty)
-                                              return SizedBox(
-                                                height: 0,
-                                              );
                                             return SupplyTypeCard(
                                                 supplyType: supplyType[index],
                                                 size: size,
@@ -520,82 +499,97 @@ class _CenterDetailsState extends State<CenterDetails> {
                             ])),
                       )),
                   floatingActionButton: Container(
-                    padding: EdgeInsets.only(left: 30),
-                    child: FloatingActionButton.extended(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        onPressed: () 
-                        // => (state as BookingUpdated)
-                        //         .booking
-                        //         .bookingDetailCreateParameters!
-                        //         .isNotEmpty
-                        //     ? 
-                            => Navigator.of(context).push(MaterialPageRoute(
-                                builder: (_) => BlocProvider.value(
-                                      value:
-                                          BlocProvider.of<BookingBloc>(context),
-                                      child: ConfirmBooking(
-                                        center: center!,
-                                      ),
-                                    ))),
-                            // : ScaffoldMessenger.of(context).showSnackBar(
-                            //     SnackBar(
-                            //       content: Text(
-                            //           "Hãy chọn chuồng cho pet trước khi tiến hành đặt lịch."),
-                            //     ),
-                            //   ),
-                        // onPressed: () async {
+                      padding: EdgeInsets.only(left: 30),
+                      child: FloatingActionButton.extended(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          onPressed: ()
+                          //ràng buộc chọn đủ số chuồng cho pet trước khi đặt hàng
+                              => ((state as BookingUpdated)
+                                      .booking
+                                      .bookingDetailCreateParameters!
+                                      .isNotEmpty && (state as BookingUpdated).booking.bookingDetailCreateParameters!.length == widget.requests.length)
+                                  ?
+                              // =>
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => BlocProvider.value(
+                                        value: BlocProvider.of<BookingBloc>(
+                                            context),
+                                        child: ConfirmBooking(
+                                          center: center!,
+                                        ),
+                                      )))
+                          : ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "Hãy chọn đủ chuồng cho pet trước khi tiến hành đặt lịch."),
+                              ),
+                            ),
+                          // onPressed: () async {
 
-                        //   var state = BlocProvider.of<BookingBloc>(context).state;
-                        //   BookingRequestModel request =
-                        //       (state as BookingUpdated).booking;
-                        //   var result =
-                        //       await BookingRepository().createBooking(request);
-                        //   print(result);
-                        //   //booking button
-                        // },
-                         icon:
-                        //  state == BookingInitial() ? Container(): 
-                          Container(
-                            //margin: EdgeInsets.only(left: 30),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 5 / 2),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            child: Text(
-                               (state as BookingUpdated).booking.getCartCount().toString(),
-                              style: TextStyle(color: primaryColor),
-                            )),
-                        label: Container(
-                            child: Row(
-                          children: [
-                            SizedBox(
-                              width: width / 7,
-                            ),
-                            Text(
-                              'Tiến Hành đặt lịch',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              width: width / 5 + 10,
-                            ),
-                          ],
-                        ))),
-                  ))
+                          //   var state = BlocProvider.of<BookingBloc>(context).state;
+                          //   BookingRequestModel request =
+                          //       (state as BookingUpdated).booking;
+                          //   var result =
+                          //       await BookingRepository().createBooking(request);
+                          //   print(result);
+                          //   //booking button
+                          // },
+                          icon:
+                              //  state == BookingInitial() ? Container():
+                              Container(
+                                  //margin: EdgeInsets.only(left: 30),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 5, vertical: 5 / 2),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  child: Text(
+                                    (state as BookingUpdated)
+                                        .booking
+                                        .getCartCount()
+                                        .toString(),
+                                    style: TextStyle(color: primaryColor),
+                                  )),
+                          label: Container(
+                            child: Row(children: [
+                              SizedBox(
+                                width: width / 7,
+                              ),
+                              Text(
+                                'Tiến Hành đặt lịch',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(
+                                width: width / 5 + 10,
+                              ),
+                            ]),
+                          )
+                          // onPressed: () async {
+
+                          //   var state = BlocProvider.of<BookingBloc>(context).state;
+                          //   BookingRequestModel request =
+                          //       (state as BookingUpdated).booking;
+                          //   var result =
+                          //       await BookingRepository().createBooking(request);
+                          //   print(result);
+                          //   //booking button
+                          // },
+                          // icon: Container(
+                          //     padding:
+                          //         EdgeInsets.symmetric(horizontal: 5, vertical: 5 / 2),
+                          //     decoration: BoxDecoration(
+                          //         color: Colors.white,
+                          //         borderRadius: BorderRadius.all(Radius.circular(10))),
+                          //     child: Text(
+                          //       cartcount.toString(),
+                          //       style: TextStyle(color: primaryColor),
+                          //     )),
+                          )))
               : LoadingIndicator(loadingText: 'Vui lòng chờ');
         }));
   }
-}
-
-List<Supplies> getSuppliesByType(String type, List<Supplies> supplies) {
-  List<Supplies> suppliesByType = supplies
-      .where(
-        (supply) => supply.supplyTypeCode == type,
-      )
-      .toList();
-  return suppliesByType;
 }
 
 class LineIndicator extends Decoration {

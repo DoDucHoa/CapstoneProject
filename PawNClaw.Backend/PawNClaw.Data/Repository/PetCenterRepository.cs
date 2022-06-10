@@ -155,7 +155,6 @@ namespace PawNClaw.Data.Repository
         //Get Pet Center Detail
         public PetCenter GetPetCenterById(int id, PetSizeCage PetSizes, string StartBooking, string EndBooking)
         {
-
             DateTime _startBooking = DateTime.ParseExact(StartBooking, SearchConst.DateFormat,
                                        System.Globalization.CultureInfo.InvariantCulture);
 

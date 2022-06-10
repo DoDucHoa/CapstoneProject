@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace PawNClaw.Data.Interface
 {
-    public interface IPetBookingDetailRepository : IRepository<PetBookingDetail>
+    public interface IPetHealthHistoryRepository : IRepository<PetHealthHistory>
     {
-        public IEnumerable<PetBookingDetail> GetPetBookingDetailsByBookingId(int BookingId);
+
     }
 }

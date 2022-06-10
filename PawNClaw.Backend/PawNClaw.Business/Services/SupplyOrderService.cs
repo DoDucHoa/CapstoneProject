@@ -14,14 +14,16 @@ namespace PawNClaw.Business.Services
     {
         ISupplyOrderRepository _supplyOrderRepository;
         IBookingRepository _bookingRepository;
+        ISupplyRepository _supplyRepository;
 
         private readonly ApplicationDbContext _db;
 
-        public SupplyOrderService(ISupplyOrderRepository supplyOrderRepository, 
-            IBookingRepository bookingRepository, ApplicationDbContext db)
+        public SupplyOrderService(ISupplyOrderRepository supplyOrderRepository, IBookingRepository bookingRepository, 
+            ISupplyRepository supplyRepository, ApplicationDbContext db)
         {
             _supplyOrderRepository = supplyOrderRepository;
             _bookingRepository = bookingRepository;
+            _supplyRepository = supplyRepository;
             _db = db;
         }
 
@@ -35,8 +37,15 @@ namespace PawNClaw.Business.Services
                 {
                     try
                     {
+                        if (list.Quantity == 0)
+                        {
+                            _supplyOrderRepository.Remove(updateSupplyOrderParameter.BookingId);
+                            await _supplyOrderRepository.SaveDbChangeAsync();
+                            continue;
+                        }
+
                         var values = _supplyOrderRepository.GetFirstOrDefault(x => x.BookingId == updateSupplyOrderParameter.BookingId
-                                                                        && x.SupplyId == list.ServiceId);
+                                                                        && x.SupplyId == list.SupplyId);
 
                         values.Quantity = list.Quantity;
                         values.SellPrice = list.SellPrice;
@@ -79,10 +88,12 @@ namespace PawNClaw.Business.Services
                         Price = (decimal)(Price + bookingDetail.Price);
                     }
 
-                    booking.SubTotal = Price;
-                    booking.Total = Price;
+                    var bookingToDb = _bookingRepository.Get(booking.Id);
 
-                    _bookingRepository.Update(booking);
+                    bookingToDb.SubTotal = Price;
+                    bookingToDb.Total = Price;
+
+                    _bookingRepository.Update(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();
                 }
                 catch
@@ -91,6 +102,97 @@ namespace PawNClaw.Business.Services
                     return false;
                 }
 
+
+                transaction.Commit();
+            }
+
+            return true;
+        }
+
+        //Create Supply Order
+        public async Task<bool> CreateSupplyOrder(AddNewSupplyOrderParameter addNewSupplyOrderParameter)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                foreach (var supplyOrder in addNewSupplyOrderParameter.supplyOrderCreateParameters)
+                {
+
+                    SupplyOrder supplyOrderToDb = new SupplyOrder()
+                    {
+                        SupplyId = supplyOrder.SupplyId,
+                        BookingId = addNewSupplyOrderParameter.BookingId,
+                        Quantity = supplyOrder.Quantity,
+                        SellPrice = supplyOrder.SellPrice,
+                        TotalPrice = supplyOrder.Quantity * supplyOrder.SellPrice,
+                        Note = supplyOrder.Note,
+                        PetId = supplyOrder.PetId
+                    };
+
+                    try
+                    {
+                        _supplyOrderRepository.Add(supplyOrderToDb);
+                        await _bookingRepository.SaveDbChangeAsync();
+
+                        var supply = _supplyRepository.Get(supplyOrder.SupplyId);
+
+                        supply.Quantity = (int)(supply.Quantity - supplyOrder.Quantity);
+
+                        if (supply.Quantity < 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+
+                        _supplyRepository.Update(supply);
+                        await _supplyRepository.SaveDbChangeAsync();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        return false;
+                    }
+                }
+
+                try
+                {
+                    var booking = _bookingRepository.GetBookingForCustomer(addNewSupplyOrderParameter.BookingId);
+
+                    var serviceOrders = booking.ServiceOrders;
+
+                    var supplyOrders = booking.SupplyOrders;
+
+                    var bookingDetails = booking.BookingDetails;
+
+                    decimal Price = 0;
+
+                    foreach (var serviceOrder in serviceOrders)
+                    {
+                        Price = (decimal)(Price + serviceOrder.TotalPrice);
+                    }
+
+                    foreach (var supplyOrder in supplyOrders)
+                    {
+                        Price = (decimal)(Price + supplyOrder.TotalPrice);
+                    }
+
+                    foreach (var bookingDetail in bookingDetails)
+                    {
+                        Price = (decimal)(Price + bookingDetail.Price);
+                    }
+
+                    var bookingToDb = _bookingRepository.Get(booking.Id);
+
+                    bookingToDb.SubTotal = Price;
+                    bookingToDb.Total = Price;
+
+                    _bookingRepository.Update(bookingToDb);
+                    await _bookingRepository.SaveDbChangeAsync();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    return false;
+                }
 
                 transaction.Commit();
             }

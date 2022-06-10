@@ -25,7 +25,7 @@ class BookingCageCard extends StatelessWidget {
     List<CageTypes> cageTypes = center.cageTypes!;
     List<Cages> cages = [];
     request.forEach(((element) => petsId.add(element.id!)));
-    print(petsId.toString());
+    print("petsid : " + petsId.toString());
     var bookingCage = booking.bookingDetailCreateParameters!
         .firstWhere((element) => element.petId.toString() == petsId.toString());
     print(bookingCage.toString());
@@ -120,6 +120,24 @@ class BookingCageCard extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+            Expanded(child: SizedBox()),
+            Container(
+              margin: EdgeInsets.only(
+                  bottom: width * extraSmallPadRate,
+                  top: width * mediumPadRate,
+                  right: 0,
+                  left: width * extraSmallPadRate),
+              padding: EdgeInsets.all(width * smallPadRate * 0.25),
+              height: height * 0.1,
+              width: height * 0.1,
+              decoration: BoxDecoration(
+                //color: primaryColor.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(15),
+                image:const DecorationImage(
+                      image: AssetImage('lib/assets/cage.png'),
+                      fit: BoxFit.cover),),
+              
             )
           ],
         ),
@@ -139,10 +157,10 @@ class BookingCageCard extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: NumberFormat.currency(
-                          decimalDigits: 0,
-                          symbol: '',
-                        ).format(bookingCage.price) +
-                        "đ",
+                                  decimalDigits: 0,
+                                  symbol: 'đ',
+                                  locale: 'vi_vn')
+                              .format(bookingCage.price) ,
                     style: TextStyle(
                       fontSize: width * regularFontRate * 0.8 * 0.8,
                       color: primaryFontColor,

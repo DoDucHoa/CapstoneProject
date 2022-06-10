@@ -24,5 +24,13 @@ namespace PawNClaw.Data.Repository
             return query.Include("CageType").Where(x => x.CageTypeId == Id
                                 && !cageCodesInvalid.Contains(x.Code) && x.IsOnline == true && x.CageType.IsSingle == IsSingle).Count();
         }
+
+        public Cage GetCageWithCageType(string CageCode, int CenterId)
+        {
+            Cage query = _dbSet.Include(x => x.CageType)
+                .SingleOrDefault(x => x.Code.Trim().Equals(CageCode) && x.CenterId == CenterId);
+
+            return query;
+        }
     }
 }

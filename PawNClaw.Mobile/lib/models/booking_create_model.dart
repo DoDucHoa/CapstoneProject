@@ -3,12 +3,16 @@ class BookingRequestModel {
   List<BookingDetailCreateParameters>? bookingDetailCreateParameters;
   List<ServiceOrderCreateParameters>? serviceOrderCreateParameters;
   List<SupplyOrderCreateParameters>? supplyOrderCreateParameters;
+  List<int>? selectedPetsIds;
+  String? voucherCode;
 
   BookingRequestModel(
       {this.bookingCreateParameter,
       this.bookingDetailCreateParameters,
       this.serviceOrderCreateParameters,
-      this.supplyOrderCreateParameters});
+      this.supplyOrderCreateParameters,
+      this.selectedPetsIds,
+      this.voucherCode});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -59,17 +63,16 @@ class BookingRequestModel {
         this.getTotalSupply() + this.getTotalCage() + this.getTotalService();
     return total;
   }
-
   int getCartCount() {
     int count = 0;
     this.supplyOrderCreateParameters!.forEach((element) {
-      count ++;
+      count++;
     });
     this.serviceOrderCreateParameters!.forEach((element) {
-      count ++;
+      count++;
     });
     this.bookingDetailCreateParameters!.forEach((element) {
-      count ++;
+      count++;
     });
     print('count ${count}');
     return count;
@@ -81,7 +84,7 @@ class BookingCreateParameter {
   String? startBooking;
   String? endBooking;
   int? statusId;
-  // Null? voucherCode;
+  Null? voucherCode;
   double? total;
   int? customerId;
   int? centerId;
@@ -92,7 +95,7 @@ class BookingCreateParameter {
       this.startBooking,
       this.endBooking,
       this.statusId,
-      // this.voucherCode,
+      this.voucherCode,
       this.total,
       this.customerId,
       this.centerId,
@@ -104,7 +107,7 @@ class BookingCreateParameter {
     data['startBooking'] = this.startBooking;
     data['endBooking'] = this.endBooking;
     data['statusId'] = this.statusId;
-    // data['voucherCode'] = this.voucherCode;
+    data['voucherCode'] = this.voucherCode;
     data['total'] = this.total;
     data['customerId'] = this.customerId;
     data['centerId'] = this.centerId;

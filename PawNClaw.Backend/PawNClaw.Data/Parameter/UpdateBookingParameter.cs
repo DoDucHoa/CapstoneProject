@@ -33,7 +33,7 @@ namespace PawNClaw.Data.Parameter
 
     public class ListUpdateSupplyOrderParameter
     {
-        public int ServiceId { get; set; }
+        public int SupplyId { get; set; }
         public int Quantity { get; set; }
         public decimal SellPrice { get; set; }
     }

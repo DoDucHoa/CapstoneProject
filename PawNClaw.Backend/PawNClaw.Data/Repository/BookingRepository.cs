@@ -191,7 +191,20 @@ namespace PawNClaw.Data.Repository
                         {
                             BookingId = pet.BookingId,
                             Line = pet.Line,
-                            PetId = pet.PetId
+                            Pet = new Pet
+                            {
+                                Id = pet.Pet.Id,
+                                Weight = pet.Pet.Weight,
+                                Length = pet.Pet.Length,
+                                Height = pet.Pet.Height,
+                                Name = pet.Pet.Name,
+                                Birth = pet.Pet.Birth,
+                                CustomerId = pet.Pet.CustomerId,
+                                PetTypeCode = pet.Pet.PetTypeCode,
+                                BreedName = pet.Pet.BreedName,
+                                PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories
+                                .Where(health => health.Id == pet.Pet.PetHealthHistories.Max(x => x.Id))
+                            }
                         })
                     }),
                     SupplyOrders = (ICollection<SupplyOrder>)x.SupplyOrders
@@ -204,7 +217,11 @@ namespace PawNClaw.Data.Repository
                         TotalPrice = supplyorder.TotalPrice,
                         Note = supplyorder.Note,
                         PetId = supplyorder.PetId,
-                        Supply = supplyorder.Supply
+                        Supply = supplyorder.Supply,
+                        Pet = new Pet
+                        {
+                            Name = supplyorder.Pet.Name,
+                        }
                     }),
                     ServiceOrders = (ICollection<ServiceOrder>)x.ServiceOrders
                     .Select(serviceorder => new ServiceOrder
@@ -216,7 +233,11 @@ namespace PawNClaw.Data.Repository
                         TotalPrice = serviceorder.TotalPrice,
                         Note = serviceorder.Note,
                         PetId = serviceorder.PetId,
-                        Service = serviceorder.Service
+                        Service = serviceorder.Service,
+                        Pet = new Pet
+                        {
+                            Name = serviceorder.Pet.Name,
+                        }
                     }),
                     Customer = x.Customer
                 })

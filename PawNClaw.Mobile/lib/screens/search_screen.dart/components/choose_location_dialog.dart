@@ -19,9 +19,11 @@ class _ChooseLocationDialogState extends State<ChooseLocationDialog> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Dialog(
+    return 
+    // WillPopScope(
+    //   onWillPop: () async => false,
+    //   child: '
+      Dialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -44,6 +46,7 @@ class _ChooseLocationDialogState extends State<ChooseLocationDialog> {
               SizedBox(
                 width: width * 0.5,
                 child: DropdownButton<Area>(
+                  icon: Icon(Icons.arrow_drop_down_rounded),
                   isExpanded: true,
                   value: cityValue,
                   items: widget.cities?.map((e) {
@@ -71,6 +74,7 @@ class _ChooseLocationDialogState extends State<ChooseLocationDialog> {
               SizedBox(
                 width: width * 0.5,
                 child: DropdownButton<Districts>(
+                  icon: Icon(Icons.arrow_drop_down_rounded),
                   isExpanded: true,
                   value: districtValue,
                   items: districts?.map((e) {
@@ -87,9 +91,39 @@ class _ChooseLocationDialogState extends State<ChooseLocationDialog> {
                   hint: const Text("Quận/Huyện"),
                 ),
               ),
-              Opacity(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                Container(
+                  width: width * 0.25,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: disableColor,
+                      //borderRadius: BorderRadius.circular(20),
+                      //shadowColor: Colors.w,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  onPressed: () {
+                    Navigator.pop(context, null);
+                  },
+                  child: const Text(
+                    "Hủy",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),),
+                //Expanded(child: SizedBox()),
+                Opacity(
                 opacity: (cityValue != null && districtValue != null) ? 1 : 0.3,
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   onPressed: (cityValue != null && districtValue != null)
                       ? () {
                           Map<Area, Districts> result = {
@@ -106,10 +140,12 @@ class _ChooseLocationDialogState extends State<ChooseLocationDialog> {
                   ),
                 ),
               ),
+              ],)
+              
             ],
           ),
         ),
-      ),
+      // ),
     );
   }
 }

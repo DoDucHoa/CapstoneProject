@@ -23,6 +23,7 @@ namespace PawNClaw.Business.Services
         ISupplyRepository _supplyRepository;
         IServicePriceRepository _servicePriceRepository;
         IPetRepository _petRepository;
+        ICageRepository _cageRepository;
 
         private readonly ApplicationDbContext _db;
 
@@ -30,6 +31,7 @@ namespace PawNClaw.Business.Services
             IPetBookingDetailRepository petBookingDetailRepository, IServiceOrderRepository serviceOrderRepository, 
             ISupplyOrderRepository supplyOrderRepository, ISupplyRepository supplyRepository,
             IServicePriceRepository servicePriceRepository, IPetRepository petRepository,
+            ICageRepository cageRepository,
             ApplicationDbContext db)
         {
             _bookingRepository = bookingRepository;
@@ -40,6 +42,7 @@ namespace PawNClaw.Business.Services
             _supplyRepository = supplyRepository;
             _servicePriceRepository = servicePriceRepository;
             _petRepository = petRepository;
+            _cageRepository = cageRepository;
             _db = db;
         }
 
@@ -165,8 +168,34 @@ namespace PawNClaw.Business.Services
                         return null;
                     }
 
+                    decimal PetHeight = 0;
+                    decimal PetWidth = 0;
                     foreach (var PetId in bookingDetail.PetId)
                     {
+                        //Get Size Pet With Cage
+                        var pet = _petRepository.Get(PetId);
+
+                        if (PetHeight < (decimal)(pet.Height + SearchConst.HeightAdd))
+                        {
+                            PetHeight = (decimal)(pet.Height + SearchConst.HeightAdd);
+                        }
+
+                        PetWidth += (decimal)Math.Round((((double)pet.Length) + ((double)pet.Height)) / SearchConst.WidthRatio, 0);
+                        //End Get Size
+
+                        //Check Size Is Avaliable
+                        var cage = _cageRepository.GetCageWithCageType(bookingDetail.CageCode, bookingToDb.CenterId);
+
+                        decimal CageHeight = cage.CageType.Height;
+                        decimal CageWidth = cage.CageType.Width;
+
+                        if (PetHeight > CageHeight || PetWidth > CageWidth)
+                        {
+                            transaction.Rollback();
+                            return null;
+                        }
+                        //End Check Size Is Avaliable
+
                         PetBookingDetail petBookingDetailToDb = new PetBookingDetail()
                         {
                             BookingId = bookingDetailToDb.BookingId,
@@ -264,6 +293,44 @@ namespace PawNClaw.Business.Services
                             return null;
                         }
                     }
+                }
+
+                try
+                {
+
+                    var serviceOrders = bookingToDb.ServiceOrders;
+
+                    var supplyOrders = bookingToDb.SupplyOrders;
+
+                    var bookingDetails = bookingToDb.BookingDetails;
+
+                    decimal Price = 0;
+
+                    foreach (var serviceOrder in serviceOrders)
+                    {
+                        Price = (decimal)(Price + serviceOrder.TotalPrice);
+                    }
+
+                    foreach (var supplyOrder in supplyOrders)
+                    {
+                        Price = (decimal)(Price + supplyOrder.TotalPrice);
+                    }
+
+                    foreach (var bookingDetail in bookingDetails)
+                    {
+                        Price = (decimal)(Price + bookingDetail.Price);
+                    }
+
+                    bookingToDb.SubTotal = Price;
+                    bookingToDb.Total = Price;
+
+                    _bookingRepository.Update(bookingToDb);
+                    await _bookingRepository.SaveDbChangeAsync();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    return null;
                 }
 
                 transaction.Commit();
