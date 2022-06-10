@@ -58,7 +58,6 @@ export function ServiceDialogForm({ open, onClose, services, bookingId }) {
   });
 
   const {
-    reset,
     control,
     watch,
     handleSubmit,
@@ -75,18 +74,16 @@ export function ServiceDialogForm({ open, onClose, services, bookingId }) {
 
   // FUNCTIONS
   // ----------------------------------------------------------------------
-  const onSubmit = (data) => {
-    UpdateServiceOrder(data, bookingId)
-      .then(() => {
-        enqueueSnackbar('Cập nhật thành công!');
-        onClose();
-        dispatch(closeModal());
-        dispatch(getBookingDetails(bookingId));
-        reset();
-      })
-      .catch((error) => {
-        enqueueSnackbar(error.message, { variant: 'error' });
-      });
+  const onSubmit = async (data) => {
+    try {
+      await UpdateServiceOrder(data, bookingId);
+      onClose();
+      enqueueSnackbar('Cập nhật thành công!');
+      dispatch(closeModal());
+      dispatch(getBookingDetails(bookingId));
+    } catch (error) {
+      enqueueSnackbar(error.message, { variant: 'error' });
+    }
   };
 
   return (

@@ -139,7 +139,7 @@ export function getBookingDetails(bookingId) {
     dispatch(startLoading());
     try {
       const response = await axios.get(`/api/bookings/for-staff/${bookingId}`);
-
+      console.log(response.data);
       const bookingDetails = {
         id: response.data.id,
         customer: response.data.customer,
