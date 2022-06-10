@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Helper;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,16 @@ namespace PawNClaw.API.Controllers
                 data.HasPrevious
             };
             return Ok(new { data, metadata });
+        }
+
+        [HttpGet("staff-booking")]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult GetCageTypeValidPetSizeAndBookingTime( [FromBody] List<List<CreatePetRequestParameter>> listPets, 
+            string StartBooking, string EndBooking)
+        {
+            var data = _cageTypeService.GetCageTypeWithCageValidPetSizeAndBookingTime(listPets, StartBooking, EndBooking);
+
+            return Ok(data);
         }
     }
 }
