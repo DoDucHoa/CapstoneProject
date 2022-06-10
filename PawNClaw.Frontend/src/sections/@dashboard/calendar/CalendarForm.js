@@ -90,7 +90,6 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
   });
 
   const {
-    reset,
     control,
     // watch,
     handleSubmit,
@@ -129,7 +128,6 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
       dispatch(updateBookingStatus(data));
       enqueueSnackbar('Cập nhật thành công!');
       onCancel();
-      reset();
     } catch (error) {
       console.error(error);
     }
@@ -188,7 +186,9 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                       <TableCell align="center" width={40}>
                         STT
                       </TableCell>
-                      <TableCell align="left">Mô tả</TableCell>
+                      <TableCell align="left" width={500}>
+                        Mô tả
+                      </TableCell>
                       <TableCell align="right">Số lượng</TableCell>
                       <TableCell align="right">Giá bán (VND)</TableCell>
                       <TableCell align="right">Tổng cộng (VND)</TableCell>
@@ -244,7 +244,9 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                       <TableCell align="center" width={40}>
                         STT
                       </TableCell>
-                      <TableCell align="left">Mô tả</TableCell>
+                      <TableCell align="left" width={500}>
+                        Mô tả
+                      </TableCell>
                       <TableCell align="right">Số lượng</TableCell>
                       <TableCell align="right">Giá bán (VND)</TableCell>
                       <TableCell align="right">Tổng cộng (VND)</TableCell>

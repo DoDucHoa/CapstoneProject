@@ -58,7 +58,6 @@ export function SupplyDialogForm({ open, onClose, supplies, bookingId }) {
   });
 
   const {
-    reset,
     control,
     watch,
     handleSubmit,
@@ -75,18 +74,16 @@ export function SupplyDialogForm({ open, onClose, supplies, bookingId }) {
 
   // FUNCTIONS
   // ----------------------------------------------------------------------
-  const onSubmit = (data) => {
-    UpdateSupplyOrder(data, bookingId)
-      .then(() => {
-        enqueueSnackbar('Cập nhật thành công!');
-        onClose();
-        dispatch(closeModal());
-        dispatch(getBookingDetails(bookingId));
-        reset();
-      })
-      .catch((error) => {
-        enqueueSnackbar(error.message, { variant: 'error' });
-      });
+  const onSubmit = async (data) => {
+    try {
+      await UpdateSupplyOrder(data, bookingId);
+      onClose();
+      enqueueSnackbar('Cập nhật thành công!');
+      dispatch(closeModal());
+      dispatch(getBookingDetails(bookingId));
+    } catch (error) {
+      enqueueSnackbar(error.message, { variant: 'error' });
+    }
   };
 
   return (
