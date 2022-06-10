@@ -13,5 +13,10 @@ namespace PawNClaw.Data.Repository
         public ServiceOrderRepository(ApplicationDbContext db) : base(db)
         {
         }
+
+        public void RemoveServiceOrder(int BookingId, int ServiceId)
+        {
+            _dbSet.Remove(_dbSet.Find(ServiceId, BookingId));
+        }
     }
 }

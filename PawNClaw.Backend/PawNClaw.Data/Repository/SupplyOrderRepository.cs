@@ -13,5 +13,10 @@ namespace PawNClaw.Data.Repository
         public SupplyOrderRepository(ApplicationDbContext db) : base(db)
         {
         }
+
+        public void RemoveSupplyOrder(int BookingId, int SupplyId)
+        {
+            _dbSet.Remove(_dbSet.Find(SupplyId,BookingId));
+        }
     }
 }

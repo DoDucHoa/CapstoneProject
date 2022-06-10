@@ -42,7 +42,7 @@ namespace PawNClaw.Business.Services
                     {
                         if (list.Quantity == 0)
                         {
-                            _serviceOrderRepository.Remove(updateServiceOrderParameter.BookingId);
+                            _serviceOrderRepository.RemoveServiceOrder(updateServiceOrderParameter.BookingId, list.ServiceId);
                             await _serviceOrderRepository.SaveDbChangeAsync();
                             continue;
                         }

@@ -39,7 +39,7 @@ namespace PawNClaw.Business.Services
                     {
                         if (list.Quantity == 0)
                         {
-                            _supplyOrderRepository.Remove(updateSupplyOrderParameter.BookingId);
+                            _supplyOrderRepository.RemoveSupplyOrder(updateSupplyOrderParameter.BookingId, list.SupplyId);
                             await _supplyOrderRepository.SaveDbChangeAsync();
                             continue;
                         }
