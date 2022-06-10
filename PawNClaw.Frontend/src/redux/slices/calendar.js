@@ -43,6 +43,11 @@ const slice = createSlice({
       state.isLoading = false;
     },
 
+    // CREATE PET HEALTH DATA SUCCESS
+    createPetHealthDataSuccess(state) {
+      state.isLoading = false;
+    },
+
     // UPDATE EVENT
     updateEventSuccess(state, action) {
       const event = action.payload;
@@ -94,7 +99,8 @@ const slice = createSlice({
 export default slice.reducer;
 
 // Actions
-export const { openModal, closeModal, selectEvent, getBookingStatusesSuccess, getPetDataSuccess } = slice.actions;
+export const { openModal, closeModal, selectEvent, getBookingStatusesSuccess, getPetDataSuccess, startLoading } =
+  slice.actions;
 
 // ----------------------------------------------------------------------
 
@@ -130,7 +136,7 @@ export function getEvents() {
 
 export function getBookingDetails(bookingId) {
   return async () => {
-    dispatch(slice.actions.startLoading());
+    dispatch(startLoading());
     try {
       const response = await axios.get(`/api/bookings/for-staff/${bookingId}`);
 
@@ -155,10 +161,10 @@ export function getBookingDetails(bookingId) {
       const petData = petDataResponse.data.map((data) => ({
         id: data.pet.id,
         name: data.pet.name,
-        weight: data.pet.weight,
-        height: data.pet.height,
-        length: data.pet.length,
-        description: '',
+        weight: data.pet.petHealthHistories[0]?.weight,
+        height: data.pet.petHealthHistories[0]?.height,
+        length: data.pet.petHealthHistories[0]?.length,
+        description: data.pet.petHealthHistories[0]?.description,
       }));
 
       dispatch(selectEvent(bookingDetails));
@@ -200,7 +206,7 @@ export function deleteEvent(eventId) {
 
 // ----------------------------------------------------------------------
 
-export function createPetHealthStatus({ petData, bookingId }) {
+export function createPetHealthStatus({ petData }, bookingId) {
   return async () => {
     dispatch(slice.actions.startLoading());
 
@@ -219,7 +225,7 @@ export function createPetHealthStatus({ petData, bookingId }) {
           },
         });
       });
-      dispatch(slice.actions.updateBookingStatusSuccess());
+      dispatch(slice.actions.createPetHealthDataSuccess());
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

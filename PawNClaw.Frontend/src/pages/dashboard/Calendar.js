@@ -119,6 +119,7 @@ export default function Calendar() {
             <FullCalendar
               weekends
               defaultAllDay
+              showNonCurrentDates={false}
               events={events}
               ref={calendarRef}
               rerenderDelay={10}
