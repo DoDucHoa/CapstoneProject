@@ -33,7 +33,7 @@ namespace PawNClaw.Data.Repository
             return query.ToList();
         }
 
-        public IEnumerable<CageType> GetCageTypeValidPetSizeAndBookingTime(List<List<CreatePetRequestParameter>> listPets, string StartBooking, string EndBooking)
+        public IEnumerable<CageType> GetCageTypeValidPetSizeAndBookingTime(int CenterId, List<List<CreatePetRequestParameter>> listPets, string StartBooking, string EndBooking)
         {
             DateTime _startBooking = DateTime.ParseExact(StartBooking, SearchConst.DateFormat,
                                        System.Globalization.CultureInfo.InvariantCulture);
@@ -75,7 +75,9 @@ namespace PawNClaw.Data.Repository
             };
 
             IQueryable<CageType> query = _dbSet
-                .Where(cagetype => cagetype.Height >= petSizeCages.Height && cagetype.Width >= petSizeCages.Width)
+                .Where(cagetype => cagetype.Height >= petSizeCages.Height 
+                    && cagetype.Width >= petSizeCages.Width 
+                    && cagetype.CenterId == CenterId)
                 .Include(catype => catype.Cages)
                 .Select(cagetype => new CageType
                 {
