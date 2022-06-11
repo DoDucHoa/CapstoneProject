@@ -36,9 +36,9 @@ namespace PawNClaw.API.Controllers
                                                 _searchRequestModel.StartBooking, _searchRequestModel.EndBooking,
                                                 _searchRequestModel._petRequests, _searchRequestModel.paging);
 
-                if (data == null)
+                if (data.Count() == 0)
                 {
-                    return BadRequest();
+                    return BadRequest("No Response!!!");
                 }
 
                 var metadata = new
@@ -50,6 +50,7 @@ namespace PawNClaw.API.Controllers
                     data.HasNext,
                     data.HasPrevious
                 };
+
                 return Ok(new { data, metadata });
             }
             catch(Exception ex)
