@@ -30,34 +30,47 @@ namespace PawNClaw.API.Controllers
         [Route("main-search")]
         public IActionResult GetAccounts([FromBody] SearchRequestModel _searchRequestModel)
         {
-            var data = _searchService.MainSearchCenter(_searchRequestModel.City, _searchRequestModel.District,
+            try
+            {
+                var data = _searchService.MainSearchCenter(_searchRequestModel.City, _searchRequestModel.District,
                                                 _searchRequestModel.StartBooking, _searchRequestModel.EndBooking,
                                                 _searchRequestModel._petRequests, _searchRequestModel.paging);
 
+                if (data == null)
+                {
+                    return BadRequest();
+                }
 
-            foreach (var item in data)
-            {
-                Console.WriteLine("Controller: " + item.Id);
-
+                var metadata = new
+                {
+                    data.TotalCount,
+                    data.PageSize,
+                    data.CurrentPage,
+                    data.TotalPages,
+                    data.HasNext,
+                    data.HasPrevious
+                };
+                return Ok(new { data, metadata });
             }
-            var metadata = new
+            catch(Exception ex)
             {
-                data.TotalCount,
-                data.PageSize,
-                data.CurrentPage,
-                data.TotalPages,
-                data.HasNext,
-                data.HasPrevious
-            };
-            return Ok(new { data, metadata });
+                return BadRequest(ex);
+            }
         }
 
         [HttpPost]
         [Route("center_detail")]
         public IActionResult GetCenterByIdWithInclude([FromBody] GetCenterByIdRequestModel model)
         {
-            var data = _petCenterService.GetDetailById(model.id, model._petRequests, model.StartBooking, model.EndBooking);
-            return Ok(data);
+            try
+            {
+                var data = _petCenterService.GetDetailById(model.id, model._petRequests, model.StartBooking, model.EndBooking);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpGet]

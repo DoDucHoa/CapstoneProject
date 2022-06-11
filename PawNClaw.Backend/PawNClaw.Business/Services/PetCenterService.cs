@@ -52,7 +52,7 @@ namespace PawNClaw.Business.Services
                 {
                     if (_pet.Height == null || _pet.Length == null || _pet.Weight == null)
                     {
-                        throw new Exception();
+                        throw new Exception("Pet Size NULL");
                     }
                     if (Height < (decimal)(_pet.Height + SearchConst.HeightAdd))
                     {
