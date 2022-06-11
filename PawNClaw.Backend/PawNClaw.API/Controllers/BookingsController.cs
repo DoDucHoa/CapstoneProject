@@ -71,7 +71,7 @@ namespace PawNClaw.API.Controllers
 
         [HttpGet("center/{id}")]
         [Authorize(Roles = "Owner,Staff")]
-        public IActionResult GetBookingByCenterIdForStaff(int id, int statusId)
+        public IActionResult GetBookingByCenterIdForStaff(int id, int? statusId)
         {
             var data = _bookingService.GetBookingsForStaffMobile(id, statusId);
             return Ok(data);
@@ -80,16 +80,22 @@ namespace PawNClaw.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromBody] BookingControllerParameter bookingControllerParameter)
         {
-            var data = await _bookingService.CreateBooking(bookingControllerParameter.bookingCreateParameter,
+            try
+            {
+                var data = await _bookingService.CreateBooking(bookingControllerParameter.bookingCreateParameter,
                 bookingControllerParameter.bookingDetailCreateParameters,
                 bookingControllerParameter.serviceOrderCreateParameters,
                 bookingControllerParameter.supplyOrderCreateParameters);
-            if (data == null)
+                if (data == null)
+                {
+                    return BadRequest();
+                }
+                else
+                    return Ok(data);
+            } catch(Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex);
             }
-            else
-                return Ok(data);
         }
     }
 }

@@ -98,6 +98,7 @@ namespace PawNClaw.Business.Services
 
             int Id = 0;
 
+            //Check cage is booking and pet is booking in time
             foreach (var bookingDetailCreateParameter in bookingDetailCreateParameters)
             {
                 if (_cageRepository.GetAll(cage => cage.Code.Trim().Equals(bookingDetailCreateParameter.CageCode) && cage.BookingDetails.Any(bookingdetail =>
@@ -110,7 +111,7 @@ namespace PawNClaw.Business.Services
                                 (DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
                                 && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0)))) != null)
                 {
-                    return null;
+                    throw new Exception("This Cage Has Been Used With Booking Time");
                 }
             }
             
@@ -140,7 +141,7 @@ namespace PawNClaw.Business.Services
                 catch
                 {
                     transaction.Rollback();
-                    return null;
+                    throw new Exception();
                 }
 
 
@@ -169,7 +170,7 @@ namespace PawNClaw.Business.Services
                     catch
                     {
                         transaction.Rollback();
-                        return null;
+                        throw new Exception();
                     }
 
                     decimal PetHeight = 0;
@@ -196,7 +197,7 @@ namespace PawNClaw.Business.Services
                         if (PetHeight > CageHeight || PetWidth > CageWidth)
                         {
                             transaction.Rollback();
-                            return null;
+                            throw new Exception("Pet Not Fix With Cage Size");
                         }
                         //End Check Size Is Avaliable
 
@@ -215,7 +216,7 @@ namespace PawNClaw.Business.Services
                         catch
                         {
                             transaction.Rollback();
-                            return null;
+                            throw new Exception();
                         }
                     }
                 }
@@ -251,7 +252,7 @@ namespace PawNClaw.Business.Services
                         catch
                         {
                             transaction.Rollback();
-                            return null;
+                            throw new Exception();
                         }
                     }
                 }
@@ -285,7 +286,7 @@ namespace PawNClaw.Business.Services
                             if (supply.Quantity < 0)
                             {
                                 transaction.Rollback();
-                                return null;
+                                throw new Exception("Quantity is INVALID");
                             }
 
                             _supplyRepository.Update(supply);
@@ -294,7 +295,7 @@ namespace PawNClaw.Business.Services
                         catch
                         {
                             transaction.Rollback();
-                            return null;
+                            throw new Exception();
                         }
                     }
                 }
@@ -334,7 +335,7 @@ namespace PawNClaw.Business.Services
                 catch
                 {
                     transaction.Rollback();
-                    return null;
+                    throw new Exception();
                 }
 
                 transaction.Commit();
