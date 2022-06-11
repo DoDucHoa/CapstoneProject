@@ -42,9 +42,9 @@ namespace PawNClaw.API.Controllers
         [HttpGet("staff-booking")]
         [Authorize(Roles = "Owner,Staff")]
         public IActionResult GetCageTypeValidPetSizeAndBookingTime( [FromBody] List<List<CreatePetRequestParameter>> listPets, 
-            string StartBooking, string EndBooking)
+            string StartBooking, string EndBooking, int CenterId)
         {
-            var data = _cageTypeService.GetCageTypeWithCageValidPetSizeAndBookingTime(listPets, StartBooking, EndBooking);
+            var data = _cageTypeService.GetCageTypeWithCageValidPetSizeAndBookingTime(CenterId, listPets, StartBooking, EndBooking);
 
             return Ok(data);
         }
