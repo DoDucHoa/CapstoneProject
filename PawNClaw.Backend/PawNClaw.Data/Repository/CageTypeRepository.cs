@@ -33,7 +33,7 @@ namespace PawNClaw.Data.Repository
             return query.ToList();
         }
 
-        public IEnumerable<CageType> GetCageTypeValidPetSizeAndBookingTime(int CenterId, List<List<CreatePetRequestParameter>> listPets, string StartBooking, string EndBooking)
+        public IEnumerable<CageType> GetCageTypeValidPetSizeAndBookingTime(int CenterId, List<CreatePetRequestParameter> listPets, string StartBooking, string EndBooking)
         {
             DateTime _startBooking = DateTime.ParseExact(StartBooking, SearchConst.DateFormat,
                                        System.Globalization.CultureInfo.InvariantCulture);
@@ -41,42 +41,29 @@ namespace PawNClaw.Data.Repository
             DateTime _endBooking = DateTime.ParseExact(EndBooking, SearchConst.DateFormat,
                                        System.Globalization.CultureInfo.InvariantCulture);
 
+            int Count = 0;
+            decimal Height = 0;
+            decimal Width = 0;
 
-            List<PetSizeCage> PetSizes = new List<PetSizeCage>();
-
-            foreach (var listPet in listPets)
+            foreach (var pet in listPets)
             {
-                int Count = 0;
-                decimal Height = 0;
-                decimal Width = 0;
-                foreach (var pet in listPet)
+                if (Height < (decimal)(pet.Height + SearchConst.HeightAdd))
                 {
-                    if (Height < (decimal)(pet.Height + SearchConst.HeightAdd))
-                    {
-                        Height = (decimal)(pet.Height + SearchConst.HeightAdd);
-                    }
-
-                    Width += (decimal)Math.Round((((double)pet.Length) + ((double)pet.Height)) / SearchConst.WidthRatio, 0);
-                    Count += 1;
+                    Height = (decimal)(pet.Height + SearchConst.HeightAdd);
                 }
 
-                PetSizeCage petSize = new PetSizeCage();
-                petSize.Height = Height;
-                petSize.Width = Width;
-                if (Count > 1) petSize.IsSingle = false;
-                PetSizes.Add(petSize);
+                Width += (decimal)Math.Round((((double)pet.Length) + ((double)pet.Height)) / SearchConst.WidthRatio, 0);
+                Count += 1;
             }
 
-            PetSizeCage petSizeCages = new PetSizeCage
-            {
-                Height = PetSizes.Min(x => x.Height),
-                Width = PetSizes.Min(x => x.Width),
-                IsSingle = true
-            };
+            PetSizeCage petSize = new PetSizeCage();
+            petSize.Height = Height;
+            petSize.Width = Width;
+            if (Count > 1) petSize.IsSingle = false;
 
             IQueryable<CageType> query = _dbSet
-                .Where(cagetype => cagetype.Height >= petSizeCages.Height 
-                    && cagetype.Width >= petSizeCages.Width 
+                .Where(cagetype => cagetype.Height >= petSize.Height
+                    && cagetype.Width >= petSize.Width
                     && cagetype.CenterId == CenterId)
                 .Include(catype => catype.Cages)
                 .Select(cagetype => new CageType

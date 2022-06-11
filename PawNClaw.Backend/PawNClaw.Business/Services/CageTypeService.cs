@@ -27,7 +27,7 @@ namespace PawNClaw.Business.Services
             paging.PageSize);
         }
 
-        public IEnumerable<CageType> GetCageTypeWithCageValidPetSizeAndBookingTime(int CenterId, List<List<CreatePetRequestParameter>> listPets, string StartBooking, string EndBooking)
+        public IEnumerable<CageType> GetCageTypeWithCageValidPetSizeAndBookingTime(int CenterId, List<CreatePetRequestParameter> listPets, string StartBooking, string EndBooking)
         {
             var values = _cageTypeRepository.GetCageTypeValidPetSizeAndBookingTime(CenterId, listPets, StartBooking, EndBooking);
 
