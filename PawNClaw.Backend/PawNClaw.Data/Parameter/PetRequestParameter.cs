@@ -44,4 +44,12 @@ namespace PawNClaw.Data.Parameter
         public int CustomerId { get; set; }
         public string PetTypeCode { get; set; }
     }
+
+    public class PetRequestForSearchCenter
+    {
+        public int Id { get; set; }
+        public decimal Weight { get; set; }
+        public decimal Length { get; set; }
+        public decimal Height { get; set; }
+    }
 }

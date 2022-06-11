@@ -36,7 +36,7 @@ namespace PawNClaw.Business.Services
 
         public PagedList<PetCenter> MainSearchCenter(string City, string District,
             string StartBooking, string EndBooking,
-            List<List<PetRequestParameter>> _petRequests, PagingParameter paging)
+            List<List<PetRequestForSearchCenter>> _petRequests, PagingParameter paging)
         {
             //Check loaction
             var values = _petCenterRepository.SearchPetCenter(City, District);
@@ -62,6 +62,21 @@ namespace PawNClaw.Business.Services
             {
                 foreach (var petId in petIds)
                 {
+                    var test = _petBookingDetailRepository.GetAll(x => x.PetId == petId.Id &&
+                            ((DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) <= 0
+                            && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) >= 0)
+                            ||
+                            (DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) >= 0
+                            && DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.EndBooking) < 0)
+                            ||
+                            (DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.StartBooking) > 0
+                            && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) <= 0)));
+
+                    foreach (var item in test)
+                    {
+                        Console.WriteLine(item.BookingId);
+                    }
+
                     if (_petBookingDetailRepository.GetAll(x => x.PetId == petId.Id &&
                             ((DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) <= 0
                             && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) >= 0)
@@ -70,7 +85,7 @@ namespace PawNClaw.Business.Services
                             && DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.EndBooking) < 0)
                             ||
                             (DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.StartBooking) > 0
-                            && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) <= 0))) != null)
+                            && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) <= 0))).Count() != 0)
                     {
                         throw new Exception("Pet is Booking Already");
                     }
@@ -115,10 +130,6 @@ namespace PawNClaw.Business.Services
                 decimal Width = 0;
                 foreach (var _pet in _petRequest)
                 {
-                    if (_pet.Height == null || _pet.Length == null || _pet.Weight == null)
-                    {
-                        throw new Exception("Pet Size NULL");
-                    }
                     if (Height < (decimal)(_pet.Height + SearchConst.HeightAdd))
                     {
                         Height = (decimal)(_pet.Height + SearchConst.HeightAdd);
