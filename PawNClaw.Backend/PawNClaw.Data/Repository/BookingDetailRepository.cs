@@ -26,5 +26,12 @@ namespace PawNClaw.Data.Repository
 
             return query.ToList();
         }
+
+        public BookingDetail GetBookingDetail(int BookingId, int Line)
+        {
+            BookingDetail query = _dbSet.Find(BookingId, Line);
+
+            return query;
+        }
     }
 }
