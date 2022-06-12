@@ -169,10 +169,12 @@ namespace PawNClaw.Business.Services
                     var CageTypes = center.CageTypes;
                     
                     //Check is fields that check center have any cage valid for pet
-                    bool Check = true;
+                    bool Check = false;
                     List<int> CageTypeCodeIsSelect = new List<int>();
                     foreach (var petsize in PetSizes)
                     {
+                        Check = false;
+
                         foreach (var cagetype in CageTypes)
                         {
                             if (cagetype.Height >= petsize.Height && cagetype.Width >= petsize.Width)
@@ -190,10 +192,6 @@ namespace PawNClaw.Business.Services
                                     Check = true;
                                     CageTypeCodeIsSelect.Add(cagetype.Id);
                                     break;
-                                }
-                                else
-                                {
-                                    Check = false;
                                 }
                             }
                         }
