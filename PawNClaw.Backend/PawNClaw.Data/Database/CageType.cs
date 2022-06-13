@@ -48,6 +48,7 @@ namespace PawNClaw.Data.Database
         [Column("center_id")]
         public int CenterId { get; set; }
 
+        [NotMapped]
         public string TotalPrice { get; set; }
 
         [ForeignKey(nameof(CenterId))]
