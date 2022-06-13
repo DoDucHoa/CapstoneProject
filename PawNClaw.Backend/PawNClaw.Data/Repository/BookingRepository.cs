@@ -225,23 +225,7 @@ namespace PawNClaw.Data.Repository
                         {
                             Name = serviceorder.Pet.Name,
                         }
-                    }),
-                    PetHealthHistories = (ICollection<PetHealthHistory>)x.PetHealthHistories
-                    .Select(health => new PetHealthHistory
-                    {
-                        Id = health.Id,
-                        CheckedDate = health.CheckedDate,
-                        Description = health.Description,
-                        CenterName = health.CenterName,
-                        Length = health.Length,
-                        Weight = health.Weight,
-                        Height = health.Height,
-                        Pet = new Pet
-                        {
-                            Name = health.Pet.Name,
-                        }
-                    }),
-                    Customer = x.Customer
+                    })
                 })
                 .SingleOrDefault(x => x.Id == BookingId);
 
