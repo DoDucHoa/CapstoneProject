@@ -191,7 +191,17 @@ namespace PawNClaw.Data.Repository
                         {
                             BookingId = pet.BookingId,
                             Line = pet.Line,
-                            Pet = pet.Pet
+                            Pet = new Pet
+                            {
+                                Id = pet.Pet.Id,
+                                Name = pet.Pet.Name,
+                                Height = pet.Pet.Height,
+                                Length = pet.Pet.Length,
+                                Weight = pet.Pet.Weight,
+                                Birth = pet.Pet.Birth,
+                                BreedName = pet.Pet.BreedName,
+                                PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == BookingId)
+                            }
                         })
                     }),
                     SupplyOrders = (ICollection<SupplyOrder>)x.SupplyOrders
@@ -225,7 +235,11 @@ namespace PawNClaw.Data.Repository
                         {
                             Name = serviceorder.Pet.Name,
                         }
-                    })
+                    }),
+                    Customer = new Customer
+                    {
+                        Name = x.Customer.Name
+                    }
                 })
                 .SingleOrDefault(x => x.Id == BookingId);
 
