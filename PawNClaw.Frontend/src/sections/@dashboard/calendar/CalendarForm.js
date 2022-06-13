@@ -52,7 +52,8 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
 
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
-  const { id, statusId, startBooking, endBooking, total, customerNote, serviceOrders, supplyOrders } = selectedEvent;
+  const { id, statusId, startBooking, endBooking, total, customerNote, serviceOrders, supplyOrders, bookingDetails } =
+    selectedEvent;
 
   // CONFIGURE FORM
   // ----------------------------------------------------------------------

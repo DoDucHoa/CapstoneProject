@@ -105,7 +105,7 @@ export function ServiceDialogForm({ open, onClose, services, bookingId }) {
           </Grid>
         </Grid>
         {fields.map((service, index) => (
-          <Grid container sx={{ px: 3, alignItems: 'center' }} spacing={2} key={index}>
+          <Grid container sx={{ p: 2, alignItems: 'center' }} spacing={2} key={index}>
             <Grid item xs={5}>
               {service.name}
             </Grid>

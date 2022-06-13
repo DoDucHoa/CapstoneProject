@@ -139,7 +139,7 @@ export function getBookingDetails(bookingId) {
     dispatch(startLoading());
     try {
       const response = await axios.get(`/api/bookings/for-staff/${bookingId}`);
-      console.log(response.data);
+
       const bookingDetails = {
         id: response.data.id,
         customer: response.data.customer,
@@ -153,6 +153,7 @@ export function getBookingDetails(bookingId) {
         bookingDetails: response.data.bookingDetails,
         serviceOrders: response.data.serviceOrders,
         supplyOrders: response.data.supplyOrders,
+        petHealthHistories: response.data.petHealthHistories,
       };
 
       const bookingStatusesResponse = await axios.get('/api/bookingstatuses');
@@ -166,6 +167,20 @@ export function getBookingDetails(bookingId) {
         length: data.pet.petHealthHistories[0]?.length,
         description: data.pet.petHealthHistories[0]?.description,
       }));
+
+      // const petData = bookingDetails.bookingDetails.map((data) => ({
+      //   cageCode: data.cageCode,
+      //   line: data.line,
+      //   price: data.price,
+      //   petBookingDetails: data.petBookingDetails.map((row) => ({
+      //     id: row.pet.id,
+      //     name: row.pet.name,
+      //     weight: row.pet.weight,
+      //     height: row.pet.height,
+      //     length: row.pet.length,
+      //     description: row.pet.description,
+      //   })),
+      // }));
 
       dispatch(selectEvent(bookingDetails));
       dispatch(getBookingStatusesSuccess(bookingStatusesResponse.data));
