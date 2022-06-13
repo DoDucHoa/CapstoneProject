@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +46,22 @@ namespace PawNClaw.API.Controllers
             else
             {
                 return Ok(data);
+            }
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult UpdateCageBookingDetail( [FromBody] UpdateBookingDetailParameter updateBookingDetailParameter)
+        {
+            try
+            {
+                var data = _bookingDetailService.UpdateCageOfBookingDetail(updateBookingDetailParameter);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
             }
         }
     }

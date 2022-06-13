@@ -27,11 +27,18 @@ namespace PawNClaw.Business.Services
             paging.PageSize);
         }
 
-        public IEnumerable<CageType> GetCageTypeWithCageValidPetSizeAndBookingTime(List<List<CreatePetRequestParameter>> listPets, string StartBooking, string EndBooking)
+        public IEnumerable<CageType> GetCageTypeWithCageValidPetSizeAndBookingTime(int CenterId, List<CreatePetRequestParameter> listPets, string StartBooking, string EndBooking)
         {
-            var values = _cageTypeRepository.GetCageTypeValidPetSizeAndBookingTime(listPets, StartBooking, EndBooking);
+            var values = _cageTypeRepository.GetCageTypeValidPetSizeAndBookingTime(CenterId, listPets, StartBooking, EndBooking);
 
             return values;
+        }
+
+        public bool CreateCageType(CageType cageType)
+        {
+            _cageTypeRepository.Add(cageType);
+            _cageTypeRepository.SaveDbChange();
+            return true;
         }
     }
 }

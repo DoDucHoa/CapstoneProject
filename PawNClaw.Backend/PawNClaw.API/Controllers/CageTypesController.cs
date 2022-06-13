@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Parameter;
 using System;
@@ -41,12 +42,25 @@ namespace PawNClaw.API.Controllers
 
         [HttpGet("staff-booking")]
         [Authorize(Roles = "Owner,Staff")]
-        public IActionResult GetCageTypeValidPetSizeAndBookingTime( [FromBody] List<List<CreatePetRequestParameter>> listPets, 
-            string StartBooking, string EndBooking)
+        public IActionResult GetCageTypeValidPetSizeAndBookingTime([FromBody] List<CreatePetRequestParameter> listPets,
+            string StartBooking, string EndBooking, int CenterId)
         {
-            var data = _cageTypeService.GetCageTypeWithCageValidPetSizeAndBookingTime(listPets, StartBooking, EndBooking);
+            var data = _cageTypeService.GetCageTypeWithCageValidPetSizeAndBookingTime(CenterId, listPets, StartBooking, EndBooking);
 
             return Ok(data);
+        }
+
+        [HttpPost]
+        public IActionResult Create([FromBody] CageType cageType)
+        {
+            try
+            {
+                return Ok(_cageTypeService.CreateCageType(cageType));
+            }
+            catch
+            {
+                throw new Exception();
+            }
         }
     }
 }
