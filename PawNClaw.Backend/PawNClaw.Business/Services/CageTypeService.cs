@@ -33,5 +33,12 @@ namespace PawNClaw.Business.Services
 
             return values;
         }
+
+        public bool CreateCageType(CageType cageType)
+        {
+            _cageTypeRepository.Add(cageType);
+            _cageTypeRepository.SaveDbChange();
+            return true;
+        }
     }
 }

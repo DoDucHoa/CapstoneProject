@@ -197,7 +197,7 @@ namespace PawNClaw.Business.Services
                         if (PetHeight > CageHeight || PetWidth > CageWidth)
                         {
                             transaction.Rollback();
-                            throw new Exception("Pet Not Fix With Cage Size");
+                            throw new Exception("Pet Not Fit With Cage Size");
                         }
                         //End Check Size Is Avaliable
 

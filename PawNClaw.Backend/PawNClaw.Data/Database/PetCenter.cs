@@ -60,6 +60,7 @@ namespace PawNClaw.Data.Database
         [StringLength(512)]
         public string Description { get; set; }
 
+        [NotMapped]
         public int RatingCount { get => _getRatingCount(this.Bookings); }
 
         [ForeignKey(nameof(BrandId))]
