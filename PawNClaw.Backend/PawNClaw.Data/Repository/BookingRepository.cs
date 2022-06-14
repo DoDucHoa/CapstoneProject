@@ -300,5 +300,38 @@ namespace PawNClaw.Data.Repository
 
             return query.ToList();
         }
+
+        public IEnumerable<Booking> GetBookingByCustomerId(int CustomerId, int? StatusId)
+        {
+            IQueryable<Booking> query = _dbSet
+                .Select(x => new Booking
+                {
+                    Id = x.Id,
+                    CreateTime = x.CreateTime,
+                    StartBooking = x.StartBooking,
+                    EndBooking = x.EndBooking,
+                    CheckIn = x.CheckIn,
+                    CheckOut = x.CheckOut,
+                    SubTotal = x.SubTotal,
+                    Discount = x.Discount,
+                    Total = x.Total,
+                    StatusId = x.StatusId,
+                    VoucherCode = x.VoucherCode,
+                    CustomerId = x.CustomerId,
+                    CenterId = x.CenterId,
+                    Rating = x.Rating,
+                    CustomerNote = x.CustomerNote,
+                    StaffNote = x.StaffNote,
+                    Center = x.Center
+                })
+                .Where(x => x.CustomerId == CustomerId);
+
+            if (StatusId > 0 && StatusId != null)
+            {
+                query = query.Where(x => x.StatusId == StatusId);
+            }
+
+            return query.ToList();
+        }
     }
 }
