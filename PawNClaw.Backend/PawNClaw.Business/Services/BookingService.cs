@@ -24,6 +24,7 @@ namespace PawNClaw.Business.Services
         IServicePriceRepository _servicePriceRepository;
         IPetRepository _petRepository;
         ICageRepository _cageRepository;
+        IStaffRepository _staffRepository;
 
         private readonly ApplicationDbContext _db;
 
@@ -31,7 +32,7 @@ namespace PawNClaw.Business.Services
             IPetBookingDetailRepository petBookingDetailRepository, IServiceOrderRepository serviceOrderRepository, 
             ISupplyOrderRepository supplyOrderRepository, ISupplyRepository supplyRepository,
             IServicePriceRepository servicePriceRepository, IPetRepository petRepository,
-            ICageRepository cageRepository,
+            ICageRepository cageRepository, IStaffRepository staffRepository,
             ApplicationDbContext db)
         {
             _bookingRepository = bookingRepository;
@@ -43,6 +44,7 @@ namespace PawNClaw.Business.Services
             _servicePriceRepository = servicePriceRepository;
             _petRepository = petRepository;
             _cageRepository = cageRepository;
+            _staffRepository = staffRepository;
             _db = db;
         }
 
@@ -374,9 +376,11 @@ namespace PawNClaw.Business.Services
         }
 
         //Get Lisy Booking for Staff Mobile
-        public IEnumerable<Booking> GetBookingsForStaffMobile(int id, int? statusId)
+        public IEnumerable<Booking> GetBookingsForStaffMobile(int staffId, int? statusId)
         {
-            var values = _bookingRepository.GetBookingByCenterIdForStaff(id, statusId);
+
+            var staff = _staffRepository.Get(staffId);
+            var values = _bookingRepository.GetBookingByCenterIdForStaff(staff.CenterId, statusId);
 
             return values;
         }
