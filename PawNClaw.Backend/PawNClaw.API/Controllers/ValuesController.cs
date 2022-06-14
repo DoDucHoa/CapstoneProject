@@ -17,13 +17,11 @@ namespace PawNClaw.API.Controllers
     {
         SearchService service;
 
-        PetCenterRepository petCenterRepository;
         PriceRepository priceRepository;
 
-        public ValuesController(SearchService service, PetCenterRepository petCenterRepository, PriceRepository priceRepository)
+        public ValuesController(SearchService service, PriceRepository priceRepository)
         {
             this.service = service;
-            this.petCenterRepository = petCenterRepository;
             this.priceRepository = priceRepository;
         }
 
@@ -44,8 +42,7 @@ namespace PawNClaw.API.Controllers
         [HttpGet("Test Check Date")]
         public IActionResult CheckDate(int id, string StartBooking, string EndBooking)
         {
-            priceRepository.checkTotalPriceOfCageType(id, StartBooking, EndBooking);
-            return Ok();
+            return Ok(priceRepository.checkTotalPriceOfCageType(id, StartBooking, EndBooking));
         }
     }
 }
