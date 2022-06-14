@@ -52,8 +52,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
 
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
-  const { id, statusId, startBooking, endBooking, total, customerNote, serviceOrders, supplyOrders, bookingDetails } =
-    selectedEvent;
+  const { id, statusId, startBooking, endBooking, total, customerNote, serviceOrders, supplyOrders } = selectedEvent;
 
   // CONFIGURE FORM
   // ----------------------------------------------------------------------
@@ -63,24 +62,31 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
     staffNote: Yup.string(),
     petData: Yup.array().of(
       Yup.object().shape({
-        id: Yup.number(),
-        name: Yup.string(),
-        weight: Yup.number()
-          .required('Bắt buộc nhập')
-          .moreThan(0, 'Không được nhỏ hơn hoặc bằng 0')
-          .max(100, 'Không được vượt quá 100kg')
-          .typeError('Bắt buộc nhập'),
-        height: Yup.number()
-          .required('Bắt buộc nhập')
-          .moreThan(0, 'Không được nhỏ hơn hoặc bằng 0')
-          .max(250, 'Không được vượt quá 250cm')
-          .typeError('Bắt buộc nhập'),
-        length: Yup.number()
-          .required('Bắt buộc nhập')
-          .moreThan(0, 'Không được nhỏ hơn hoặc bằng 0')
-          .max(250, 'Không được vượt quá 250cm')
-          .typeError('Bắt buộc nhập'),
-        description: Yup.string().required('Bắt buộc nhập').typeError('Bắt buộc nhập'),
+        cageCode: Yup.string(),
+        line: Yup.number(),
+        price: Yup.number(),
+        petBookingDetails: Yup.array().of(
+          Yup.object().shape({
+            id: Yup.number(),
+            name: Yup.string(),
+            weight: Yup.number()
+              .required('Bắt buộc nhập')
+              .moreThan(0, 'Không được nhỏ hơn hoặc bằng 0')
+              .max(100, 'Không được vượt quá 100kg')
+              .typeError('Bắt buộc nhập'),
+            height: Yup.number()
+              .required('Bắt buộc nhập')
+              .moreThan(0, 'Không được nhỏ hơn hoặc bằng 0')
+              .max(250, 'Không được vượt quá 250cm')
+              .typeError('Bắt buộc nhập'),
+            length: Yup.number()
+              .required('Bắt buộc nhập')
+              .moreThan(0, 'Không được nhỏ hơn hoặc bằng 0')
+              .max(250, 'Không được vượt quá 250cm')
+              .typeError('Bắt buộc nhập'),
+            description: Yup.string().required('Bắt buộc nhập').typeError('Bắt buộc nhập'),
+          })
+        ),
       })
     ),
   });
@@ -292,26 +298,63 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
 
         <Divider sx={{ borderStyle: 'dashed', borderColor: 'black', my: 3 }} />
 
-        {fields.map((pet, index) => (
-          <Grid container spacing={3} sx={{ p: 3 }} key={index}>
-            <Grid item xs={2}>
-              <Typography variant="caption">Tên pet</Typography>
-              <Typography variant="body1">{pet.name}</Typography>
+        {fields.map((cage, index) => {
+          const cageIndex = index;
+          const pet = cage.petBookingDetails;
+          return (
+            <Grid container spacing={3} sx={{ p: 3 }} key={index}>
+              <Grid item xs={12}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box>
+                    <Typography variant="caption">Mã chuồng</Typography>
+                    <Typography variant="h6">{cage.cageCode}</Typography>
+                  </Box>
+                  <Button variant="contained" color="primary" onClick={() => {}}>
+                    Đổi chuồng
+                  </Button>
+                </Box>
+              </Grid>
+
+              {pet.map((pet, petIndex) => (
+                <Grid item xs={12} key={index}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={2}>
+                      <Typography variant="caption">Tên pet</Typography>
+                      <Typography variant="body1">{pet.name}</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <RHFTextField
+                        name={`petData[${cageIndex}].petBookingDetails[${petIndex}].height`}
+                        type="number"
+                        label="Chiều cao (cm)"
+                      />
+                    </Grid>
+                    <Grid item xs={2}>
+                      <RHFTextField
+                        name={`petData[${index}].petBookingDetails[${petIndex}].length`}
+                        type="number"
+                        label="Chiều dài (cm)"
+                      />
+                    </Grid>
+                    <Grid item xs={2}>
+                      <RHFTextField
+                        name={`petData[${index}].petBookingDetails[${petIndex}].weight`}
+                        type="number"
+                        label="Cân nặng (kg)"
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <RHFTextField
+                        name={`petData[${index}].petBookingDetails[${petIndex}].description`}
+                        label="Tình trạng sức khỏe"
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
+              ))}
             </Grid>
-            <Grid item xs={2}>
-              <RHFTextField name={`petData[${index}].height`} type="number" label="Chiều cao (cm)" />
-            </Grid>
-            <Grid item xs={2}>
-              <RHFTextField name={`petData[${index}].length`} type="number" label="Chiều dài (cm)" />
-            </Grid>
-            <Grid item xs={2}>
-              <RHFTextField name={`petData[${index}].weight`} type="number" label="Cân nặng (kg)" />
-            </Grid>
-            <Grid item xs={4}>
-              <RHFTextField name={`petData[${index}].description`} label="Tình trạng sức khỏe" />
-            </Grid>
-          </Grid>
-        ))}
+          );
+        })}
 
         <Grid container spacing={3} sx={{ p: 3 }}>
           {bookingStatuses.length > 0 && (

@@ -157,30 +157,30 @@ export function getBookingDetails(bookingId) {
       };
 
       const bookingStatusesResponse = await axios.get('/api/bookingstatuses');
-      const petDataResponse = await axios.get(`/api/petbookingdetails/booking/${bookingId}`);
+      // const petDataResponse = await axios.get(`/api/petbookingdetails/booking/${bookingId}`);
 
-      const petData = petDataResponse.data.map((data) => ({
-        id: data.pet.id,
-        name: data.pet.name,
-        weight: data.pet.petHealthHistories[0]?.weight,
-        height: data.pet.petHealthHistories[0]?.height,
-        length: data.pet.petHealthHistories[0]?.length,
-        description: data.pet.petHealthHistories[0]?.description,
-      }));
-
-      // const petData = bookingDetails.bookingDetails.map((data) => ({
-      //   cageCode: data.cageCode,
-      //   line: data.line,
-      //   price: data.price,
-      //   petBookingDetails: data.petBookingDetails.map((row) => ({
-      //     id: row.pet.id,
-      //     name: row.pet.name,
-      //     weight: row.pet.weight,
-      //     height: row.pet.height,
-      //     length: row.pet.length,
-      //     description: row.pet.description,
-      //   })),
+      // const petData = petDataResponse.data.map((data) => ({
+      //   id: data.pet.id,
+      //   name: data.pet.name,
+      //   weight: data.pet.petHealthHistories[0]?.weight,
+      //   height: data.pet.petHealthHistories[0]?.height,
+      //   length: data.pet.petHealthHistories[0]?.length,
+      //   description: data.pet.petHealthHistories[0]?.description,
       // }));
+
+      const petData = bookingDetails.bookingDetails.map((data) => ({
+        cageCode: data.cageCode,
+        line: data.line,
+        price: data.price,
+        petBookingDetails: data.petBookingDetails.map((row) => ({
+          id: row.pet.id,
+          name: row.pet.name,
+          weight: row.pet.weight,
+          height: row.pet.height,
+          length: row.pet.length,
+          description: row.pet.description,
+        })),
+      }));
 
       dispatch(selectEvent(bookingDetails));
       dispatch(getBookingStatusesSuccess(bookingStatusesResponse.data));
