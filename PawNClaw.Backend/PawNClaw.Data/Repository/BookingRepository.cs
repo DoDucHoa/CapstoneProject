@@ -295,7 +295,35 @@ namespace PawNClaw.Data.Repository
                     Rating = x.Rating,
                     CustomerNote = x.CustomerNote,
                     StaffNote = x.StaffNote,
-                    Customer = x.Customer
+                    Customer = x.Customer,
+                    BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
+                    .Select(bookingdetail => new BookingDetail
+                    {
+                        BookingId = bookingdetail.BookingId,
+                        Line = bookingdetail.Line,
+                        Price = bookingdetail.Price,
+                        CageCode = bookingdetail.CageCode,
+                        CenterId = bookingdetail.CenterId,
+                        Duration = bookingdetail.Duration,
+                        Note = bookingdetail.Note,
+                        PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
+                        .Select(pet => new PetBookingDetail
+                        {
+                            BookingId = pet.BookingId,
+                            Line = pet.Line,
+                            Pet = new Pet
+                            {
+                                Id = pet.Pet.Id,
+                                Name = pet.Pet.Name,
+                                Height = pet.Pet.Height,
+                                Length = pet.Pet.Length,
+                                Weight = pet.Pet.Weight,
+                                Birth = pet.Pet.Birth,
+                                BreedName = pet.Pet.BreedName,
+                                PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == pet.BookingId)
+                            }
+                        })
+                    }),
                 })
                 .Where(x => x.CenterId == CenterId);
 

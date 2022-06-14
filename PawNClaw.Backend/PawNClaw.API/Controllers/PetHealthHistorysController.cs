@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PawNClaw.API.Controllers
 {
-    [Route("api/pethealthhistorys")]
+    [Route("api/pethealthhistories")]
     [ApiController]
     [Authorize]
     public class PetHealthHistorysController : ControllerBase
