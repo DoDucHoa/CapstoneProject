@@ -172,6 +172,10 @@ namespace PawNClaw.Data.Repository
                     Customer = new Customer
                     {
                         Name = x.Customer.Name
+                    },
+                    Status = new BookingStatus
+                    {
+                        Name = x.Status.Name
                     }
                 })
                 .SingleOrDefault(x => x.Id == BookingId);
