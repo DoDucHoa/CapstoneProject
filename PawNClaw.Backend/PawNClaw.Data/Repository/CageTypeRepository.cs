@@ -33,7 +33,7 @@ namespace PawNClaw.Data.Repository
             return query.ToList();
         }
 
-        public IEnumerable<CageType> GetCageTypeValidPetSizeAndBookingTime(int CenterId, List<CreatePetRequestParameter> listPets, string StartBooking, string EndBooking)
+        public IEnumerable<CageType> GetCageTypeValidPetSizeAndBookingTime(int CenterId, List<PetRequestForSearchCenter> listPets, string StartBooking, string EndBooking)
         {
             DateTime _startBooking = DateTime.ParseExact(StartBooking, SearchConst.DateFormat,
                                        System.Globalization.CultureInfo.InvariantCulture);

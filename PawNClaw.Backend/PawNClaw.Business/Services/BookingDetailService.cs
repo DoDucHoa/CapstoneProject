@@ -48,35 +48,35 @@ namespace PawNClaw.Business.Services
         {
             var value = _bookingDetailRepository.GetBookingDetail(updateBookingDetailParameter.BookingId, updateBookingDetailParameter.Line);
 
-            var petbookingdetails = _petBookingDetailRepository.GetAll(x => x.BookingId == updateBookingDetailParameter.BookingId
-                                                                    && x.Line == updateBookingDetailParameter.Line);
+            //var petbookingdetails = _petBookingDetailRepository.GetAll(x => x.BookingId == updateBookingDetailParameter.BookingId
+            //                                                        && x.Line == updateBookingDetailParameter.Line);
 
-            decimal PetHeight = 0;
-            decimal PetWidth = 0;
-            foreach (var petbookingdetail in petbookingdetails)
-            {
-                //Get Size Pet With Cage
-                var pet = _petRepository.Get(petbookingdetail.PetId);
+            //decimal PetHeight = 0;
+            //decimal PetWidth = 0;
+            //foreach (var petbookingdetail in petbookingdetails)
+            //{
+            //    //Get Size Pet With Cage
+            //    var pet = _petRepository.Get(petbookingdetail.PetId);
 
-                if (PetHeight < (decimal)(pet.Height + SearchConst.HeightAdd))
-                {
-                    PetHeight = (decimal)(pet.Height + SearchConst.HeightAdd);
-                }
+            //    if (PetHeight < (decimal)(pet.Height + SearchConst.HeightAdd))
+            //    {
+            //        PetHeight = (decimal)(pet.Height + SearchConst.HeightAdd);
+            //    }
 
-                PetWidth += (decimal)Math.Round((((double)pet.Length) + ((double)pet.Height)) / SearchConst.WidthRatio, 0);
-                //End Get Size
+            //    PetWidth += (decimal)Math.Round((((double)pet.Length) + ((double)pet.Height)) / SearchConst.WidthRatio, 0);
+            //    //End Get Size
 
-                //Check Size Is Avaliable
-                var cage = _cageRepository.GetCageWithCageType(updateBookingDetailParameter.CageCode, value.CenterId);
+            //    //Check Size Is Avaliable
+            //    var cage = _cageRepository.GetCageWithCageType(updateBookingDetailParameter.CageCode, value.CenterId);
 
-                decimal CageHeight = cage.CageType.Height;
-                decimal CageWidth = cage.CageType.Width;
+            //    decimal CageHeight = cage.CageType.Height;
+            //    decimal CageWidth = cage.CageType.Width;
 
-                if (PetHeight > CageHeight || PetWidth > CageWidth)
-                {
-                    throw new Exception("Pet Not Fix With Cage Size");
-                }
-            }
+            //    if (PetHeight > CageHeight || PetWidth > CageWidth)
+            //    {
+            //        throw new Exception("Pet Not Fix With Cage Size");
+            //    }
+            //}
 
             value.Price = updateBookingDetailParameter.Price;
             value.CageCode = updateBookingDetailParameter.CageCode;
