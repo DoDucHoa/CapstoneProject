@@ -45,7 +45,8 @@ namespace PawNClaw.Business.Services
             {
                 try
                 {
-                    var petHealth = _petHealthHistoryRepository.GetFirstOrDefault(x => x.BookingId == createUpdatePetHealthHistoryParameter.createPetHealthHistoryParameter.BookingId);
+                    var petHealth = _petHealthHistoryRepository.GetFirstOrDefault(x => x.BookingId == createUpdatePetHealthHistoryParameter.createPetHealthHistoryParameter.BookingId
+                                                                                && x.PetId == createUpdatePetHealthHistoryParameter.createPetHealthHistoryParameter.PetId);
                     if (petHealth != null)
                     {
                         _petHealthHistoryRepository.Remove(petHealth);
