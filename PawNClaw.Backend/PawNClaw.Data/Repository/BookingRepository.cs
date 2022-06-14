@@ -267,48 +267,6 @@ namespace PawNClaw.Data.Repository
                     Rating = x.Rating,
                     CustomerNote = x.CustomerNote,
                     StaffNote = x.StaffNote,
-                    BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
-                    .Select(bookingdetail => new BookingDetail
-                    {
-                        BookingId = bookingdetail.BookingId,
-                        Line = bookingdetail.Line,
-                        Price = bookingdetail.Price,
-                        CageCode = bookingdetail.CageCode,
-                        CenterId = bookingdetail.CenterId,
-                        Duration = bookingdetail.Duration,
-                        Note = bookingdetail.Note,
-                        PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
-                        .Select(pet => new PetBookingDetail
-                        {
-                            BookingId = pet.BookingId,
-                            Line = pet.Line,
-                            PetId = pet.PetId
-                        })
-                    }),
-                    SupplyOrders = (ICollection<SupplyOrder>)x.SupplyOrders
-                    .Select(supplyorder => new SupplyOrder
-                    {
-                        SupplyId = supplyorder.SupplyId,
-                        BookingId = supplyorder.BookingId,
-                        Quantity = supplyorder.Quantity,
-                        SellPrice = supplyorder.SellPrice,
-                        TotalPrice = supplyorder.TotalPrice,
-                        Note = supplyorder.Note,
-                        PetId = supplyorder.PetId,
-                        Supply = supplyorder.Supply
-                    }),
-                    ServiceOrders = (ICollection<ServiceOrder>)x.ServiceOrders
-                    .Select(serviceorder => new ServiceOrder
-                    {
-                        ServiceId = serviceorder.ServiceId,
-                        BookingId = serviceorder.BookingId,
-                        Quantity = serviceorder.Quantity,
-                        SellPrice = serviceorder.SellPrice,
-                        TotalPrice = serviceorder.TotalPrice,
-                        Note = serviceorder.Note,
-                        PetId = serviceorder.PetId,
-                        Service = serviceorder.Service
-                    }),
                     Customer = x.Customer
                 })
                 .Where(x => x.CenterId == CenterId);
