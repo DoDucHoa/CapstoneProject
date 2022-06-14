@@ -326,7 +326,11 @@ namespace PawNClaw.Data.Repository
                     Rating = x.Rating,
                     CustomerNote = x.CustomerNote,
                     StaffNote = x.StaffNote,
-                    Center = x.Center
+                    Center = x.Center,
+                    Status = new BookingStatus
+                    {
+                        Name = x.Status.Name
+                    }
                 })
                 .Where(x => x.CustomerId == CustomerId);
 
