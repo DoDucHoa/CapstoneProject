@@ -47,9 +47,9 @@ namespace PawNClaw.API.Controllers
 
         [HttpGet("customer/{id}")]
         [Authorize(Roles = "Owner,Staff,Customer")]
-        public IActionResult GetBookingByCustomerId(int id)
+        public IActionResult GetBookingByCustomerId(int id, int statusId)
         {
-            var data = _bookingService.GetBookingsByCustomerId(id);
+            var data = _bookingService.GetBookingsByCustomerId(id, statusId);
             return Ok(data);
         }
 

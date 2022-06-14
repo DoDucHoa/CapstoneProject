@@ -349,9 +349,9 @@ namespace PawNClaw.Business.Services
         }
 
         //Get List Booking By Cus ID
-        public IEnumerable<Booking> GetBookingsByCustomerId(int id)
+        public IEnumerable<Booking> GetBookingsByCustomerId(int id, int? StatusId)
         {
-            var values = _bookingRepository.GetAll(x => x.CustomerId == id);
+            var values = _bookingRepository.GetBookingByCustomerId(id, StatusId);
 
             return values;
         }
