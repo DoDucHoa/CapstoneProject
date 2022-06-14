@@ -420,17 +420,19 @@ namespace PawNClaw.Data.Database
 
             modelBuilder.Entity<PetHealthHistory>(entity =>
             {
+                entity.Property(e => e.CheckedDate).HasDefaultValueSql("(getdate())");
+
                 entity.HasOne(d => d.Booking)
                     .WithMany(p => p.PetHealthHistories)
                     .HasForeignKey(d => d.BookingId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PetHealth__booki__26CFC035");
+                    .HasConstraintName("FK__PetHealth__booki__2B947552");
 
                 entity.HasOne(d => d.Pet)
                     .WithMany(p => p.PetHealthHistories)
                     .HasForeignKey(d => d.PetId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PetHealth__pet_i__3A4CA8FD");
+                    .HasConstraintName("FK__PetHealth__pet_i__2AA05119");
             });
 
             modelBuilder.Entity<PetType>(entity =>
