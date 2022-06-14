@@ -43,6 +43,9 @@ namespace PawNClaw.Data.Database
         public int? CreateUser { get; set; }
         [Column("modify_user")]
         public int? ModifyUser { get; set; }
+        [Column("name")]
+        [StringLength(256)]
+        public string Name { get; set; }
 
         [ForeignKey(nameof(CenterId))]
         [InverseProperty(nameof(PetCenter.staff))]
