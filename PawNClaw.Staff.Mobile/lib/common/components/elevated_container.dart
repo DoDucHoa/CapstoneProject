@@ -6,18 +6,20 @@ class ElevatedContainer extends StatelessWidget {
       required this.height,
       required this.width,
       required this.elevation,
-      required this.child})
+      required this.child,
+      this.circularRadius})
       : super(key: key);
 
   final double height;
   final double width;
   final double elevation;
+  final double? circularRadius;
   final Widget? child;
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(25),
+      borderRadius: BorderRadius.circular(circularRadius ?? 25),
       child: Container(
         margin: EdgeInsets.only(
           bottom: elevation,
@@ -26,7 +28,7 @@ class ElevatedContainer extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(circularRadius ?? 25),
           border: Border.all(color: Colors.white),
           boxShadow: [
             BoxShadow(

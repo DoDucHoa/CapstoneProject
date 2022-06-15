@@ -42,6 +42,9 @@ dependencies:
   dio: ^4.0.6
   flutter_snake_navigationbar: ^0.6.1
   shared_preferences: ^2.0.15
+  firebase_storage: ^10.2.17
+  file_picker: ^4.6.1
+  image_picker: ^0.8.5+3
   
 dev_dependencies:
   flutter_test:

@@ -31,7 +31,8 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     for (petCenter.ServicePrices price in prices) {
       print(
           'id: ${price.id}; min: ${price.minWeight}; max: ${price.maxWeight}');
-      if (price.minWeight! <= pet.weight! && price.maxWeight! >= pet.weight!) {
+      if (price.minWeight! <= pet.weight! && price.maxWeight! > pet.weight!) {
+        print(price.price);
         return price.price!;
       }
     }
