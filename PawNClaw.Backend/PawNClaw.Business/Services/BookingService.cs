@@ -23,6 +23,8 @@ namespace PawNClaw.Business.Services
         ISupplyRepository _supplyRepository;
         IServicePriceRepository _servicePriceRepository;
         IPetRepository _petRepository;
+        ICageRepository _cageRepository;
+        IStaffRepository _staffRepository;
 
         private readonly ApplicationDbContext _db;
 
@@ -30,6 +32,7 @@ namespace PawNClaw.Business.Services
             IPetBookingDetailRepository petBookingDetailRepository, IServiceOrderRepository serviceOrderRepository, 
             ISupplyOrderRepository supplyOrderRepository, ISupplyRepository supplyRepository,
             IServicePriceRepository servicePriceRepository, IPetRepository petRepository,
+            ICageRepository cageRepository, IStaffRepository staffRepository,
             ApplicationDbContext db)
         {
             _bookingRepository = bookingRepository;
@@ -40,6 +43,8 @@ namespace PawNClaw.Business.Services
             _supplyRepository = supplyRepository;
             _servicePriceRepository = servicePriceRepository;
             _petRepository = petRepository;
+            _cageRepository = cageRepository;
+            _staffRepository = staffRepository;
             _db = db;
         }
 
@@ -95,18 +100,23 @@ namespace PawNClaw.Business.Services
 
             int Id = 0;
 
-            if (_bookingRepository.GetAll(x =>
-                                (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)x.StartBooking) <= 0
-                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)x.EndBooking) >= 0)
-                                ||
-                                (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)x.StartBooking) >= 0
-                                && DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)x.EndBooking) < 0)
-                                ||
-                                (DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)x.StartBooking) > 0
-                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)x.EndBooking) <= 0)) != null)
+            //Check cage is booking and pet is booking in time
+            foreach (var bookingDetailCreateParameter in bookingDetailCreateParameters)
             {
-                return null;
+                if (_cageRepository.GetAll(cage => cage.Code.Trim().Equals(bookingDetailCreateParameter.CageCode) && cage.BookingDetails.Any(bookingdetail =>
+                                ((DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
+                                ||
+                                (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) >= 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
+                                ||
+                                (DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0)))).Count() != 0)
+                {
+                    throw new Exception("This Cage Has Been Used With Booking Time");
+                }
             }
+            
 
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
@@ -133,7 +143,7 @@ namespace PawNClaw.Business.Services
                 catch
                 {
                     transaction.Rollback();
-                    return null;
+                    throw new Exception();
                 }
 
 
@@ -162,11 +172,37 @@ namespace PawNClaw.Business.Services
                     catch
                     {
                         transaction.Rollback();
-                        return null;
+                        throw new Exception();
                     }
 
+                    decimal PetHeight = 0;
+                    decimal PetWidth = 0;
                     foreach (var PetId in bookingDetail.PetId)
                     {
+                        //Get Size Pet With Cage
+                        var pet = _petRepository.Get(PetId);
+
+                        if (PetHeight < (decimal)(pet.Height + SearchConst.HeightAdd))
+                        {
+                            PetHeight = (decimal)(pet.Height + SearchConst.HeightAdd);
+                        }
+
+                        PetWidth += (decimal)Math.Round((((double)pet.Length) + ((double)pet.Height)) / SearchConst.WidthRatio, 0);
+                        //End Get Size
+
+                        //Check Size Is Avaliable
+                        var cage = _cageRepository.GetCageWithCageType(bookingDetail.CageCode, bookingToDb.CenterId);
+
+                        decimal CageHeight = cage.CageType.Height;
+                        decimal CageWidth = cage.CageType.Width;
+
+                        if (PetHeight > CageHeight || PetWidth > CageWidth)
+                        {
+                            transaction.Rollback();
+                            throw new Exception("Pet Not Fit With Cage Size");
+                        }
+                        //End Check Size Is Avaliable
+
                         PetBookingDetail petBookingDetailToDb = new PetBookingDetail()
                         {
                             BookingId = bookingDetailToDb.BookingId,
@@ -182,7 +218,7 @@ namespace PawNClaw.Business.Services
                         catch
                         {
                             transaction.Rollback();
-                            return null;
+                            throw new Exception();
                         }
                     }
                 }
@@ -218,7 +254,7 @@ namespace PawNClaw.Business.Services
                         catch
                         {
                             transaction.Rollback();
-                            return null;
+                            throw new Exception();
                         }
                     }
                 }
@@ -252,7 +288,7 @@ namespace PawNClaw.Business.Services
                             if (supply.Quantity < 0)
                             {
                                 transaction.Rollback();
-                                return null;
+                                throw new Exception("Quantity is INVALID");
                             }
 
                             _supplyRepository.Update(supply);
@@ -261,9 +297,47 @@ namespace PawNClaw.Business.Services
                         catch
                         {
                             transaction.Rollback();
-                            return null;
+                            throw new Exception();
                         }
                     }
+                }
+
+                try
+                {
+
+                    var serviceOrders = bookingToDb.ServiceOrders;
+
+                    var supplyOrders = bookingToDb.SupplyOrders;
+
+                    var bookingDetails = bookingToDb.BookingDetails;
+
+                    decimal Price = 0;
+
+                    foreach (var serviceOrder in serviceOrders)
+                    {
+                        Price = (decimal)(Price + serviceOrder.TotalPrice);
+                    }
+
+                    foreach (var supplyOrder in supplyOrders)
+                    {
+                        Price = (decimal)(Price + supplyOrder.TotalPrice);
+                    }
+
+                    foreach (var bookingDetail in bookingDetails)
+                    {
+                        Price = (decimal)(Price + bookingDetail.Price);
+                    }
+
+                    bookingToDb.SubTotal = Price;
+                    bookingToDb.Total = Price;
+
+                    _bookingRepository.Update(bookingToDb);
+                    await _bookingRepository.SaveDbChangeAsync();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw new Exception();
                 }
 
                 transaction.Commit();
@@ -277,9 +351,9 @@ namespace PawNClaw.Business.Services
         }
 
         //Get List Booking By Cus ID
-        public IEnumerable<Booking> GetBookingsByCustomerId(int id)
+        public IEnumerable<Booking> GetBookingsByCustomerId(int id, int? StatusId)
         {
-            var values = _bookingRepository.GetAll(x => x.CustomerId == id);
+            var values = _bookingRepository.GetBookingByCustomerId(id, StatusId);
 
             return values;
         }
@@ -302,11 +376,14 @@ namespace PawNClaw.Business.Services
         }
 
         //Get Lisy Booking for Staff Mobile
-        public IEnumerable<Booking> GetBookingsForStaffMobile(int id, int? statusId)
+        public IEnumerable<Booking> GetBookingsForStaffMobile(int staffId, int? statusId)
         {
-            var values = _bookingRepository.GetBookingByCenterIdForStaff(id, statusId);
+
+            var staff = _staffRepository.Get(staffId);
+            var values = _bookingRepository.GetBookingByCenterIdForStaff(staff.CenterId, statusId);
 
             return values;
         }
+
     }
 }

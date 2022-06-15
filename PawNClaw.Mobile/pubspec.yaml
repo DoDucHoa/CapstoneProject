@@ -54,6 +54,7 @@ dependencies:
   im_stepper:
   percent_indicator:
   dotted_border:
+  iconsax:
   
 dev_dependencies:
   flutter_test:

@@ -39,7 +39,7 @@ export default function Calendar() {
 
   const [view, setView] = useState(isDesktop ? 'dayGridMonth' : 'listWeek');
 
-  const { events, isOpenModal, bookingDetails, bookingStatuses } = useSelector((state) => state.calendar);
+  const { events, isOpenModal, bookingDetails, bookingStatuses, petData } = useSelector((state) => state.calendar);
 
   useEffect(() => {
     dispatch(getEvents());
@@ -54,24 +54,6 @@ export default function Calendar() {
       setView(newView);
     }
   }, [isDesktop]);
-
-  const handleClickToday = () => {
-    const calendarEl = calendarRef.current;
-    if (calendarEl) {
-      const calendarApi = calendarEl.getApi();
-      calendarApi.today();
-      setDate(calendarApi.getDate());
-    }
-  };
-
-  const handleChangeView = (newView) => {
-    const calendarEl = calendarRef.current;
-    if (calendarEl) {
-      const calendarApi = calendarEl.getApi();
-      calendarApi.changeView(newView);
-      setView(newView);
-    }
-  };
 
   const handleClickDatePrev = () => {
     const calendarEl = calendarRef.current;
@@ -108,24 +90,18 @@ export default function Calendar() {
         />
         <Card>
           <CalendarStyle>
-            <CalendarToolbar
-              date={date}
-              view={view}
-              onNextDate={handleClickDateNext}
-              onPrevDate={handleClickDatePrev}
-              onToday={handleClickToday}
-              onChangeView={handleChangeView}
-            />
+            <CalendarToolbar date={date} onNextDate={handleClickDateNext} onPrevDate={handleClickDatePrev} />
             <FullCalendar
               weekends
               defaultAllDay
+              showNonCurrentDates={false}
               events={events}
               ref={calendarRef}
               rerenderDelay={10}
               initialDate={date}
               initialView={view}
               dayMaxEventRows={3}
-              eventDisplay="list-item"
+              eventDisplay="block"
               headerToolbar={false}
               eventClick={handleSelectEvent}
               height={isDesktop ? 720 : 'auto'}
@@ -140,6 +116,7 @@ export default function Calendar() {
             selectedEvent={bookingDetails || {}}
             onCancel={handleCloseModal}
             bookingStatuses={bookingStatuses}
+            petData={petData}
           />
         </DialogAnimate>
       </Container>

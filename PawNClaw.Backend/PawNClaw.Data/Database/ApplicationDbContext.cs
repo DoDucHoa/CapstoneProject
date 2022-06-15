@@ -35,7 +35,7 @@ namespace PawNClaw.Data.Database
         public virtual DbSet<Pet> Pets { get; set; }
         public virtual DbSet<PetBookingDetail> PetBookingDetails { get; set; }
         public virtual DbSet<PetCenter> PetCenters { get; set; }
-        public virtual DbSet<PetHealthHistory> PetHealthHistorys { get; set; }
+        public virtual DbSet<PetHealthHistory> PetHealthHistories { get; set; }
         public virtual DbSet<PetType> PetTypes { get; set; }
         public virtual DbSet<Photo> Photos { get; set; }
         public virtual DbSet<PhotoType> PhotoTypes { get; set; }
@@ -420,17 +420,19 @@ namespace PawNClaw.Data.Database
 
             modelBuilder.Entity<PetHealthHistory>(entity =>
             {
+                entity.Property(e => e.CheckedDate).HasDefaultValueSql("(getdate())");
+
                 entity.HasOne(d => d.Booking)
                     .WithMany(p => p.PetHealthHistories)
                     .HasForeignKey(d => d.BookingId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PetHealth__booki__26CFC035");
+                    .HasConstraintName("FK__PetHealth__booki__30592A6F");
 
                 entity.HasOne(d => d.Pet)
                     .WithMany(p => p.PetHealthHistories)
                     .HasForeignKey(d => d.PetId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PetHealth__pet_i__3A4CA8FD");
+                    .HasConstraintName("FK__PetHealth__pet_i__2F650636");
             });
 
             modelBuilder.Entity<PetType>(entity =>

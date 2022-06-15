@@ -21,9 +21,9 @@ namespace PawNClaw.Data.Parameter
 
     public class BookingDetailCreateParameter
     {
-        public decimal? Price { get; set; }
+        public decimal Price { get; set; }
         public string CageCode { get; set; }
-        public decimal? Duration { get; set; }
+        public decimal Duration { get; set; }
         public string Note { get; set; }
         public List<int> PetId { get; set; }
     }

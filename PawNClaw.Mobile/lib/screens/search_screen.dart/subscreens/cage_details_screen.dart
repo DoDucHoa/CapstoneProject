@@ -106,7 +106,7 @@ class _CageDetailsState extends State<CageDetails> {
               )
             ];
           },
-          body: buildContent(cageType, cage, size, context, requests!),
+          body: buildContent(cageType, cage, size, context, requests),
         ),
         floatingActionButton: Container(
             padding: EdgeInsets.only(left: 30),

@@ -9,5 +9,6 @@ namespace PawNClaw.Data.Interface
 {
     public interface IServiceOrderRepository : IRepository<ServiceOrder>
     {
+        public void RemoveServiceOrder(int BookingId, int ServiceId);
     }
 }

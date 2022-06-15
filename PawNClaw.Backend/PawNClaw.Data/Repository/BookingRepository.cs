@@ -119,12 +119,30 @@ namespace PawNClaw.Data.Repository
                         CenterId = bookingdetail.CenterId,
                         Duration = bookingdetail.Duration,
                         Note = bookingdetail.Note,
+                        C = new Cage
+                        {
+                            Name = bookingdetail.C.Name,
+                            CageType = new CageType
+                            {
+                                TypeName = bookingdetail.C.CageType.TypeName
+                            }
+                        },
                         PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
                         .Select(pet => new PetBookingDetail
                         {
                             BookingId = pet.BookingId,
                             Line = pet.Line,
-                            PetId = pet.PetId
+                            Pet = new Pet
+                            {
+                                Id = pet.Pet.Id,
+                                Name = pet.Pet.Name,
+                                Height = pet.Pet.Height,
+                                Length = pet.Pet.Length,
+                                Weight = pet.Pet.Weight,
+                                Birth = pet.Pet.Birth,
+                                BreedName = pet.Pet.BreedName,
+                                PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == BookingId)
+                            }
                         })
                     }),
                     SupplyOrders = (ICollection<SupplyOrder>)x.SupplyOrders
@@ -136,7 +154,12 @@ namespace PawNClaw.Data.Repository
                         SellPrice = supplyorder.SellPrice,
                         TotalPrice = supplyorder.TotalPrice,
                         Note = supplyorder.Note,
-                        PetId = supplyorder.PetId
+                        PetId = supplyorder.PetId,
+                        Supply = supplyorder.Supply,
+                        Pet = new Pet
+                        {
+                            Name = supplyorder.Pet.Name,
+                        }
                     }),
                     ServiceOrders = (ICollection<ServiceOrder>)x.ServiceOrders
                     .Select(serviceorder => new ServiceOrder
@@ -147,8 +170,28 @@ namespace PawNClaw.Data.Repository
                         SellPrice = serviceorder.SellPrice,
                         TotalPrice = serviceorder.TotalPrice,
                         Note = serviceorder.Note,
-                        PetId = serviceorder.PetId
-                    })
+                        PetId = serviceorder.PetId,
+                        Service = serviceorder.Service,
+                        Pet = new Pet
+                        {
+                            Name = serviceorder.Pet.Name,
+                        }
+                    }),
+                    Customer = new Customer
+                    {
+                        Name = x.Customer.Name,
+                        IdNavigation = new Account
+                        {
+                            Phone = x.Customer.IdNavigation.Phone
+                        }
+                    },
+                    Status = new BookingStatus
+                    {
+                        Id = x.Status.Id,
+                        Name = x.Status.Name
+                    },
+                    TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
+                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
                 })
                 .SingleOrDefault(x => x.Id == BookingId);
 
@@ -186,12 +229,30 @@ namespace PawNClaw.Data.Repository
                         CenterId = bookingdetail.CenterId,
                         Duration = bookingdetail.Duration,
                         Note = bookingdetail.Note,
+                        C = new Cage
+                        {
+                            Name = bookingdetail.C.Name,
+                            CageType = new CageType
+                            {
+                                TypeName = bookingdetail.C.CageType.TypeName
+                            }
+                        },
                         PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
                         .Select(pet => new PetBookingDetail
                         {
                             BookingId = pet.BookingId,
                             Line = pet.Line,
-                            PetId = pet.PetId
+                            Pet = new Pet
+                            {
+                                Id = pet.Pet.Id,
+                                Name = pet.Pet.Name,
+                                Height = pet.Pet.Height,
+                                Length = pet.Pet.Length,
+                                Weight = pet.Pet.Weight,
+                                Birth = pet.Pet.Birth,
+                                BreedName = pet.Pet.BreedName,
+                                PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == BookingId)
+                            }
                         })
                     }),
                     SupplyOrders = (ICollection<SupplyOrder>)x.SupplyOrders
@@ -204,7 +265,11 @@ namespace PawNClaw.Data.Repository
                         TotalPrice = supplyorder.TotalPrice,
                         Note = supplyorder.Note,
                         PetId = supplyorder.PetId,
-                        Supply = supplyorder.Supply
+                        Supply = supplyorder.Supply,
+                        Pet = new Pet
+                        {
+                            Name = supplyorder.Pet.Name,
+                        }
                     }),
                     ServiceOrders = (ICollection<ServiceOrder>)x.ServiceOrders
                     .Select(serviceorder => new ServiceOrder
@@ -216,9 +281,27 @@ namespace PawNClaw.Data.Repository
                         TotalPrice = serviceorder.TotalPrice,
                         Note = serviceorder.Note,
                         PetId = serviceorder.PetId,
-                        Service = serviceorder.Service
+                        Service = serviceorder.Service,
+                        Pet = new Pet
+                        {
+                            Name = serviceorder.Pet.Name,
+                        }
                     }),
-                    Customer = x.Customer
+                    Customer = new Customer
+                    {
+                        Name = x.Customer.Name,
+                        IdNavigation = new Account
+                        {
+                            Phone = x.Customer.IdNavigation.Phone
+                        }
+                    },
+                    Status = new BookingStatus
+                    {
+                        Id = x.Status.Id,
+                        Name = x.Status.Name
+                    },
+                    TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
+                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
                 })
                 .SingleOrDefault(x => x.Id == BookingId);
 
@@ -246,6 +329,7 @@ namespace PawNClaw.Data.Repository
                     Rating = x.Rating,
                     CustomerNote = x.CustomerNote,
                     StaffNote = x.StaffNote,
+                    Customer = x.Customer,
                     BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
                     .Select(bookingdetail => new BookingDetail
                     {
@@ -261,39 +345,61 @@ namespace PawNClaw.Data.Repository
                         {
                             BookingId = pet.BookingId,
                             Line = pet.Line,
-                            PetId = pet.PetId
+                            Pet = new Pet
+                            {
+                                Id = pet.Pet.Id,
+                                Name = pet.Pet.Name,
+                                Height = pet.Pet.Height,
+                                Length = pet.Pet.Length,
+                                Weight = pet.Pet.Weight,
+                                Birth = pet.Pet.Birth,
+                                BreedName = pet.Pet.BreedName,
+                                PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == pet.BookingId)
+                            }
                         })
                     }),
-                    SupplyOrders = (ICollection<SupplyOrder>)x.SupplyOrders
-                    .Select(supplyorder => new SupplyOrder
-                    {
-                        SupplyId = supplyorder.SupplyId,
-                        BookingId = supplyorder.BookingId,
-                        Quantity = supplyorder.Quantity,
-                        SellPrice = supplyorder.SellPrice,
-                        TotalPrice = supplyorder.TotalPrice,
-                        Note = supplyorder.Note,
-                        PetId = supplyorder.PetId,
-                        Supply = supplyorder.Supply
-                    }),
-                    ServiceOrders = (ICollection<ServiceOrder>)x.ServiceOrders
-                    .Select(serviceorder => new ServiceOrder
-                    {
-                        ServiceId = serviceorder.ServiceId,
-                        BookingId = serviceorder.BookingId,
-                        Quantity = serviceorder.Quantity,
-                        SellPrice = serviceorder.SellPrice,
-                        TotalPrice = serviceorder.TotalPrice,
-                        Note = serviceorder.Note,
-                        PetId = serviceorder.PetId,
-                        Service = serviceorder.Service
-                    }),
-                    Customer = x.Customer
                 })
                 .Where(x => x.CenterId == CenterId);
 
             if (StatusId != null)
-            query = query.Where(x => x.StatusId == StatusId);
+                query = query.Where(x => x.StatusId == StatusId);
+
+            return query.ToList();
+        }
+
+        public IEnumerable<Booking> GetBookingByCustomerId(int CustomerId, int? StatusId)
+        {
+            IQueryable<Booking> query = _dbSet
+                .Select(x => new Booking
+                {
+                    Id = x.Id,
+                    CreateTime = x.CreateTime,
+                    StartBooking = x.StartBooking,
+                    EndBooking = x.EndBooking,
+                    CheckIn = x.CheckIn,
+                    CheckOut = x.CheckOut,
+                    SubTotal = x.SubTotal,
+                    Discount = x.Discount,
+                    Total = x.Total,
+                    StatusId = x.StatusId,
+                    VoucherCode = x.VoucherCode,
+                    CustomerId = x.CustomerId,
+                    CenterId = x.CenterId,
+                    Rating = x.Rating,
+                    CustomerNote = x.CustomerNote,
+                    StaffNote = x.StaffNote,
+                    Center = x.Center,
+                    Status = new BookingStatus
+                    {
+                        Name = x.Status.Name
+                    }
+                })
+                .Where(x => x.CustomerId == CustomerId);
+
+            if (StatusId > 0 && StatusId != null)
+            {
+                query = query.Where(x => x.StatusId == StatusId);
+            }
 
             return query.ToList();
         }

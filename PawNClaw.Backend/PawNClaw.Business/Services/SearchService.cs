@@ -20,21 +20,23 @@ namespace PawNClaw.Business.Services
         IBookingDetailRepository _bookingDetailRepository;
         ICageRepository _cageRepository;
         ILocationRepository _locationRepository;
+        IPetBookingDetailRepository _petBookingDetailRepository;
 
         public SearchService(IPetCenterRepository petCenterRepository, ILocationRepository locationRepository,
             IBookingRepository bookingRepository, IBookingDetailRepository bookingDetailRepository,
-            ICageRepository cageRepository)
+            ICageRepository cageRepository, IPetBookingDetailRepository petBookingDetailRepository)
         {
             _petCenterRepository = petCenterRepository;
             _locationRepository = locationRepository;
             _bookingRepository = bookingRepository;
             _bookingDetailRepository = bookingDetailRepository;
             _cageRepository = cageRepository;
+            _petBookingDetailRepository = petBookingDetailRepository;
         }
 
         public PagedList<PetCenter> MainSearchCenter(string City, string District,
             string StartBooking, string EndBooking,
-            List<List<PetRequestParameter>> _petRequests, PagingParameter paging)
+            List<List<PetRequestForSearchCenter>> _petRequests, PagingParameter paging)
         {
             //Check loaction
             var values = _petCenterRepository.SearchPetCenter(City, District);
@@ -43,7 +45,7 @@ namespace PawNClaw.Business.Services
             //This is 24 Hours format
             if (StartBooking == null || EndBooking == null)
             {
-                throw new Exception();
+                throw new Exception("StartBooking or EndBooking is NULL");
             }
             DateTime _startBooking = DateTime.ParseExact(s: StartBooking, format: SearchConst.DateFormat,
                                                         CultureInfo.InvariantCulture);
@@ -52,9 +54,43 @@ namespace PawNClaw.Business.Services
                                                         CultureInfo.InvariantCulture);
             if (DateTime.Compare(_startBooking, DateTime.Now) <= 0 || DateTime.Compare(_startBooking, _endBooking) >= 0)
             {
-                throw new Exception();
+                throw new Exception("StartBooking or EndBooking is INVALID");
             }
             //END Check valid time booking
+
+            foreach (var petIds in _petRequests)
+            {
+                foreach (var petId in petIds)
+                {
+                    var test = _petBookingDetailRepository.GetAll(x => x.PetId == petId.Id &&
+                            ((DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) <= 0
+                            && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) >= 0)
+                            ||
+                            (DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) >= 0
+                            && DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.EndBooking) < 0)
+                            ||
+                            (DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.StartBooking) > 0
+                            && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) <= 0)));
+
+                    foreach (var item in test)
+                    {
+                        Console.WriteLine(item.BookingId);
+                    }
+
+                    if (_petBookingDetailRepository.GetAll(x => x.PetId == petId.Id &&
+                            ((DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) <= 0
+                            && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) >= 0)
+                            ||
+                            (DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) >= 0
+                            && DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.EndBooking) < 0)
+                            ||
+                            (DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.StartBooking) > 0
+                            && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) <= 0))).Count() != 0)
+                    {
+                        throw new Exception("Pet is Booking Already");
+                    }
+                }
+            }
 
             //START Check time booking with open close time from petcenter
             List<PetCenter> validOCCenter = new List<PetCenter>();
@@ -94,10 +130,6 @@ namespace PawNClaw.Business.Services
                 decimal Width = 0;
                 foreach (var _pet in _petRequest)
                 {
-                    if (_pet.Height == null || _pet.Length == null || _pet.Weight == null)
-                    {
-                        throw new Exception();
-                    }
                     if (Height < (decimal)(_pet.Height + SearchConst.HeightAdd))
                     {
                         Height = (decimal)(_pet.Height + SearchConst.HeightAdd);
@@ -136,21 +168,18 @@ namespace PawNClaw.Business.Services
                 {
                     var CageTypes = center.CageTypes;
                     
-                    Console.WriteLine(center.Id + " Is Null");
                     //Check is fields that check center have any cage valid for pet
-                    bool Check = true;
+                    bool Check = false;
                     List<int> CageTypeCodeIsSelect = new List<int>();
                     foreach (var petsize in PetSizes)
                     {
-                        Console.WriteLine(center.Id + " Pet H: " + petsize.Height);
-                        Console.WriteLine(center.Id + " Pet W: " + petsize.Width);
+                        Check = false;
+
                         foreach (var cagetype in CageTypes)
                         {
                             if (cagetype.Height >= petsize.Height && cagetype.Width >= petsize.Width)
                             {
                                 //CageTypeValidCode.Add(cagetype.Id);
-
-                                Console.WriteLine(center.Id + "Check Amount");
 
                                 int CageAmount = 1;
                                 int CageTypeCodeIsSelectAmount = CageTypeCodeIsSelect.Where(x => x == cagetype.Id).Count();
@@ -161,13 +190,8 @@ namespace PawNClaw.Business.Services
                                 if (_cageRepository.CountCageByCageTypeIDExceptBusyCage(cagetype.Id, petsize.IsSingle, CageCodesNotValid) >= CageAmount)
                                 {
                                     Check = true;
-                                    Console.WriteLine(center.Id + " CageWithTypeID: " + cagetype.Id);
                                     CageTypeCodeIsSelect.Add(cagetype.Id);
                                     break;
-                                }
-                                else
-                                {
-                                    Check = false;
                                 }
                             }
                         }

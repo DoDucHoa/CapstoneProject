@@ -40,6 +40,13 @@ namespace PawNClaw.Business.Services
                 {
                     try
                     {
+                        if (list.Quantity == 0)
+                        {
+                            _serviceOrderRepository.RemoveServiceOrder(updateServiceOrderParameter.BookingId, list.ServiceId);
+                            await _serviceOrderRepository.SaveDbChangeAsync();
+                            continue;
+                        }
+
                         var values = _serviceOrderRepository.GetFirstOrDefault(x => x.BookingId == updateServiceOrderParameter.BookingId
                                                                         && x.ServiceId == list.ServiceId);
 
@@ -84,10 +91,12 @@ namespace PawNClaw.Business.Services
                         Price = (decimal)(Price + bookingDetail.Price);
                     }
 
-                    booking.SubTotal = Price;
-                    booking.Total = Price;
+                    var bookingToDb = _bookingRepository.Get(booking.Id);
 
-                    _bookingRepository.Update(booking);
+                    bookingToDb.SubTotal = Price;
+                    bookingToDb.Total = Price;
+
+                    _bookingRepository.Update(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();
                 }
                 catch
@@ -166,10 +175,12 @@ namespace PawNClaw.Business.Services
                         Price = (decimal)(Price + bookingDetail.Price);
                     }
 
-                    booking.SubTotal = Price;
-                    booking.Total = Price;
+                    var bookingToDb = _bookingRepository.Get(booking.Id);
 
-                    _bookingRepository.Update(booking);
+                    bookingToDb.SubTotal = Price;
+                    bookingToDb.Total = Price;
+
+                    _bookingRepository.Update(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();
                 }
                 catch

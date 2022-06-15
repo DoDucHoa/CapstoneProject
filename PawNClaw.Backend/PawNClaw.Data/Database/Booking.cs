@@ -55,6 +55,11 @@ namespace PawNClaw.Data.Database
         [StringLength(512)]
         public string StaffNote { get; set; }
 
+        [NotMapped]
+        public decimal? TotalSupply { get; set; }
+        [NotMapped]
+        public decimal? TotalService { get; set; }
+
         [ForeignKey(nameof(CenterId))]
         [InverseProperty(nameof(PetCenter.Bookings))]
         public virtual PetCenter Center { get; set; }

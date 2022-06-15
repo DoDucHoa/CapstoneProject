@@ -1,6 +1,7 @@
 ﻿using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,20 @@ namespace PawNClaw.Business.Services
             return PagedList<CageType>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
             paging.PageSize);
+        }
+
+        public IEnumerable<CageType> GetCageTypeWithCageValidPetSizeAndBookingTime(int CenterId, List<PetRequestForSearchCenter> listPets, string StartBooking, string EndBooking)
+        {
+            var values = _cageTypeRepository.GetCageTypeValidPetSizeAndBookingTime(CenterId, listPets, StartBooking, EndBooking);
+
+            return values;
+        }
+
+        public bool CreateCageType(CageType cageType)
+        {
+            _cageTypeRepository.Add(cageType);
+            _cageTypeRepository.SaveDbChange();
+            return true;
         }
     }
 }

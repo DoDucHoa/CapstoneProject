@@ -37,8 +37,17 @@ namespace PawNClaw.Business.Services
                 {
                     try
                     {
+                        if (list.Quantity == 0)
+                        {
+                            _supplyOrderRepository.RemoveSupplyOrder(updateSupplyOrderParameter.BookingId, list.SupplyId);
+                            await _supplyOrderRepository.SaveDbChangeAsync();
+                            continue;
+                        }
+
                         var values = _supplyOrderRepository.GetFirstOrDefault(x => x.BookingId == updateSupplyOrderParameter.BookingId
-                                                                        && x.SupplyId == list.ServiceId);
+                                                                        && x.SupplyId == list.SupplyId);
+
+                        var oldQuantity = values.Quantity;
 
                         values.Quantity = list.Quantity;
                         values.SellPrice = list.SellPrice;
@@ -46,6 +55,20 @@ namespace PawNClaw.Business.Services
 
                         _supplyOrderRepository.Update(values);
                         await _supplyOrderRepository.SaveDbChangeAsync();
+
+                        //
+                        var supply = _supplyRepository.Get(list.SupplyId);
+
+                        supply.Quantity = (int)(supply.Quantity - (values.Quantity - oldQuantity));
+
+                        if (supply.Quantity < 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+
+                        _supplyRepository.Update(supply);
+                        await _supplyRepository.SaveDbChangeAsync();
                     }
                     catch
                     {
@@ -81,10 +104,12 @@ namespace PawNClaw.Business.Services
                         Price = (decimal)(Price + bookingDetail.Price);
                     }
 
-                    booking.SubTotal = Price;
-                    booking.Total = Price;
+                    var bookingToDb = _bookingRepository.Get(booking.Id);
 
-                    _bookingRepository.Update(booking);
+                    bookingToDb.SubTotal = Price;
+                    bookingToDb.Total = Price;
+
+                    _bookingRepository.Update(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();
                 }
                 catch
@@ -171,10 +196,12 @@ namespace PawNClaw.Business.Services
                         Price = (decimal)(Price + bookingDetail.Price);
                     }
 
-                    booking.SubTotal = Price;
-                    booking.Total = Price;
+                    var bookingToDb = _bookingRepository.Get(booking.Id);
 
-                    _bookingRepository.Update(booking);
+                    bookingToDb.SubTotal = Price;
+                    bookingToDb.Total = Price;
+
+                    _bookingRepository.Update(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();
                 }
                 catch

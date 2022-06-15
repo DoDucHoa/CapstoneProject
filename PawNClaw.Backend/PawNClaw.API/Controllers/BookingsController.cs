@@ -47,9 +47,9 @@ namespace PawNClaw.API.Controllers
 
         [HttpGet("customer/{id}")]
         [Authorize(Roles = "Owner,Staff,Customer")]
-        public IActionResult GetBookingByCustomerId(int id)
+        public IActionResult GetBookingByCustomerId(int id, int statusId)
         {
-            var data = _bookingService.GetBookingsByCustomerId(id);
+            var data = _bookingService.GetBookingsByCustomerId(id, statusId);
             return Ok(data);
         }
 
@@ -69,27 +69,33 @@ namespace PawNClaw.API.Controllers
             return Ok(data);
         }
 
-        [HttpGet("center/{id}")]
+        [HttpGet("center/{staffId}")]
         [Authorize(Roles = "Owner,Staff")]
-        public IActionResult GetBookingByCenterIdForStaff(int id, int statusId)
+        public IActionResult GetBookingByCenterIdForStaff(int staffId, int? statusId)
         {
-            var data = _bookingService.GetBookingsForStaffMobile(id, statusId);
+            var data = _bookingService.GetBookingsForStaffMobile(staffId, statusId);
             return Ok(data);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromBody] BookingControllerParameter bookingControllerParameter)
         {
-            var data = await _bookingService.CreateBooking(bookingControllerParameter.bookingCreateParameter,
+            try
+            {
+                var data = await _bookingService.CreateBooking(bookingControllerParameter.bookingCreateParameter,
                 bookingControllerParameter.bookingDetailCreateParameters,
                 bookingControllerParameter.serviceOrderCreateParameters,
                 bookingControllerParameter.supplyOrderCreateParameters);
-            if (data == null)
+                if (data == null)
+                {
+                    return BadRequest();
+                }
+                else
+                    return Ok(data);
+            } catch(Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex);
             }
-            else
-                return Ok(data);
         }
     }
 }

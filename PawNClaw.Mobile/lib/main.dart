@@ -3,9 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
+import 'package:pawnclaw_mobile_application/blocs/transaction/transaction_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/repositories/auth/auth_repository.dart';
 import 'package:pawnclaw_mobile_application/repositories/pet/pet_repository.dart';
+import 'package:pawnclaw_mobile_application/repositories/transaction/transaction_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/home_screen/HomeScreen.dart';
 import 'package:pawnclaw_mobile_application/screens/signin_screen/SignInScreen.dart';
 
@@ -34,6 +36,7 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
             create: (context) => PetBloc(petRepository: PetRepository())),
+       
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
