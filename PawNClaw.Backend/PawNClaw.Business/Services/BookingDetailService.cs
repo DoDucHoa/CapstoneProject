@@ -80,7 +80,6 @@ namespace PawNClaw.Business.Services
 
             value.Price = updateBookingDetailParameter.Price;
             value.CageCode = updateBookingDetailParameter.CageCode;
-            value.Duration = updateBookingDetailParameter.Duration;
             value.Note = updateBookingDetailParameter.Note;
 
             try
