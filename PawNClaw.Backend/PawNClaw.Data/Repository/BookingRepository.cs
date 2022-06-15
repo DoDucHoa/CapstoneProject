@@ -119,6 +119,14 @@ namespace PawNClaw.Data.Repository
                         CenterId = bookingdetail.CenterId,
                         Duration = bookingdetail.Duration,
                         Note = bookingdetail.Note,
+                        C = new Cage
+                        {
+                            Name = bookingdetail.C.Name,
+                            CageType = new CageType
+                            {
+                                TypeName = bookingdetail.C.CageType.TypeName
+                            }
+                        },
                         PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
                         .Select(pet => new PetBookingDetail
                         {
@@ -171,12 +179,18 @@ namespace PawNClaw.Data.Repository
                     }),
                     Customer = new Customer
                     {
-                        Name = x.Customer.Name
+                        Name = x.Customer.Name,
+                        IdNavigation = new Account
+                        {
+                            Phone = x.Customer.IdNavigation.Phone
+                        }
                     },
                     Status = new BookingStatus
                     {
                         Name = x.Status.Name
-                    }
+                    },
+                    TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
+                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
                 })
                 .SingleOrDefault(x => x.Id == BookingId);
 
@@ -214,6 +228,14 @@ namespace PawNClaw.Data.Repository
                         CenterId = bookingdetail.CenterId,
                         Duration = bookingdetail.Duration,
                         Note = bookingdetail.Note,
+                        C = new Cage
+                        {
+                            Name = bookingdetail.C.Name,
+                            CageType = new CageType
+                            {
+                                TypeName = bookingdetail.C.CageType.TypeName
+                            }
+                        },
                         PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
                         .Select(pet => new PetBookingDetail
                         {
@@ -266,8 +288,18 @@ namespace PawNClaw.Data.Repository
                     }),
                     Customer = new Customer
                     {
-                        Name = x.Customer.Name
-                    }
+                        Name = x.Customer.Name,
+                        IdNavigation = new Account
+                        {
+                            Phone = x.Customer.IdNavigation.Phone
+                        }
+                    },
+                    Status = new BookingStatus
+                    {
+                        Name = x.Status.Name
+                    },
+                    TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
+                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
                 })
                 .SingleOrDefault(x => x.Id == BookingId);
 
