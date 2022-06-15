@@ -157,28 +157,19 @@ export function getBookingDetails(bookingId) {
       };
 
       const bookingStatusesResponse = await axios.get('/api/bookingstatuses');
-      // const petDataResponse = await axios.get(`/api/petbookingdetails/booking/${bookingId}`);
-
-      // const petData = petDataResponse.data.map((data) => ({
-      //   id: data.pet.id,
-      //   name: data.pet.name,
-      //   weight: data.pet.petHealthHistories[0]?.weight,
-      //   height: data.pet.petHealthHistories[0]?.height,
-      //   length: data.pet.petHealthHistories[0]?.length,
-      //   description: data.pet.petHealthHistories[0]?.description,
-      // }));
 
       const petData = bookingDetails.bookingDetails.map((data) => ({
         cageCode: data.cageCode,
         line: data.line,
         price: data.price,
+        duration: data.duration,
         petBookingDetails: data.petBookingDetails.map((row) => ({
           id: row.pet.id,
           name: row.pet.name,
-          weight: row.pet.weight,
-          height: row.pet.height,
-          length: row.pet.length,
-          description: row.pet.description,
+          weight: row.pet.petHealthHistories[0]?.weight || '',
+          height: row.pet.petHealthHistories[0]?.height || '',
+          length: row.pet.petHealthHistories[0]?.length || '',
+          description: row.pet.petHealthHistories[0]?.description || '',
         })),
       }));
 
@@ -227,19 +218,22 @@ export function createPetHealthStatus({ petData }, bookingId) {
 
     try {
       petData.map(async (data) => {
-        await axios.post('/api/pethealthhistorys', {
-          isUpdatePet: true,
-          createPetHealthHistoryParameter: {
-            petId: data.id,
-            weight: data.weight,
-            height: data.height,
-            length: data.length,
-            description: data.description,
-            centerName: 'Runolfsson-Dickens',
-            bookingId,
-          },
+        data.petBookingDetails.map(async (pet) => {
+          await axios.post('/api/pethealthhistories', {
+            isUpdatePet: true,
+            createPetHealthHistoryParameter: {
+              petId: pet.id,
+              bookingId,
+              weight: pet.weight,
+              height: pet.height,
+              length: pet.length,
+              description: pet.description,
+              centerName: 'Runolfsson-Dickens',
+            },
+          });
         });
       });
+
       dispatch(slice.actions.createPetHealthDataSuccess());
     } catch (error) {
       dispatch(slice.actions.hasError(error));

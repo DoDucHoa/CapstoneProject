@@ -55,24 +55,6 @@ export default function Calendar() {
     }
   }, [isDesktop]);
 
-  const handleClickToday = () => {
-    const calendarEl = calendarRef.current;
-    if (calendarEl) {
-      const calendarApi = calendarEl.getApi();
-      calendarApi.today();
-      setDate(calendarApi.getDate());
-    }
-  };
-
-  const handleChangeView = (newView) => {
-    const calendarEl = calendarRef.current;
-    if (calendarEl) {
-      const calendarApi = calendarEl.getApi();
-      calendarApi.changeView(newView);
-      setView(newView);
-    }
-  };
-
   const handleClickDatePrev = () => {
     const calendarEl = calendarRef.current;
     if (calendarEl) {
@@ -108,14 +90,7 @@ export default function Calendar() {
         />
         <Card>
           <CalendarStyle>
-            <CalendarToolbar
-              date={date}
-              view={view}
-              onNextDate={handleClickDateNext}
-              onPrevDate={handleClickDatePrev}
-              onToday={handleClickToday}
-              onChangeView={handleChangeView}
-            />
+            <CalendarToolbar date={date} onNextDate={handleClickDateNext} onPrevDate={handleClickDatePrev} />
             <FullCalendar
               weekends
               defaultAllDay
@@ -136,7 +111,7 @@ export default function Calendar() {
         </Card>
 
         <DialogAnimate open={isOpenModal} onClose={handleCloseModal}>
-          {/* <DialogTitle>Khách hàng: {isEmpty(bookingDetails) ? '' : bookingDetails.customer.name}</DialogTitle> */}
+          <DialogTitle>Khách hàng: {isEmpty(bookingDetails) ? '' : bookingDetails.customer.name}</DialogTitle>
           <CalendarForm
             selectedEvent={bookingDetails || {}}
             onCancel={handleCloseModal}
