@@ -25,7 +25,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("center/{id}")]
-        public IActionResult GetCageTypes(int id, PagingParameter paging)
+        public IActionResult GetCageTypes(int id, [FromQuery] PagingParameter paging)
         {
             var data = _cageTypeService.GetCageTypes(id, paging);
             var metadata = new
@@ -40,12 +40,14 @@ namespace PawNClaw.API.Controllers
             return Ok(new { data, metadata });
         }
 
-        [HttpGet("staff-booking")]
+        [HttpPost("staff-booking")]
         [Authorize(Roles = "Owner,Staff")]
-        public IActionResult GetCageTypeValidPetSizeAndBookingTime([FromBody] List<PetRequestForSearchCenter> listPets,
-            string StartBooking, string EndBooking, int CenterId)
+        public IActionResult GetCageTypeValidPetSizeAndBookingTime([FromBody] RequestCageTypeForBookingParameter requestCageTypeForBookingParameter)
         {
-            var data = _cageTypeService.GetCageTypeWithCageValidPetSizeAndBookingTime(CenterId, listPets, StartBooking, EndBooking);
+            var data = _cageTypeService.GetCageTypeWithCageValidPetSizeAndBookingTime(requestCageTypeForBookingParameter.CenterId, 
+                requestCageTypeForBookingParameter.listPets, 
+                requestCageTypeForBookingParameter.StartBooking, 
+                requestCageTypeForBookingParameter.EndBooking);
 
             return Ok(data);
         }

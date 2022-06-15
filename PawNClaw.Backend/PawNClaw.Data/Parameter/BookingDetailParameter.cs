@@ -16,7 +16,6 @@ namespace PawNClaw.Data.Parameter
         public int Line { get; set; }
         public decimal Price { get; set; }
         public string CageCode { get; set; }
-        public decimal Duration { get; set; }
         public string Note { get; set; }
     }
 }
