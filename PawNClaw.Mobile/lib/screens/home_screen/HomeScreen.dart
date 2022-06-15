@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
+import 'package:iconsax/iconsax.dart';
 
 import 'components/home_body.dart';
 import 'components/welcome_panel.dart';
@@ -61,17 +63,17 @@ class _HomeScreenState extends State<HomeScreen> {
               items: const [
                 BottomNavigationBarItem(
                     icon: Icon(
-                      Icons.home,
+                      Iconsax.home5,
                     ),
                     label: ""),
                 BottomNavigationBarItem(
                     icon: Icon(
-                      Icons.message,
+                      Iconsax.message5,
                     ),
                     label: ""),
                 BottomNavigationBarItem(
                     icon: Icon(
-                      Icons.person,
+                      Icons.person_rounded,
                     ),
                     label: ""),
               ],
