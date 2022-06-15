@@ -127,27 +127,6 @@ function AuthProvider({ children }) {
     }
   }, [dispatch]);
 
-  const getBackendToken = async (idToken, signInMethod) => {
-    try {
-      const response = await axios.post('/api/auth/sign-in', {
-        idToken,
-        signInMethod,
-      });
-
-      if (response.statusText === 'OK') {
-        const { jwtToken, ...userData } = response.data;
-        console.log('jwtToken: ', jwtToken);
-        setSession(jwtToken);
-        setAccountInfoSession(JSON.stringify(userData));
-        return userData;
-      }
-      return null;
-    } catch (error) {
-      console.log('error: ', error);
-      return null;
-    }
-  };
-
   const login = async (email, password) => {
     const userCredentials = await signInWithEmailAndPassword(AUTH, email, password);
 
@@ -210,3 +189,24 @@ function AuthProvider({ children }) {
 }
 
 export { AuthContext, AuthProvider };
+
+const getBackendToken = async (idToken, signInMethod) => {
+  try {
+    const response = await axios.post('/api/auth/sign-in', {
+      idToken,
+      signInMethod,
+    });
+
+    if (response.statusText === 'OK') {
+      const { jwtToken, ...userData } = response.data;
+      console.log('jwtToken: ', jwtToken);
+      setSession(jwtToken);
+      setAccountInfoSession(JSON.stringify(userData));
+      return userData;
+    }
+    return null;
+  } catch (error) {
+    console.log('error: ', error);
+    return null;
+  }
+};
