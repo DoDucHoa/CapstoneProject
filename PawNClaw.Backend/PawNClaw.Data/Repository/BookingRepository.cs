@@ -187,6 +187,7 @@ namespace PawNClaw.Data.Repository
                     },
                     Status = new BookingStatus
                     {
+                        Id = x.Status.Id,
                         Name = x.Status.Name
                     },
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
@@ -296,6 +297,7 @@ namespace PawNClaw.Data.Repository
                     },
                     Status = new BookingStatus
                     {
+                        Id = x.Status.Id,
                         Name = x.Status.Name
                     },
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
