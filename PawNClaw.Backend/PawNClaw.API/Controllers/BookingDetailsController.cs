@@ -51,11 +51,11 @@ namespace PawNClaw.API.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Owner,Staff")]
-        public IActionResult UpdateCageBookingDetail( [FromBody] UpdateBookingDetailParameter updateBookingDetailParameter)
+        public async Task<ActionResult> UpdateCageBookingDetail( [FromBody] UpdateBookingDetailParameter updateBookingDetailParameter)
         {
             try
             {
-                var data = _bookingDetailService.UpdateCageOfBookingDetail(updateBookingDetailParameter);
+                var data = await _bookingDetailService.UpdateCageOfBookingDetail(updateBookingDetailParameter);
 
                 return Ok();
             }
