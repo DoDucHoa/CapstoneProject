@@ -12,6 +12,7 @@ namespace PawNClaw.Data.Database
     {
         public Supply()
         {
+            BookingActivities = new HashSet<BookingActivity>();
             SupplyOrders = new HashSet<SupplyOrder>();
         }
 
@@ -57,6 +58,8 @@ namespace PawNClaw.Data.Database
         [ForeignKey(nameof(SupplyTypeCode))]
         [InverseProperty(nameof(SupplyType.Supplies))]
         public virtual SupplyType SupplyTypeCodeNavigation { get; set; }
+        [InverseProperty(nameof(BookingActivity.Supply))]
+        public virtual ICollection<BookingActivity> BookingActivities { get; set; }
         [InverseProperty(nameof(SupplyOrder.Supply))]
         public virtual ICollection<SupplyOrder> SupplyOrders { get; set; }
     }
