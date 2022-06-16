@@ -12,6 +12,7 @@ namespace PawNClaw.Data.Database
     {
         public Service()
         {
+            BookingActivities = new HashSet<BookingActivity>();
             ServiceOrders = new HashSet<ServiceOrder>();
             ServicePrices = new HashSet<ServicePrice>();
         }
@@ -49,6 +50,8 @@ namespace PawNClaw.Data.Database
         [ForeignKey(nameof(ModifyUser))]
         [InverseProperty(nameof(Staff.ServiceModifyUserNavigations))]
         public virtual Staff ModifyUserNavigation { get; set; }
+        [InverseProperty(nameof(BookingActivity.Service))]
+        public virtual ICollection<BookingActivity> BookingActivities { get; set; }
         [InverseProperty(nameof(ServiceOrder.Service))]
         public virtual ICollection<ServiceOrder> ServiceOrders { get; set; }
         [InverseProperty(nameof(ServicePrice.Service))]

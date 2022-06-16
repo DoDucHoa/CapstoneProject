@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace PawNClaw.Data.Interface
 {
-    public interface IPhotoRepository : IRepository<Photo>
+    public interface IBookingActivityRepository : IRepository<BookingActivity>
     {
-        public void CreatePhotos(CreatePhotoParameter createPhotoParameter);
+        public void CreateBookingAcivities(CreateBookingActivityParameter createBookingActivityParameter);
     }
 }

@@ -20,6 +20,7 @@ namespace PawNClaw.Data.Database
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<Admin> Admins { get; set; }
         public virtual DbSet<Booking> Bookings { get; set; }
+        public virtual DbSet<BookingActivity> BookingActivities { get; set; }
         public virtual DbSet<BookingDetail> BookingDetails { get; set; }
         public virtual DbSet<BookingStatus> BookingStatuses { get; set; }
         public virtual DbSet<Brand> Brands { get; set; }
@@ -120,6 +121,37 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.VoucherCode)
                     .HasConstraintName("FK__Bookings__vouche__690797E6");
+            });
+
+            modelBuilder.Entity<BookingActivity>(entity =>
+            {
+                entity.Property(e => e.ProvideTime).HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.Booking)
+                    .WithMany(p => p.BookingActivities)
+                    .HasForeignKey(d => d.BookingId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__BookingAc__booki__38EE7070");
+
+                entity.HasOne(d => d.Pet)
+                    .WithMany(p => p.BookingActivities)
+                    .HasForeignKey(d => d.PetId)
+                    .HasConstraintName("FK__BookingAc__pet_i__3AD6B8E2");
+
+                entity.HasOne(d => d.Service)
+                    .WithMany(p => p.BookingActivities)
+                    .HasForeignKey(d => d.ServiceId)
+                    .HasConstraintName("FK__BookingAc__servi__3CBF0154");
+
+                entity.HasOne(d => d.Supply)
+                    .WithMany(p => p.BookingActivities)
+                    .HasForeignKey(d => d.SupplyId)
+                    .HasConstraintName("FK__BookingAc__suppl__3BCADD1B");
+
+                entity.HasOne(d => d.BookingDetail)
+                    .WithMany(p => p.BookingActivities)
+                    .HasForeignKey(d => new { d.BookingId, d.Line })
+                    .HasConstraintName("FK__BookingActivitie__39E294A9");
             });
 
             modelBuilder.Entity<BookingDetail>(entity =>

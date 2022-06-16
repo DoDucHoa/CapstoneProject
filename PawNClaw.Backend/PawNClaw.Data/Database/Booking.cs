@@ -12,6 +12,7 @@ namespace PawNClaw.Data.Database
     {
         public Booking()
         {
+            BookingActivities = new HashSet<BookingActivity>();
             BookingDetails = new HashSet<BookingDetail>();
             PetHealthHistories = new HashSet<PetHealthHistory>();
             ServiceOrders = new HashSet<ServiceOrder>();
@@ -74,6 +75,8 @@ namespace PawNClaw.Data.Database
         public virtual Voucher VoucherCodeNavigation { get; set; }
         [InverseProperty("IdNavigation")]
         public virtual GeneralLedger GeneralLedger { get; set; }
+        [InverseProperty(nameof(BookingActivity.Booking))]
+        public virtual ICollection<BookingActivity> BookingActivities { get; set; }
         [InverseProperty(nameof(BookingDetail.Booking))]
         public virtual ICollection<BookingDetail> BookingDetails { get; set; }
         [InverseProperty(nameof(PetHealthHistory.Booking))]
