@@ -14,9 +14,12 @@ namespace PawNClaw.Data.Repository
     {
         private readonly ApplicationDbContext _db;
 
-        public BookingRepository(ApplicationDbContext db) : base(db)
+        PhotoRepository _photoRepository;
+
+        public BookingRepository(ApplicationDbContext db, PhotoRepository photoRepository) : base(db)
         {
             _db = db;
+            _photoRepository = photoRepository;
         }
 
         public IEnumerable<Booking> GetBookingValidSearch(int Id, DateTime _startBooking, DateTime _endBooking)
@@ -190,6 +193,19 @@ namespace PawNClaw.Data.Repository
                         Id = x.Status.Id,
                         Name = x.Status.Name
                     },
+                    BookingActivities = (ICollection<BookingActivity>)x.BookingActivities
+                    .Select(bookingact => new BookingActivity
+                    {
+                        Id = bookingact.Id,
+                        ProvideTime = bookingact.ProvideTime,
+                        Description = bookingact.Description,
+                        BookingId = bookingact.BookingId,
+                        Line = bookingact.Line,
+                        PetId = bookingact.PetId,
+                        SupplyId = bookingact.SupplyId,
+                        ServiceId = bookingact.ServiceId,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, 1)
+                    }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
                     TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
                 })
@@ -300,6 +316,19 @@ namespace PawNClaw.Data.Repository
                         Id = x.Status.Id,
                         Name = x.Status.Name
                     },
+                    BookingActivities = (ICollection<BookingActivity>)x.BookingActivities
+                    .Select(bookingact => new BookingActivity
+                    {
+                        Id = bookingact.Id,
+                        ProvideTime = bookingact.ProvideTime,
+                        Description = bookingact.Description,
+                        BookingId = bookingact.BookingId,
+                        Line = bookingact.Line,
+                        PetId = bookingact.PetId,
+                        SupplyId = bookingact.SupplyId,
+                        ServiceId = bookingact.ServiceId,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, 1)
+                    }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
                     TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
                 })
