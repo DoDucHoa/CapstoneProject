@@ -32,5 +32,12 @@ namespace PawNClaw.Data.Repository
             _dbSet.Add(photo);
 
         }
+
+        public IEnumerable<Photo> GetPhotosByIdActorAndPhotoType(int IdActor, int PhotoType)
+        {
+            IQueryable<Photo> query = _dbSet.Where(x => x.IdActor == IdActor && x.PhotoTypeId == PhotoType && x.Status == true);
+
+            return query.ToList();
+        }
     }
 }

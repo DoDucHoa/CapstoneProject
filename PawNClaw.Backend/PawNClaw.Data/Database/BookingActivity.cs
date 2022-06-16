@@ -44,5 +44,8 @@ namespace PawNClaw.Data.Database
         [ForeignKey(nameof(SupplyId))]
         [InverseProperty("BookingActivities")]
         public virtual Supply Supply { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }
