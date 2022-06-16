@@ -84,6 +84,9 @@ namespace PawNClaw.API
             services.AddTransient<IBookingRepository, BookingRepository>();
             services.AddTransient<BookingService, BookingService>();
 
+            services.AddTransient<IBookingActivityRepository, BookingActivityRepository>();
+            services.AddTransient<BookingActivityService, BookingActivityService>();
+
             services.AddTransient<IBookingStatusRepository, BookingStatusRepository>();
             services.AddTransient<BookingStatusService, BookingStatusService>();
 
