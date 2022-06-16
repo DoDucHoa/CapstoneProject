@@ -391,8 +391,11 @@ namespace PawNClaw.Data.Repository
                     Center = x.Center,
                     Status = new BookingStatus
                     {
+                        Id = x.Status.Id,
                         Name = x.Status.Name
-                    }
+                    },
+                    TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
+                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
                 })
                 .Where(x => x.CustomerId == CustomerId);
 
