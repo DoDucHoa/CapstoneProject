@@ -22,7 +22,7 @@ namespace PawNClaw.Data.Repository
         {
             Photo photo = new Photo();
             photo.PhotoTypeId = createPhotoParameter.PhotoTypeId;
-            photo.IdActor = createPhotoParameter.IdActor;
+            photo.IdActor = (int)createPhotoParameter.IdActor;
             photo.Line = _dbSet.Where(x => x.PhotoTypeId == createPhotoParameter.PhotoTypeId
                                     && x.IdActor == createPhotoParameter.IdActor).Count() + 1;
             photo.Url = createPhotoParameter.Url;

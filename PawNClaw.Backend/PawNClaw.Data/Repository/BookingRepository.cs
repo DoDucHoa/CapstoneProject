@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PawNClaw.Data.Const;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
@@ -204,7 +205,7 @@ namespace PawNClaw.Data.Repository
                         PetId = bookingact.PetId,
                         SupplyId = bookingact.SupplyId,
                         ServiceId = bookingact.ServiceId,
-                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, 1)
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
                     TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
@@ -327,7 +328,7 @@ namespace PawNClaw.Data.Repository
                         PetId = bookingact.PetId,
                         SupplyId = bookingact.SupplyId,
                         ServiceId = bookingact.ServiceId,
-                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, 1)
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
                     TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
