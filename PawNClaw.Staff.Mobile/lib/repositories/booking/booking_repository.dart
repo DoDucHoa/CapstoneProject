@@ -19,12 +19,12 @@ class BookingRepository implements BaseBookingRepository {
       var response = await _dio.get(
         _url,
       );
+      print(response.data);
       final bookings =
           response.data.map<Booking>((e) => Booking.fromJson(e)).toList();
-      print(bookings);
       return bookings;
     } on DioError catch (e) {
-      print(e.response!.data);
+      print(e.response?.data);
       throw Exception(e);
     }
   }

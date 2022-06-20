@@ -43,8 +43,9 @@ dependencies:
   flutter_snake_navigationbar: ^0.6.1
   shared_preferences: ^2.0.15
   firebase_storage: ^10.2.17
-  file_picker: ^4.6.1
   image_picker: ^0.8.5+3
+  connectivity_plus: ^2.3.4
+  percent_indicator: ^4.2.2
   
 dev_dependencies:
   flutter_test:

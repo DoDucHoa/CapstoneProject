@@ -10,6 +10,7 @@ class BookingDetail {
   List<BookingDetails>? bookingDetails;
   List<ServiceOrders>? serviceOrders;
   List<SupplyOrders>? supplyOrders;
+  List<BookingActivities>? bookingActivities;
 
   BookingDetail(
       {this.id,
@@ -20,7 +21,8 @@ class BookingDetail {
       this.customer,
       this.bookingDetails,
       this.serviceOrders,
-      this.supplyOrders});
+      this.supplyOrders,
+      this.bookingActivities});
 
   BookingDetail.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -42,13 +44,22 @@ class BookingDetail {
       json['serviceOrders'].forEach((v) {
         serviceOrders!.add(new ServiceOrders.fromJson(v));
       });
-    }
+    } else
+      serviceOrders = [];
     if (json['supplyOrders'] != null) {
       supplyOrders = <SupplyOrders>[];
       json['supplyOrders'].forEach((v) {
         supplyOrders!.add(new SupplyOrders.fromJson(v));
       });
-    }
+    } else
+      supplyOrders = [];
+    if (json['bookingActivities'] != null) {
+      bookingActivities = <BookingActivities>[];
+      json['bookingActivities'].forEach((v) {
+        bookingActivities!.add(new BookingActivities.fromJson(v));
+      });
+    } else
+      bookingActivities = [];
   }
 
   Map<String, dynamic> toJson() {
@@ -69,7 +80,97 @@ class BookingDetail {
     if (this.supplyOrders != null) {
       data['supplyOrders'] = this.supplyOrders!.map((v) => v.toJson()).toList();
     }
+    if (this.bookingActivities != null) {
+      data['bookingActivities'] =
+          this.bookingActivities!.map((v) => v.toJson()).toList();
+    }
     return data;
+  }
+
+  int getSupplyActivities() {
+    int count = 0;
+    this.supplyOrders!.forEach((element) {
+      count += element.quantity!;
+    });
+
+    return count;
+  }
+
+  int getServiceActivities() {
+    int count = 0;
+    this.serviceOrders!.forEach((element) {
+      count += element.quantity!;
+    });
+    return count;
+  }
+
+  int getTotalActivities() {
+    return this.getSupplyActivities() + this.getServiceActivities();
+  }
+
+  int getUndoneSupplyAct() {
+    int count = 0;
+    this.bookingActivities!.forEach((element) {
+      this.supplyOrders!.forEach((order) {
+        if (order.petId == element.petId &&
+            order.supply!.id == element.supplyId) {
+          count++;
+        }
+      });
+    });
+    return this.getSupplyActivities() - count;
+  }
+
+  int getRemainSupplyAct(SupplyOrders supply) {
+    int count = supply.quantity!;
+    this.bookingActivities!.forEach((element) {
+      if (element.supplyId == supply.supply!.id) {
+        count--;
+      }
+    });
+    return count;
+  }
+
+  int getRemainServiceAct(ServiceOrders service) {
+    int count = service.quantity!;
+    this.bookingActivities!.forEach((element) {
+      if (element.serviceId == service.service!.id) {
+        count--;
+      }
+    });
+    return count;
+  }
+
+  int getUndoneServiceAct() {
+    int count = 0;
+    this.bookingActivities!.forEach((element) {
+      this.serviceOrders!.forEach((order) {
+        if (order.petId == element.petId &&
+            order.service!.id == element.serviceId) {
+          count++;
+        }
+      });
+    });
+    return this.getSupplyActivities() - count;
+  }
+
+  int getDoneActivites() {
+    int count = 0;
+    this.bookingActivities!.forEach((element) {
+      this.supplyOrders?.forEach((order) {
+        if (order.petId == element.petId &&
+            order.supply?.id == element.supplyId) {
+          count++;
+        }
+      });
+      this.serviceOrders?.forEach((order) {
+        if (order.petId == element.petId &&
+            order.service?.id == element.serviceId) {
+          count++;
+        }
+      });
+    });
+    return count;
   }
 }
 
@@ -218,12 +319,12 @@ class PetBookingDetails {
 
 class ServiceOrders {
   // int? serviceId;
-  // int? bookingId;
+  int? bookingId;
   int? quantity;
   double? sellPrice;
   double? totalPrice;
   String? note;
-  // int? petId;
+  int? petId;
   // Null? booking;
   Pet? pet;
   Service? service;
@@ -231,24 +332,24 @@ class ServiceOrders {
   ServiceOrders(
       {
       // this.serviceId,
-      // this.bookingId,
+      this.bookingId,
       this.quantity,
       this.sellPrice,
       this.totalPrice,
       this.note,
-      // this.petId,
+      this.petId,
       // this.booking,
       this.pet,
       this.service});
 
   ServiceOrders.fromJson(Map<String, dynamic> json) {
     // serviceId = json['serviceId'];
-    // bookingId = json['bookingId'];
+    bookingId = json['bookingId'];
     quantity = json['quantity'];
     sellPrice = json['sellPrice'];
     totalPrice = json['totalPrice'];
     note = json['note'];
-    // petId = json['petId'];
+    petId = json['petId'];
     // booking = json['booking'];
     pet = json['pet'] != null ? new Pet.fromJson(json['pet']) : null;
     service =
@@ -258,7 +359,7 @@ class ServiceOrders {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     // data['serviceId'] = this.serviceId;
-    // data['bookingId'] = this.bookingId;
+    data['bookingId'] = this.bookingId;
     data['quantity'] = this.quantity;
     data['sellPrice'] = this.sellPrice;
     data['totalPrice'] = this.totalPrice;
@@ -367,12 +468,12 @@ class Service {
 
 class SupplyOrders {
   // int? supplyId;
-  // int? bookingId;
+  int? bookingId;
   int? quantity;
   double? sellPrice;
   double? totalPrice;
   String? note;
-  // int? petId;
+  int? petId;
   // Null? booking;
   Pet? pet;
   Supply? supply;
@@ -380,24 +481,24 @@ class SupplyOrders {
   SupplyOrders(
       {
       //   this.supplyId,
-      // this.bookingId,
+      this.bookingId,
       this.quantity,
       this.sellPrice,
       this.totalPrice,
       this.note,
-      // this.petId,
+      this.petId,
       // this.booking,
       this.pet,
       this.supply});
 
   SupplyOrders.fromJson(Map<String, dynamic> json) {
     // supplyId = json['supplyId'];
-    // bookingId = json['bookingId'];
+    bookingId = json['bookingId'];
     quantity = json['quantity'];
     sellPrice = json['sellPrice'];
     totalPrice = json['totalPrice'];
     note = json['note'];
-    // petId = json['petId'];
+    petId = json['petId'];
     // booking = json['booking'];
     pet = json['pet'] != null ? new Pet.fromJson(json['pet']) : null;
     supply =
@@ -508,6 +609,76 @@ class Supply {
     // data['supplyTypeCodeNavigation'] = this.supplyTypeCodeNavigation;
     // if (this.supplyOrders != null) {
     //   data['supplyOrders'] = this.supplyOrders!.map((v) => v.toJson()).toList();
+    // }
+    return data;
+  }
+}
+
+class BookingActivities {
+  int? id;
+  String? provideTime;
+  String? description;
+  int? bookingId;
+  int? line;
+  int? petId;
+  int? supplyId;
+  int? serviceId;
+  Pet? pet;
+  Service? service;
+  Supply? supply;
+  // List<Null>? photos;
+
+  BookingActivities({
+    this.id,
+    this.provideTime,
+    this.description,
+    this.bookingId,
+    this.line,
+    this.petId,
+    this.supplyId,
+    this.serviceId,
+    this.pet,
+    this.service,
+    this.supply,
+    // this.photos
+  });
+
+  BookingActivities.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    provideTime = json['provideTime'];
+    description = json['description'];
+    bookingId = json['bookingId'];
+    line = json['line'];
+    petId = json['petId'];
+    supplyId = json['supplyId'];
+    serviceId = json['serviceId'];
+    pet = json['pet'] != null ? Pet.fromJson(json['pet']) : null;
+    service =
+        json['service'] != null ? Service.fromJson(json['service']) : null;
+    supply = json['supply'] != null ? Supply.fromJson(json['supply']) : null;
+    // if (json['photos'] != null) {
+    //   photos = <Null>[];
+    //   json['photos'].forEach((v) {
+    //     photos!.add(new Null.fromJson(v));
+    //   });
+    // }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['provideTime'] = this.provideTime;
+    data['description'] = this.description;
+    data['bookingId'] = this.bookingId;
+    data['line'] = this.line;
+    data['petId'] = this.petId;
+    data['supplyId'] = this.supplyId;
+    data['serviceId'] = this.serviceId;
+    data['pet'] = this.pet;
+    data['service'] = this.service;
+    data['supply'] = this.supply;
+    // if (this.photos != null) {
+    //   data['photos'] = this.photos!.map((v) => v.toJson()).toList();
     // }
     return data;
   }

@@ -1,3 +1,4 @@
+import 'booking_detail.dart';
 import 'pet.dart';
 import 'package:intl/intl.dart';
 
@@ -20,6 +21,8 @@ class Booking {
   // String? staffNote;
   // Null? center;
   Customer? customer;
+  double? totalSupply;
+  double? totalService;
   // Null? status;
   // Null? voucherCodeNavigation;
   // Null? generalLedger;
@@ -47,6 +50,8 @@ class Booking {
     // this.staffNote,
     // this.center,
     this.customer,
+    this.totalSupply,
+    this.totalService,
     // this.status,
     // this.voucherCodeNavigation,
     // this.generalLedger,
@@ -77,6 +82,8 @@ class Booking {
     customer = json['customer'] != null
         ? new Customer.fromJson(json['customer'])
         : null;
+    totalSupply = json['totalSupply'];
+    totalService = json['totalService'];
     // status = json['status'];
     // voucherCodeNavigation = json['voucherCodeNavigation'];
     // generalLedger = json['generalLedger'];
@@ -216,101 +223,6 @@ class Customer {
     // if (this.pets != null) {
     //   data['pets'] = this.pets!.map((v) => v.toJson()).toList();
     // }
-    return data;
-  }
-}
-
-class BookingDetails {
-  // int? bookingId;
-  int? line;
-  // int? price;
-  // String? cageCode;
-  // int? centerId;
-  // int? duration;
-  // Null? note;
-  // Null? booking;
-  // Null? c;
-  List<PetBookingDetails>? petBookingDetails;
-
-  BookingDetails(
-      {
-      // this.bookingId,
-      this.line,
-      // this.price,
-      // this.cageCode,
-      // this.centerId,
-      // this.duration,
-      // this.note,
-      // this.booking,
-      // this.c,
-      this.petBookingDetails});
-
-  BookingDetails.fromJson(Map<String, dynamic> json) {
-    // bookingId = json['bookingId'];
-    line = json['line'];
-    // price = json['price'];
-    // cageCode = json['cageCode'];
-    // centerId = json['centerId'];
-    // duration = json['duration'];
-    // note = json['note'];
-    // booking = json['booking'];
-    // c = json['c'];
-    if (json['petBookingDetails'] != null) {
-      petBookingDetails = <PetBookingDetails>[];
-      json['petBookingDetails'].forEach((v) {
-        petBookingDetails!.add(new PetBookingDetails.fromJson(v));
-      });
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    // data['bookingId'] = this.bookingId;
-    data['line'] = this.line;
-    // data['price'] = this.price;
-    // data['cageCode'] = this.cageCode;
-    // data['centerId'] = this.centerId;
-    // data['duration'] = this.duration;
-    // data['note'] = this.note;
-    // data['booking'] = this.booking;
-    // data['c'] = this.c;
-    if (this.petBookingDetails != null) {
-      data['petBookingDetails'] =
-          this.petBookingDetails!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
-}
-
-class PetBookingDetails {
-  // int? bookingId;
-  // int? line;
-  // int? petId;
-  // Null? bookingDetail;
-  Pet? pet;
-
-  PetBookingDetails(
-      {
-      // this.bookingId, this.line, this.petId, this.bookingDetail,
-      this.pet});
-
-  PetBookingDetails.fromJson(Map<String, dynamic> json) {
-    // bookingId = json['bookingId'];
-    // line = json['line'];
-    // petId = json['petId'];
-    // bookingDetail = json['bookingDetail'];
-    pet = json['pet'] != null ? new Pet.fromJson(json['pet']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    // data['bookingId'] = this.bookingId;
-    // data['line'] = this.line;
-    // data['petId'] = this.petId;
-    // data['bookingDetail'] = this.bookingDetail;
-    if (this.pet != null) {
-      data['pet'] = this.pet!.toJson();
-    }
     return data;
   }
 }
