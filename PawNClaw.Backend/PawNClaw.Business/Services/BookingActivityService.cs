@@ -29,14 +29,25 @@ namespace PawNClaw.Business.Services
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
+
+                BookingActivity bookingActivity = new BookingActivity();
+                bookingActivity.ProvideTime = createBookingActivityControllerParameter.createBookingActivityParameter.ProvideTime;
+                bookingActivity.Description = createBookingActivityControllerParameter.createBookingActivityParameter.Description;
+                bookingActivity.BookingId = createBookingActivityControllerParameter.createBookingActivityParameter.BookingId;
+                bookingActivity.Line = createBookingActivityControllerParameter.createBookingActivityParameter.Line;
+                bookingActivity.PetId = createBookingActivityControllerParameter.createBookingActivityParameter.PetId;
+                bookingActivity.SupplyId = createBookingActivityControllerParameter.createBookingActivityParameter.SupplyId;
+                bookingActivity.ServiceId = createBookingActivityControllerParameter.createBookingActivityParameter.ServiceId;
+
                 try
                 {
-                    var id = _bookingActivityRepository.CreateBookingAcivities(createBookingActivityControllerParameter.createBookingActivityParameter);
+                    _bookingActivityRepository.Add(bookingActivity);
+                    await _bookingActivityRepository.SaveDbChangeAsync();
 
-                    createBookingActivityControllerParameter.createPhotoParameter.IdActor = id;
+                    createBookingActivityControllerParameter.createPhotoParameter.IdActor = bookingActivity.Id;
 
                     _photoRepository.CreatePhotos(createBookingActivityControllerParameter.createPhotoParameter);
-                    await _bookingActivityRepository.SaveDbChangeAsync();
+                    
                     await _photoRepository.SaveDbChangeAsync();
 
                     transaction.Commit();
