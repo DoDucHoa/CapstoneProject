@@ -31,7 +31,10 @@ namespace PawNClaw.Business.Services
             {
                 try
                 {
-                    _bookingActivityRepository.CreateBookingAcivities(createBookingActivityControllerParameter.createBookingActivityParameter);
+                    var id = _bookingActivityRepository.CreateBookingAcivities(createBookingActivityControllerParameter.createBookingActivityParameter);
+
+                    createBookingActivityControllerParameter.createPhotoParameter.IdActor = id;
+
                     _photoRepository.CreatePhotos(createBookingActivityControllerParameter.createPhotoParameter);
                     await _bookingActivityRepository.SaveDbChangeAsync();
                     await _photoRepository.SaveDbChangeAsync();
