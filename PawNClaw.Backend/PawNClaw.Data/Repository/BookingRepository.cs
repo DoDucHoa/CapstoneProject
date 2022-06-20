@@ -387,6 +387,8 @@ namespace PawNClaw.Data.Repository
                             }
                         })
                     }),
+                    TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
+                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
                 })
                 .Where(x => x.CenterId == CenterId);
 
