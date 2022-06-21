@@ -69,8 +69,11 @@ namespace PawNClaw.Business.Services
                     {
                         if (_priceRepository.GetAll(x => x.CageTypeId == cageType.Id && x.PriceTypeCode == createPriceParameter.PriceTypeCode && x.Status == true).Count() > 0)
                         {
-                            transaction.Rollback();
-                            throw new Exception("Duplicate Price");
+                            if (!createPriceParameter.PriceTypeCode.Equals("PRICE-004"))
+                            {
+                                transaction.Rollback();
+                                throw new Exception("Duplicate Price");
+                            }
                         }
                         if (createPriceParameter.PriceTypeCode.Equals("PRICE-001"))
                         {
