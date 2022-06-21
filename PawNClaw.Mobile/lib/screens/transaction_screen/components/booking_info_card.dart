@@ -228,7 +228,7 @@ class BookingInfoCard extends StatelessWidget {
                                               children: [
                                                 Text(
                                                   'Chi phí trên được tính theo dự kiến, có thể thay đổi trong quá trình trung tâm cung cấp dịch vụ.',
-                                                  textAlign: TextAlign.center,
+                                                  textAlign: TextAlign.justify,
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.w700),
@@ -241,7 +241,7 @@ class BookingInfoCard extends StatelessWidget {
                                                       Navigator.of(context)
                                                           .pop();
                                                     },
-                                                    child: Text('Đóng'))
+                                                    child: Container(width: width*(0.5 - 2*extraSmallPadRate),child: Center(child: Text('Đóng'))))
                                               ],
                                             ),
                                           ),

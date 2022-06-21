@@ -13,6 +13,7 @@ import 'package:pawnclaw_mobile_application/models/booking.dart';
 import 'package:pawnclaw_mobile_application/models/transaction_details.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/components/booking_cage_card.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/components/booking_info_card.dart';
+import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/activity_list_screen.dart';
 
 import '../components/booking_item_card.dart';
 
@@ -29,18 +30,16 @@ class TransactionDetailsScreen extends StatefulWidget {
 
 class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
   int currentstatus = 0;
-  int maxStep = 4;
+  int maxStep = 3;
   List<String> STATUSLIST = [
     'Đặt lịch thành công',
-    'Đã check-in tại trung tâm',
     'Đang tiến hành',
     'Hoàn thành',
     'Hủy'
   ];
   List<String> STATUSDESCRIPTIONS = [
     'Hãy đến trung tâm đúng giờ bạn nhé.',
-    'Trung tâm đang tiến hành kiểm tra sức khỏe thú cưng.',
-    'Trung tâm đang chăm sóc thú cưng của bạn.',
+    'Trung tâm đang chăm sóc thú cưng.',
     'Hãy để lại đánh giá cho trung tâm nhé!',
     'Đơn hàng đã bị Hủy'
   ];
@@ -67,7 +66,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
     double width = size.width;
     double height = size.height;
 
-    int statusId = modifiedStatus(booking);
+    int statusId = booking.statusId! - 1; //modifiedStatus(booking);
 
     return BlocProvider(
         create: (context) =>
@@ -89,6 +88,21 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                         Navigator.pop(context);
                       },
                     ),
+                    actions: [
+                      TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            booking.status == 3
+                                ? booking.rating != null
+                                    ? "Đã đánh giá"
+                                    : "Đánh giá"
+                                : '',
+                            style: TextStyle(
+                                color: booking.rating != null
+                                    ? lightFontColor
+                                    : primaryColor),
+                          ))
+                    ],
                   ),
                   body: SingleChildScrollView(
                       child: Column(
@@ -274,13 +288,13 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                           details: state.transactionDetails,
                         ),
                         Container(
-                            height: width + 20,
+                            height: width * (1 - regularPadRate),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
                                     margin:
-                                        EdgeInsets.only(top: lineLength - 18),
+                                        EdgeInsets.only(top: lineLength - 20),
                                     child: IconStepper(
                                       icons: buildIcon(statusId),
                                       // onStepReached: (index) => setState(() {
@@ -302,7 +316,8 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                                       lineDotRadius: 0.7,
                                       stepReachedAnimationEffect: Curves.easeIn,
                                     )),
-                                buildStatusCard(statusId, width),
+                                buildStatusCard(statusId, width,
+                                    state.transactionDetails, booking),
                                 //     Stepper(
                                 //       onStepTapped: (value) => setState(() {
                                 //         currentstatus = value;
@@ -353,7 +368,6 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                                 )
                               ]),
                         ),
-                        
                         buildPetCards(state, size, booking),
                         buildSeperator(size)
                       ])))
@@ -370,54 +384,58 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
     List<Pet> pets = state.transactionDetails.getPets();
     bool ifAnyPetHaveItems = false;
     for (var pet in pets) {
-      if (state.transactionDetails.haveItems(pet))
-      {
+      if (state.transactionDetails.haveItems(pet)) {
         ifAnyPetHaveItems = true;
         break;
       }
     }
-    return (ifAnyPetHaveItems)? Column(
-      children: [
-        buildSeperator(size),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: height * extraSmallPadRate),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            
-            Text(
-              "THÚ CƯNG",
-              style: TextStyle(
-                color: primaryFontColor,
-                fontWeight: FontWeight.w600,
-                fontSize: width * regularFontRate,
+    return (ifAnyPetHaveItems)
+        ? Column(
+            children: [
+              buildSeperator(size),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: height * extraSmallPadRate),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "THÚ CƯNG",
+                        style: TextStyle(
+                          color: primaryFontColor,
+                          fontWeight: FontWeight.w600,
+                          fontSize: width * regularFontRate,
+                        ),
+                      ),
+                      ListView.separated(
+                        itemBuilder: (context, index) {
+                          Pet pet = state.transactionDetails.getPets()[index];
+                          if (state.transactionDetails.haveItems(pet))
+                            return BookingItemCard(
+                                booking: booking,
+                                pet: pet,
+                                details: state.transactionDetails);
+                          return Container();
+                        },
+                        itemCount: state.transactionDetails.getPets().length,
+                        separatorBuilder: (BuildContext context, int index) =>
+                            SizedBox(
+                          height: 8,
+                        ),
+                        physics: ClampingScrollPhysics(),
+                        shrinkWrap: true,
+                      )
+                    ]),
               ),
-            ),
-            ListView.separated(
-              itemBuilder: (context, index) {
-                Pet pet = state.transactionDetails.getPets()[index];
-                if (state.transactionDetails.haveItems(pet))
-                  return BookingItemCard(
-                      booking: booking,
-                      pet: pet,
-                      details: state.transactionDetails);
-                return Container();
-              },
-              itemCount: state.transactionDetails.getPets().length,
-              separatorBuilder: (BuildContext context, int index) => SizedBox(
-                height: 8,
-              ),
-              physics: ClampingScrollPhysics(),
-              shrinkWrap: true,
-            )
-          ]),
-        ),
-      ],
-    ):Container();
+            ],
+          )
+        : Container();
   }
 
   List<Icon> buildIcon(int activeIndex) {
     List<Icon> iconList = [];
     for (var i = 0; i < maxStep; i++) {
-      if (activeIndex < 4) {
+      if (activeIndex < 3) {
         if (i == activeIndex)
           iconList.add(Icon(
             Icons.check_circle,
@@ -436,9 +454,10 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
     return iconList;
   }
 
-  Widget buildStatusCard(int activeIndex, double width) {
+  Widget buildStatusCard(int activeIndex, double width,
+      TransactionDetails transaction, Booking booking) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      if (activeIndex > 0 && activeIndex < 4)
+      if (activeIndex > 0 && activeIndex < 3)
         Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: buildPreStatusCard(activeIndex, width)),
@@ -446,7 +465,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
         padding: EdgeInsets.only(top: 10),
         //margin: EdgeInsets.only(top: lineLength),
         child: Container(
-            height: width / 4,
+            height: width / 3.3,
             padding: EdgeInsets.all(15),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -465,7 +484,48 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                         style: TextStyle(
                             fontWeight: FontWeight.w700,
                             color: lightFontColor,
-                            fontSize: 13)))
+                            fontSize: 13))),
+                SizedBox(
+                  height: 7,
+                ),
+                Container(
+                    width: width * (1 - mediumPadRate * 3 - regularPadRate),
+                    height: width * (1 / 3.5 / 3 - extraSmallPadRate),
+                    child: Row(
+                      children: [
+                        Expanded(child: SizedBox()),
+                        if (activeIndex > 0)
+                          ElevatedButton(
+                              onPressed: () {
+                                // print(transaction.bookingActivities);
+                                // print(booking);
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => ActivityListScreen(
+                                          transaction: transaction,
+                                          booking: booking,
+                                        )));
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15))),
+                              child: Text(
+                                'Xem hoạt động',
+                                style: TextStyle(
+                                    fontSize: 13, fontWeight: FontWeight.w600),
+                              ))
+                        else
+                          ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15))),
+                              child: Text(
+                                'Liên hệ trung tâm',
+                                style: TextStyle(
+                                    fontSize: 13, fontWeight: FontWeight.w600),
+                              ))
+                      ],
+                    ))
               ],
             )),
       )
@@ -479,7 +539,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
         width: width * (1 - mediumPadRate * 3 - regularPadRate),
         padding: EdgeInsets.only(
             top: lineLength,
-            bottom: lineLength - 18 - width * extraSmallPadRate),
+            bottom: lineLength - 20 - width * extraSmallPadRate),
         //margin: EdgeInsets.only(bottom:(lineLength*currentstatus)/2 - 18 - width*smallPadRate),
         child: Text(STATUSLIST[i],
             style: TextStyle(
