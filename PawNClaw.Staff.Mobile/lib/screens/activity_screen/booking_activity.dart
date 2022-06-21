@@ -394,12 +394,23 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                 decoration: BoxDecoration(
                                     color: lightPrimaryColor,
                                     borderRadius: BorderRadius.circular(20)),
-                                child: Text(
-                                  "Đã hoàn thành tất cả nhiệm vụ",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 15,
-                                      color: primaryColor),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Đã hoàn thành tất cả nhiệm vụ",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15,
+                                          color: primaryColor),
+                                    ),
+                                    Icon(
+                                      Icons.check,
+                                      color: primaryColor,
+                                      size: 15,
+                                    ),
+                                  ],
                                 ),
                               ),
                         Container(
