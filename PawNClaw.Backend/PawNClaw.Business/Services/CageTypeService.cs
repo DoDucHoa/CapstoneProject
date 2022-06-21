@@ -64,6 +64,7 @@ namespace PawNClaw.Business.Services
                     _cageTypeRepository.Add(cageType);
                     await _cageTypeRepository.SaveDbChangeAsync();
 
+                    bool CheckPrice = false;
                     foreach (var createPriceParameter in createPriceParameters)
                     {
                         if (_priceRepository.GetAll(x => x.CageTypeId == cageType.Id && x.PriceTypeCode == createPriceParameter.PriceTypeCode && x.Status == true).Count() > 0)
@@ -71,7 +72,10 @@ namespace PawNClaw.Business.Services
                             transaction.Rollback();
                             throw new Exception("Duplicate Price");
                         }
-
+                        if (createPriceParameter.PriceTypeCode.Equals("PRICE-001"))
+                        {
+                            CheckPrice = true;
+                        }
 
                         Price price = new Price();
                         price.UnitPrice = createPriceParameter.UnitPrice;
@@ -83,6 +87,12 @@ namespace PawNClaw.Business.Services
 
                         _priceRepository.Add(price);
                         await _priceRepository.SaveDbChangeAsync();
+                    }
+
+                    if (!CheckPrice)
+                    {
+                        transaction.Rollback();
+                        throw new Exception("Need Price Is - 'Giá Mặc Định' ");
                     }
 
                     transaction.Commit();
