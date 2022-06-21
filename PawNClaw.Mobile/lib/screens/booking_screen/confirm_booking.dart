@@ -418,7 +418,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                               children: [
                                                 Text(
                                                   'Chi phí trên được tính theo dự kiến, có thể thay đổi trong quá trình trung tâm cung cấp dịch vụ.',
-                                                  textAlign: TextAlign.center,
+                                                  textAlign: TextAlign.justify,
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.w700),

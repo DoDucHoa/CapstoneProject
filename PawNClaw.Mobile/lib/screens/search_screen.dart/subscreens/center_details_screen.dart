@@ -323,16 +323,16 @@ class _CenterDetailsState extends State<CenterDetails> {
                               bottom: TabBar(
                                 tabs: [
                                   Tab(
-                                    text: 'Facilities',
+                                    text: 'Phòng',
                                   ),
                                   Tab(
-                                    text: 'Supplies',
+                                    text: 'Đồ dùng',
                                   ),
                                   Tab(
-                                    text: 'Services',
+                                    text: 'Dịch vụ',
                                   ),
                                   Tab(
-                                    text: 'Reviews',
+                                    text: 'Đánh giá',
                                   ),
                                 ],
                                 labelColor: primaryColor,

@@ -65,7 +65,8 @@ namespace PawNClaw.Data.Repository
             .Where(cagetype => cagetype.Height >= petSize.Height
                 && cagetype.Width >= petSize.Width
                 && cagetype.CenterId == CenterId
-                && cagetype.IsSingle == petSize.IsSingle)
+                && cagetype.IsSingle == petSize.IsSingle
+                && cagetype.Status == true)
             .Include(catype => catype.Cages)
             .Select(cagetype => new CageType
             {
@@ -79,7 +80,8 @@ namespace PawNClaw.Data.Repository
                 Status = cagetype.Status,
                 CenterId = cagetype.CenterId,
                 TotalPrice = _priceRepository.checkTotalPriceOfCageType(cagetype.Id, StartBooking, EndBooking),
-                Cages = (ICollection<Cage>)cagetype.Cages.Where(cage => !cage.BookingDetails.Any(bookingdetail =>
+                Cages = (ICollection<Cage>)cagetype.Cages.Where(cage => cage.Status == true 
+                        && !cage.BookingDetails.Any(bookingdetail =>
                         ((DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
                         && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
                         ||

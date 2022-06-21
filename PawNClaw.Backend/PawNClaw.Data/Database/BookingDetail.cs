@@ -12,6 +12,7 @@ namespace PawNClaw.Data.Database
     {
         public BookingDetail()
         {
+            BookingActivities = new HashSet<BookingActivity>();
             PetBookingDetails = new HashSet<PetBookingDetail>();
         }
 
@@ -41,6 +42,8 @@ namespace PawNClaw.Data.Database
         [ForeignKey("CageCode,CenterId")]
         [InverseProperty(nameof(Cage.BookingDetails))]
         public virtual Cage C { get; set; }
+        [InverseProperty(nameof(BookingActivity.BookingDetail))]
+        public virtual ICollection<BookingActivity> BookingActivities { get; set; }
         [InverseProperty(nameof(PetBookingDetail.BookingDetail))]
         public virtual ICollection<PetBookingDetail> PetBookingDetails { get; set; }
     }

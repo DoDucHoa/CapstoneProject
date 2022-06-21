@@ -375,7 +375,7 @@ namespace PawNClaw.Business.Services
             return values;
         }
 
-        //Get Lisy Booking for Staff Mobile
+        //Get List Booking for Staff Mobile
         public IEnumerable<Booking> GetBookingsForStaffMobile(int staffId, int? statusId)
         {
 

@@ -56,6 +56,11 @@ class ItemCard extends StatelessWidget {
                               decimalDigits: 0, symbol: '', locale: 'vi_vn')
                           .format(
                               discountPrice == 0 ? sellPrice : discountPrice),
+                                  decimalDigits: 0,
+                                  symbol: 'đ',
+                                  locale: 'vi_vn')
+                              .format(
+                     discountPrice == 0 ? sellPrice : discountPrice),
                       //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
                       style: TextStyle(fontSize: 13),
                     ),

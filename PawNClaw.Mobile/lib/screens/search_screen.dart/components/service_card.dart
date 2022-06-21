@@ -72,6 +72,10 @@ class _ServiceCardState extends State<ServiceCard> {
                         NumberFormat.currency(
                                 decimalDigits: 0, symbol: '', locale: 'vi_vn')
                             .format(service.sellPrice ?? 0),
+                                  decimalDigits: 0,
+                                  symbol: 'đ',
+                                  locale: 'vi_vn')
+                              .format(service.sellPrice ?? 0),
                         style: TextStyle(
                             fontSize: 13,
                             color: lightFontColor,

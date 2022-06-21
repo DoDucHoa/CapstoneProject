@@ -41,7 +41,7 @@ class CageCard extends StatelessWidget {
                 Text(
                   NumberFormat.currency(
                     decimalDigits: 0,
-                    symbol: '',
+                    symbol: 'đ',
                   ).format(cageType.totalPrice),
                   //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
                   style: TextStyle(fontSize: 13),
