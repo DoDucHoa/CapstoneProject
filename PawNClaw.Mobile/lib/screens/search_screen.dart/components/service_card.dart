@@ -58,7 +58,7 @@ class _ServiceCardState extends State<ServiceCard> {
                           " ~ " +
                           NumberFormat.currency(
                                   decimalDigits: 0,
-                                  symbol: '',
+                                  symbol: 'đ',
                                   locale: 'vi_vn')
                               .format((service
                                   .servicePrices![
@@ -75,7 +75,7 @@ class _ServiceCardState extends State<ServiceCard> {
                       Text(
                         NumberFormat.currency(
                                   decimalDigits: 0,
-                                  symbol: '',
+                                  symbol: 'đ',
                                   locale: 'vi_vn')
                               .format(service.sellPrice ?? 0),
                         style: TextStyle(

@@ -52,7 +52,7 @@ class ItemCard extends StatelessWidget {
                     Text(
                       NumberFormat.currency(
                                   decimalDigits: 0,
-                                  symbol: '',
+                                  symbol: 'đ',
                                   locale: 'vi_vn')
                               .format(
                      discountPrice == 0 ? sellPrice : discountPrice),

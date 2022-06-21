@@ -1,3 +1,4 @@
+import 'package:pawnclaw_mobile_application/models/activity.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
 import 'package:pawnclaw_mobile_application/models/review.dart';
 import 'package:pawnclaw_mobile_application/models/voucher.dart';
@@ -100,3 +101,4 @@ List<List<Pet>> FAKE_REQUESTS = [
   //   Pet(id: 8, weight: 0.5, name: 'Pet 9'),
   //   Pet(id: 9, weight: 0.5, name: 'Pet 10'),],
 ];
+

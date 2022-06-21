@@ -4,16 +4,21 @@
 
 import 'dart:convert';
 
+import 'package:pawnclaw_mobile_application/models/activity.dart';
+
 class TransactionDetails {
   TransactionDetails({
+    this.bookingId,
     this.bookingDetails,
     this.serviceOrders,
     this.supplyOrders,
+    this.bookingActivities
   });
-
+  int? bookingId;
   List<BookingDetail>? bookingDetails;
   List<ServiceOrder>? serviceOrders;
   List<SupplyOrder>? supplyOrders;
+  List<BookingActivities>? bookingActivities;
 
   factory TransactionDetails.fromRawJson(String str) =>
       TransactionDetails.fromJson(json.decode(str));
@@ -22,6 +27,7 @@ class TransactionDetails {
 
   factory TransactionDetails.fromJson(Map<String, dynamic> json) =>
       TransactionDetails(
+        bookingId: json["id"],
         bookingDetails: List<BookingDetail>.from(
             json["bookingDetails"].map((x) => BookingDetail.fromJson(x))),
         serviceOrders: json["serviceOrders"] != null
@@ -32,15 +38,20 @@ class TransactionDetails {
             ? List<SupplyOrder>.from(
                 json["supplyOrders"].map((x) => SupplyOrder.fromJson(x)))
             : null,
+        bookingActivities: json["bookingActivities"] != null
+            ? List<BookingActivities>.from(json["bookingActivities"].map((x) => BookingActivities.fromJson(x)))
+            :null
       );
 
   Map<String, dynamic> toJson() => {
+        "id": bookingId,
         "bookingDetails":
             List<BookingDetail>.from(bookingDetails!.map((x) => x.toJson())),
         "serviceOrders":
             List<ServiceOrder>.from(serviceOrders!.map((x) => x.toJson())),
         "supplyOrders":
             List<SupplyOrder>.from(supplyOrders!.map((x) => x.toJson())),
+        "bookingActivities": List<BookingActivities>.from(bookingActivities!.map((x) => x.toJson()))
       };
 
   double getTotalServices() {
@@ -92,6 +103,102 @@ class TransactionDetails {
     }
     return false;
   }
+
+  List<Activity> getFeedActivities(){
+    List<Activity> FEED_ACTS = [];
+    for (var act in this.bookingActivities!) {
+      if (act.line != null) {
+        for (var pet in getPets()) {
+          if (pet.id == act.petId) {
+            FEED_ACTS.add(Activity(
+                id: 0,
+                time: DateTime.parse(act.provideTime!),
+                type: ActivityType(0),
+                product: Product(
+                    id: 0,
+                    name: this.bookingDetails!
+                        .where((e) => e.line == act.line)
+                        .first
+                        .cage!
+                        .cageType!
+                        .typeName!,
+                    imgUrl: "lib/assets/cage.png",
+                    note: act.description != null
+                        ? act.description!
+                        : 'Cho ${pet.name} ăn'),
+                pet: pet, imgUrl:  act.photo!.isNotEmpty ? act.photo!.first.url:null));
+          }
+        }
+      }
+    }
+    return FEED_ACTS;
+  }
+
+  List<Activity> getSupplyActivities(){
+    List<Activity> SUPPLY_ACTS = [];
+    for (var act in this.bookingActivities!) {
+      if (act.supplyId != null) {
+        for (var pet in getPets()) {
+          if (pet.id == act.petId) {
+            SUPPLY_ACTS.add(Activity(
+                id: 0,
+                time: DateTime.parse(act.provideTime!),
+                type: ActivityType(1),
+                product: Product(
+                    id: 0,
+                    name: this.supplyOrders!
+                        .where((e) => e.supplyId == act.supplyId)
+                        .first
+                        .supply!
+                        .name!,
+                    imgUrl: "lib/assets/cage.png",
+                    note: act.description != null
+                        ? act.description!
+                        : 'Không có chú thích'),
+                pet: pet,imgUrl: act.photo!.isNotEmpty ? act.photo!.first.url:null));
+          }
+        }
+      }
+    }
+    return SUPPLY_ACTS;
+  }
+
+  List<Activity> getServiceActivities(){
+    List<Activity> SERVICE_ACTS = [];
+    for (var act in this.bookingActivities!) {
+      if (act.serviceId != null) {
+        for (var pet in getPets()) {
+          if (pet.id == act.petId) {
+            SERVICE_ACTS.add(Activity(
+                id: 0,
+                time: DateTime.parse(act.provideTime!),
+                type: ActivityType(2),
+                product: Product(
+                    id: 0,
+                    name: this.serviceOrders!
+                        .where((e) => e.serviceId == act.serviceId)
+                        .first
+                        .service!
+                        .description!,
+                    imgUrl: "lib/assets/cage.png",
+                    note: act.description != null
+                        ? act.description!
+                        : 'Không có chú thích'),
+                pet: pet,imgUrl:  act.photo!.isNotEmpty ? act.photo!.first.url:null));
+          }
+        }
+      }
+    }
+    return SERVICE_ACTS;
+  }
+
+  List<Activity> getAllActivities(){
+    List<Activity> list = getFeedActivities();
+    list.addAll(getServiceActivities());
+    list.addAll(getSupplyActivities());
+    list.sort((a, b) => b.time.compareTo(a.time));
+    return list;
+  }
 }
 
 class BookingDetail {
@@ -109,6 +216,7 @@ class BookingDetail {
   double? duration;
   List<PetBookingDetail>? petBookingDetails;
   Cage? cage;
+
 
   factory BookingDetail.fromRawJson(String str) =>
       BookingDetail.fromJson(json.decode(str));
@@ -243,6 +351,7 @@ class ServiceOrder {
     this.totalPrice,
     this.petId,
     this.service,
+    this.note
   });
 
   int? serviceId;
@@ -251,6 +360,7 @@ class ServiceOrder {
   double? totalPrice;
   int? petId;
   Service? service;
+  String? note;
 
   factory ServiceOrder.fromRawJson(String str) =>
       ServiceOrder.fromJson(json.decode(str));
@@ -264,6 +374,7 @@ class ServiceOrder {
         totalPrice: json["totalPrice"].toDouble(),
         petId: json["petId"],
         service: Service.fromJson(json["service"]),
+        note: json['note']
       );
 
   Map<String, dynamic> toJson() => {
@@ -273,6 +384,7 @@ class ServiceOrder {
         "totalPrice": totalPrice,
         "petId": petId,
         "service": service!.toJson(),
+        "note": note
       };
 }
 
@@ -314,6 +426,7 @@ class SupplyOrder {
     this.totalPrice,
     this.petId,
     this.supply,
+    this.note
   });
 
   int? supplyId;
@@ -322,6 +435,7 @@ class SupplyOrder {
   double? totalPrice;
   int? petId;
   Supply? supply;
+  String? note;
 
   factory SupplyOrder.fromRawJson(String str) =>
       SupplyOrder.fromJson(json.decode(str));
@@ -335,6 +449,7 @@ class SupplyOrder {
         totalPrice: json["totalPrice"].toDouble(),
         petId: json["petId"],
         supply: Supply.fromJson(json["supply"]),
+        note: json["note"]
       );
 
   Map<String, dynamic> toJson() => {
@@ -344,6 +459,7 @@ class SupplyOrder {
         "totalPrice": totalPrice,
         "petId": petId,
         "supply": supply!.toJson(),
+        "note": note
       };
 }
 
@@ -375,4 +491,113 @@ class Supply {
         "name": name,
         "discountPrice": discountPrice,
       };
+}
+
+class BookingActivities {
+  int? id;
+  String? provideTime;
+  String? description;
+  int? bookingId;
+  int? line;
+  int? petId;
+  int? supplyId;
+  int? serviceId;
+  Pet? pet;
+  Service? service;
+  Supply? supply;
+  List<Photo>? photo;
+
+  BookingActivities({
+    this.id,
+    this.provideTime,
+    this.description,
+    this.bookingId,
+    this.line,
+    this.petId,
+    this.supplyId,
+    this.serviceId,
+    this.pet,
+    this.service,
+    this.supply,
+    this.photo
+  });
+
+  BookingActivities.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    provideTime = json['provideTime'];
+    description = json['description'];
+    bookingId = json['bookingId'];
+    line = json['line'];
+    petId = json['petId'];
+    supplyId = json['supplyId'];
+    serviceId = json['serviceId'];
+    pet = json['pet'] != null ? Pet.fromJson(json['pet']) : null;
+    service =
+        json['service'] != null ? Service.fromJson(json['service']) : null;
+    supply = json['supply'] != null ? Supply.fromJson(json['supply']) : null;
+    photo = json['photos'] != null ? List<Photo>.from(
+                json["photos"].map((x) => Photo.fromJson(x)))
+            : null;
+    
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['provideTime'] = this.provideTime;
+    data['description'] = this.description;
+    data['bookingId'] = this.bookingId;
+    data['line'] = this.line;
+    data['petId'] = this.petId;
+    data['supplyId'] = this.supplyId;
+    data['serviceId'] = this.serviceId;
+    data['pet'] = this.pet;
+    data['service'] = this.service;
+    data['supply'] = this.supply;
+    data['photos'] = this.photo;
+    // if (this.photos != null) {
+    //   data['photos'] = this.photos!.map((v) => v.toJson()).toList();
+    // }
+    return data;
+  }
+}
+class Photo {
+  int? photoTypeId;
+  int? idActor;
+  int? line;
+  String? url;
+  bool? isThumbnail;
+  bool? status;
+  Null? photoType;
+
+  Photo(
+      {this.photoTypeId,
+      this.idActor,
+      this.line,
+      this.url,
+      this.isThumbnail,
+      this.status,
+      this.photoType});
+
+  Photo.fromJson(Map<String, dynamic> json) {
+    photoTypeId = json['photoTypeId'];
+    idActor = json['idActor'];
+    line = json['line'];
+    url = json['url'];
+    isThumbnail = json['isThumbnail'];
+    status = json['status'];
+    photoType = json['photoType'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['photoTypeId'] = this.photoTypeId;
+    data['idActor'] = this.idActor;
+    data['line'] = this.line;
+    data['url'] = this.url;
+    data['isThumbnail'] = this.isThumbnail;
+    data['status'] = this.status;
+    data['photoType'] = this.photoType;
+    return data;
+  }
 }
