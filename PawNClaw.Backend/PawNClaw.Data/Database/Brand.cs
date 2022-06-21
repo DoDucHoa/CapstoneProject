@@ -41,11 +41,11 @@ namespace PawNClaw.Data.Database
         public int OwnerId { get; set; }
 
         [ForeignKey(nameof(CreateUser))]
-        [InverseProperty(nameof(Admin.BrandCreateUserNavigations))]
-        public virtual Admin CreateUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.BrandCreateUserNavigations))]
+        public virtual Account CreateUserNavigation { get; set; }
         [ForeignKey(nameof(ModifyUser))]
-        [InverseProperty(nameof(Admin.BrandModifyUserNavigations))]
-        public virtual Admin ModifyUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.BrandModifyUserNavigations))]
+        public virtual Account ModifyUserNavigation { get; set; }
         [ForeignKey(nameof(OwnerId))]
         [InverseProperty("Brands")]
         public virtual Owner Owner { get; set; }

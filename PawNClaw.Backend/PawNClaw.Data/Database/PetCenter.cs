@@ -67,11 +67,11 @@ namespace PawNClaw.Data.Database
         [InverseProperty("PetCenters")]
         public virtual Brand Brand { get; set; }
         [ForeignKey(nameof(CreateUser))]
-        [InverseProperty(nameof(Admin.PetCenterCreateUserNavigations))]
-        public virtual Admin CreateUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.PetCenterCreateUserNavigations))]
+        public virtual Account CreateUserNavigation { get; set; }
         [ForeignKey(nameof(ModifyUser))]
-        [InverseProperty(nameof(Admin.PetCenterModifyUserNavigations))]
-        public virtual Admin ModifyUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.PetCenterModifyUserNavigations))]
+        public virtual Account ModifyUserNavigation { get; set; }
         [InverseProperty("IdNavigation")]
         public virtual Location Location { get; set; }
         [InverseProperty(nameof(Booking.Center))]

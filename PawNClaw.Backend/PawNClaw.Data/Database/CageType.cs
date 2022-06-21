@@ -55,11 +55,11 @@ namespace PawNClaw.Data.Database
         [InverseProperty(nameof(PetCenter.CageTypes))]
         public virtual PetCenter Center { get; set; }
         [ForeignKey(nameof(CreateUser))]
-        [InverseProperty(nameof(Staff.CageTypeCreateUserNavigations))]
-        public virtual Staff CreateUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.CageTypeCreateUserNavigations))]
+        public virtual Account CreateUserNavigation { get; set; }
         [ForeignKey(nameof(ModifyUser))]
-        [InverseProperty(nameof(Staff.CageTypeModifyUserNavigations))]
-        public virtual Staff ModifyUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.CageTypeModifyUserNavigations))]
+        public virtual Account ModifyUserNavigation { get; set; }
         [InverseProperty(nameof(Cage.CageType))]
         public virtual ICollection<Cage> Cages { get; set; }
         [InverseProperty(nameof(Price.CageType))]
