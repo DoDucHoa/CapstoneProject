@@ -44,24 +44,25 @@ namespace PawNClaw.API.Controllers
         [Authorize(Roles = "Owner,Staff")]
         public IActionResult GetCageTypeValidPetSizeAndBookingTime([FromBody] RequestCageTypeForBookingParameter requestCageTypeForBookingParameter)
         {
-            var data = _cageTypeService.GetCageTypeWithCageValidPetSizeAndBookingTime(requestCageTypeForBookingParameter.CenterId, 
-                requestCageTypeForBookingParameter.listPets, 
-                requestCageTypeForBookingParameter.StartBooking, 
+            var data = _cageTypeService.GetCageTypeWithCageValidPetSizeAndBookingTime(requestCageTypeForBookingParameter.CenterId,
+                requestCageTypeForBookingParameter.listPets,
+                requestCageTypeForBookingParameter.StartBooking,
                 requestCageTypeForBookingParameter.EndBooking);
 
             return Ok(data);
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] CageType cageType)
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult Create([FromBody] CreateCageTypeFlowParameter createCageTypeFlowParameter)
         {
             try
             {
-                return Ok(_cageTypeService.CreateCageType(cageType));
+                return Ok(_cageTypeService.CreateCageType(createCageTypeFlowParameter.createCageTypeParameter, createCageTypeFlowParameter.createPriceParameters));
             }
-            catch
+            catch (Exception ex)
             {
-                throw new Exception();
+                return BadRequest(ex);
             }
         }
     }

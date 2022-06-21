@@ -1,4 +1,5 @@
-﻿using PawNClaw.Data.Database;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
@@ -13,10 +14,16 @@ namespace PawNClaw.Business.Services
     public class CageTypeService
     {
         ICageTypeRepository _cageTypeRepository;
+        IPriceRepository _priceRepository;
 
-        public CageTypeService(ICageTypeRepository cageTypeRepository)
+        private readonly ApplicationDbContext _db;
+
+        public CageTypeService(ICageTypeRepository cageTypeRepository, IPriceRepository priceRepository, 
+            ApplicationDbContext db)
         {
             _cageTypeRepository = cageTypeRepository;
+            _priceRepository = priceRepository;
+            _db = db;
         }
 
         public PagedList<CageType> GetCageTypes(int centerId, PagingParameter paging)
@@ -34,10 +41,59 @@ namespace PawNClaw.Business.Services
             return values;
         }
 
-        public bool CreateCageType(CageType cageType)
+        public async Task<bool> CreateCageType(CreateCageTypeParameter createCageTypeParameter, List<CreatePriceParameter> createPriceParameters)
         {
-            _cageTypeRepository.Add(cageType);
-            _cageTypeRepository.SaveDbChange();
+            CageType cageType = new CageType();
+
+            cageType.TypeName = createCageTypeParameter.TypeName;
+            cageType.Description = createCageTypeParameter.Description;
+            cageType.Height = createCageTypeParameter.Height;
+            cageType.Width = createCageTypeParameter.Width;
+            cageType.Length = createCageTypeParameter.Length;
+            cageType.IsSingle = createCageTypeParameter.IsSingle;
+            cageType.CreateDate = createCageTypeParameter.CreateDate;
+            cageType.CreateUser = createCageTypeParameter.CreateUser;
+            cageType.CenterId = createCageTypeParameter.CenterId;
+            cageType.Status = true;
+
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    _cageTypeRepository.Add(cageType);
+                    await _cageTypeRepository.SaveDbChangeAsync();
+
+                    foreach (var createPriceParameter in createPriceParameters)
+                    {
+                        if (_priceRepository.GetAll(x => x.CageTypeId == cageType.Id && x.PriceTypeCode == createPriceParameter.PriceTypeCode && x.Status == true).Count() > 0)
+                        {
+                            transaction.Rollback();
+                            throw new Exception("Duplicate Price");
+                        }
+
+
+                        Price price = new Price();
+                        price.UnitPrice = createPriceParameter.UnitPrice;
+                        price.CreateDate = createPriceParameter.CreateDate;
+                        price.CreateUser = createPriceParameter.CreateUser;
+                        price.PriceTypeCode = createPriceParameter.PriceTypeCode;
+                        price.Status = true;
+                        price.CageTypeId = cageType.Id;
+
+                        _priceRepository.Add(price);
+                        await _priceRepository.SaveDbChangeAsync();
+                    }
+
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw new Exception();
+                }
+            }
+
             return true;
         }
     }
