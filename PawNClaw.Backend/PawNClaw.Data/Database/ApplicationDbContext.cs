@@ -190,12 +190,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.BrandCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Brands__create_u__778AC167");
+                    .HasConstraintName("FK__Brands__create_u__3DB3258D");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.BrandModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Brands__modify_u__787EE5A0");
+                    .HasConstraintName("FK__Brands__modify_u__3EA749C6");
 
                 entity.HasOne(d => d.Owner)
                     .WithMany(p => p.Brands)
@@ -232,12 +232,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.CageCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Cages__create_us__29221CFB");
+                    .HasConstraintName("FK__Cages__create_us__4B0D20AB");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.CageModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Cages__modify_us__2A164134");
+                    .HasConstraintName("FK__Cages__modify_us__4C0144E4");
             });
 
             modelBuilder.Entity<CageType>(entity =>
@@ -257,12 +257,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.CageTypeCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__CageTypes__creat__18EBB532");
+                    .HasConstraintName("FK__CageTypes__creat__473C8FC7");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.CageTypeModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__CageTypes__modif__19DFD96B");
+                    .HasConstraintName("FK__CageTypes__modif__4830B400");
             });
 
             modelBuilder.Entity<City>(entity =>
@@ -442,12 +442,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.PetCenterCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__PetCenter__creat__7F2BE32F");
+                    .HasConstraintName("FK__PetCenter__creat__3F9B6DFF");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.PetCenterModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__PetCenter__modif__00200768");
+                    .HasConstraintName("FK__PetCenter__modif__408F9238");
             });
 
             modelBuilder.Entity<PetHealthHistory>(entity =>
@@ -483,12 +483,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.PetTypeCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__PetTypes__create__31B762FC");
+                    .HasConstraintName("FK__PetTypes__create__4CF5691D");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.PetTypeModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__PetTypes__modify__32AB8735");
+                    .HasConstraintName("FK__PetTypes__modify__4DE98D56");
             });
 
             modelBuilder.Entity<Photo>(entity =>
@@ -533,12 +533,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.PriceCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Prices__create_u__208CD6FA");
+                    .HasConstraintName("FK__Prices__create_u__4924D839");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.PriceModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Prices__modify_u__2180FB33");
+                    .HasConstraintName("FK__Prices__modify_u__4A18FC72");
 
                 entity.HasOne(d => d.PriceTypeCodeNavigation)
                     .WithMany(p => p.Prices)
@@ -563,12 +563,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.PriceTypeCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__PriceType__creat__123EB7A3");
+                    .HasConstraintName("FK__PriceType__creat__436BFEE3");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.PriceTypeModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__PriceType__modif__1332DBDC");
+                    .HasConstraintName("FK__PriceType__modif__4460231C");
             });
 
             modelBuilder.Entity<Role>(entity =>
@@ -600,12 +600,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.ServiceCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Services__create__075714DC");
+                    .HasConstraintName("FK__Services__create__4EDDB18F");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.ServiceModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Services__modify__084B3915");
+                    .HasConstraintName("FK__Services__modify__4FD1D5C8");
             });
 
             modelBuilder.Entity<ServiceOrder>(entity =>
@@ -639,12 +639,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.ServicePriceCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__ServicePr__creat__11D4A34F");
+                    .HasConstraintName("FK__ServicePr__creat__5C37ACAD");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.ServicePriceModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__ServicePr__modif__12C8C788");
+                    .HasConstraintName("FK__ServicePr__modif__5D2BD0E6");
 
                 entity.HasOne(d => d.Service)
                     .WithMany(p => p.ServicePrices)
@@ -670,12 +670,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.SponsorBannerCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__SponsorBa__creat__0A688BB1");
+                    .HasConstraintName("FK__SponsorBa__creat__5A4F643B");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.SponsorBannerModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__SponsorBa__modif__0B5CAFEA");
+                    .HasConstraintName("FK__SponsorBa__modif__5B438874");
             });
 
             modelBuilder.Entity<Staff>(entity =>
@@ -695,10 +695,10 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.StaffCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Staffs__create_u__24E777C3");
+                    .HasConstraintName("FK__Staffs__create_u__4183B671");
 
                 entity.HasOne(d => d.IdNavigation)
-                    .WithOne(p => p.Staff)
+                    .WithOne(p => p.StaffIdNavigation)
                     .HasForeignKey<Staff>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Staffs__id__0C85DE4D");
@@ -706,7 +706,7 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.StaffModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Staffs__modify_u__25DB9BFC");
+                    .HasConstraintName("FK__Staffs__modify_u__4277DAAA");
             });
 
             modelBuilder.Entity<Supply>(entity =>
@@ -730,10 +730,20 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.SupplyCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
+                    .HasConstraintName("FK__Supplies__create__52AE4273");
+
+                entity.HasOne(d => d.CreateUser1)
+                    .WithMany(p => p.SupplyCreateUser1s)
+                    .HasForeignKey(d => d.CreateUser)
                     .HasConstraintName("FK__Supplies__create__7908F585");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.SupplyModifyUserNavigations)
+                    .HasForeignKey(d => d.ModifyUser)
+                    .HasConstraintName("FK__Supplies__modify__53A266AC");
+
+                entity.HasOne(d => d.ModifyUser1)
+                    .WithMany(p => p.SupplyModifyUser1s)
                     .HasForeignKey(d => d.ModifyUser)
                     .HasConstraintName("FK__Supplies__modify__79FD19BE");
 
@@ -784,12 +794,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.SupplyTypeCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__SupplyTyp__creat__489AC854");
+                    .HasConstraintName("FK__SupplyTyp__creat__54968AE5");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.SupplyTypeModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__SupplyTyp__modif__498EEC8D");
+                    .HasConstraintName("FK__SupplyTyp__modif__558AAF1E");
             });
 
             modelBuilder.Entity<Voucher>(entity =>
@@ -816,12 +826,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.VoucherCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Vouchers__create__5E8A0973");
+                    .HasConstraintName("FK__Vouchers__create__58671BC9");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.VoucherModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Vouchers__modify__5F7E2DAC");
+                    .HasConstraintName("FK__Vouchers__modify__595B4002");
 
                 entity.HasOne(d => d.VoucherTypeCodeNavigation)
                     .WithMany(p => p.Vouchers)
@@ -846,12 +856,12 @@ namespace PawNClaw.Data.Database
                 entity.HasOne(d => d.CreateUserNavigation)
                     .WithMany(p => p.VoucherTypeCreateUserNavigations)
                     .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__VoucherTy__creat__57DD0BE4");
+                    .HasConstraintName("FK__VoucherTy__creat__567ED357");
 
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.VoucherTypeModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__VoucherTy__modif__58D1301D");
+                    .HasConstraintName("FK__VoucherTy__modif__5772F790");
             });
 
             modelBuilder.Entity<Ward>(entity =>

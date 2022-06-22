@@ -13,7 +13,7 @@ namespace PawNClaw.Data.Parameter
     public class CreatePhotoParameter
     {
         public int PhotoTypeId { get; set; }
-        public int IdActor { get; set; }
+        public int? IdActor { get; set; }
         public string Url { get; set; }
         public bool? IsThumbnail { get; set; }
     }

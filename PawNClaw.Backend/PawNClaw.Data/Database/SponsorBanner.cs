@@ -44,10 +44,10 @@ namespace PawNClaw.Data.Database
         [InverseProperty("SponsorBanners")]
         public virtual Brand Brand { get; set; }
         [ForeignKey(nameof(CreateUser))]
-        [InverseProperty(nameof(Admin.SponsorBannerCreateUserNavigations))]
-        public virtual Admin CreateUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.SponsorBannerCreateUserNavigations))]
+        public virtual Account CreateUserNavigation { get; set; }
         [ForeignKey(nameof(ModifyUser))]
-        [InverseProperty(nameof(Admin.SponsorBannerModifyUserNavigations))]
-        public virtual Admin ModifyUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.SponsorBannerModifyUserNavigations))]
+        public virtual Account ModifyUserNavigation { get; set; }
     }
 }

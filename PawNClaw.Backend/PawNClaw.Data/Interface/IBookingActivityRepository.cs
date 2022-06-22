@@ -10,6 +10,6 @@ namespace PawNClaw.Data.Interface
 {
     public interface IBookingActivityRepository : IRepository<BookingActivity>
     {
-        public void CreateBookingAcivities(CreateBookingActivityParameter createBookingActivityParameter);
+        public int CreateBookingAcivities(CreateBookingActivityParameter createBookingActivityParameter);
     }
 }

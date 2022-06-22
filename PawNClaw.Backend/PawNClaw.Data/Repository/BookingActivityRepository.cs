@@ -15,7 +15,7 @@ namespace PawNClaw.Data.Repository
         {
         }
 
-        public void CreateBookingAcivities(CreateBookingActivityParameter createBookingActivityParameter)
+        public int CreateBookingAcivities(CreateBookingActivityParameter createBookingActivityParameter)
         {
             BookingActivity bookingActivity = new BookingActivity();
             bookingActivity.ProvideTime = createBookingActivityParameter.ProvideTime;
@@ -27,7 +27,8 @@ namespace PawNClaw.Data.Repository
             bookingActivity.ServiceId = createBookingActivityParameter.ServiceId;
 
             _dbSet.Add(bookingActivity);
-            
+
+            return bookingActivity.Id;
         }
     }
 }

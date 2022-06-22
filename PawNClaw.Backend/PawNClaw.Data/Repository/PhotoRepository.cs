@@ -22,15 +22,20 @@ namespace PawNClaw.Data.Repository
         {
             Photo photo = new Photo();
             photo.PhotoTypeId = createPhotoParameter.PhotoTypeId;
-            photo.IdActor = createPhotoParameter.IdActor;
-            photo.Line = _dbSet.Where(x => x.PhotoTypeId == createPhotoParameter.PhotoTypeId
-                                    && x.IdActor == createPhotoParameter.IdActor).Count() + 1;
+            photo.IdActor = (int)createPhotoParameter.IdActor;
             photo.Url = createPhotoParameter.Url;
             photo.IsThumbnail = createPhotoParameter.IsThumbnail;
             photo.Status = true;
 
             _dbSet.Add(photo);
 
+        }
+
+        public IEnumerable<Photo> GetPhotosByIdActorAndPhotoType(int IdActor, int PhotoType)
+        {
+            IQueryable<Photo> query = _dbSet.Where(x => x.IdActor == IdActor && x.PhotoTypeId == PhotoType && x.Status == true);
+
+            return query.ToList();
         }
     }
 }

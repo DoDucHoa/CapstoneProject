@@ -26,6 +26,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     print('cage: ' + transactionDetails.bookingDetails!.first.cage!.cageType!.typeName!);
     print('service: ' + transactionDetails.serviceOrders!.length.toString());
     print('supply: ' + transactionDetails.supplyOrders!.length.toString());
+    print('act: ' + transactionDetails.bookingActivities!.length.toString());
     if (transactionDetails != null) emit(TransactionDetailsLoaded(transactionDetails));
   });
   }
