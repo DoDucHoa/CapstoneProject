@@ -32,7 +32,7 @@ AdminNewEditForm.propTypes = {
 
 export default function AdminNewEditForm({ isEdit, adminData }) {
   const navigate = useNavigate();
-  const { accountInfo, register } = useAuth();
+  const { accountInfo, register, uploadPhoto } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -102,6 +102,7 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
         await Promise.all([
           createAdmin(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender), // create account on Backend
           register(values.email, values.password), // create account on Firebase
+          uploadPhoto('moderators', values.avatarUrl),
         ]);
       } else {
         updateAdmin(accountInfo.id, values.name, values.phoneNumber, values.gender);

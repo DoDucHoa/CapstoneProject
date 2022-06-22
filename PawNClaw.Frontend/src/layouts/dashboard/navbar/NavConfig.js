@@ -13,6 +13,8 @@ const ICONS = {
   owner: getIcon('ic_owner'),
   booking: getIcon('ic_booking'),
   chart: getIcon('ic_chart'),
+  brand: getIcon('ic_brand'),
+  center: getIcon('ic_center'),
 };
 
 const navConfig = [
@@ -45,6 +47,25 @@ const navConfig = [
         title: 'Chủ trung tâm',
         path: PATH_DASHBOARD.owner.list,
         icon: ICONS.owner,
+      },
+    ],
+  },
+
+  // CENTER
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Trung Tâm',
+    items: [
+      // MODERATOR
+      {
+        title: 'Thương hiệu',
+        path: PATH_DASHBOARD.brand.list,
+        icon: ICONS.brand,
+      },
+      {
+        title: 'Trung tâm',
+        path: PATH_DASHBOARD.center.list,
+        icon: ICONS.center,
       },
     ],
   },

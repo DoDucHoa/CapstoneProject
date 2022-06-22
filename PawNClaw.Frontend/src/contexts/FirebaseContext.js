@@ -10,6 +10,7 @@ import {
   // updatePassword,
 } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 //
 import { FIREBASE_API } from '../config';
 
@@ -31,6 +32,8 @@ const firebaseApp = initializeApp(FIREBASE_API);
 const AUTH = getAuth(firebaseApp);
 
 const DB = getFirestore(firebaseApp);
+
+const storage = getStorage(firebaseApp);
 
 // user: chứa thông tin user của firebase
 // accountInfo: chứa thông tin user của backend
@@ -81,7 +84,8 @@ const AuthContext = createContext({
   login: () => Promise.resolve(),
   register: (email, password) => Promise.resolve(email, password),
   logout: () => Promise.resolve(),
-  changePassword: (password) => Promise.resolve(password),
+  uploadPhoto: (path, file) => Promise.resolve(path, file),
+  // changePassword: (password) => Promise.resolve(password),
 });
 
 // ----------------------------------------------------------------------
@@ -155,6 +159,35 @@ function AuthProvider({ children }) {
     dispatch({ type: 'LOGOUT' });
   };
 
+  // create function upload photo to Firebase use async
+  const uploadPhoto = (path, file) => {
+    const storageRef = ref(storage, `${path}/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        // const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        // console.log("Upload is " + progress + "% done");
+        switch (snapshot.state) {
+          case 'paused':
+            console.log('Upload is paused');
+            break;
+          case 'running':
+            console.log('Upload is running');
+            break;
+          default:
+            break;
+        }
+      },
+      (error) => {
+        console.log(error.code);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => console.log('downloadURL: ', downloadURL));
+      }
+    );
+  };
+
   // const changePassword = (password) => updatePassword(AUTH.currentUser, password);
 
   return (
@@ -180,6 +213,7 @@ function AuthProvider({ children }) {
         login,
         register,
         logout,
+        uploadPhoto,
         // changePassword,
       }}
     >
