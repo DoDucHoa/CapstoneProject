@@ -1,17 +1,15 @@
 ﻿using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
+using PawNClaw.Data.Parameter;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PawNClaw.Business.Services
 {
     public class BrandService
     {
-        IBrandRepository _brandRepository;
+        private IBrandRepository _brandRepository;
 
         public BrandService(IBrandRepository brandRepository)
         {
@@ -19,9 +17,29 @@ namespace PawNClaw.Business.Services
         }
 
         //Get All
-        public PagedList<Brand> GetAll(string includeProperties, PagingParameter paging)
+        public PagedList<Brand> GetBrands(string Name, bool? Status, string dir, PagingParameter paging)
         {
-            var values = _brandRepository.GetAll(includeProperties: includeProperties);
+            var values = _brandRepository.GetAll(includeProperties: "Owner");
+
+            // lọc theo name
+            if (!string.IsNullOrWhiteSpace(Name))
+            {
+                values = values.Where(x => x.Name.Trim().Equals(Name));
+            }
+
+            // lọc theo status
+            if (Status != null)
+            {
+                if (Status == true)
+                    values = values.Where(x => x.Status == true);
+                else
+                    values = values.Where(x => x.Status == false);
+            }
+
+            if (dir == "asc")
+                values = values.OrderBy(d => d.Name);
+            else
+                values = values.OrderByDescending(d => d.Name);
 
             return PagedList<Brand>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
@@ -29,35 +47,34 @@ namespace PawNClaw.Business.Services
         }
 
         //Get Id
-        public Brand GetById(int id)
+        public Brand GetBrandById(int id)
         {
             var value = _brandRepository.GetFirstOrDefault(x => x.Id == id);
             return value;
         }
 
-        //Get By Owner Id
-        public PagedList<Brand> GetByOwner(int id, PagingParameter paging)
-        {
-            var values = _brandRepository.GetAll(x => x.OwnerId == id);
-            
-            return PagedList<Brand>.ToPagedList(values.AsQueryable(),
-            paging.PageNumber,
-            paging.PageSize);
-        }
-
         //Add
-        public int Add(Brand brand)
+        public int Add(CreateBrandParameter brand)
         {
+            Brand brandToDB = new()
+            {
+                Name = brand.Name,
+                Description = brand.Description,
+                OwnerId = brand.OwnerId,
+                CreateUser = brand.CreateUser,
+                ModifyUser = brand.ModifyUser
+            };
+
             try
             {
-                if (_brandRepository.GetFirstOrDefault(x => x.Name.Trim().Equals(brand.Name)) != null) 
-                    return -1;
-                _brandRepository.Add(brand);
+                _brandRepository.Add(brandToDB);
                 _brandRepository.SaveDbChange();
-                return 1;
+                var id = brandToDB.Id;
+                return id;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("This is error: " + ex.Message);
                 return -1;
             }
         }
@@ -82,11 +99,10 @@ namespace PawNClaw.Business.Services
         {
             try
             {
-                var objFromDb = _brandRepository.Get(id);
-                objFromDb.Status = false;
-                if (objFromDb != null)
+                var brandFromDb = _brandRepository.Get(id);
+                if (brandFromDb != null)
                 {
-                    _brandRepository.Update(objFromDb);
+                    brandFromDb.Status = false;
                     _brandRepository.SaveDbChange();
                     return true;
                 }
@@ -103,11 +119,10 @@ namespace PawNClaw.Business.Services
         {
             try
             {
-                var objFromDb = _brandRepository.Get(id);
-                objFromDb.Status = true;
-                if (objFromDb != null)
+                var brandFromDb = _brandRepository.Get(id);
+                if (brandFromDb != null)
                 {
-                    _brandRepository.Update(objFromDb);
+                    brandFromDb.Status = true;
                     _brandRepository.SaveDbChange();
                     return true;
                 }
