@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Stack, Typography, IconButton } from '@mui/material';
+import { Stack, Typography, IconButton, Tooltip, Box } from '@mui/material';
 // utils
 import { fDate } from '../../../utils/formatTime';
 // components
@@ -16,7 +16,7 @@ const RootStyle = styled('div')(({ theme }) => ({
   padding: theme.spacing(2.5),
   [theme.breakpoints.up('sm')]: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
 }));
 
@@ -31,6 +31,43 @@ CalendarToolbar.propTypes = {
 export default function CalendarToolbar({ date, onNextDate, onPrevDate }) {
   return (
     <RootStyle>
+      <Tooltip
+        arrow
+        placement="right"
+        title={
+          <>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Iconify icon={'material-symbols:circle'} color="#FFD384" width={16} height={16} />
+              <Typography variant="body1" sx={{ ml: 2 }}>
+                đang chờ
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Iconify icon={'material-symbols:circle'} color="#8484FF" width={16} height={16} />
+              <Typography variant="body1" sx={{ ml: 2 }}>
+                đang xử lý
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Iconify icon={'material-symbols:circle'} color="#84C384" width={16} height={16} />
+              <Typography variant="body1" sx={{ ml: 2 }}>
+                hoàn thành
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Iconify icon={'material-symbols:circle'} color="#FF8484" width={16} height={16} />
+              <Typography variant="body1" sx={{ ml: 2 }}>
+                hủy
+              </Typography>
+            </Box>
+          </>
+        }
+      >
+        <IconButton>
+          <Iconify icon={'bi:info-circle-fill'} color="#637381" width={20} height={20} />
+        </IconButton>
+      </Tooltip>
+
       <Stack direction="row" alignItems="center" spacing={2}>
         <IconButton onClick={onPrevDate}>
           <Iconify icon="eva:arrow-ios-back-fill" width={20} height={20} />
@@ -42,6 +79,8 @@ export default function CalendarToolbar({ date, onNextDate, onPrevDate }) {
           <Iconify icon="eva:arrow-ios-forward-fill" width={20} height={20} />
         </IconButton>
       </Stack>
+
+      <Box />
     </RootStyle>
   );
 }
