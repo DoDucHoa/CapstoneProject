@@ -62,21 +62,6 @@ namespace PawNClaw.Business.Services
             {
                 foreach (var petId in petIds)
                 {
-                    var test = _petBookingDetailRepository.GetAll(x => x.PetId == petId.Id &&
-                            ((DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) <= 0
-                            && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) >= 0)
-                            ||
-                            (DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) >= 0
-                            && DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.EndBooking) < 0)
-                            ||
-                            (DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.StartBooking) > 0
-                            && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) <= 0)));
-
-                    foreach (var item in test)
-                    {
-                        Console.WriteLine(item.BookingId);
-                    }
-
                     if (_petBookingDetailRepository.GetAll(x => x.PetId == petId.Id &&
                             ((DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) <= 0
                             && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) >= 0)

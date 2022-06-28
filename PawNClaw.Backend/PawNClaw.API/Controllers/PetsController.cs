@@ -40,7 +40,7 @@ namespace PawNClaw.API.Controllers
 
         [HttpPut]
         [Authorize("Staff")]
-        public IActionResult UpdatePetForStaff(UpdatePetRequestParameter updatePetRequestParameter)
+        public IActionResult UpdatePetForStaff([FromBody] UpdatePetRequestParameter updatePetRequestParameter)
         {
             var values = _petService.UpdatePetForStaff(updatePetRequestParameter.Id,
                                                         updatePetRequestParameter.Weight,
@@ -54,6 +54,53 @@ namespace PawNClaw.API.Controllers
             else
             {
                 return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        public IActionResult CreatePet([FromBody] CreatePetRequestParameter createPetRequestParameter)
+        {
+            try
+            {
+                _petService.CreatePet(createPetRequestParameter);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut("customer")]
+        [Authorize(Roles = "Cus")]
+        public IActionResult UpdatePet([FromBody] UpdatePetRequestForCusParameter updatePetRequestForCusParameter)
+        {
+            try
+            {
+                _petService.UpdatePetForCustomer(updatePetRequestForCusParameter);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+
+        [HttpDelete("{id}")]
+        public IActionResult DeletePet(int id)
+        {
+            try
+            {
+                _petService.DeletePet(id);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
             }
         }
     }
