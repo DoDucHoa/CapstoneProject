@@ -21,7 +21,7 @@ namespace PawNClaw.Data.Repository
         {
             IQueryable<Pet> query = _dbSet;
 
-            query = query.Where(x => x.CustomerId == CusId);
+            query = query.Where(x => x.CustomerId == CusId && x.Status == true);
 
             return query.ToList();
         }
