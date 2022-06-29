@@ -64,5 +64,8 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<Cage> Cages { get; set; }
         [InverseProperty(nameof(Price.CageType))]
         public virtual ICollection<Price> Prices { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }

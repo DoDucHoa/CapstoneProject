@@ -14,6 +14,7 @@ namespace PawNClaw.Data.Repository
     {
 
         PriceRepository _priceRepository;
+        PhotoRepository _photoRepository;
 
         public class PetSizeCage
         {
@@ -23,9 +24,10 @@ namespace PawNClaw.Data.Repository
             public bool IsSingle { get; set; } = true;
         }
 
-        public PetCenterRepository(ApplicationDbContext db, PriceRepository priceRepository) : base(db)
+        public PetCenterRepository(ApplicationDbContext db, PriceRepository priceRepository, PhotoRepository photoRepository) : base(db)
         {
             _priceRepository = priceRepository;
+            _photoRepository = photoRepository;
         }
 
         public IEnumerable<PetCenter> SearchPetCenter(string City, string District)
@@ -193,6 +195,7 @@ namespace PawNClaw.Data.Repository
                         IsSingle = cagetype.IsSingle,
                         Status = cagetype.Status,
                         CenterId = cagetype.CenterId,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(cagetype.Id, PhotoTypesConst.CageType),
                         TotalPrice = _priceRepository.checkTotalPriceOfCageType(cagetype.Id, StartBooking, EndBooking),
                         Cages = (ICollection<Cage>)cagetype.Cages.Where(cage => cage.Status == true 
                                 && !cage.BookingDetails.Any(bookingdetail =>
@@ -213,13 +216,15 @@ namespace PawNClaw.Data.Repository
                         SellPrice = s.SellPrice,
                         DiscountPrice = s.DiscountPrice,
                         Quantity = s.Quantity,
-                        SupplyTypeCode = s.SupplyTypeCode
+                        SupplyTypeCode = s.SupplyTypeCode,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(s.Id, PhotoTypesConst.Supply)
                     }),
                     Services = (ICollection<Service>)x.Services.Where(ser => ser.Status == true)
                     .Select(ser => new Service
                     {
                         Id = ser.Id,
                         Description = ser.Description,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(ser.Id, PhotoTypesConst.Service),
                         ServicePrices = (ICollection<ServicePrice>)ser.ServicePrices
                         .Select(price => new ServicePrice
                         {

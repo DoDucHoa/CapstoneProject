@@ -49,5 +49,8 @@ namespace PawNClaw.Data.Database
         [ForeignKey(nameof(ModifyUser))]
         [InverseProperty(nameof(Account.SponsorBannerModifyUserNavigations))]
         public virtual Account ModifyUserNavigation { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }

@@ -1,12 +1,14 @@
 ﻿using FirebaseAdmin.Auth;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
+using PawNClaw.Data.Const;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -162,7 +164,7 @@ namespace PawNClaw.Business.Services
                 Name = Name,
                 Phone = account.Phone,
                 Email = Email,
-                Url = null,
+                Url = _photoRepository.GetPhotosByIdActorAndPhotoType(account.Id, PhotoTypesConst.Account).FirstOrDefault().Url,
                 JwtToken = null
             };
             return loginViewModel;
@@ -251,8 +253,7 @@ namespace PawNClaw.Business.Services
 
             string Name = null;
             string Email = null;
-            string Url = null;
-            Photo photo = new();
+
             //Get data for loginViewModel
             try
             {
@@ -262,34 +263,16 @@ namespace PawNClaw.Business.Services
                     case "AD":
                         Name = _adminRepository.Get(account.Id).Name;
                         Email = _adminRepository.Get(account.Id).Email;
-                        photo = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 1
-                                                            && x.IdActor == account.Id);
-                        if (photo != null)
-                        {
-                            Url = photo.Url;
-                        }
                         break;
 
                     case "MOD":
                         Name = _adminRepository.Get(account.Id).Name;
                         Email = _adminRepository.Get(account.Id).Email;
-                        photo = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 2
-                                                            && x.IdActor == account.Id);
-                        if (photo != null)
-                        {
-                            Url = photo.Url;
-                        }
                         break;
 
                     case "OWN":
                         Name = _ownerRepository.Get(account.Id).Name;
                         Email = _ownerRepository.Get(account.Id).Email;
-                        photo = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 3
-                                                            && x.IdActor == account.Id);
-                        if (photo != null)
-                        {
-                            Url = photo.Url;
-                        }
                         break;
 
                     case "STF":
@@ -298,12 +281,6 @@ namespace PawNClaw.Business.Services
                     case "CUS":
                         Name = _customerRepository.Get(account.Id).Name;
                         Email = account.UserName;
-                        photo = _photoRepository.GetFirstOrDefault(x => x.PhotoTypeId == 5
-                                                            && x.IdActor == account.Id);
-                        if (photo != null)
-                        {
-                            Url = photo.Url;
-                        }
                         break;
 
                     default:
@@ -323,7 +300,7 @@ namespace PawNClaw.Business.Services
                 Name = Name,
                 Phone = account.Phone,
                 Email = Email,
-                Url = Url,
+                Url = _photoRepository.GetPhotosByIdActorAndPhotoType(account.Id, PhotoTypesConst.Account).FirstOrDefault().Url,
                 JwtToken = null
             };
 
