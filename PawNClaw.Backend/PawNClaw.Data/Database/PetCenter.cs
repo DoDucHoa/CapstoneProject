@@ -91,6 +91,9 @@ namespace PawNClaw.Data.Database
         [InverseProperty(nameof(Staff.Center))]
         public virtual ICollection<Staff> staff { get; set; }
 
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
+
         private int _getRatingCount(ICollection<Booking> Bookings)
         {
             int count = 0;

@@ -56,5 +56,8 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<ServiceOrder> ServiceOrders { get; set; }
         [InverseProperty(nameof(ServicePrice.Service))]
         public virtual ICollection<ServicePrice> ServicePrices { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }

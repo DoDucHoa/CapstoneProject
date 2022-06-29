@@ -128,7 +128,8 @@ namespace PawNClaw.Data.Repository
                             Name = bookingdetail.C.Name,
                             CageType = new CageType
                             {
-                                TypeName = bookingdetail.C.CageType.TypeName
+                                TypeName = bookingdetail.C.CageType.TypeName,
+                                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingdetail.C.CageType.Id, PhotoTypesConst.CageType)
                             }
                         },
                         PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
@@ -145,7 +146,8 @@ namespace PawNClaw.Data.Repository
                                 Weight = pet.Pet.Weight,
                                 Birth = pet.Pet.Birth,
                                 BreedName = pet.Pet.BreedName,
-                                PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == BookingId)
+                                PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == BookingId),
+                                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(pet.Pet.Id, PhotoTypesConst.PetProfile)
                             }
                         })
                     }),

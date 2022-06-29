@@ -53,5 +53,8 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<PetCenter> PetCenters { get; set; }
         [InverseProperty(nameof(SponsorBanner.Brand))]
         public virtual ICollection<SponsorBanner> SponsorBanners { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }

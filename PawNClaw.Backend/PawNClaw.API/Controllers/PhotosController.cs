@@ -57,12 +57,12 @@ namespace PawNClaw.API.Controllers
             }
         }
 
-        [HttpPost("cage")]
+        [HttpPost("cagetype")]
         public IActionResult UpLoadCagePhoto(CreatePhotoParameter createPhotoParameter)
         {
             try
             {
-                createPhotoParameter.PhotoTypeId = PhotoTypesConst.Cage;
+                createPhotoParameter.PhotoTypeId = PhotoTypesConst.CageType;
 
                 _photoService.UploadPhoto(createPhotoParameter);
 

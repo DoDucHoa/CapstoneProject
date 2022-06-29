@@ -68,5 +68,8 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<BookingActivity> BookingActivities { get; set; }
         [InverseProperty(nameof(SupplyOrder.Supply))]
         public virtual ICollection<SupplyOrder> SupplyOrders { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }
