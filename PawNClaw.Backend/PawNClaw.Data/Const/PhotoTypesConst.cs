@@ -14,7 +14,7 @@ namespace PawNClaw.Data.Const
         public static int PetCenter { get; } = 4;
         public static int Cage { get; } = 5;
         public static int Customer { get; } = 6;
-        public static int PetPrifile { get; } = 7;
+        public static int PetProfile { get; } = 7;
         public static int Banner { get; } = 8;
         public static int Service { get; } = 9;
         public static int Supply { get; } = 10;
