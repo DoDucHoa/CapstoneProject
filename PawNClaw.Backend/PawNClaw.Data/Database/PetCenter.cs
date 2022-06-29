@@ -59,6 +59,10 @@ namespace PawNClaw.Data.Database
         [Column("description")]
         [StringLength(512)]
         public string Description { get; set; }
+        [Column("checkin", TypeName = "datetime")]
+        public DateTime? Checkin { get; set; }
+        [Column("checkout", TypeName = "datetime")]
+        public DateTime? Checkout { get; set; }
 
         [NotMapped]
         public int RatingCount { get => _getRatingCount(this.Bookings); }

@@ -13,7 +13,6 @@ namespace PawNClaw.Data.Database
         public Pet()
         {
             BookingActivities = new HashSet<BookingActivity>();
-            PetBookingDetails = new HashSet<PetBookingDetail>();
             PetHealthHistories = new HashSet<PetHealthHistory>();
             ServiceOrders = new HashSet<ServiceOrder>();
             SupplyOrders = new HashSet<SupplyOrder>();
@@ -54,8 +53,6 @@ namespace PawNClaw.Data.Database
         public virtual PetType PetTypeCodeNavigation { get; set; }
         [InverseProperty(nameof(BookingActivity.Pet))]
         public virtual ICollection<BookingActivity> BookingActivities { get; set; }
-        [InverseProperty(nameof(PetBookingDetail.Pet))]
-        public virtual ICollection<PetBookingDetail> PetBookingDetails { get; set; }
         [InverseProperty(nameof(PetHealthHistory.Pet))]
         public virtual ICollection<PetHealthHistory> PetHealthHistories { get; set; }
         [InverseProperty(nameof(ServiceOrder.Pet))]

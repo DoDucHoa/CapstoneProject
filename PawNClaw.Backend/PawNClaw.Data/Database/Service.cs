@@ -24,8 +24,6 @@ namespace PawNClaw.Data.Database
         [Column("description")]
         [StringLength(512)]
         public string Description { get; set; }
-        [Column("sell_price", TypeName = "numeric(19, 5)")]
-        public decimal SellPrice { get; set; }
         [Column("discount_price", TypeName = "numeric(19, 5)")]
         public decimal? DiscountPrice { get; set; }
         [Column("create_date", TypeName = "date")]
@@ -40,6 +38,9 @@ namespace PawNClaw.Data.Database
         public bool? Status { get; set; }
         [Column("center_id")]
         public int CenterId { get; set; }
+        [Column("name")]
+        [StringLength(256)]
+        public string Name { get; set; }
 
         [ForeignKey(nameof(CenterId))]
         [InverseProperty(nameof(PetCenter.Services))]

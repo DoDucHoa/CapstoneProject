@@ -8,23 +8,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PawNClaw.Data.Database
 {
+    [Keyless]
     public partial class PetBookingDetail
     {
-        [Key]
-        [Column("booking_id")]
-        public int BookingId { get; set; }
-        [Key]
-        [Column("line")]
-        public int Line { get; set; }
-        [Key]
+        [Column("booking_detail_id")]
+        public int BookingDetailId { get; set; }
         [Column("pet_id")]
         public int PetId { get; set; }
 
-        [ForeignKey("BookingId,Line")]
-        [InverseProperty("PetBookingDetails")]
+        [ForeignKey(nameof(BookingDetailId))]
         public virtual BookingDetail BookingDetail { get; set; }
         [ForeignKey(nameof(PetId))]
-        [InverseProperty("PetBookingDetails")]
         public virtual Pet Pet { get; set; }
     }
 }
