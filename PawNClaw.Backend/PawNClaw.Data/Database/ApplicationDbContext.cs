@@ -30,6 +30,7 @@ namespace PawNClaw.Data.Database
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<CustomerAddress> CustomerAddresses { get; set; }
         public virtual DbSet<District> Districts { get; set; }
+        public virtual DbSet<FoodSchedule> FoodSchedules { get; set; }
         public virtual DbSet<GeneralLedger> GeneralLedgers { get; set; }
         public virtual DbSet<Location> Locations { get; set; }
         public virtual DbSet<Owner> Owners { get; set; }
@@ -127,51 +128,48 @@ namespace PawNClaw.Data.Database
             {
                 entity.Property(e => e.ProvideTime).HasDefaultValueSql("(getdate())");
 
+                entity.HasOne(d => d.BookingDetail)
+                    .WithMany(p => p.BookingActivities)
+                    .HasForeignKey(d => d.BookingDetailId)
+                    .HasConstraintName("FK__BookingAc__booki__689D8392");
+
                 entity.HasOne(d => d.Booking)
                     .WithMany(p => p.BookingActivities)
                     .HasForeignKey(d => d.BookingId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__BookingAc__booki__38EE7070");
+                    .HasConstraintName("FK__BookingAc__booki__67A95F59");
 
                 entity.HasOne(d => d.Pet)
                     .WithMany(p => p.BookingActivities)
                     .HasForeignKey(d => d.PetId)
-                    .HasConstraintName("FK__BookingAc__pet_i__3AD6B8E2");
+                    .HasConstraintName("FK__BookingAc__pet_i__6991A7CB");
 
                 entity.HasOne(d => d.Service)
                     .WithMany(p => p.BookingActivities)
                     .HasForeignKey(d => d.ServiceId)
-                    .HasConstraintName("FK__BookingAc__servi__3CBF0154");
+                    .HasConstraintName("FK__BookingAc__servi__6B79F03D");
 
                 entity.HasOne(d => d.Supply)
                     .WithMany(p => p.BookingActivities)
                     .HasForeignKey(d => d.SupplyId)
-                    .HasConstraintName("FK__BookingAc__suppl__3BCADD1B");
-
-                entity.HasOne(d => d.BookingDetail)
-                    .WithMany(p => p.BookingActivities)
-                    .HasForeignKey(d => new { d.BookingId, d.Line })
-                    .HasConstraintName("FK__BookingActivitie__39E294A9");
+                    .HasConstraintName("FK__BookingAc__suppl__6A85CC04");
             });
 
             modelBuilder.Entity<BookingDetail>(entity =>
             {
-                entity.HasKey(e => new { e.BookingId, e.Line })
-                    .HasName("PK_BookingDetail");
-
                 entity.Property(e => e.CageCode).IsUnicode(false);
 
                 entity.HasOne(d => d.Booking)
                     .WithMany(p => p.BookingDetails)
                     .HasForeignKey(d => d.BookingId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__BookingDe__booki__76619304");
+                    .HasConstraintName("FK__BookingDe__booki__60FC61CA");
 
                 entity.HasOne(d => d.C)
                     .WithMany(p => p.BookingDetails)
                     .HasForeignKey(d => new { d.CageCode, d.CenterId })
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__BookingDetails__756D6ECB");
+                    .HasConstraintName("FK__BookingDetails__60083D91");
             });
 
             modelBuilder.Entity<BookingStatus>(entity =>
@@ -308,11 +306,24 @@ namespace PawNClaw.Data.Database
 
                 entity.Property(e => e.CityCode).IsUnicode(false);
 
+                entity.Property(e => e.Latitude).IsUnicode(false);
+
+                entity.Property(e => e.Longtitude).IsUnicode(false);
+
                 entity.HasOne(d => d.CityCodeNavigation)
                     .WithMany(p => p.Districts)
                     .HasForeignKey(d => d.CityCode)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__District__city_c__54CB950F");
+            });
+
+            modelBuilder.Entity<FoodSchedule>(entity =>
+            {
+                entity.HasOne(d => d.CageType)
+                    .WithMany(p => p.FoodSchedules)
+                    .HasForeignKey(d => d.CageTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__FoodSched__cage___7226EDCC");
             });
 
             modelBuilder.Entity<GeneralLedger>(entity =>
@@ -403,20 +414,19 @@ namespace PawNClaw.Data.Database
 
             modelBuilder.Entity<PetBookingDetail>(entity =>
             {
-                entity.HasKey(e => new { e.BookingId, e.Line, e.PetId })
-                    .HasName("PK_PetBookingDetail");
+                entity.HasKey(e => new { e.BookingDetailId, e.PetId });
+
+                entity.HasOne(d => d.BookingDetail)
+                    .WithMany(p => p.PetBookingDetails)
+                    .HasForeignKey(d => d.BookingDetailId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__PetBookin__booki__75035A77");
 
                 entity.HasOne(d => d.Pet)
                     .WithMany(p => p.PetBookingDetails)
                     .HasForeignKey(d => d.PetId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PetBookin__pet_i__7E02B4CC");
-
-                entity.HasOne(d => d.BookingDetail)
-                    .WithMany(p => p.PetBookingDetails)
-                    .HasForeignKey(d => new { d.BookingId, d.Line })
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PetBookingDetail__7D0E9093");
+                    .HasConstraintName("FK__PetBookin__pet_i__75F77EB0");
             });
 
             modelBuilder.Entity<PetCenter>(entity =>
@@ -493,18 +503,13 @@ namespace PawNClaw.Data.Database
 
             modelBuilder.Entity<Photo>(entity =>
             {
-                entity.HasKey(e => new { e.PhotoTypeId, e.IdActor, e.Line })
-                    .HasName("PK_Photo");
-
-                entity.Property(e => e.Line).ValueGeneratedOnAdd();
-
                 entity.Property(e => e.Status).HasDefaultValueSql("((1))");
 
                 entity.HasOne(d => d.PhotoType)
                     .WithMany(p => p.Photos)
                     .HasForeignKey(d => d.PhotoTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Photos__photo_ty__04AFB25B");
+                    .HasConstraintName("FK__Photos__photo_ty__6F4A8121");
             });
 
             modelBuilder.Entity<PhotoType>(entity =>

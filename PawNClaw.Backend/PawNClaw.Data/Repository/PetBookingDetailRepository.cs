@@ -17,15 +17,14 @@ namespace PawNClaw.Data.Repository
         {
         }
 
-        public IEnumerable<PetBookingDetail> GetPetBookingDetailsByBookingId(int BookingId)
+        public IEnumerable<PetBookingDetail> GetPetBookingDetailsByBookingId(int BookingDetailId)
         {
             IQueryable<PetBookingDetail> query = _dbSet
                 .Include(x => x.Pet)
                 .ThenInclude(pet => pet.PetHealthHistories)
                 .Select(x => new PetBookingDetail
                 {
-                    BookingId = x.BookingId,
-                    Line = x.Line,
+                    BookingDetailId = x.BookingDetailId,
                     Pet = new Pet
                     {
                         Id = x.Pet.Id,
@@ -41,7 +40,7 @@ namespace PawNClaw.Data.Repository
                         .Where(health => health.Id == x.Pet.PetHealthHistories.Max(x => x.Id))
                     }
                 })
-                .Where(x => x.BookingId == BookingId);
+                .Where(x => x.BookingDetailId == BookingDetailId);
 
             return query.ToList();
         }

@@ -9,6 +9,6 @@ namespace PawNClaw.Data.Interface
 {
     public interface IPetBookingDetailRepository : IRepository<PetBookingDetail>
     {
-        public IEnumerable<PetBookingDetail> GetPetBookingDetailsByBookingId(int BookingId);
+        public IEnumerable<PetBookingDetail> GetPetBookingDetailsByBookingId(int BookingDetailId);
     }
 }

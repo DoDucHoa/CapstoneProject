@@ -42,10 +42,10 @@ namespace PawNClaw.Business.Services
             return values.ToList();
         }
 
-        //Get By Booking Id And Line
-        public IEnumerable<BookingDetail> GetBookingDetailsByBookingIdAndLine(int BookingId, int Line)
+        //Get By Booking Detail Id
+        public IEnumerable<BookingDetail> GetBookingDetailsById(int BookingDetailId)
         {
-            var values = _bookingDetailRepository.GetAll(x => x.BookingId == BookingId && x.Line == Line);
+            var values = _bookingDetailRepository.GetAll(x => x.Id == BookingDetailId);
 
             return values.ToList();
         }

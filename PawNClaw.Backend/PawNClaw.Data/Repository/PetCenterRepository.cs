@@ -48,6 +48,8 @@ namespace PawNClaw.Data.Repository
                     CloseTime = x.CloseTime,
                     Description = x.Description,
                     BrandId = x.BrandId,
+                    Checkin = x.Checkin,
+                    Checkout = x.Checkout,
                     CageTypes = (ICollection<CageType>)x.CageTypes.Select(cagetype => new CageType
                     {
                         Id = cagetype.Id,
@@ -59,7 +61,8 @@ namespace PawNClaw.Data.Repository
                         IsSingle = cagetype.IsSingle,
                         Status = cagetype.Status,
                         CenterId = cagetype.CenterId
-                    })
+                    }),
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
                 });
             return query.ToList();
         }

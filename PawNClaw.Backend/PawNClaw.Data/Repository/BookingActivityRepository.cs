@@ -21,7 +21,7 @@ namespace PawNClaw.Data.Repository
             bookingActivity.ProvideTime = createBookingActivityParameter.ProvideTime;
             bookingActivity.Description = createBookingActivityParameter.Description;
             bookingActivity.BookingId = createBookingActivityParameter.BookingId;
-            bookingActivity.Line = createBookingActivityParameter.Line;
+            bookingActivity.BookingDetailId = createBookingActivityParameter.BookingDetailId;
             bookingActivity.PetId = createBookingActivityParameter.PetId;
             bookingActivity.SupplyId = createBookingActivityParameter.SupplyId;
             bookingActivity.ServiceId = createBookingActivityParameter.ServiceId;

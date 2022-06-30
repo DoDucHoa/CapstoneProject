@@ -117,7 +117,6 @@ namespace PawNClaw.Data.Repository
                     .Select(bookingdetail => new BookingDetail
                     {
                         BookingId = bookingdetail.BookingId,
-                        Line = bookingdetail.Line,
                         Price = bookingdetail.Price,
                         CageCode = bookingdetail.CageCode,
                         CenterId = bookingdetail.CenterId,
@@ -135,8 +134,7 @@ namespace PawNClaw.Data.Repository
                         PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
                         .Select(pet => new PetBookingDetail
                         {
-                            BookingId = pet.BookingId,
-                            Line = pet.Line,
+                            BookingDetailId = pet.BookingDetailId,
                             Pet = new Pet
                             {
                                 Id = pet.Pet.Id,
@@ -203,7 +201,6 @@ namespace PawNClaw.Data.Repository
                         ProvideTime = bookingact.ProvideTime,
                         Description = bookingact.Description,
                         BookingId = bookingact.BookingId,
-                        Line = bookingact.Line,
                         PetId = bookingact.PetId,
                         SupplyId = bookingact.SupplyId,
                         ServiceId = bookingact.ServiceId,
@@ -242,7 +239,6 @@ namespace PawNClaw.Data.Repository
                     .Select(bookingdetail => new BookingDetail
                     {
                         BookingId = bookingdetail.BookingId,
-                        Line = bookingdetail.Line,
                         Price = bookingdetail.Price,
                         CageCode = bookingdetail.CageCode,
                         CenterId = bookingdetail.CenterId,
@@ -259,8 +255,7 @@ namespace PawNClaw.Data.Repository
                         PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
                         .Select(pet => new PetBookingDetail
                         {
-                            BookingId = pet.BookingId,
-                            Line = pet.Line,
+                            BookingDetailId = pet.BookingDetailId,
                             Pet = new Pet
                             {
                                 Id = pet.Pet.Id,
@@ -326,7 +321,6 @@ namespace PawNClaw.Data.Repository
                         ProvideTime = bookingact.ProvideTime,
                         Description = bookingact.Description,
                         BookingId = bookingact.BookingId,
-                        Line = bookingact.Line,
                         PetId = bookingact.PetId,
                         SupplyId = bookingact.SupplyId,
                         ServiceId = bookingact.ServiceId,
@@ -366,7 +360,6 @@ namespace PawNClaw.Data.Repository
                     .Select(bookingdetail => new BookingDetail
                     {
                         BookingId = bookingdetail.BookingId,
-                        Line = bookingdetail.Line,
                         Price = bookingdetail.Price,
                         CageCode = bookingdetail.CageCode,
                         CenterId = bookingdetail.CenterId,
@@ -375,8 +368,7 @@ namespace PawNClaw.Data.Repository
                         PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
                         .Select(pet => new PetBookingDetail
                         {
-                            BookingId = pet.BookingId,
-                            Line = pet.Line,
+                            BookingDetailId = pet.BookingDetailId,
                             Pet = new Pet
                             {
                                 Id = pet.Pet.Id,
@@ -386,7 +378,7 @@ namespace PawNClaw.Data.Repository
                                 Weight = pet.Pet.Weight,
                                 Birth = pet.Pet.Birth,
                                 BreedName = pet.Pet.BreedName,
-                                PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == pet.BookingId)
+                                PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == bookingdetail.BookingId)
                             }
                         })
                     }),
