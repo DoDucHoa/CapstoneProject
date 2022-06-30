@@ -15,7 +15,7 @@ namespace PawNClaw.Data.Parameter
         public DateTime? ProvideTime { get; set; }
         public string Description { get; set; }
         public int BookingId { get; set; }
-        public int? Line { get; set; }
+        public int? BookingDetailId { get; set; }
         public int? PetId { get; set; }
         public int? SupplyId { get; set; }
         public int? ServiceId { get; set; }

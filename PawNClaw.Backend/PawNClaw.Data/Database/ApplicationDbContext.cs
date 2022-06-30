@@ -414,17 +414,19 @@ namespace PawNClaw.Data.Database
 
             modelBuilder.Entity<PetBookingDetail>(entity =>
             {
+                entity.HasKey(e => new { e.BookingDetailId, e.PetId });
+
                 entity.HasOne(d => d.BookingDetail)
-                    .WithMany()
+                    .WithMany(p => p.PetBookingDetails)
                     .HasForeignKey(d => d.BookingDetailId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PetBookin__booki__62E4AA3C");
+                    .HasConstraintName("FK__PetBookin__booki__75035A77");
 
                 entity.HasOne(d => d.Pet)
-                    .WithMany()
+                    .WithMany(p => p.PetBookingDetails)
                     .HasForeignKey(d => d.PetId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PetBookin__pet_i__63D8CE75");
+                    .HasConstraintName("FK__PetBookin__pet_i__75F77EB0");
             });
 
             modelBuilder.Entity<PetCenter>(entity =>
