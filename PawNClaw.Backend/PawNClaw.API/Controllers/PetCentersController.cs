@@ -32,8 +32,8 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                var data = _searchService.MainSearchCenter(_searchRequestModel.City, _searchRequestModel.District,
-                                                _searchRequestModel.StartBooking, _searchRequestModel.EndBooking,
+                var data = _searchService.MainSearchCenter_ver_2(_searchRequestModel.City, _searchRequestModel.District,
+                                                _searchRequestModel.StartBooking, _searchRequestModel.Due,
                                                 _searchRequestModel._petRequests, _searchRequestModel.paging);
 
                 if (data.Count() == 0)

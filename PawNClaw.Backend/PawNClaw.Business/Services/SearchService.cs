@@ -300,6 +300,19 @@ namespace PawNClaw.Business.Services
             }
             //END Check valid time booking
 
+            foreach (var petIds in _petRequests)
+            {
+                foreach (var petId in petIds)
+                {
+                    if (_petBookingDetailRepository.GetAll(x => x.PetId == petId.Id &&
+                            (DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) >= 0
+                            && DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.EndBooking) < 0)).Count() != 0)
+                    {
+                        throw new Exception("Pet is Booking Already");
+                    }
+                }
+            }
+
             //START Check time booking with open close time from petcenter
             List<PetCenter> validOCCenter = new List<PetCenter>();
             foreach (var center in values)
@@ -366,28 +379,46 @@ namespace PawNClaw.Business.Services
             foreach (var center in values)
             {
 
-                TimeSpan diffOfDates = _startBooking.TimeOfDay.Subtract(DateTime.Parse(center.Checkout.ToString()).TimeOfDay);
+                TimeSpan diffOfDates = DateTime.Parse(center.Checkout.ToString()).TimeOfDay.Subtract(_startBooking.TimeOfDay);
 
                 DateTime _endBooking = _startBooking.AddDays(Due).AddHours(diffOfDates.Hours);
 
-                foreach (var petIds in _petRequests)
-                {
-                    foreach (var petId in petIds)
-                    {
-                        if (_petBookingDetailRepository.GetAll(x => x.PetId == petId.Id &&
-                                ((DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) <= 0
-                                && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) >= 0)
-                                ||
-                                (DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) >= 0
-                                && DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.EndBooking) < 0)
-                                ||
-                                (DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.StartBooking) > 0
-                                && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) <= 0))).Count() != 0)
-                        {
-                            throw new Exception("Pet is Booking Already");
-                        }
-                    }
-                }
+                center.EndBooking = _endBooking;
+                //bool CheckPetIsBooked = false;
+
+                //foreach (var petIds in _petRequests)
+                //{
+                //    foreach (var petId in petIds)
+                //    {
+                //        CheckPetIsBooked = false;
+
+                //        if (_petBookingDetailRepository.GetAll(x => x.PetId == petId.Id &&
+                //                ((DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) <= 0
+                //                && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) >= 0)
+                //                ||
+                //                (DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) >= 0
+                //                && DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.EndBooking) < 0)
+                //                ||
+                //                (DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.StartBooking) > 0
+                //                && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) <= 0))).Count() != 0)
+                //        {
+                //            CheckPetIsBooked = true;
+                //            break;
+                //            //throw new Exception("Pet is Booking Already");
+                //        }
+                //    }
+                    
+                //    if (CheckPetIsBooked)
+                //    {
+                //        break;
+                //    }
+
+                //}
+
+                //if (CheckPetIsBooked)
+                //{
+                //    break;
+                //}
 
                 var BookingOfCenter = _bookingRepository.GetBookingValidSearch(center.Id, _startBooking, _endBooking);
 
@@ -515,7 +546,9 @@ namespace PawNClaw.Business.Services
                 OpenTime = center.OpenTime,
                 CloseTime = center.CloseTime,
                 Description = center.Description,
-                BrandId = center.BrandId
+                BrandId = center.BrandId,
+                EndBooking = center.EndBooking,
+                Photos = center.Photos
             });
 
 
