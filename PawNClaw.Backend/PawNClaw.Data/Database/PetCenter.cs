@@ -69,6 +69,9 @@ namespace PawNClaw.Data.Database
         [NotMapped]
         public int RatingCount { get => _getRatingCount(this.Bookings); }
 
+        [NotMapped]
+        public DateTime EndBooking { get; set; }
+
         [ForeignKey(nameof(BrandId))]
         [InverseProperty("PetCenters")]
         public virtual Brand Brand { get; set; }
