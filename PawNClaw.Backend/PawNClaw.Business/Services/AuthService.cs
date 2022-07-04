@@ -164,7 +164,7 @@ namespace PawNClaw.Business.Services
                 Name = Name,
                 Phone = account.Phone,
                 Email = Email,
-                Url = _photoRepository.GetPhotosByIdActorAndPhotoType(account.Id, PhotoTypesConst.Account).FirstOrDefault().Url,
+                Url = null,
                 JwtToken = null
             };
             return loginViewModel;
@@ -292,6 +292,13 @@ namespace PawNClaw.Business.Services
                 throw new Exception();
             }
 
+            var photo = _photoRepository.GetPhotosByIdActorAndPhotoType(account.Id, PhotoTypesConst.Account);
+            string url = null;
+            if (photo.Count() > 0)
+            {
+                url = photo.First().Url;
+            }
+
             var loginViewModel = new LoginViewModel
             {
                 Id = account.Id,
@@ -300,7 +307,7 @@ namespace PawNClaw.Business.Services
                 Name = Name,
                 Phone = account.Phone,
                 Email = Email,
-                Url = _photoRepository.GetPhotosByIdActorAndPhotoType(account.Id, PhotoTypesConst.Account).FirstOrDefault().Url,
+                Url = url,
                 JwtToken = null
             };
 
