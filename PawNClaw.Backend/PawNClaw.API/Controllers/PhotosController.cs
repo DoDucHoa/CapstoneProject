@@ -141,5 +141,22 @@ namespace PawNClaw.API.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpPost("account")]
+        public IActionResult UpLoadAccountPhoto(CreatePhotoParameter createPhotoParameter)
+        {
+            try
+            {
+                createPhotoParameter.PhotoTypeId = PhotoTypesConst.Account;
+
+                _photoService.UploadPhoto(createPhotoParameter);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }
