@@ -28,15 +28,15 @@ namespace PawNClaw.API.Controllers
 
         [HttpPost]
         [Route("main-search")]
-        public IActionResult GetAccounts([FromBody] SearchRequestModel _searchRequestModel)
+        public async Task<IActionResult> GetAccountsAsync([FromBody] SearchRequestModel _searchRequestModel)
         {
             try
             {
-                var data = _searchService.MainSearchCenter_ver_2(_searchRequestModel.City, _searchRequestModel.District,
+                var data = await _searchService.ReferenceCenter(_searchRequestModel.City, _searchRequestModel.District,
                                                 _searchRequestModel.StartBooking, _searchRequestModel.Due,
                                                 _searchRequestModel._petRequests, _searchRequestModel.paging);
 
-                if (data.Count() == 0)
+                if (data.Count == 0)
                 {
 
                     return BadRequest("No Response!!!");
