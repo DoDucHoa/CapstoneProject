@@ -38,6 +38,7 @@ namespace PawNClaw.API.Controllers
 
                 if (data.Count() == 0)
                 {
+
                     return BadRequest("No Response!!!");
                 }
 
