@@ -149,14 +149,11 @@ namespace PawNClaw.Business.Services
 
 
                 //Create Booking Detail
-                int Line = 0;
                 foreach (var bookingDetail in bookingDetailCreateParameters)
                 {
-                    Line++;
                     BookingDetail bookingDetailToDb = new BookingDetail()
                     {
                         BookingId = bookingToDb.Id,
-                        Line = Line,
                         Price = bookingDetail.Price,
                         CageCode = bookingDetail.CageCode,
                         CenterId = bookingToDb.CenterId,
@@ -205,8 +202,7 @@ namespace PawNClaw.Business.Services
 
                         PetBookingDetail petBookingDetailToDb = new PetBookingDetail()
                         {
-                            BookingId = bookingDetailToDb.BookingId,
-                            Line = bookingDetailToDb.Line,
+                            BookingDetailId = bookingDetailToDb.Id,
                             PetId = PetId
                         };
 

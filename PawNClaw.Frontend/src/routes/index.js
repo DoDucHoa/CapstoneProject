@@ -75,6 +75,24 @@ export default function Router() {
           ],
         },
         {
+          path: 'brand',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/brand/list" replace />, index: true },
+            { path: 'list', element: <BrandList /> },
+            { path: 'new', element: <BrandCreate /> },
+            { path: ':id/edit', element: <BrandCreate /> },
+          ],
+        },
+        {
+          path: 'center',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/center/list" replace />, index: true },
+            { path: 'list', element: <OwnerList /> },
+            { path: 'new', element: <OwnerCreate /> },
+            { path: ':id/edit', element: <OwnerCreate /> },
+          ],
+        },
+        {
           path: 'owner',
           children: [
             { path: '', element: <Navigate to="/dashboard/owner/list" replace />, index: true },
@@ -148,6 +166,10 @@ const AdminCreate = Loadable(lazy(() => import('../pages/dashboard/Admin/AdminCr
 // OWNER
 const OwnerList = Loadable(lazy(() => import('../pages/dashboard/Owner/OwnerList')));
 const OwnerCreate = Loadable(lazy(() => import('../pages/dashboard/Owner/OwnerCreate')));
+
+// BRAND
+const BrandList = Loadable(lazy(() => import('../pages/dashboard/Brand/BrandList')));
+const BrandCreate = Loadable(lazy(() => import('../pages/dashboard/Brand/BrandCreate')));
 
 // BOOKING CALENDAR
 const BookingCalendar = Loadable(lazy(() => import('../pages/dashboard/Calendar')));

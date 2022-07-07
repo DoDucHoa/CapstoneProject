@@ -21,8 +21,8 @@ namespace PawNClaw.API.Controllers
             _petBookingDetailService = petBookingDetailService;
         }
 
-        [HttpGet("booking/{id}")]
-        public IActionResult GetPetBookingDetailsByBookingId(int id)
+        [HttpGet("{id}")]
+        public IActionResult GetPetBookingDetailsById(int id)
         {
             var data = _petBookingDetailService.GetPetBookingDetailsByBookingId(id);
 

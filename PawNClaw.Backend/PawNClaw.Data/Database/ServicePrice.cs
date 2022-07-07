@@ -29,11 +29,11 @@ namespace PawNClaw.Data.Database
         public int ServiceId { get; set; }
 
         [ForeignKey(nameof(CreateUser))]
-        [InverseProperty(nameof(Staff.ServicePriceCreateUserNavigations))]
-        public virtual Staff CreateUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.ServicePriceCreateUserNavigations))]
+        public virtual Account CreateUserNavigation { get; set; }
         [ForeignKey(nameof(ModifyUser))]
-        [InverseProperty(nameof(Staff.ServicePriceModifyUserNavigations))]
-        public virtual Staff ModifyUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.ServicePriceModifyUserNavigations))]
+        public virtual Account ModifyUserNavigation { get; set; }
         [ForeignKey(nameof(ServiceId))]
         [InverseProperty("ServicePrices")]
         public virtual Service Service { get; set; }

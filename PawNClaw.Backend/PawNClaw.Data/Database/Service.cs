@@ -24,8 +24,6 @@ namespace PawNClaw.Data.Database
         [Column("description")]
         [StringLength(512)]
         public string Description { get; set; }
-        [Column("sell_price", TypeName = "numeric(19, 5)")]
-        public decimal SellPrice { get; set; }
         [Column("discount_price", TypeName = "numeric(19, 5)")]
         public decimal? DiscountPrice { get; set; }
         [Column("create_date", TypeName = "date")]
@@ -40,21 +38,27 @@ namespace PawNClaw.Data.Database
         public bool? Status { get; set; }
         [Column("center_id")]
         public int CenterId { get; set; }
+        [Column("name")]
+        [StringLength(256)]
+        public string Name { get; set; }
 
         [ForeignKey(nameof(CenterId))]
         [InverseProperty(nameof(PetCenter.Services))]
         public virtual PetCenter Center { get; set; }
         [ForeignKey(nameof(CreateUser))]
-        [InverseProperty(nameof(Staff.ServiceCreateUserNavigations))]
-        public virtual Staff CreateUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.ServiceCreateUserNavigations))]
+        public virtual Account CreateUserNavigation { get; set; }
         [ForeignKey(nameof(ModifyUser))]
-        [InverseProperty(nameof(Staff.ServiceModifyUserNavigations))]
-        public virtual Staff ModifyUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.ServiceModifyUserNavigations))]
+        public virtual Account ModifyUserNavigation { get; set; }
         [InverseProperty(nameof(BookingActivity.Service))]
         public virtual ICollection<BookingActivity> BookingActivities { get; set; }
         [InverseProperty(nameof(ServiceOrder.Service))]
         public virtual ICollection<ServiceOrder> ServiceOrders { get; set; }
         [InverseProperty(nameof(ServicePrice.Service))]
         public virtual ICollection<ServicePrice> ServicePrices { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }

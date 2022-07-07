@@ -59,19 +59,28 @@ namespace PawNClaw.Data.Database
         [Column("description")]
         [StringLength(512)]
         public string Description { get; set; }
+        [Column("checkin")]
+        [StringLength(256)]
+        public string Checkin { get; set; }
+        [Column("checkout")]
+        [StringLength(256)]
+        public string Checkout { get; set; }
 
         [NotMapped]
         public int RatingCount { get => _getRatingCount(this.Bookings); }
+
+        [NotMapped]
+        public DateTime EndBooking { get; set; }
 
         [ForeignKey(nameof(BrandId))]
         [InverseProperty("PetCenters")]
         public virtual Brand Brand { get; set; }
         [ForeignKey(nameof(CreateUser))]
-        [InverseProperty(nameof(Admin.PetCenterCreateUserNavigations))]
-        public virtual Admin CreateUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.PetCenterCreateUserNavigations))]
+        public virtual Account CreateUserNavigation { get; set; }
         [ForeignKey(nameof(ModifyUser))]
-        [InverseProperty(nameof(Admin.PetCenterModifyUserNavigations))]
-        public virtual Admin ModifyUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.PetCenterModifyUserNavigations))]
+        public virtual Account ModifyUserNavigation { get; set; }
         [InverseProperty("IdNavigation")]
         public virtual Location Location { get; set; }
         [InverseProperty(nameof(Booking.Center))]
@@ -90,6 +99,9 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<Voucher> Vouchers { get; set; }
         [InverseProperty(nameof(Staff.Center))]
         public virtual ICollection<Staff> staff { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
 
         private int _getRatingCount(ICollection<Booking> Bookings)
         {

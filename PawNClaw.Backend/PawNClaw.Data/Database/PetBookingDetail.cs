@@ -11,16 +11,13 @@ namespace PawNClaw.Data.Database
     public partial class PetBookingDetail
     {
         [Key]
-        [Column("booking_id")]
-        public int BookingId { get; set; }
-        [Key]
-        [Column("line")]
-        public int Line { get; set; }
+        [Column("booking_detail_id")]
+        public int BookingDetailId { get; set; }
         [Key]
         [Column("pet_id")]
         public int PetId { get; set; }
 
-        [ForeignKey("BookingId,Line")]
+        [ForeignKey(nameof(BookingDetailId))]
         [InverseProperty("PetBookingDetails")]
         public virtual BookingDetail BookingDetail { get; set; }
         [ForeignKey(nameof(PetId))]

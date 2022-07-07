@@ -40,11 +40,11 @@ namespace PawNClaw.Data.Database
         [InverseProperty("Prices")]
         public virtual CageType CageType { get; set; }
         [ForeignKey(nameof(CreateUser))]
-        [InverseProperty(nameof(Staff.PriceCreateUserNavigations))]
-        public virtual Staff CreateUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.PriceCreateUserNavigations))]
+        public virtual Account CreateUserNavigation { get; set; }
         [ForeignKey(nameof(ModifyUser))]
-        [InverseProperty(nameof(Staff.PriceModifyUserNavigations))]
-        public virtual Staff ModifyUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.PriceModifyUserNavigations))]
+        public virtual Account ModifyUserNavigation { get; set; }
         [ForeignKey(nameof(PriceTypeCode))]
         [InverseProperty(nameof(PriceType.Prices))]
         public virtual PriceType PriceTypeCodeNavigation { get; set; }

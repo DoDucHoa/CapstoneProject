@@ -17,11 +17,10 @@ namespace PawNClaw.Data.Database
         }
 
         [Key]
+        [Column("id")]
+        public int Id { get; set; }
         [Column("booking_id")]
         public int BookingId { get; set; }
-        [Key]
-        [Column("line")]
-        public int Line { get; set; }
         [Column("price", TypeName = "numeric(19, 5)")]
         public decimal? Price { get; set; }
         [Required]
