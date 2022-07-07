@@ -31,7 +31,7 @@ namespace PawNClaw.Business.Services
                 bookingActivity.ProvideTime = createBookingActivityControllerParameter.createBookingActivityParameter.ProvideTime;
                 bookingActivity.Description = createBookingActivityControllerParameter.createBookingActivityParameter.Description;
                 bookingActivity.BookingId = createBookingActivityControllerParameter.createBookingActivityParameter.BookingId;
-                bookingActivity.Line = createBookingActivityControllerParameter.createBookingActivityParameter.Line;
+                bookingActivity.BookingDetailId = createBookingActivityControllerParameter.createBookingActivityParameter.BookingDetailId;
                 bookingActivity.PetId = createBookingActivityControllerParameter.createBookingActivityParameter.PetId;
                 bookingActivity.SupplyId = createBookingActivityControllerParameter.createBookingActivityParameter.SupplyId;
                 bookingActivity.ServiceId = createBookingActivityControllerParameter.createBookingActivityParameter.ServiceId;

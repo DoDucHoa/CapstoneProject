@@ -11,5 +11,7 @@ namespace PawNClaw.Data.Interface
     public interface IPhotoRepository : IRepository<Photo>
     {
         public void CreatePhotos(CreatePhotoParameter createPhotoParameter);
+
+        public IEnumerable<Photo> GetPhotosByIdActorAndPhotoType(int IdActor, int PhotoType);
     }
 }

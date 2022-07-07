@@ -14,6 +14,7 @@ namespace PawNClaw.Data.Database
         public CageType()
         {
             Cages = new HashSet<Cage>();
+            FoodSchedules = new HashSet<FoodSchedule>();
             Prices = new HashSet<Price>();
         }
 
@@ -62,7 +63,12 @@ namespace PawNClaw.Data.Database
         public virtual Account ModifyUserNavigation { get; set; }
         [InverseProperty(nameof(Cage.CageType))]
         public virtual ICollection<Cage> Cages { get; set; }
+        [InverseProperty(nameof(FoodSchedule.CageType))]
+        public virtual ICollection<FoodSchedule> FoodSchedules { get; set; }
         [InverseProperty(nameof(Price.CageType))]
         public virtual ICollection<Price> Prices { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }

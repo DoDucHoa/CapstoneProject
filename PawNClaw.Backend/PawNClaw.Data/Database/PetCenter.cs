@@ -59,9 +59,18 @@ namespace PawNClaw.Data.Database
         [Column("description")]
         [StringLength(512)]
         public string Description { get; set; }
+        [Column("checkin")]
+        [StringLength(256)]
+        public string Checkin { get; set; }
+        [Column("checkout")]
+        [StringLength(256)]
+        public string Checkout { get; set; }
 
         [NotMapped]
         public int RatingCount { get => _getRatingCount(this.Bookings); }
+
+        [NotMapped]
+        public DateTime EndBooking { get; set; }
 
         [ForeignKey(nameof(BrandId))]
         [InverseProperty("PetCenters")]
@@ -90,6 +99,9 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<Voucher> Vouchers { get; set; }
         [InverseProperty(nameof(Staff.Center))]
         public virtual ICollection<Staff> staff { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
 
         private int _getRatingCount(ICollection<Booking> Bookings)
         {

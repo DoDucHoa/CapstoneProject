@@ -32,17 +32,5 @@ namespace PawNClaw.API.Controllers
         {
             return Ok("Admin-Oke");
         }
-
-        [HttpPost]
-        public IActionResult TestListParam([FromBody] List<List<PetRequestParameter>> _petRequests)
-        {
-            return Ok(service.TestListParameter(_petRequests));
-        }
-
-        [HttpGet("Test Check Date")]
-        public IActionResult CheckDate(int id, string StartBooking, string EndBooking)
-        {
-            return Ok(priceRepository.checkTotalPriceOfCageType(id, StartBooking, EndBooking));
-        }
     }
 }

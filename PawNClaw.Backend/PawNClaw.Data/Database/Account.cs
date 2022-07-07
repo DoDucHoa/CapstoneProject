@@ -137,5 +137,8 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<VoucherType> VoucherTypeCreateUserNavigations { get; set; }
         [InverseProperty(nameof(VoucherType.ModifyUserNavigation))]
         public virtual ICollection<VoucherType> VoucherTypeModifyUserNavigations { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }

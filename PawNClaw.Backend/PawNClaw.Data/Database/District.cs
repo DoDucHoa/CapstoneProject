@@ -29,6 +29,12 @@ namespace PawNClaw.Data.Database
         [Column("city_code")]
         [StringLength(32)]
         public string CityCode { get; set; }
+        [Column("latitude")]
+        [StringLength(64)]
+        public string Latitude { get; set; }
+        [Column("longtitude")]
+        [StringLength(64)]
+        public string Longtitude { get; set; }
 
         [ForeignKey(nameof(CityCode))]
         [InverseProperty(nameof(City.Districts))]

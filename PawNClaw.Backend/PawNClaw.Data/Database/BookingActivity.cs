@@ -20,8 +20,8 @@ namespace PawNClaw.Data.Database
         public string Description { get; set; }
         [Column("booking_id")]
         public int BookingId { get; set; }
-        [Column("line")]
-        public int? Line { get; set; }
+        [Column("booking_detail_id")]
+        public int? BookingDetailId { get; set; }
         [Column("pet_id")]
         public int? PetId { get; set; }
         [Column("supply_id")]
@@ -32,7 +32,7 @@ namespace PawNClaw.Data.Database
         [ForeignKey(nameof(BookingId))]
         [InverseProperty("BookingActivities")]
         public virtual Booking Booking { get; set; }
-        [ForeignKey("BookingId,Line")]
+        [ForeignKey(nameof(BookingDetailId))]
         [InverseProperty("BookingActivities")]
         public virtual BookingDetail BookingDetail { get; set; }
         [ForeignKey(nameof(PetId))]

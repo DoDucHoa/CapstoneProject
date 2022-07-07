@@ -13,6 +13,7 @@ namespace PawNClaw.Data.Helper
         public string District { get; set; }
         public string StartBooking { get; set; }
         public string EndBooking { get; set; }
+        public int Due { get; set; }
         public List<List<PetRequestForSearchCenter>> _petRequests { get; set; }
         public PagingParameter paging { get; set; }
     }
