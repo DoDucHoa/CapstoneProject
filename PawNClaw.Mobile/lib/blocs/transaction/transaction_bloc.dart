@@ -27,24 +27,15 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       print("line of BookingDetails: " +
           transactionDetails!.bookingDetails!.length.toString());
       print("line of petbookingdetails: " +
-          transactionDetails.bookingDetails!.first.petBookingDetails!.length
+          transactionDetails!.bookingDetails!.first.petBookingDetails!.length
               .toString());
       print('cage: ' +
           transactionDetails.bookingDetails!.first.cage!.cageType!.typeName!);
       print('service: ' + transactionDetails.serviceOrders!.length.toString());
       print('supply: ' + transactionDetails.supplyOrders!.length.toString());
+      print('act: ' + transactionDetails.bookingActivities!.length.toString());
       if (transactionDetails != null)
         emit(TransactionDetailsLoaded(transactionDetails));
     });
-    on<GetTransactionDetails>((event, emit) async{
-    final transactionDetails = await _transactionRepository.getTransactionDetails(event.bookingId);
-    print("line of BookingDetails: "+ transactionDetails!.bookingDetails!.length.toString());
-    print("line of petbookingdetails: "+ transactionDetails!.bookingDetails!.first.petBookingDetails!.length.toString());
-    print('cage: ' + transactionDetails.bookingDetails!.first.cage!.cageType!.typeName!);
-    print('service: ' + transactionDetails.serviceOrders!.length.toString());
-    print('supply: ' + transactionDetails.supplyOrders!.length.toString());
-    print('act: ' + transactionDetails.bookingActivities!.length.toString());
-    if (transactionDetails != null) emit(TransactionDetailsLoaded(transactionDetails));
-  });
   }
 }

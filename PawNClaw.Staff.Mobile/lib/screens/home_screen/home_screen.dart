@@ -4,6 +4,7 @@ import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:pncstaff_mobile_application/blocs/auth/auth_bloc.dart';
 import 'package:pncstaff_mobile_application/blocs/booking/booking_bloc.dart';
 import 'package:pncstaff_mobile_application/common/components/elevated_container.dart';
+import 'package:pncstaff_mobile_application/common/components/line_indicator.dart';
 import 'package:pncstaff_mobile_application/common/components/loading_indicator.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/models/account.dart';
@@ -46,51 +47,112 @@ class _HomeScreenState extends State<HomeScreen> {
             return Scaffold(
               backgroundColor: backgroundColor,
               resizeToAvoidBottomInset: true,
-              body: NestedScrollView(
-                headerSliverBuilder: ((context, value) {
-                  var authState = BlocProvider.of<AuthBloc>(context).state;
-                  var user = (authState as Authenticated).user;
-                  return [
-                    SliverAppBar(
-                      centerTitle: true,
-                      backgroundColor: frameColor,
-                      expandedHeight: height * 0.3,
-                      floating: true,
-                      pinned: true,
-                      flexibleSpace: FlexibleSpaceBar(
-                        collapseMode: CollapseMode.pin,
-                        background: WelcomePanel(
-                          username: user.name ?? "Staff",
-                          bookings: state.bookings,
-                        ),
-                      ),
-                      shadowColor: Colors.transparent,
-                      bottom: PreferredSize(
-                        preferredSize: Size(width * 0.85, height * 0.075),
-                        child: ElevatedContainer(
-                          height: height * 0.06,
-                          width: width * 0.85,
-                          child: TextField(
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(
-                                Icons.search,
-                                color: primaryColor,
-                              ),
-                              hintText: "Tìm kiếm khách hàng",
-                              hintStyle: TextStyle(
-                                  color: lightFontColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15),
-                              border: InputBorder.none,
-                            ),
+              body: DefaultTabController(
+                length: 3,
+                child: NestedScrollView(
+                  headerSliverBuilder: ((context, value) {
+                    var authState = BlocProvider.of<AuthBloc>(context).state;
+                    var user = (authState as Authenticated).user;
+                    return [
+                      SliverAppBar(
+                        centerTitle: true,
+                        backgroundColor: frameColor,
+                        expandedHeight: height * 0.15,
+                        floating: true,
+                        pinned: true,
+                        flexibleSpace: FlexibleSpaceBar(
+                          collapseMode: CollapseMode.pin,
+                          background: WelcomePanel(
+                            username: user.name ?? "Staff",
+                            bookings: state.bookings,
                           ),
-                          elevation: width * 0.015,
+                        ),
+                        shadowColor: Colors.transparent,
+                        bottom: TabBar(
+                          tabs: [
+                            Tab(
+                              text: 'To-do list',
+                            ),
+                            Tab(
+                              text: 'Check-out today',
+                            ),
+                            Tab(
+                              text: 'Next up tasks',
+                            ),
+                          ],
+                          labelColor: primaryColor,
+                          unselectedLabelColor: lightFontColor,
+                          labelStyle: TextStyle(fontWeight: FontWeight.w700),
+                          indicator: LineIndicator(
+                              color: primaryColor, radius: width / 4),
+                          splashBorderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10)),
+                        ),
+                      )
+                    ];
+                  }),
+                  body: Container(
+                    color: frameColor,
+                    width: width,
+                    child: TabBarView(children: [
+                      SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("${DateTime.now()}"),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: 2,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text("Time"),
+                                      Flexible(
+                                        child: ListView(
+                                          shrinkWrap: true,
+                                          children: [
+                                            Text("data"),
+                                            Text("data"),
+                                            Text("data"),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            )
+                            // Row(
+                            //   mainAxisSize: MainAxisSize.min,
+                            //   children: [
+                            //     Text("Time"),
+                            //     ListView.builder(
+                            //       shrinkWrap: true,
+                            //       itemBuilder: ((context, index) {
+                            //         return Container(
+                            //           height: 150,
+                            //           width: 10,
+                            //           decoration: BoxDecoration(
+                            //             borderRadius: BorderRadius.circular(15),
+                            //           ),
+                            //         );
+                            //       }),
+                            //       itemCount: 2,
+                            //     )
+                            //   ],
+                            // ),
+                          ],
                         ),
                       ),
-                    )
-                  ];
-                }),
-                body: HomeBody(bookings: state.bookings),
+                      Text("2"),
+                      Text("3"),
+                    ]),
+                  ),
+                ),
               ),
               bottomNavigationBar: SnakeNavigationBar.color(
                 behaviour: SnakeBarBehaviour.floating,
