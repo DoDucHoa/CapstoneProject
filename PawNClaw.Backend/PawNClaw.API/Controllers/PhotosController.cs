@@ -24,7 +24,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost("brand")]
-        public IActionResult UpLoadBrandPhoto(CreatePhotoParameter createPhotoParameter)
+        public IActionResult UpLoadBrandPhoto([FromBody] CreatePhotoParameter createPhotoParameter)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost("petcenter")]
-        public IActionResult UpLoadPetCenterPhoto(CreatePhotoParameter createPhotoParameter)
+        public IActionResult UpLoadPetCenterPhoto([FromBody] CreatePhotoParameter createPhotoParameter)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost("cagetype")]
-        public IActionResult UpLoadCagePhoto(CreatePhotoParameter createPhotoParameter)
+        public IActionResult UpLoadCagePhoto([FromBody] CreatePhotoParameter createPhotoParameter)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost("pet")]
-        public IActionResult UpLoadPetPhoto(CreatePhotoParameter createPhotoParameter)
+        public IActionResult UpLoadPetPhoto([FromBody] CreatePhotoParameter createPhotoParameter)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost("banner")]
-        public IActionResult UpLoadBannerPhoto(CreatePhotoParameter createPhotoParameter)
+        public IActionResult UpLoadBannerPhoto([FromBody] CreatePhotoParameter createPhotoParameter)
         {
             try
             {
@@ -109,7 +109,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost("service")]
-        public IActionResult UpLoadServicePhoto(CreatePhotoParameter createPhotoParameter)
+        public IActionResult UpLoadServicePhoto([FromBody] CreatePhotoParameter createPhotoParameter)
         {
             try
             {
@@ -126,7 +126,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost("supply")]
-        public IActionResult UpLoadSupplyPhoto(CreatePhotoParameter createPhotoParameter)
+        public IActionResult UpLoadSupplyPhoto([FromBody] CreatePhotoParameter createPhotoParameter)
         {
             try
             {
@@ -143,13 +143,43 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost("account")]
-        public IActionResult UpLoadAccountPhoto(CreatePhotoParameter createPhotoParameter)
+        public IActionResult UpLoadAccountPhoto([FromBody] CreatePhotoParameter createPhotoParameter)
         {
             try
             {
                 createPhotoParameter.PhotoTypeId = PhotoTypesConst.Account;
 
                 _photoService.UploadPhoto(createPhotoParameter);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut]
+        public IActionResult UpDateBrandPhoto([FromBody] UpdatePhotoParameter updatePhotoParameter)
+        {
+            try
+            {
+                _photoService.UpdatePhoto(updatePhotoParameter);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeletePhoto(int id)
+        {
+            try
+            {
+                _photoService.DeletePhoto(id);
 
                 return Ok();
             }

@@ -17,4 +17,10 @@ namespace PawNClaw.Data.Parameter
         public string Url { get; set; }
         public bool? IsThumbnail { get; set; }
     }
+
+    public class UpdatePhotoParameter
+    {
+        public int Id { get; set; }
+        public string Url { get; set; }
+    }
 }
