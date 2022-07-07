@@ -9,7 +9,7 @@ namespace PawNClaw.Business.Services
 {
     public class BrandService
     {
-        private IBrandRepository _brandRepository;
+        private readonly IBrandRepository _brandRepository;
 
         public BrandService(IBrandRepository brandRepository)
         {
@@ -17,29 +17,23 @@ namespace PawNClaw.Business.Services
         }
 
         //Get All
-        public PagedList<Brand> GetBrands(string Name, bool? Status, string dir, PagingParameter paging)
+        public PagedList<Brand> GetBrands(string name, bool? status, string dir, PagingParameter paging)
         {
             var values = _brandRepository.GetAll(includeProperties: "Owner");
 
             // lọc theo name
-            if (!string.IsNullOrWhiteSpace(Name))
+            if (!string.IsNullOrWhiteSpace(name))
             {
-                values = values.Where(x => x.Name.Trim().Equals(Name));
+                values = values.Where(brand => brand.Name.Trim().Equals(name));
             }
 
             // lọc theo status
-            if (Status != null)
+            if (status != null)
             {
-                if (Status == true)
-                    values = values.Where(x => x.Status == true);
-                else
-                    values = values.Where(x => x.Status == false);
+                values = status == true ? values.Where(brand => brand.Status == true) : values.Where(brand => brand.Status == false);
             }
 
-            if (dir == "asc")
-                values = values.OrderBy(d => d.Name);
-            else
-                values = values.OrderByDescending(d => d.Name);
+            values = dir == "asc" ? values.OrderBy(brand => brand.Name) : values.OrderByDescending(brand => brand.Name);
 
             return PagedList<Brand>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
@@ -49,14 +43,14 @@ namespace PawNClaw.Business.Services
         //Get Id
         public Brand GetBrandById(int id)
         {
-            var value = _brandRepository.GetFirstOrDefault(x => x.Id == id);
+            var value = _brandRepository.GetBrandById(id);
             return value;
         }
 
         //Add
         public int Add(CreateBrandParameter brand)
         {
-            Brand brandToDB = new()
+            Brand brandToDb = new()
             {
                 Name = brand.Name,
                 Description = brand.Description,
@@ -67,9 +61,9 @@ namespace PawNClaw.Business.Services
 
             try
             {
-                _brandRepository.Add(brandToDB);
+                _brandRepository.Add(brandToDb);
                 _brandRepository.SaveDbChange();
-                var id = brandToDB.Id;
+                var id = brandToDb.Id;
                 return id;
             }
             catch (Exception ex)

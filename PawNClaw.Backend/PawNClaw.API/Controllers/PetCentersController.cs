@@ -1,14 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Parameter;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PawNClaw.API.Controllers
 {
@@ -17,8 +14,8 @@ namespace PawNClaw.API.Controllers
     [Authorize]
     public class PetCentersController : ControllerBase
     {
-        private readonly SearchService _searchService;
         private readonly PetCenterService _petCenterService;
+        private readonly SearchService _searchService;
 
         public PetCentersController(SearchService searchService, PetCenterService petCenterService)
         {
@@ -33,13 +30,10 @@ namespace PawNClaw.API.Controllers
             try
             {
                 var data = _searchService.MainSearchCenter(_searchRequestModel.City, _searchRequestModel.District,
-                                                _searchRequestModel.StartBooking, _searchRequestModel.EndBooking,
-                                                _searchRequestModel._petRequests, _searchRequestModel.paging);
+                    _searchRequestModel.StartBooking, _searchRequestModel.EndBooking,
+                    _searchRequestModel._petRequests, _searchRequestModel.paging);
 
-                if (data.Count() == 0)
-                {
-                    return BadRequest("No Response!!!");
-                }
+                if (data.Count() == 0) return BadRequest("No Response!!!");
 
                 var metadata = new
                 {
@@ -53,7 +47,7 @@ namespace PawNClaw.API.Controllers
 
                 return Ok(new { data, metadata });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -75,7 +69,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetCenters(string includeProperties, PagingParameter paging)
+        public IActionResult GetCenters([FromQuery] string name, [FromQuery] bool? status, [FromQuery] string sort, [FromQuery] PagingParameter paging, string includeProperties)
         {
             var data = _petCenterService.GetAll(includeProperties, paging);
             var metadata = new
@@ -90,14 +84,14 @@ namespace PawNClaw.API.Controllers
             return Ok(new { data, metadata });
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public IActionResult GetCenter(int id)
         {
             var data = _petCenterService.GetById(id);
             return Ok(data);
         }
 
-        [HttpGet("brand/{id}")]
+        [HttpGet("brand/{id:int}")]
         public IActionResult GetCentersByBrand(int id, PagingParameter paging)
         {
             var data = _petCenterService.GetByBrand(id, paging);
@@ -133,7 +127,7 @@ namespace PawNClaw.API.Controllers
         [Authorize(Roles = "Admin,Mod")]
         public IActionResult Create([FromBody] PetCenterRequestParameter petCenterRequestParameter)
         {
-            PetCenter petCenter = new PetCenter
+            var petCenter = new PetCenter
             {
                 Name = petCenterRequestParameter.Name,
                 Address = petCenterRequestParameter.Address,
@@ -150,15 +144,13 @@ namespace PawNClaw.API.Controllers
             };
             if (_petCenterService.Add(petCenter) == 1)
                 return Ok();
-            else
-                return BadRequest();
+            return BadRequest();
         }
 
         [HttpPut]
         public IActionResult Update([FromBody] PetCenterRequestParameter petCenterRequestParameter)
         {
-
-            PetCenter petCenter = _petCenterService.GetById((int)petCenterRequestParameter.Id);
+            var petCenter = _petCenterService.GetById((int)petCenterRequestParameter.Id);
 
             petCenter.Name = petCenterRequestParameter.Name;
             petCenter.Address = petCenterRequestParameter.Address;
@@ -168,11 +160,10 @@ namespace PawNClaw.API.Controllers
             petCenter.BrandId = (int)petCenterRequestParameter.BrandId;
             petCenter.OpenTime = petCenterRequestParameter.OpenTime;
             petCenter.CloseTime = petCenterRequestParameter.CloseTime;
-            
+
             if (_petCenterService.Update(petCenter))
                 return Ok();
-            else
-                return BadRequest();
+            return BadRequest();
         }
 
         [HttpDelete("{id}")]
@@ -181,8 +172,7 @@ namespace PawNClaw.API.Controllers
         {
             if (_petCenterService.Delete(id))
                 return Ok();
-            else
-                return BadRequest();
+            return BadRequest();
         }
 
         [HttpPut("restore/{id}")]
@@ -191,8 +181,7 @@ namespace PawNClaw.API.Controllers
         {
             if (_petCenterService.Restore(id))
                 return Ok();
-            else
-                return BadRequest();
+            return BadRequest();
         }
     }
 }
