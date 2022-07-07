@@ -285,7 +285,7 @@ namespace PawNClaw.Business.Services
         }
 
         //Main Search Center Part 2
-        public PagedList<PetCenter> MainSearchCenter_ver_2Async(string City, string District,
+        public PagedList<PetCenter> MainSearchCenter_ver_2(string City, string District,
             string StartBooking, int Due,
             List<List<PetRequestForSearchCenter>> _petRequests, PagingParameter paging)
         {
@@ -567,7 +567,7 @@ namespace PawNClaw.Business.Services
             string StartBooking, int Due,
             List<List<PetRequestForSearchCenter>> _petRequests, PagingParameter paging)
         {
-            var values = MainSearchCenter_ver_2Async(City, District,
+            var values = MainSearchCenter_ver_2(City, District,
                                                 StartBooking, Due,
                                                 _petRequests, paging);
 
@@ -616,7 +616,7 @@ namespace PawNClaw.Business.Services
                     if (count <= 3)
                     {
                         Console.WriteLine(item.Key.Name);
-                        values = MainSearchCenter_ver_2Async(City, item.Key.Code,
+                        values = MainSearchCenter_ver_2(City, item.Key.Code,
                                                     StartBooking, Due,
                                                     _petRequests, paging);
 
