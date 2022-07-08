@@ -84,6 +84,21 @@ export default function CageDialogForm({ open, onClose, cageSearchParam, booking
   const onSubmit = async (data) => {
     try {
       await axios.put('/api/bookingdetails', { ...data, price });
+      cageSearchParam.listPets.map(async (pet) => {
+        axios.post('/api/pethealthhistories', {
+          isUpdatePet: true,
+          createPetHealthHistoryParameter: {
+            checkedDate: new Date(),
+            description: '',
+            centerName: 'Runolfsson-Dickens',
+            petId: pet.id,
+            length: pet.length,
+            height: pet.height,
+            weight: pet.weight,
+            bookingId,
+          },
+        });
+      });
       onClose();
       enqueueSnackbar('Cập nhật thành công!');
       dispatch(closeModal());

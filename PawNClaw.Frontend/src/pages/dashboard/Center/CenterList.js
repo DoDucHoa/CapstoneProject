@@ -41,7 +41,7 @@ import { TableEmptyRows, TableHeadCustom, TableNoData } from '../../../component
 import { BrandTableRow, BrandTableToolbar } from '../../../sections/@dashboard/brand/list';
 
 // API
-import { getBrands, banBrand, unbanBrand } from './useBrandAPI';
+import { getBrands, banBrand, unbanBrand } from './useCenterAPI';
 
 // ----------------------------------------------------------------------
 
@@ -61,10 +61,11 @@ const TABLE_HEAD = [
 
 // ----------------------------------------------------------------------
 
-export default function BrandList() {
+export default function CenterList() {
   const [tableData, setTableData] = useState([]);
   const [metadata, setMetadata] = useState({});
   const [filterName, setFilterName] = useState('');
+
   const [searchRequest, setSearchRequest] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
   const [selectIdAdmin, setSelectIdAdmin] = useState();
@@ -161,7 +162,7 @@ export default function BrandList() {
                 variant="contained"
                 component={RouterLink}
                 to={PATH_DASHBOARD.brand.new}
-                startIcon={<Iconify icon={'eva:plus-fill'} />}
+                startIcon={<Iconify icon={'eva:plus-fill'}/>}
               >
                 Thêm mới thương hiệu
               </Button>
@@ -178,11 +179,11 @@ export default function BrandList() {
               sx={{ px: 2, bgcolor: 'background.neutral' }}
             >
               {STATUS_OPTIONS.map((tab) => (
-                <Tab disableRipple key={tab.key} label={tab.label} value={tab.value} />
+                <Tab disableRipple key={tab.key} label={tab.label} value={tab.value}/>
               ))}
             </Tabs>
 
-            <Divider />
+            <Divider/>
 
             {/* Filter dữ liệu */}
             <BrandTableToolbar
@@ -195,7 +196,7 @@ export default function BrandList() {
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
                 <Table size={'medium'}>
-                  <TableHeadCustom order={order} orderBy={orderBy} headLabel={TABLE_HEAD} onSort={onSort} />
+                  <TableHeadCustom order={order} orderBy={orderBy} headLabel={TABLE_HEAD} onSort={onSort}/>
 
                   <TableBody>
                     {tableData.map((row) => (
@@ -212,7 +213,7 @@ export default function BrandList() {
                       emptyRows={emptyRows(page, rowsPerPage, metadata.totalCount ? metadata.totalCount : 0)}
                     />
 
-                    <TableNoData isNotFound={isNotFound} />
+                    <TableNoData isNotFound={isNotFound}/>
                   </TableBody>
                 </Table>
               </TableContainer>

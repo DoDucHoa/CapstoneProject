@@ -9,9 +9,9 @@ import useSettings from '../../../hooks/useSettings';
 // components
 import Page from '../../../components/Page';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
-import { getBrand } from './useBrandAPI';
+import { getBrand } from './useCenterAPI';
 // sections
-import BrandNewEditForm from '../../../sections/@dashboard/brand/BrandNewEditForm';
+import UserNewEditForm from '../../../sections/@dashboard/brand/BrandNewEditForm';
 
 // ----------------------------------------------------------------------
 
@@ -43,7 +43,7 @@ export default function UserCreate() {
             { name: !isEdit ? 'Thêm mới' : 'Sửa' },
           ]}
         />
-        <BrandNewEditForm isEdit={isEdit} adminData={adminData} />
+        <UserNewEditForm isEdit={isEdit} adminData={adminData} />
       </Container>
     </Page>
   );

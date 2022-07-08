@@ -233,7 +233,7 @@ const getBackendToken = async (idToken, signInMethod) => {
 
     if (response.statusText === 'OK') {
       const { jwtToken, ...userData } = response.data;
-      console.log('jwtToken: ', jwtToken);
+      console.log('jwtToken: ', `Bearer ${jwtToken}`);
       setSession(jwtToken);
       setAccountInfoSession(JSON.stringify(userData));
       return userData;

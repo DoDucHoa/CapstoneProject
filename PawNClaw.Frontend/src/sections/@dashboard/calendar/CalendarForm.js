@@ -67,7 +67,10 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
   const EventSchema = Yup.object().shape({
     id: Yup.number(),
     statusId: Yup.number().required('Bắt buộc nhập'),
-    staffNote: Yup.string(),
+    staffNote: Yup.string().when('statusId', {
+      is: 4,
+      then: Yup.string().required('Bắt buộc nhập lý do hủy'),
+    }),
     petData: Yup.array().of(
       Yup.object().shape({
         cageCode: Yup.string(),
@@ -198,6 +201,8 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
         <Typography paragraph variant="overline" sx={{ color: 'green', pl: 3 }}>
           Thông tin thú cưng
         </Typography>
+
+        {/* Cage management */}
         {fields.map((cage, index) => {
           const cageIndex = index;
           const pet = cage.petBookingDetails;
@@ -283,6 +288,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
           );
         })}
 
+        {/* Supplies management */}
         {supplyOrders.length > 0 && (
           <Box sx={{ px: 3, pt: 5 }}>
             <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
@@ -342,6 +348,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
           </Box>
         )}
 
+        {/* Service management */}
         {serviceOrders.length > 0 && (
           <Box sx={{ px: 3, mt: 6 }}>
             <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
@@ -400,6 +407,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
           </Box>
         )}
 
+        {/* Total */}
         <Grid container spacing={3} sx={{ p: 3, pt: 6 }}>
           <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Box>
@@ -414,6 +422,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
           </Grid>
         </Grid>
 
+        {/* Booking status */}
         <Grid container spacing={3} sx={{ p: 3 }}>
           {bookingStatuses.length > 0 && (
             <Grid item xs={8} md={4}>
@@ -444,6 +453,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
           )}
         </Grid>
 
+        {/* Buttons */}
         <DialogActions>
           <Box sx={{ flexGrow: 1 }} />
 
