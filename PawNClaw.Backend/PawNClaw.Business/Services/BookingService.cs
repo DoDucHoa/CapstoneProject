@@ -28,8 +28,8 @@ namespace PawNClaw.Business.Services
 
         private readonly ApplicationDbContext _db;
 
-        public BookingService(IBookingRepository bookingRepository, IBookingDetailRepository bookingDetailRepository, 
-            IPetBookingDetailRepository petBookingDetailRepository, IServiceOrderRepository serviceOrderRepository, 
+        public BookingService(IBookingRepository bookingRepository, IBookingDetailRepository bookingDetailRepository,
+            IPetBookingDetailRepository petBookingDetailRepository, IServiceOrderRepository serviceOrderRepository,
             ISupplyOrderRepository supplyOrderRepository, ISupplyRepository supplyRepository,
             IServicePriceRepository servicePriceRepository, IPetRepository petRepository,
             ICageRepository cageRepository, IStaffRepository staffRepository,
@@ -92,7 +92,7 @@ namespace PawNClaw.Business.Services
         }
 
         //Create Booking
-        public async Task<Booking> CreateBooking(BookingCreateParameter bookingCreateParameter, 
+        public async Task<Booking> CreateBooking(BookingCreateParameter bookingCreateParameter,
             List<BookingDetailCreateParameter> bookingDetailCreateParameters,
             List<ServiceOrderCreateParameter> serviceOrderCreateParameters,
             List<SupplyOrderCreateParameter> supplyOrderCreateParameters)
@@ -116,7 +116,7 @@ namespace PawNClaw.Business.Services
                     throw new Exception("This Cage Has Been Used With Booking Time");
                 }
             }
-            
+
 
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
@@ -174,8 +174,11 @@ namespace PawNClaw.Business.Services
 
                     decimal PetHeight = 0;
                     decimal PetWidth = 0;
+                    int checkSingle = 0;
                     foreach (var PetId in bookingDetail.PetId)
                     {
+
+
                         //Get Size Pet With Cage
                         var pet = _petRepository.Get(PetId);
 
@@ -189,6 +192,14 @@ namespace PawNClaw.Business.Services
 
                         //Check Size Is Avaliable
                         var cage = _cageRepository.GetCageWithCageType(bookingDetail.CageCode, bookingToDb.CenterId);
+
+                        checkSingle++;
+
+                        if (checkSingle > 1 && cage.CageType.IsSingle)
+                        {
+                            transaction.Rollback();
+                            throw new Exception("This Cage For Single Pet");
+                        }
 
                         decimal CageHeight = cage.CageType.Height;
                         decimal CageWidth = cage.CageType.Width;
@@ -227,8 +238,8 @@ namespace PawNClaw.Business.Services
 
                         var pet = _petRepository.Get(serviceOrder.PetId);
 
-                        decimal servicePrice = _servicePriceRepository.GetFirstOrDefault(x => x.ServiceId == serviceOrder.ServiceId 
-                                                                        && x.MinWeight <= pet.Weight 
+                        decimal servicePrice = _servicePriceRepository.GetFirstOrDefault(x => x.ServiceId == serviceOrder.ServiceId
+                                                                        && x.MinWeight <= pet.Weight
                                                                         && x.MaxWeight >= pet.Weight).Price;
 
                         ServiceOrder serviceOrderToDb = new ServiceOrder()
