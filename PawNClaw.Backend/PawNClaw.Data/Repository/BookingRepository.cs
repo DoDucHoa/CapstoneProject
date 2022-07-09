@@ -359,6 +359,7 @@ namespace PawNClaw.Data.Repository
                     BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
                     .Select(bookingdetail => new BookingDetail
                     {
+                        Id = bookingdetail.Id,
                         BookingId = bookingdetail.BookingId,
                         Price = bookingdetail.Price,
                         CageCode = bookingdetail.CageCode,
@@ -383,7 +384,51 @@ namespace PawNClaw.Data.Repository
                         })
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
-                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
+                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice),
+                    SupplyOrders = (ICollection<SupplyOrder>)x.SupplyOrders
+                    .Select(supplyorder => new SupplyOrder
+                    {
+                        SupplyId = supplyorder.SupplyId,
+                        BookingId = supplyorder.BookingId,
+                        Quantity = supplyorder.Quantity,
+                        SellPrice = supplyorder.SellPrice,
+                        TotalPrice = supplyorder.TotalPrice,
+                        Note = supplyorder.Note,
+                        PetId = supplyorder.PetId,
+                        Supply = supplyorder.Supply,
+                        Pet = new Pet
+                        {
+                            Name = supplyorder.Pet.Name,
+                        }
+                    }),
+                    ServiceOrders = (ICollection<ServiceOrder>)x.ServiceOrders
+                    .Select(serviceorder => new ServiceOrder
+                    {
+                        ServiceId = serviceorder.ServiceId,
+                        BookingId = serviceorder.BookingId,
+                        Quantity = serviceorder.Quantity,
+                        SellPrice = serviceorder.SellPrice,
+                        TotalPrice = serviceorder.TotalPrice,
+                        Note = serviceorder.Note,
+                        PetId = serviceorder.PetId,
+                        Service = serviceorder.Service,
+                        Pet = new Pet
+                        {
+                            Name = serviceorder.Pet.Name,
+                        }
+                    }),
+                    BookingActivities = (ICollection<BookingActivity>)x.BookingActivities
+                    .Select(bookingact => new BookingActivity
+                    {
+                        Id = bookingact.Id,
+                        ProvideTime = bookingact.ProvideTime,
+                        Description = bookingact.Description,
+                        BookingId = bookingact.BookingId,
+                        PetId = bookingact.PetId,
+                        SupplyId = bookingact.SupplyId,
+                        ServiceId = bookingact.ServiceId,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
+                    }),
                 })
                 .Where(x => x.CenterId == CenterId);
 
