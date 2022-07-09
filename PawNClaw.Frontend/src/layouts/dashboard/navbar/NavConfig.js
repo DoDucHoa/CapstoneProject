@@ -15,6 +15,7 @@ const ICONS = {
   chart: getIcon('ic_chart'),
   brand: getIcon('ic_brand'),
   center: getIcon('ic_center'),
+  list: getIcon('ic_list'),
 };
 
 const navConfig = [
@@ -29,7 +30,14 @@ const navConfig = [
   // ----------------------------------------------------------------------
   {
     subheader: 'booking',
-    items: [{ title: 'Lịch Đặt', path: PATH_DASHBOARD.booking.calendar, icon: ICONS.booking }],
+    items: [
+      { title: 'Booking', path: PATH_DASHBOARD.bookingList.list, icon: ICONS.list },
+      {
+        title: 'Lịch Đặt',
+        path: PATH_DASHBOARD.booking.calendar,
+        icon: ICONS.booking,
+      },
+    ],
   },
 
   // MANAGEMENT

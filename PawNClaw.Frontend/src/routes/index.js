@@ -108,6 +108,15 @@ export default function Router() {
             { path: 'calendar', element: <BookingCalendar /> },
           ],
         },
+        {
+          path: 'booking-list',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/booking-list/list" replace />, index: true },
+            { path: 'list', element: <BookingList /> },
+            { path: 'new', element: <OwnerCreate /> },
+            { path: ':id/edit', element: <OwnerCreate /> },
+          ],
+        },
       ],
     },
 
@@ -173,3 +182,6 @@ const BrandCreate = Loadable(lazy(() => import('../pages/dashboard/Brand/BrandCr
 
 // BOOKING CALENDAR
 const BookingCalendar = Loadable(lazy(() => import('../pages/dashboard/Calendar')));
+
+// BOOKING LIST
+const BookingList = Loadable(lazy(() => import('../pages/dashboard/BookingList/BookingList')));
