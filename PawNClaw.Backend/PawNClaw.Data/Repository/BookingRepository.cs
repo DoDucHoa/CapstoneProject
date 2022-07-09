@@ -381,7 +381,8 @@ namespace PawNClaw.Data.Repository
                                 BreedName = pet.Pet.BreedName,
                                 PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == bookingdetail.BookingId)
                             }
-                        })
+                        }),
+                        FoodSchedules = bookingdetail.C.CageType.FoodSchedules
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
                     TotalService = x.ServiceOrders.Sum(service => service.TotalPrice),
@@ -428,12 +429,9 @@ namespace PawNClaw.Data.Repository
                         SupplyId = bookingact.SupplyId,
                         ServiceId = bookingact.ServiceId,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
-                    }),
+                    })
                 })
-                .Where(x => x.CenterId == CenterId);
-
-            if (StatusId != null)
-                query = query.Where(x => x.StatusId == StatusId);
+                .Where(x => x.CenterId == CenterId && x.StatusId == StatusId);
 
             return query.ToList();
         }

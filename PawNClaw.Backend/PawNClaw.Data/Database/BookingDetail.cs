@@ -45,5 +45,8 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<BookingActivity> BookingActivities { get; set; }
         [InverseProperty(nameof(PetBookingDetail.BookingDetail))]
         public virtual ICollection<PetBookingDetail> PetBookingDetails { get; set; }
+
+        [NotMapped]
+        public ICollection<FoodSchedule> FoodSchedules { get; set; }
     }
 }
