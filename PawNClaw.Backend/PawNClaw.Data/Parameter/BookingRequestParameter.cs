@@ -14,6 +14,8 @@ namespace PawNClaw.Data.Parameter
         public int? CenterId { get; set; } = null;
         public int? Month { get; set; } = null;
         public int? Year { get; set; } = null;
+        public DateTime? StartBooking { get; set; }
+        public DateTime? EndBooking { get; set; }
 
         public string dir { get; set; } = "asc";
         public string sort { get; set; } = "CreateTime";
