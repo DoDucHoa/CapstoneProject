@@ -563,13 +563,15 @@ namespace PawNClaw.Business.Services
             paging.PageSize);
         }
 
-        public async Task<PagedList<PetCenter>> ReferenceCenter(string City, string District,
+        public async Task<SearchPetCenterResponse> ReferenceCenter(string City, string District,
             string StartBooking, int Due,
             List<List<PetRequestForSearchCenter>> _petRequests, PagingParameter paging)
         {
             var values = MainSearchCenter_ver_2(City, District,
                                                 StartBooking, Due,
                                                 _petRequests, paging);
+
+            SearchPetCenterResponse searchPetCenterResponse = new SearchPetCenterResponse();
 
             if (values.Count <= 0)
             {
@@ -615,7 +617,6 @@ namespace PawNClaw.Business.Services
                 {
                     if (count <= 3)
                     {
-                        Console.WriteLine(item.Key.Name);
                         values = MainSearchCenter_ver_2(City, item.Key.Code,
                                                     StartBooking, Due,
                                                     _petRequests, paging);
@@ -623,13 +624,24 @@ namespace PawNClaw.Business.Services
                         count++;
                         if (values.Count > 0)
                         {
-                            return values;
+                            
+                            searchPetCenterResponse.City = City;
+                            searchPetCenterResponse.District = item.Key.Code;
+                            searchPetCenterResponse.DistrictName = item.Key.Name;
+                            searchPetCenterResponse.petCenters = values;
+
+                            return searchPetCenterResponse;
                         }
                     }
                 }
             }
 
-            return values;
+            searchPetCenterResponse.City = City;
+            searchPetCenterResponse.District = District;
+            searchPetCenterResponse.DistrictName = "";
+            searchPetCenterResponse.petCenters = values;
+
+            return searchPetCenterResponse;
         }
     }
 }

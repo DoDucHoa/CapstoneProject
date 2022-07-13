@@ -36,20 +36,19 @@ namespace PawNClaw.API.Controllers
                                                 _searchRequestModel.StartBooking, _searchRequestModel.Due,
                                                 _searchRequestModel._petRequests, _searchRequestModel.paging);
 
-                if (data.Count == 0)
+                if (data.petCenters.Count == 0)
                 {
-
                     return BadRequest("No Response!!!");
                 }
 
                 var metadata = new
                 {
-                    data.TotalCount,
-                    data.PageSize,
-                    data.CurrentPage,
-                    data.TotalPages,
-                    data.HasNext,
-                    data.HasPrevious
+                    data.petCenters.TotalCount,
+                    data.petCenters.PageSize,
+                    data.petCenters.CurrentPage,
+                    data.petCenters.TotalPages,
+                    data.petCenters.HasNext,
+                    data.petCenters.HasPrevious
                 };
 
                 return Ok(new { data, metadata });
