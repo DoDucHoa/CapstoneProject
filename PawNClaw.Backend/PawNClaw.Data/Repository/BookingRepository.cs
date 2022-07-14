@@ -72,6 +72,19 @@ namespace PawNClaw.Data.Repository
                 query = query.Where(x => x.StartBooking.Value.Month == bookingRequestParameter.Month
                                 && x.EndBooking.Value.Month == bookingRequestParameter.Month);
             }
+            if (bookingRequestParameter.StartBooking.HasValue && bookingRequestParameter.EndBooking.HasValue)
+            {
+                query = query.Where(x =>
+                            ((DateTime.Compare((DateTime)bookingRequestParameter.StartBooking, (DateTime)x.StartBooking) <= 0
+                            && DateTime.Compare((DateTime)bookingRequestParameter.EndBooking, (DateTime)x.EndBooking) >= 0)
+                            ||
+                            (DateTime.Compare((DateTime)bookingRequestParameter.StartBooking, (DateTime)x.StartBooking) >= 0
+                            && DateTime.Compare((DateTime)bookingRequestParameter.StartBooking, (DateTime)x.EndBooking) < 0)
+                            ||
+                            (DateTime.Compare((DateTime)bookingRequestParameter.EndBooking, (DateTime)x.StartBooking) > 0
+                            && DateTime.Compare((DateTime)bookingRequestParameter.EndBooking, (DateTime)x.EndBooking) <= 0)));
+            } 
+
 
             if (bookingRequestParameter.dir == "asc")
                 query = query.OrderBy(d => d.CreateTime);
