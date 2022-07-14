@@ -1,30 +1,66 @@
 import { useState } from 'react';
 
 // @mui
-import { Button, Card, Container, Grid, MenuItem, TextField } from '@mui/material';
-import DatePicker from '@mui/lab/DatePicker';
+import { Box, Card, Container, Table, TableBody, TableContainer } from '@mui/material';
 
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
 
 // hooks
 import useSettings from '../../../hooks/useSettings';
+import useTable, { emptyRows } from '../../../hooks/useTable';
 
 // components
 import Page from '../../../components/Page';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
+import Scrollbar from '../../../components/Scrollbar';
+import { TableEmptyRows, TableHeadCustom, TableNoData } from '../../../components/table';
+import { BookingRow, BookingListToolbar } from '../../../sections/@dashboard/bookingList';
 
-// config
-import { BOOKING_STATUS } from '../../../config';
+// ----------------------------------------------------------------------
+
+const TABLE_HEAD = [
+  { id: 'name', label: 'Tên thương thiệu', align: 'left' },
+  { id: 'description', label: 'Mô tả', align: 'left' },
+  { id: 'ownerName', label: 'Chủ sở hữu', align: 'left' },
+  { id: 'status', label: 'Trạng thái', align: 'left' },
+  { id: '' },
+];
 
 // ----------------------------------------------------------------------
 
 export default function BookingList() {
+  // STATE
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [bookingStatus, setBookingStatus] = useState(3);
 
+  const [tableData, setTableData] = useState([]);
+  const [metadata, setMetadata] = useState({});
+  const [filterName, setFilterName] = useState('');
+  const [searchRequest, setSearchRequest] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectIdAdmin, setSelectIdAdmin] = useState();
+
+  // CONFIG
   const { themeStretch } = useSettings();
+  const denseHeight = 72;
+
+  const {
+    page,
+    order,
+    orderBy,
+    rowsPerPage,
+    setPage,
+    //
+    onSort,
+    onChangePage,
+    onChangeRowsPerPage,
+  } = useTable();
+
+  const isNotFound =
+    (!(metadata.totalCount ? metadata.totalCount : 0) && !!filterName) ||
+    (!(metadata.totalCount ? metadata.totalCount : 0) && !!bookingStatus);
 
   return (
     <Page title="Đơn booking">
@@ -34,63 +70,38 @@ export default function BookingList() {
           links={[{ name: 'Trang chủ', href: PATH_DASHBOARD.root }, { name: 'Đơn booking' }]}
         />
 
-        <Card sx={{ p: 3 }}>
-          <Grid container spacing={3}>
-            <Grid item md={3}>
-              <DatePicker
-                label="Từ ngày"
-                value={fromDate}
-                onChange={(newValue) => {
-                  setFromDate(newValue);
-                }}
-                renderInput={(params) => <TextField {...params} fullWidth />}
-              />
-            </Grid>
-            <Grid item md={3}>
-              <DatePicker
-                label="Đến ngày"
-                value={toDate}
-                onChange={(newValue) => {
-                  setToDate(newValue);
-                }}
-                renderInput={(params) => <TextField {...params} fullWidth />}
-              />
-            </Grid>
-            {BOOKING_STATUS.length > 0 && (
-              <Grid item xs={8} md={3}>
-                <TextField
-                  label="Trạng thái booking"
-                  value={bookingStatus}
-                  onChange={(event) => setBookingStatus(event.target.value)}
-                  select
-                  fullWidth
-                  SelectProps={{ native: false }}
-                  InputLabelProps={{ shrink: true }}
-                >
-                  {BOOKING_STATUS.map((option) => (
-                    <MenuItem
-                      key={option.id}
-                      value={option.id}
-                      sx={{
-                        mx: 1,
-                        my: 0.5,
-                        borderRadius: 0.75,
-                        typography: 'body2',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {option.name}
-                    </MenuItem>
+        <BookingListToolbar
+          fromDate={fromDate}
+          setFromDate={setFromDate}
+          toDate={toDate}
+          setToDate={setToDate}
+          bookingStatus={bookingStatus}
+          setBookingStatus={setBookingStatus}
+        />
+
+        <Box mt={4} />
+
+        <Card sx={{ p: 1 }}>
+          <Scrollbar>
+            <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
+              <Table size={'medium'}>
+                <TableHeadCustom order={order} orderBy={orderBy} headLabel={TABLE_HEAD} onSort={onSort} />
+
+                <TableBody>
+                  {tableData.map((row) => (
+                    <BookingRow key={row.id} row={row} />
                   ))}
-                </TextField>
-              </Grid>
-            )}
-            <Grid item md={3} sx={{ alignSelf: 'center' }}>
-              <Button variant="contained" size="large" fullWidth>
-                Tìm kiếm
-              </Button>
-            </Grid>
-          </Grid>
+
+                  <TableEmptyRows
+                    height={denseHeight}
+                    emptyRows={emptyRows(page, rowsPerPage, metadata.totalCount ? metadata.totalCount : 0)}
+                  />
+
+                  <TableNoData isNotFound={isNotFound} />
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Scrollbar>
         </Card>
       </Container>
     </Page>
