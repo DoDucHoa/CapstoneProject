@@ -33,7 +33,7 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
   // STATE
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
-  const { accountInfo, register } = useAuth();
+  const { accountInfo } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({
@@ -91,14 +91,10 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
   const onSubmit = async () => {
     try {
       if (!isEdit) {
-        await Promise.all([
-          createBrand(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender), // create account on Backend
-          register(values.email, values.password), // create account on Firebase
-        ]);
+        await createBrand(values.name, values.description, values.ownerInfo.id, accountInfo.id, accountInfo.id);
       } else {
         await updateBrand(accountInfo.id, values.name, values.phoneNumber, values.gender);
       }
-
       reset();
       enqueueSnackbar(!isEdit ? 'Tạo mới thành công' : 'Cập nhật thành công');
       navigate(PATH_DASHBOARD.owner.list);

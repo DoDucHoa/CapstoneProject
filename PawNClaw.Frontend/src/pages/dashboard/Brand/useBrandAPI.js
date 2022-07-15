@@ -19,13 +19,13 @@ const getBrand = async (idBrand) => {
   return response.data;
 };
 
-const createBrand = async (userName, createdUser, phone, name, gender) => {
+const createBrand = async (name, description, ownerId, createdUser, modifyUser) => {
   const response = await axios.post(URL, {
-    userName,
-    createdUser,
-    phone,
     name,
-    gender,
+    description,
+    ownerId,
+    createdUser,
+    modifyUser,
   });
   return response.data;
 };
