@@ -48,10 +48,7 @@ class WelcomePanel extends StatelessWidget {
                         color: primaryColor,
                       ),
                       hintText: "Tìm kiếm thú cưng hay khách hàng",
-                      hintStyle: TextStyle(
-                          color: lightFontColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16),
+                      hintStyle: TextStyle(color: lightFontColor, fontSize: 16),
                       border: InputBorder.none,
                     ),
                   ),

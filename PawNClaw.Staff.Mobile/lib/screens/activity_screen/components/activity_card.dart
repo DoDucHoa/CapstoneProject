@@ -29,7 +29,7 @@ class ActivityCard extends StatelessWidget {
       visible: remainCount > 0 ? true : false,
       child: Container(
         margin: EdgeInsets.only(
-          right: width * smallPadRate,
+          // right: width * smallPadRate,
           left: width * smallPadRate,
           top: width * smallPadRate,
         ),
