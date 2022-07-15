@@ -72,6 +72,19 @@ namespace PawNClaw.Data.Repository
                 query = query.Where(x => x.StartBooking.Value.Month == bookingRequestParameter.Month
                                 && x.EndBooking.Value.Month == bookingRequestParameter.Month);
             }
+            if (bookingRequestParameter.StartBooking.HasValue && bookingRequestParameter.EndBooking.HasValue)
+            {
+                query = query.Where(x =>
+                            ((DateTime.Compare((DateTime)bookingRequestParameter.StartBooking, (DateTime)x.StartBooking) <= 0
+                            && DateTime.Compare((DateTime)bookingRequestParameter.EndBooking, (DateTime)x.EndBooking) >= 0)
+                            ||
+                            (DateTime.Compare((DateTime)bookingRequestParameter.StartBooking, (DateTime)x.StartBooking) >= 0
+                            && DateTime.Compare((DateTime)bookingRequestParameter.StartBooking, (DateTime)x.EndBooking) < 0)
+                            ||
+                            (DateTime.Compare((DateTime)bookingRequestParameter.EndBooking, (DateTime)x.StartBooking) > 0
+                            && DateTime.Compare((DateTime)bookingRequestParameter.EndBooking, (DateTime)x.EndBooking) <= 0)));
+            } 
+
 
             if (bookingRequestParameter.dir == "asc")
                 query = query.OrderBy(d => d.CreateTime);
@@ -359,6 +372,7 @@ namespace PawNClaw.Data.Repository
                     BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
                     .Select(bookingdetail => new BookingDetail
                     {
+                        Id = bookingdetail.Id,
                         BookingId = bookingdetail.BookingId,
                         Price = bookingdetail.Price,
                         CageCode = bookingdetail.CageCode,
@@ -380,15 +394,57 @@ namespace PawNClaw.Data.Repository
                                 BreedName = pet.Pet.BreedName,
                                 PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == bookingdetail.BookingId)
                             }
-                        })
+                        }),
+                        FoodSchedules = bookingdetail.C.CageType.FoodSchedules
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
-                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
+                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice),
+                    SupplyOrders = (ICollection<SupplyOrder>)x.SupplyOrders
+                    .Select(supplyorder => new SupplyOrder
+                    {
+                        SupplyId = supplyorder.SupplyId,
+                        BookingId = supplyorder.BookingId,
+                        Quantity = supplyorder.Quantity,
+                        SellPrice = supplyorder.SellPrice,
+                        TotalPrice = supplyorder.TotalPrice,
+                        Note = supplyorder.Note,
+                        PetId = supplyorder.PetId,
+                        Supply = supplyorder.Supply,
+                        Pet = new Pet
+                        {
+                            Name = supplyorder.Pet.Name,
+                        }
+                    }),
+                    ServiceOrders = (ICollection<ServiceOrder>)x.ServiceOrders
+                    .Select(serviceorder => new ServiceOrder
+                    {
+                        ServiceId = serviceorder.ServiceId,
+                        BookingId = serviceorder.BookingId,
+                        Quantity = serviceorder.Quantity,
+                        SellPrice = serviceorder.SellPrice,
+                        TotalPrice = serviceorder.TotalPrice,
+                        Note = serviceorder.Note,
+                        PetId = serviceorder.PetId,
+                        Service = serviceorder.Service,
+                        Pet = new Pet
+                        {
+                            Name = serviceorder.Pet.Name,
+                        }
+                    }),
+                    BookingActivities = (ICollection<BookingActivity>)x.BookingActivities
+                    .Select(bookingact => new BookingActivity
+                    {
+                        Id = bookingact.Id,
+                        ProvideTime = bookingact.ProvideTime,
+                        Description = bookingact.Description,
+                        BookingId = bookingact.BookingId,
+                        PetId = bookingact.PetId,
+                        SupplyId = bookingact.SupplyId,
+                        ServiceId = bookingact.ServiceId,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
+                    })
                 })
-                .Where(x => x.CenterId == CenterId);
-
-            if (StatusId != null)
-                query = query.Where(x => x.StatusId == StatusId);
+                .Where(x => x.CenterId == CenterId && x.StatusId == StatusId);
 
             return query.ToList();
         }

@@ -9,9 +9,9 @@ import useSettings from '../../../hooks/useSettings';
 // components
 import Page from '../../../components/Page';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
-import { getOwner } from './useBrandAPI';
+import { getBrand } from './useBrandAPI';
 // sections
-import UserNewEditForm from '../../../sections/@dashboard/owner/OwnerNewEditForm';
+import BrandNewEditForm from '../../../sections/@dashboard/brand/BrandNewEditForm';
 
 // ----------------------------------------------------------------------
 
@@ -26,24 +26,24 @@ export default function UserCreate() {
   const { id } = useParams();
   useEffect(() => {
     if (isEdit) {
-      getOwner(id).then((data) => {
+      getBrand(id).then((data) => {
         setAdminData(data);
       });
     }
   }, [id, isEdit]);
 
   return (
-    <Page title="Chủ trung tâm">
+    <Page title="Thương hiệu">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading={!isEdit ? 'Thêm mới chủ trung tâm' : 'Sửa thông tin chủ trung tâm'}
+          heading={!isEdit ? 'Thêm mới thương hiệu' : 'Sửa thông tin thương hiệu'}
           links={[
             { name: 'Trang chủ', href: PATH_DASHBOARD.root },
-            { name: 'Danh sách chủ trung tâm', href: PATH_DASHBOARD.owner.list },
+            { name: 'Danh sách thương hiệu', href: PATH_DASHBOARD.brand.list },
             { name: !isEdit ? 'Thêm mới' : 'Sửa' },
           ]}
         />
-        <UserNewEditForm isEdit={isEdit} adminData={adminData} />
+        <BrandNewEditForm isEdit={isEdit} adminData={adminData} />
       </Container>
     </Page>
   );

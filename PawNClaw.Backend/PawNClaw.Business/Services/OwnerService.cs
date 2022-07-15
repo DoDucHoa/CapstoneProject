@@ -1,16 +1,16 @@
-﻿using PawNClaw.Data.Database;
+﻿using System;
+using System.Linq;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
-using System;
-using System.Linq;
 
 namespace PawNClaw.Business.Services
 {
     public class OwnerService
     {
-        private IOwnerRepository _ownerRepository;
-        private IAccountRepository _accountRepository;
+        private readonly IAccountRepository _accountRepository;
+        private readonly IOwnerRepository _ownerRepository;
 
         public OwnerService(IOwnerRepository ownerRepository, IAccountRepository accountRepository)
         {
@@ -26,28 +26,19 @@ namespace PawNClaw.Business.Services
             values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("OWN"));
 
             // lọc theo name
-            if (!string.IsNullOrWhiteSpace(Name))
-            {
-                values = values.Where(x => x.Name.Trim().Equals(Name));
-            }
+            if (!string.IsNullOrWhiteSpace(Name)) values = values.Where(x => x.Name.Trim().Equals(Name));
 
             // lọc theo status
             if (Status != null)
             {
-                if (Status == true)
-                    values = values.Where(x => x.IdNavigation.Status == true);
-                else
-                    values = values.Where(x => x.IdNavigation.Status == false);
+                values = Status == true ? values.Where(x => x.IdNavigation.Status == true) : values.Where(x => x.IdNavigation.Status == false);
             }
 
-            if (dir == "asc")
-                values = values.OrderBy(d => d.Name);
-            else
-                values = values.OrderByDescending(d => d.Name);
+            values = dir == "asc" ? values.OrderBy(d => d.Name) : values.OrderByDescending(d => d.Name);
 
             return PagedList<Owner>.ToPagedList(values.AsQueryable(),
-            paging.PageNumber,
-            paging.PageSize);
+                paging.PageNumber,
+                paging.PageSize);
         }
 
         //Get Id
@@ -60,7 +51,7 @@ namespace PawNClaw.Business.Services
         //Add
         public int Add(CreateOwnerParameter owner)
         {
-            Owner ownerToDB = new()
+            Owner ownerToDb = new()
             {
                 Email = owner.UserName,
                 Name = owner.Name
@@ -84,11 +75,11 @@ namespace PawNClaw.Business.Services
                 _accountRepository.Add(accountToDb);
                 _accountRepository.SaveDbChange();
 
-                ownerToDB.Id = accountToDb.Id;
+                ownerToDb.Id = accountToDb.Id;
 
-                _ownerRepository.Add(ownerToDB);
+                _ownerRepository.Add(ownerToDb);
                 _ownerRepository.SaveDbChange();
-                var id = ownerToDB.Id;
+                var id = ownerToDb.Id;
                 return id;
             }
             catch (Exception ex)
@@ -103,7 +94,7 @@ namespace PawNClaw.Business.Services
         {
             try
             {
-                Account account = _accountRepository.Get(owner.Id);
+                var account = _accountRepository.Get(owner.Id);
                 account.Phone = Phone;
                 _accountRepository.Update(account);
                 _accountRepository.SaveDbChange();
@@ -135,6 +126,7 @@ namespace PawNClaw.Business.Services
             {
                 return false;
             }
+
             return false;
         }
 
@@ -156,6 +148,7 @@ namespace PawNClaw.Business.Services
             {
                 return false;
             }
+
             return false;
         }
     }

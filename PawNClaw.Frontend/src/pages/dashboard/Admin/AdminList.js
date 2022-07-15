@@ -234,6 +234,7 @@ export default function UserList() {
           </Card>
         </Container>
       </Page>
+
       <BanAdminDialog
         open={openDialog}
         onClose={handleCloseBanDialog}
