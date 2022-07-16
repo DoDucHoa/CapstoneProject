@@ -3,6 +3,7 @@ import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/common/vn_locale.dart';
 import 'package:intl/intl.dart';
 import 'package:pncstaff_mobile_application/models/booking_detail.dart';
+import 'package:pncstaff_mobile_application/screens/home_screen/subscreens/booking_cage.dart';
 
 class TodoList extends StatefulWidget {
   const TodoList({Key? key, required this.bookings}) : super(key: key);
@@ -73,7 +74,7 @@ class _TodoListState extends State<TodoList> {
             shrinkWrap: true,
             itemCount: times.length,
             physics: ClampingScrollPhysics(),
-            itemBuilder: (context, index) {
+            itemBuilder: (context, timeIdx) {
               return Padding(
                 padding: EdgeInsets.only(bottom: width * smallPadRate),
                 child: Row(
@@ -82,7 +83,7 @@ class _TodoListState extends State<TodoList> {
                     Padding(
                       padding: EdgeInsets.only(right: width * smallPadRate),
                       child: Text(
-                        times[index].substring(0, 5),
+                        times[timeIdx].substring(0, 5),
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: lightFontColor,
@@ -95,9 +96,18 @@ class _TodoListState extends State<TodoList> {
                           shrinkWrap: true,
                           physics: ClampingScrollPhysics(),
                           itemCount: getFeedByTime(
-                                  remainFeedingActivites, times[index])
+                                  remainFeedingActivites, times[timeIdx])
                               .length,
-                          itemBuilder: (context, index) => Container(
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => BookingCageScreen(
+                                          bookings: bookings,
+                                          bookingDetail: getFeedByTime(
+                                              remainFeedingActivites,
+                                              times[timeIdx])[index]))),
+                              child: Container(
                                 padding: EdgeInsets.symmetric(
                                   horizontal: width * smallPadRate,
                                   vertical: width * extraSmallPadRate,
@@ -119,7 +129,7 @@ class _TodoListState extends State<TodoList> {
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
                                         Text(
-                                          "Cho ăn ${getFeedByTime(remainFeedingActivites, times[index])[index].cageCode}",
+                                          "Cho ăn ${getFeedByTime(remainFeedingActivites, times[timeIdx])[index].cageCode}",
                                           // "Cho ăn Cagecode",
                                           style: TextStyle(
                                             fontSize: 18,
@@ -127,22 +137,22 @@ class _TodoListState extends State<TodoList> {
                                             color: primaryFontColor,
                                           ),
                                         ),
-                                        Container(
-                                          child: Text(
-                                            "${getFeedByTime(remainFeedingActivites, times[index])[index].cageType}",
-                                            // "cagetype",
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w600,
-                                              color: lightFontColor,
-                                            ),
+                                        Text(
+                                          "${getFeedByTime(remainFeedingActivites, times[timeIdx])[index].cageType}",
+                                          // "cagetype",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            color: lightFontColor,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ],
                                 ),
-                              )),
+                              ),
+                            );
+                          }),
                     ),
                   ],
                 ),
