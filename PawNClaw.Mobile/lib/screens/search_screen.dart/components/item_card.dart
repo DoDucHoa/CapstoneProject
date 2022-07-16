@@ -28,11 +28,13 @@ class ItemCard extends StatelessWidget {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return InkWell(
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                  value: BlocProvider.of<BookingBloc>(context),
-                  child: redirect,
-                ))).then((value) =>
+        onTap: () => Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (_) => BlocProvider.value(
+                      value: BlocProvider.of<BookingBloc>(context),
+                      child: redirect,
+                    )))
+            .then((value) =>
                 context.findRootAncestorStateOfType()!.setState(() {})),
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 10),
@@ -51,11 +53,9 @@ class ItemCard extends StatelessWidget {
                   children: [
                     Text(
                       NumberFormat.currency(
-                                  decimalDigits: 0,
-                                  symbol: 'đ',
-                                  locale: 'vi_vn')
-                              .format(
-                     discountPrice == 0 ? sellPrice : discountPrice),
+                              decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+                          .format(
+                              discountPrice == 0 ? sellPrice : discountPrice),
                       //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
                       style: TextStyle(fontSize: 13),
                     ),
@@ -64,11 +64,9 @@ class ItemCard extends StatelessWidget {
                     ),
                     if (discountPrice > 0)
                       Text(
-                       NumberFormat.currency(
-                                  decimalDigits: 0,
-                                  symbol: 'đ',
-                                  locale: 'vi_vn')
-                              .format(sellPrice),
+                        NumberFormat.currency(
+                                decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+                            .format(sellPrice),
                         style: TextStyle(
                             fontSize: 13,
                             color: lightFontColor,

@@ -27,15 +27,17 @@ class _ServiceDetailsState extends State<ServiceDetails> {
   double selectedPrice = 0;
 
   double updatePrice(Pet pet, petCenter.Services service) {
-      List<petCenter.ServicePrices> prices = service.servicePrices!;
-      for (petCenter.ServicePrices price in prices){
-        print('id: ${price.id}; min: ${price.minWeight}; max: ${price.maxWeight}');
-        if (price.minWeight! <= pet.weight! && price.maxWeight! > pet.weight!){
-          return price.price!;
-        }
+    List<petCenter.ServicePrices> prices = service.servicePrices!;
+    for (petCenter.ServicePrices price in prices) {
+      print(
+          'id: ${price.id}; min: ${price.minWeight}; max: ${price.maxWeight}');
+      if (price.minWeight! <= pet.weight! && price.maxWeight! > pet.weight!) {
+        print(price.price);
+        return price.price!;
       }
-      return 0;
     }
+    return 0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +51,12 @@ class _ServiceDetailsState extends State<ServiceDetails> {
       });
     });
 
-    
-
     Size size = MediaQuery.of(context).size;
     double height = size.height;
     double width = size.width;
     double appbarSize = size.height * 0.35;
     petCenter.Services service = widget.service;
-    
+
     selectedPrice = updatePrice(pets[selectedIndex], service);
 
     return Scaffold(
@@ -144,21 +144,17 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                 Row(
                   children: [
                     Text(
-                     NumberFormat.currency(
-                                  decimalDigits: 0,
-                                  symbol: '',
-                                  locale: 'vi_vn')
+                      NumberFormat.currency(
+                                  decimalDigits: 0, symbol: '', locale: 'vi_vn')
                               .format((service.servicePrices![0].price ?? 0)) +
                           " ~ " +
                           NumberFormat.currency(
-                                  decimalDigits: 0,
-                                  symbol: '',
-                                  locale: 'vi_vn')
+                                  decimalDigits: 0, symbol: '', locale: 'vi_vn')
                               .format((service
-                                  .servicePrices![
-                                      service.servicePrices!.length - 1]
-                                  .price ??
-                              0)),
+                                      .servicePrices![
+                                          service.servicePrices!.length - 1]
+                                      .price ??
+                                  0)),
                       //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
                       style: TextStyle(fontSize: 15),
                     ),
@@ -175,18 +171,19 @@ class _ServiceDetailsState extends State<ServiceDetails> {
             height: 15,
           ),
           Container(
-          height: 50,
-          width: size.width,
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15), topRight: Radius.circular(15))),
-          child: Text(
-            'THÚ CƯNG',
-            style: TextStyle(fontWeight: FontWeight.w700),
+            height: 50,
+            width: size.width,
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15))),
+            child: Text(
+              'THÚ CƯNG',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
           ),
-        ),
           Container(
             height: height * 0.2,
             width: width,
@@ -207,7 +204,8 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                       onTap: () {
                         setState(() {
                           selectedIndex = index;
-                          selectedPrice = updatePrice(pets[selectedIndex], service);
+                          selectedPrice =
+                              updatePrice(pets[selectedIndex], service);
                           // pet = pets[index];
                           // print('pet id at choose ${pet.id}');
                           // print(pets[index].id.toString());
@@ -313,7 +311,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
               //     return ChoosePetDialog(requests: requests);
               //   },
               // ).then((value) {
-                print(pets[selectedIndex].id);
+              print(pets[selectedIndex].id);
               BlocProvider.of<BookingBloc>(context).add(
                 SelectService(
                   prices: service.servicePrices!,
@@ -335,9 +333,9 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                     NumberFormat.currency(
                             decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
                         .format(selectedPrice),
-                          // (service.discountPrice)), //== 0
-                            // ? (selectedPrice ?? 0)
-                            // : (service.discountPrice ?? 0)),
+                // (service.discountPrice)), //== 0
+                // ? (selectedPrice ?? 0)
+                // : (service.discountPrice ?? 0)),
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
               Expanded(child: SizedBox(height: 45)),

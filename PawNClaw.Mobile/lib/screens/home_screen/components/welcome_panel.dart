@@ -77,7 +77,8 @@ class WelcomePanel extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.symmetric(vertical: width * 0.02, horizontal: width*0.04),
+                        padding: EdgeInsets.symmetric(
+                            vertical: width * 0.02, horizontal: width * 0.04),
                         height: width * regularFontRate * 1.8,
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
@@ -98,18 +99,16 @@ class WelcomePanel extends StatelessWidget {
                               child: Center(
                                   child: Text('2',
                                       style: TextStyle(
-                                        fontSize: 11,
-                                        color: lightPrimaryColor,
-                                        fontWeight: FontWeight.w700
-                                      ))),
+                                          fontSize: 11,
+                                          color: lightPrimaryColor,
+                                          fontWeight: FontWeight.w700))),
                             ),
                             Text(
                               " Lịch hẹn",
                               style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.white,
-                                 fontWeight: FontWeight.w700
-                              ),
+                                  fontSize: 15,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700),
                             ),
                           ],
                         ),
@@ -150,7 +149,10 @@ class WelcomePanel extends StatelessWidget {
                   color: primaryColor,
                 ),
                 hintText: "Tìm kiếm trung tâm thú cưng",
-                hintStyle: TextStyle(color: lightFontColor, fontWeight: FontWeight.w600, fontSize: 15),
+                hintStyle: TextStyle(
+                    color: lightFontColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15),
                 border: InputBorder.none,
               ),
             ),

@@ -18,8 +18,7 @@ class Vouchers extends StatefulWidget {
 class _VouchersState extends State<Vouchers> {
   @override
   Widget build(BuildContext context) {
-    
-    return  Scaffold(
+    return Scaffold(
         backgroundColor: frameColor,
         appBar: AppBar(
           foregroundColor: primaryFontColor,
@@ -38,19 +37,17 @@ class _VouchersState extends State<Vouchers> {
                 var state = BlocProvider.of<BookingBloc>(context).state;
                 var total = (state as BookingUpdated).booking.getTotal();
                 bool avaiable = false;
-                if(total >= FAKE_VOUCHERS[index].minCondition)
-                avaiable = true;
+                if (total >= FAKE_VOUCHERS[index].minCondition) avaiable = true;
                 //prin'voucher screen' + total.toString());
                 return VoucherCard(
-                  voucher: FAKE_VOUCHERS[index],
-                  size: 180,
-                  avaiable: avaiable,
-                  callback: (val) {
-              print(val);
-              BlocProvider.of<BookingBloc>(context)
-                  .add(AddVoucher(voucherCode: val));
-            });
-                
+                    voucher: FAKE_VOUCHERS[index],
+                    size: 180,
+                    avaiable: avaiable,
+                    callback: (val) {
+                      print(val);
+                      BlocProvider.of<BookingBloc>(context)
+                          .add(AddVoucher(voucherCode: val));
+                    });
               }),
               itemCount: FAKE_VOUCHERS.length,
               separatorBuilder: (context, index) => const SizedBox(

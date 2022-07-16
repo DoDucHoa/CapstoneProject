@@ -258,25 +258,22 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                       style: OutlinedButton.styleFrom(
                                                           shape: RoundedRectangleBorder(
                                                               borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10))),
-                                                      onPressed: () => Navigator
-                                                              .of(context)
+                                                                  BorderRadius.circular(
+                                                                      10))),
+                                                      onPressed: () => Navigator.of(
+                                                              context)
                                                           .push(MaterialPageRoute(
                                                               builder: (context) =>
-                                                                  ShowVouchers(vouchers:FAKE_VOUCHERS))),
+                                                                  ShowVouchers(
+                                                                      vouchers:
+                                                                          FAKE_VOUCHERS))),
                                                       icon: Image.asset(
                                                         'lib/assets/coupon.png',
                                                         width: 30,
                                                       ),
                                                       label: Container(
-                                                          padding:
-                                                              EdgeInsets.fromLTRB(
-                                                                  10,
-                                                                  15,
-                                                                  5,
-                                                                  15),
+                                                          padding: EdgeInsets.fromLTRB(
+                                                              10, 15, 5, 15),
                                                           child: Row(
                                                             children: [
                                                               Text(
@@ -504,27 +501,33 @@ class _CenterDetailsState extends State<CenterDetails> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15)),
                           onPressed: ()
-                          //ràng buộc chọn đủ số chuồng cho pet trước khi đặt hàng
-                              => ((state as BookingUpdated)
-                                      .booking
-                                      .bookingDetailCreateParameters!
-                                      .isNotEmpty && (state as BookingUpdated).booking.bookingDetailCreateParameters!.length == widget.requests.length)
+                              //ràng buộc chọn đủ số chuồng cho pet trước khi đặt hàng
+                              =>
+                              ((state as BookingUpdated)
+                                          .booking
+                                          .bookingDetailCreateParameters!
+                                          .isNotEmpty &&
+                                      (state as BookingUpdated)
+                                              .booking
+                                              .bookingDetailCreateParameters!
+                                              .length ==
+                                          widget.requests.length)
                                   ?
-                              // =>
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (_) => BlocProvider.value(
-                                        value: BlocProvider.of<BookingBloc>(
-                                            context),
-                                        child: ConfirmBooking(
-                                          center: center!,
-                                        ),
-                                      )))
-                          : ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    "Hãy chọn đủ chuồng cho pet trước khi tiến hành đặt lịch."),
-                              ),
-                            ),
+                                  // =>
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (_) => BlocProvider.value(
+                                            value: BlocProvider.of<BookingBloc>(
+                                                context),
+                                            child: ConfirmBooking(
+                                              center: center!,
+                                            ),
+                                          )))
+                                  : ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            "Hãy chọn đủ chuồng cho pet trước khi tiến hành đặt lịch."),
+                                      ),
+                                    ),
                           // onPressed: () async {
 
                           //   var state = BlocProvider.of<BookingBloc>(context).state;

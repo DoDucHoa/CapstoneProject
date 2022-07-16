@@ -48,5 +48,7 @@ namespace PawNClaw.Data.Database
 
         [NotMapped]
         public ICollection<FoodSchedule> FoodSchedules { get; set; }
+        [NotMapped]
+        public string CageType { get; internal set; }
     }
 }
