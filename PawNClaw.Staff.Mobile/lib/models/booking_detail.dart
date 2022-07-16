@@ -231,8 +231,8 @@ class IdNavigation {
 }
 
 class BookingDetails {
-  // int? bookingId;
-  int? line;
+  int? bookingId;
+  int? id;
   double? price;
   String? cageCode;
   // int? centerId;
@@ -255,9 +255,8 @@ class BookingDetails {
   }
 
   BookingDetails(
-      {
-      // this.bookingId,
-      this.line,
+      {this.bookingId,
+      this.id,
       this.price,
       this.cageCode,
       // this.centerId,
@@ -271,8 +270,8 @@ class BookingDetails {
       this.cageType});
 
   BookingDetails.fromJson(Map<String, dynamic> json) {
-    // bookingId = json['bookingId'];
-    line = json['line'];
+    bookingId = json['bookingId'];
+    id = json['id'];
     price = json['price'];
     cageCode = json['cageCode'];
     // centerId = json['centerId'];
@@ -304,7 +303,7 @@ class BookingDetails {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     // data['bookingId'] = this.bookingId;
-    data['line'] = this.line;
+    data['id'] = this.id;
     data['price'] = this.price;
     data['cageCode'] = this.cageCode;
     // data['centerId'] = this.centerId;
