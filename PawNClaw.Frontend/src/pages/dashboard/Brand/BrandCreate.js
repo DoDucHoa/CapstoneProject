@@ -16,7 +16,7 @@ import BrandNewEditForm from '../../../sections/@dashboard/brand/BrandNewEditFor
 // ----------------------------------------------------------------------
 
 export default function UserCreate() {
-  const [adminData, setAdminData] = useState({});
+  const [brandData, setBrandData] = useState({});
 
   const { themeStretch } = useSettings();
   const { pathname } = useLocation();
@@ -27,7 +27,7 @@ export default function UserCreate() {
   useEffect(() => {
     if (isEdit) {
       getBrand(id).then((data) => {
-        setAdminData(data);
+        setBrandData(data);
       });
     }
   }, [id, isEdit]);
@@ -43,7 +43,7 @@ export default function UserCreate() {
             { name: !isEdit ? 'Thêm mới' : 'Sửa' },
           ]}
         />
-        <BrandNewEditForm isEdit={isEdit} adminData={adminData} />
+        <BrandNewEditForm isEdit={isEdit} brandData={brandData} />
       </Container>
     </Page>
   );

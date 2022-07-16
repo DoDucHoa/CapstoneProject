@@ -17,7 +17,7 @@ namespace PawNClaw.Data.Repository
         }
         public Brand GetBrandById(int id)
         {
-            return _dbSet.Include(x => x.Owner).FirstOrDefault(brand => brand.Id == id);
+            return _dbSet.Include(x => x.Owner).ThenInclude(y => y.IdNavigation).FirstOrDefault(brand => brand.Id == id);
         }
     }
 }
