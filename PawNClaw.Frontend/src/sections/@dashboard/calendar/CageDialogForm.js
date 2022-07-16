@@ -90,7 +90,7 @@ export default function CageDialogForm({ open, onClose, cageSearchParam, booking
           createPetHealthHistoryParameter: {
             checkedDate: new Date(),
             description: '',
-            centerName: 'Runolfsson-Dickens',
+            centerName: 'Dogily',
             petId: pet.id,
             length: pet.length,
             height: pet.height,

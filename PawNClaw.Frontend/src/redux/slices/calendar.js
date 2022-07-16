@@ -228,7 +228,7 @@ export function createPetHealthStatus({ petData }, bookingId) {
               height: pet.height,
               length: pet.length,
               description: pet.description,
-              centerName: 'Runolfsson-Dickens',
+              centerName: 'Dogily',
             },
           });
         });
