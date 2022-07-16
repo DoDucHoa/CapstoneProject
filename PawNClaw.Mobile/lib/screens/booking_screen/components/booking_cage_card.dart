@@ -134,10 +134,10 @@ class BookingCageCard extends StatelessWidget {
               decoration: BoxDecoration(
                 //color: primaryColor.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(15),
-                image:const DecorationImage(
-                      image: AssetImage('lib/assets/cage.png'),
-                      fit: BoxFit.cover),),
-              
+                image: const DecorationImage(
+                    image: AssetImage('lib/assets/cage.png'),
+                    fit: BoxFit.cover),
+              ),
             )
           ],
         ),
@@ -157,10 +157,8 @@ class BookingCageCard extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: NumberFormat.currency(
-                                  decimalDigits: 0,
-                                  symbol: 'đ',
-                                  locale: 'vi_vn')
-                              .format(bookingCage.price) ,
+                            decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+                        .format(bookingCage.price),
                     style: TextStyle(
                       fontSize: width * regularFontRate * 0.8 * 0.8,
                       color: primaryFontColor,

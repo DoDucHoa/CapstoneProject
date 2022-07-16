@@ -368,7 +368,14 @@ namespace PawNClaw.Data.Repository
                     Rating = x.Rating,
                     CustomerNote = x.CustomerNote,
                     StaffNote = x.StaffNote,
-                    Customer = x.Customer,
+                    Customer = new Customer
+                    {
+                        Name = x.Customer.Name,
+                        IdNavigation = new Account
+                        {
+                            Phone = x.Customer.IdNavigation.Phone
+                        }
+                    },
                     BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
                     .Select(bookingdetail => new BookingDetail
                     {
@@ -376,6 +383,7 @@ namespace PawNClaw.Data.Repository
                         BookingId = bookingdetail.BookingId,
                         Price = bookingdetail.Price,
                         CageCode = bookingdetail.CageCode,
+                        CageType = bookingdetail.C.CageType.TypeName,
                         CenterId = bookingdetail.CenterId,
                         Duration = bookingdetail.Duration,
                         Note = bookingdetail.Note,
@@ -395,6 +403,7 @@ namespace PawNClaw.Data.Repository
                                 PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == bookingdetail.BookingId)
                             }
                         }),
+                        BookingActivities = bookingdetail.BookingActivities,
                         FoodSchedules = bookingdetail.C.CageType.FoodSchedules
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),

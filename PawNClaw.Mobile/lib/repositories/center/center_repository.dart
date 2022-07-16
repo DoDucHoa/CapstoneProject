@@ -41,9 +41,8 @@ class CenterRepository implements BaseCenterRepository {
           response.data['data'].map<Center>((e) => Center.fromJson(e)).toList();
       print(centers);
       return centers;
-    } catch (e) {
-      print(e);
-      return null;
+    } on DioError catch (e) {
+      throw Exception(e.response!.data['Message']);
     }
   }
 
@@ -71,9 +70,9 @@ class CenterRepository implements BaseCenterRepository {
       print(requestBody);
       print(response.data);
       return center;
-    } catch (e) {
-      print(e);
-      return null;
+    } on DioError catch (e) {
+      print(e.response!.data);
+      throw Exception(e.response!.data['Message']);
     }
   }
 }

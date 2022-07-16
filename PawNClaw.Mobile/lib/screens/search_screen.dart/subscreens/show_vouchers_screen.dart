@@ -31,7 +31,7 @@ class ShowVouchers extends StatelessWidget {
             padding: EdgeInsets.all(15),
             child: ListView.separated(
               itemBuilder: ((context, index) {
-                return VoucherCard(vouchers[index],180, size);
+                return VoucherCard(vouchers[index], 180, size);
               }),
               itemCount: FAKE_VOUCHERS.length,
               separatorBuilder: (context, index) => const SizedBox(
@@ -157,6 +157,5 @@ class ShowVouchers extends StatelessWidget {
                 ])))
       ],
     );
-
   }
 }

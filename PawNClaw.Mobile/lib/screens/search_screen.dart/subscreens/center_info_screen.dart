@@ -15,6 +15,8 @@ class _CenterInfoState extends State<CenterInfo> {
   @override
   Widget build(BuildContext context) {
     petCenter.Center center = widget.center;
-    return Scaffold(appBar: AppBar(title: Text('center info')),);
+    return Scaffold(
+      appBar: AppBar(title: Text('center info')),
+    );
   }
 }

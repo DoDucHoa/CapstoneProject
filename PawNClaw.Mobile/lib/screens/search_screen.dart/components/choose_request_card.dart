@@ -60,7 +60,6 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                   print(result);
                   widget.callback(result);
                   print(context.read<BookingBloc>().state);
-
                 },
                 child: Stack(children: [
                   selectedIndex == index

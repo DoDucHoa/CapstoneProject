@@ -30,17 +30,22 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     });
     on<SearchCenter>((event, emit) async {
       emit(Loading());
-      var center = await _centerRepository.searchCenterToBooking(
-          event.timeFrom,
-          event.timeTo,
-          event.requests,
-          event.cityCode,
-          event.districtCode,
-          event.pageNumber);
-      center != null
-          ? emit(SearchCompleted(
-              center, event.requests, event.timeFrom, event.timeTo))
-          : emit(Loading());
+      try {
+        var center = await _centerRepository.searchCenterToBooking(
+            event.timeFrom,
+            event.timeTo,
+            event.requests,
+            event.cityCode,
+            event.districtCode,
+            event.pageNumber);
+        center != null
+            ? emit(SearchCompleted(
+                center, event.requests, event.timeFrom, event.timeTo))
+            : emit(Loading());
+      } catch (e) {
+        print(e);
+        emit(this.state);
+      }
     });
   }
 }
