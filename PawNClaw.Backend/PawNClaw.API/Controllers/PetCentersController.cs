@@ -36,7 +36,7 @@ namespace PawNClaw.API.Controllers
 
                 if (data.petCenters.Count == 0)
                 {
-                    return BadRequest("No Response!!!");
+                    return Ok("No Response!!!");
                 }
 
                 var metadata = new

@@ -33,7 +33,10 @@ namespace PawNClaw.Data.Repository
         public IEnumerable<PetCenter> SearchPetCenter(string City, string District)
         {
             IQueryable<PetCenter> query = _dbSet;
-            query = query.Include("Location").Include("CageTypes").Where(x => x.Location.CityCode.Trim().Equals(City)
+            query = query
+                .Include(x => x.Location)
+                .Include(x => x.CageTypes)
+                .Where(x => x.Location.CityCode.Trim().Equals(City)
                                             && x.Location.DistrictCode.Trim().Equals(District))
                 .Select(x => new PetCenter
                 {
@@ -222,7 +225,7 @@ namespace PawNClaw.Data.Repository
                         SupplyTypeCode = s.SupplyTypeCode,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(s.Id, PhotoTypesConst.Supply)
                     }),
-                    Services = (ICollection<Service>)x.Services.Where(ser => ser.Status == true)
+                    Services = (ICollection<Service>)x.Services.Where(ser => ser.Status == true && ser.ServiceOrders.Count > 0)
                     .Select(ser => new Service
                     {
                         Id = ser.Id,

@@ -291,6 +291,11 @@ namespace PawNClaw.Business.Services
             //Check loaction
             var values = _petCenterRepository.SearchPetCenter(City, District);
 
+            foreach (var item in values)
+            {
+                Console.WriteLine(item.CageTypes.Count());
+            }
+
             //START Check valid time booking
             //This is 24 Hours format
             if (StartBooking == null || Due <= 0)
