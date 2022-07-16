@@ -16,7 +16,8 @@ class BookingRepository implements BaseBookingRepository {
         'Authorization': 'Bearer ' + pref.get("jwtToken").toString()
       };
       final String _url =
-          "https://pawnclawdevelopmentapi.azurewebsites.net/api/bookings/center/$staffId?statusId=2";
+          // "https://pawnclawdevelopmentapi.azurewebsites.net/api/bookings/center/$staffId?statusId=2";
+          "https://192.168.31.133/api/bookings/center/$staffId?statusId=2";
       var response = await _dio.get(
         _url,
       );

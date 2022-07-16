@@ -4,10 +4,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
 class FirebaseUpload {
-  Future<String?> pickFile(String destination) async {
+  Future<String?> pickFile(String destination, bool isCamera) async {
     final ImagePicker _picker = ImagePicker();
     XFile? result = await _picker.pickImage(
-      source: ImageSource.camera,
+      source: isCamera ? ImageSource.camera : ImageSource.gallery,
     );
     if (result != null) {
       File file = File(result.path);

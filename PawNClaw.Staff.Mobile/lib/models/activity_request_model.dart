@@ -33,7 +33,7 @@ class CreateBookingActivityParameter {
   String? provideTime;
   String? description;
   int? bookingId;
-  int? line;
+  int? bookingDetailId;
   int? petId;
   int? supplyId;
   int? serviceId;
@@ -42,7 +42,7 @@ class CreateBookingActivityParameter {
       {this.provideTime,
       this.description,
       this.bookingId,
-      this.line,
+      this.bookingDetailId,
       this.petId,
       this.supplyId,
       this.serviceId});
@@ -51,7 +51,7 @@ class CreateBookingActivityParameter {
     provideTime = json['provideTime'];
     description = json['description'];
     bookingId = json['bookingId'];
-    line = json['line'];
+    bookingDetailId = json['bookingDetailId'];
     petId = json['petId'];
     supplyId = json['supplyId'];
     serviceId = json['serviceId'];
@@ -62,7 +62,7 @@ class CreateBookingActivityParameter {
     data['provideTime'] = this.provideTime;
     data['description'] = this.description;
     data['bookingId'] = this.bookingId;
-    data['line'] = this.line;
+    data['bookingDetailId'] = this.bookingDetailId;
     data['petId'] = this.petId;
     data['supplyId'] = this.supplyId;
     data['serviceId'] = this.serviceId;

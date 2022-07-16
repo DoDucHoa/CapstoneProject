@@ -12,6 +12,7 @@ import 'package:pncstaff_mobile_application/models/booking_detail.dart';
 import 'package:pncstaff_mobile_application/models/pet.dart';
 import 'package:pncstaff_mobile_application/repositories/booking/booking_repository.dart';
 import 'package:intl/intl.dart';
+import 'package:pncstaff_mobile_application/screens/activity_screen/subscreens/activity_detail.dart';
 import 'package:pncstaff_mobile_application/screens/activity_screen/subscreens/supply_activity.dart';
 
 class BookingCageScreen extends StatefulWidget {
@@ -27,8 +28,6 @@ class BookingCageScreen extends StatefulWidget {
 }
 
 class _BookingCageScreenState extends State<BookingCageScreen> {
-  List<Pet> pets = [];
-
   @override
   void initState() {
     // TODO: implement initState
@@ -36,21 +35,27 @@ class _BookingCageScreenState extends State<BookingCageScreen> {
     super.initState();
   }
 
+  int selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     var bookings = widget.bookings;
     var bookingDetail = widget.bookingDetail;
+    List<Pet> pets = [];
     BookingDetail booking = BookingDetail();
     bookings.forEach((element) {
       if (element!.id == bookingDetail.bookingId) booking = element;
     });
+    bookingDetail.petBookingDetails!.forEach((element) {
+      pets.add(element.pet!);
+    });
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         title: Text(
-          bookingDetail.cageCode ?? "",
+          "Cho ăn",
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -139,6 +144,107 @@ class _BookingCageScreenState extends State<BookingCageScreen> {
                 ],
               ),
             ),
+            Container(
+              margin: EdgeInsets.all(width * smallPadRate),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Row(children: [
+                Container(
+                  margin: EdgeInsets.all(width * extraSmallPadRate + 5),
+                  height: 55,
+                  child: ClipRRect(
+                    child: Image.asset("lib/assets/vet-ava.png"),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${bookingDetail.cageCode} (${bookingDetail.cageType})",
+                      style: TextStyle(
+                          color: primaryFontColor,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      "${booking.customerNote ?? "không có chú thích"}",
+                      style: TextStyle(
+                          color: lightFontColor,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                )
+              ]),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemBuilder: (context, index) => InkWell(
+                  onTap: () => setState(() {
+                    selectedIndex = index;
+                  }),
+                  child: Container(
+                    padding: EdgeInsets.only(right: width * smallPadRate),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(width * smallPadRate),
+                          child: CircleAvatar(
+                            backgroundImage:
+                                AssetImage("lib/assets/cat_avatar0.png"),
+                            radius: width * 0.08,
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                pets[index].name!,
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: primaryFontColor),
+                              ),
+                              Text(
+                                pets[index].breedName!,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: lightFontColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: selectedIndex == index
+                                ? primaryColor
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Icon(
+                            Icons.check,
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                itemCount: pets.length,
+              ),
+            ),
           ],
         ),
       ),
@@ -149,6 +255,20 @@ class _BookingCageScreenState extends State<BookingCageScreen> {
       //   label: Text("Ghi chép hoạt động"),
       //   icon: Icon(Icons.assignment_sharp),
       // ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => ActivityDetail(
+                  pet: pets[selectedIndex],
+                  cage: bookingDetail,
+                ))),
+        label: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Cập nhật hoạt động"),
+            Icon(Icons.navigate_next),
+          ],
+        ),
+      ),
     );
   }
 }
