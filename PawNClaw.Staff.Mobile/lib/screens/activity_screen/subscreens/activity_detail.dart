@@ -8,6 +8,7 @@ import 'package:pncstaff_mobile_application/repositories/activity/activity_repos
 import 'package:pncstaff_mobile_application/screens/activity_screen/booking_activity.dart';
 import 'package:pncstaff_mobile_application/screens/activity_screen/components/pet_card.dart';
 import 'package:intl/intl.dart';
+import 'package:pncstaff_mobile_application/screens/home_screen/home_screen.dart';
 
 class ActivityDetail extends StatefulWidget {
   const ActivityDetail(
@@ -262,9 +263,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
                                   .addNewActivity(activity);
                               print(result);
                               Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => BookingActivityScreen(
-                                    bookingId: supply?.bookingId ??
-                                        service?.bookingId),
+                                builder: (context) => HomeScreen(),
                               ));
                             }
                           : () {},

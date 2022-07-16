@@ -12,6 +12,8 @@ class BookingDetail {
   List<ServiceOrders>? serviceOrders;
   List<SupplyOrders>? supplyOrders;
   List<BookingActivities>? bookingActivities;
+  double? totalSupply;
+  double? totalService;
 
   List<String> getAllStartTime() {
     List<String> times = [];
@@ -33,7 +35,9 @@ class BookingDetail {
       this.bookingDetails,
       this.serviceOrders,
       this.supplyOrders,
-      this.bookingActivities});
+      this.bookingActivities,
+      this.totalService,
+      this.totalSupply});
 
   BookingDetail.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -44,6 +48,8 @@ class BookingDetail {
     customer = json['customer'] != null
         ? new Customer.fromJson(json['customer'])
         : null;
+    totalSupply = json['totalSupply'];
+    totalService = json['totalService'];
     if (json['bookingDetails'] != null) {
       bookingDetails = <BookingDetails>[];
       json['bookingDetails'].forEach((v) {
@@ -244,15 +250,6 @@ class BookingDetails {
   List<PetBookingDetails>? petBookingDetails;
   List<FoodSchedules>? foodSchedules;
   String? cageType;
-
-  List<FoodSchedules>? remainFoodSchedules() {
-    var done = bookingActivities != null ? bookingActivities!.length : 0;
-    var remain = this.foodSchedules;
-    for (int i = 0; i < done; i++) {
-      remain!.removeAt(i);
-    }
-    return remain;
-  }
 
   BookingDetails(
       {this.bookingId,
