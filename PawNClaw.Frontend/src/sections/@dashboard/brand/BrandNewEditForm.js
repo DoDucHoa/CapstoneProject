@@ -15,6 +15,7 @@ import { fData } from '../../../utils/formatNumber';
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
 import useAuth from '../../../hooks/useAuth';
+import useResponsive from '../../../hooks/useResponsive';
 // components
 import Label from '../../../components/Label';
 import { FormProvider, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
@@ -39,7 +40,7 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Bắt buộc nhập'),
     description: Yup.string(),
-    createdUser: Yup.number().required(),
+    createUser: Yup.number().required(),
     modifyUser: Yup.number().required(),
     ownerId: Yup.number().required('Bắt buộc nhập'),
     avatarUrl: Yup.mixed().test('required', 'Ảnh thương hiệu bắt buộc nhập', (value) => value !== ''),
@@ -50,10 +51,11 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
     () => ({
       name: brandData?.name || '',
       description: brandData?.description || '',
-      createdUser: brandData?.createdUser || 0,
+      createdUser: brandData?.createUser || 0,
       modifyUser: brandData?.modifyUser || 0,
       ownerId: brandData?.ownerId || 0,
       avatarUrl: brandData?.avatarUrl || '',
+      ownerInfo: brandData?.owner || null,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [brandData]
@@ -232,8 +234,10 @@ OwnerInfo.propTypes = {
   phone: PropTypes.string.isRequired,
 };
 function OwnerInfo({ name, email, phone }) {
+  const isDesktop = useResponsive('up', 'sm');
+
   return (
-    <Box sx={{ border: '1px dashed grey', p: 1, borderRadius: 1, maxWidth: '60%' }}>
+    <Box sx={{ border: '1px dashed grey', p: 1, borderRadius: 1, maxWidth: isDesktop ? '60%' : '100%' }}>
       <Typography variant="subtitle2">{name}</Typography>
       <Typography sx={{ my: 0.5, color: 'primary.main', fontWeight: 'fontWeightMedium' }} variant="caption">
         {email}
