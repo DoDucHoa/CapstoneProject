@@ -13,10 +13,12 @@ namespace PawNClaw.Business.Services
     public class PetCenterService
     {
         IPetCenterRepository _petCenterRepository;
+        IStaffRepository _staffRepository;
 
-        public PetCenterService(IPetCenterRepository petCenterRepository)
+        public PetCenterService(IPetCenterRepository petCenterRepository, IStaffRepository staffRepository)
         {
             _petCenterRepository = petCenterRepository;
+            _staffRepository = staffRepository;
         }
 
         //Get All
@@ -87,6 +89,14 @@ namespace PawNClaw.Business.Services
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
             paging.PageSize);
+        }
+
+        //Get By Staff Id
+        public PetCenter GetByStaffId(int id)
+        {
+            var staff = _staffRepository.GetFirstOrDefault(x => x.Id == id);
+            var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == staff.CenterId);
+            return value;
         }
 
         //Get By Name
