@@ -10,11 +10,13 @@ import 'package:pncstaff_mobile_application/screens/activity_screen/components/p
 import 'package:intl/intl.dart';
 
 class ActivityDetail extends StatefulWidget {
-  const ActivityDetail({required this.pet, this.service, this.supply, Key? key})
+  const ActivityDetail(
+      {required this.pet, this.service, this.supply, this.cage, Key? key})
       : super(key: key);
 
   final SupplyOrders? supply;
   final ServiceOrders? service;
+  final BookingDetails? cage;
   final Pet pet;
 
   @override
@@ -67,56 +69,60 @@ class _ActivityDetailState extends State<ActivityDetail> {
               ),
             ),
             PetCard(pet: widget.pet),
-            Padding(
-              padding: EdgeInsets.all(width * smallPadRate),
-              child: Text(
-                "${widget.supply != null ? "Đồ dùng" : "Dịch vụ"}",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
-                  color: lightFontColor,
-                ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(
-                right: width * smallPadRate,
-                left: width * smallPadRate,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Row(children: [
-                Container(
-                  margin: EdgeInsets.all(width * extraSmallPadRate + 5),
-                  height: 55,
-                  child: ClipRRect(
-                    child: Image.asset("lib/assets/vet-ava.png"),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${widget.supply?.supply?.name ?? widget.service?.service?.description}",
+            (widget.cage == null)
+                ? Padding(
+                    padding: EdgeInsets.all(width * smallPadRate),
+                    child: Text(
+                      "${widget.supply != null ? "Đồ dùng" : "Dịch vụ"}",
                       style: TextStyle(
-                          color: primaryFontColor,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700),
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        color: lightFontColor,
+                      ),
                     ),
-                    Text(
-                      "${widget.supply?.note ?? widget.service?.note ?? "không có chú thích"}",
-                      style: TextStyle(
-                          color: lightFontColor,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600),
+                  )
+                : Container(),
+            (widget.cage == null)
+                ? Container(
+                    margin: EdgeInsets.only(
+                      right: width * smallPadRate,
+                      left: width * smallPadRate,
                     ),
-                  ],
-                )
-              ]),
-            ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Row(children: [
+                      Container(
+                        margin: EdgeInsets.all(width * extraSmallPadRate + 5),
+                        height: 55,
+                        child: ClipRRect(
+                          child: Image.asset("lib/assets/vet-ava.png"),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${widget.supply?.supply?.name ?? widget.service?.service?.description}",
+                            style: TextStyle(
+                                color: primaryFontColor,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700),
+                          ),
+                          Text(
+                            "${widget.supply?.note ?? widget.service?.note ?? "không có chú thích"}",
+                            style: TextStyle(
+                                color: lightFontColor,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      )
+                    ]),
+                  )
+                : Container(),
             Padding(
               padding: EdgeInsets.all(width * smallPadRate),
               child: Text(
@@ -134,7 +140,8 @@ class _ActivityDetailState extends State<ActivityDetail> {
                 InkWell(
                   onTap: () async {
                     var resultUrl = await FirebaseUpload().pickFile(
-                        "booking/${supply != null ? supply.bookingId : service!.bookingId}");
+                        "booking/${supply != null ? supply.bookingId : service!.bookingId}",
+                        true);
                     setState(() {
                       imageUrl = resultUrl;
                     });
@@ -168,32 +175,43 @@ class _ActivityDetailState extends State<ActivityDetail> {
                         ]),
                   ),
                 ),
-                Container(
-                  height: height * 0.18,
-                  width: height * 0.18,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(vertical: width * 0.05),
-                          child: Icon(
-                            Icons.file_upload_outlined,
-                            size: width * 0.15,
-                            color: primaryColor,
+                InkWell(
+                  onTap: () async {
+                    var resultUrl = await FirebaseUpload().pickFile(
+                        "booking/${supply != null ? supply.bookingId : service != null ? service.bookingId : widget.cage?.id}",
+                        false);
+                    setState(() {
+                      imageUrl = resultUrl;
+                    });
+                  },
+                  child: Container(
+                    height: height * 0.18,
+                    width: height * 0.18,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15)),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin:
+                                EdgeInsets.symmetric(vertical: width * 0.05),
+                            child: Icon(
+                              Icons.file_upload_outlined,
+                              size: width * 0.15,
+                              color: primaryColor,
+                            ),
                           ),
-                        ),
-                        Text(
-                          "Tải ảnh lên",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontSize: width * regularFontRate,
-                            color: lightFontColor,
+                          Text(
+                            "Tải ảnh lên",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: width * regularFontRate,
+                              color: lightFontColor,
+                            ),
                           ),
-                        ),
-                      ]),
+                        ]),
+                  ),
                 ),
               ],
             ),
@@ -222,14 +240,17 @@ class _ActivityDetailState extends State<ActivityDetail> {
                                   ActivityRequestModel(
                                 createBookingActivityParameter:
                                     CreateBookingActivityParameter(
-                                  bookingId:
-                                      supply?.bookingId ?? service?.bookingId,
-                                  description:
-                                      "Cung cấp ${supply?.supply?.name ?? service?.service?.description}",
+                                  bookingId: supply?.bookingId ??
+                                      service?.bookingId ??
+                                      widget.cage?.bookingId,
+                                  description: widget.cage == null
+                                      ? "Cung cấp ${supply?.supply?.name ?? service?.service?.description}"
+                                      : "Cho ăn",
                                   provideTime: DateFormat('yyyy-MM-dd HH:mm:ss')
                                       .format(DateTime.now()),
                                   serviceId: service?.service?.id,
                                   supplyId: supply?.supply?.id,
+                                  bookingDetailId: widget.cage?.id,
                                   petId: pet.id,
                                 ),
                                 createPhotoParameter: CreatePhotoParameter(

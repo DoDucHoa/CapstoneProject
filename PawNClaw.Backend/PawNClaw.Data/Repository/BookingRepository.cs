@@ -403,6 +403,7 @@ namespace PawNClaw.Data.Repository
                                 PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == bookingdetail.BookingId)
                             }
                         }),
+                        BookingActivities = bookingdetail.BookingActivities,
                         FoodSchedules = bookingdetail.C.CageType.FoodSchedules
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
