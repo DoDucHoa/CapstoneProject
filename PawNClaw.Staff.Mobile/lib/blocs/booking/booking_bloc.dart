@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pncstaff_mobile_application/models/account.dart';
 import 'package:pncstaff_mobile_application/models/booking.dart';
+import 'package:pncstaff_mobile_application/models/booking_detail.dart';
 import 'package:pncstaff_mobile_application/repositories/booking/booking_repository.dart';
 
 part 'booking_event.dart';

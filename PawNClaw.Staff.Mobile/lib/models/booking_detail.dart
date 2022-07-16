@@ -1,4 +1,5 @@
 import 'pet.dart';
+import 'package:intl/intl.dart';
 
 class BookingDetail {
   int? id;
@@ -11,6 +12,16 @@ class BookingDetail {
   List<ServiceOrders>? serviceOrders;
   List<SupplyOrders>? supplyOrders;
   List<BookingActivities>? bookingActivities;
+
+  List<String> getAllStartTime() {
+    List<String> times = [];
+    this.bookingDetails!.forEach((element) {
+      element.foodSchedules!.forEach((element) {
+        times.add(element.fromTime!);
+      });
+    });
+    return times.toSet().toList();
+  }
 
   BookingDetail(
       {this.id,
@@ -229,7 +240,18 @@ class BookingDetails {
   // Null? note;
   // Null? booking;
   // Null? c;
+  List<BookingActivities>? bookingActivities;
   List<PetBookingDetails>? petBookingDetails;
+  List<FoodSchedules>? foodSchedules;
+
+  List<FoodSchedules>? remainFoodSchedules() {
+    var done = bookingActivities != null ? bookingActivities!.length : 0;
+    var remain = this.foodSchedules;
+    for (int i = 0; i < done; i++) {
+      remain!.removeAt(i);
+    }
+    return remain;
+  }
 
   BookingDetails(
       {
@@ -242,7 +264,9 @@ class BookingDetails {
       // this.note,
       // this.booking,
       // this.c,
-      this.petBookingDetails});
+      this.bookingActivities,
+      this.petBookingDetails,
+      this.foodSchedules});
 
   BookingDetails.fromJson(Map<String, dynamic> json) {
     // bookingId = json['bookingId'];
@@ -254,10 +278,22 @@ class BookingDetails {
     // note = json['note'];
     // booking = json['booking'];
     // c = json['c'];
+    if (json['bookingActivities'] != null) {
+      bookingActivities = <BookingActivities>[];
+      json['bookingActivities'].forEach((v) {
+        bookingActivities!.add(new BookingActivities.fromJson(v));
+      });
+    }
     if (json['petBookingDetails'] != null) {
       petBookingDetails = <PetBookingDetails>[];
       json['petBookingDetails'].forEach((v) {
         petBookingDetails!.add(new PetBookingDetails.fromJson(v));
+      });
+    }
+    if (json['foodSchedules'] != null) {
+      foodSchedules = <FoodSchedules>[];
+      json['foodSchedules'].forEach((v) {
+        foodSchedules!.add(new FoodSchedules.fromJson(v));
       });
     }
   }
@@ -273,10 +309,56 @@ class BookingDetails {
     // data['note'] = this.note;
     // data['booking'] = this.booking;
     // data['c'] = this.c;
+    if (this.bookingActivities != null) {
+      data['bookingActivities'] =
+          this.bookingActivities!.map((v) => v.toJson()).toList();
+    }
     if (this.petBookingDetails != null) {
       data['petBookingDetails'] =
           this.petBookingDetails!.map((v) => v.toJson()).toList();
     }
+    if (this.foodSchedules != null) {
+      data['foodSchedules'] =
+          this.foodSchedules!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class FoodSchedules {
+  int? id;
+  String? fromTime;
+  String? toTime;
+  String? name;
+  int? cageTypeId;
+  // Null? cageType;
+
+  FoodSchedules({
+    this.id,
+    this.fromTime,
+    this.toTime,
+    this.name,
+    this.cageTypeId,
+    // this.cageType
+  });
+
+  FoodSchedules.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    fromTime = json['fromTime'];
+    toTime = json['toTime'];
+    name = json['name'];
+    cageTypeId = json['cageTypeId'];
+    // cageType = json['cageType'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['fromTime'] = this.fromTime;
+    data['toTime'] = this.toTime;
+    data['name'] = this.name;
+    data['cageTypeId'] = this.cageTypeId;
+    // data['cageType'] = this.cageType;
     return data;
   }
 }

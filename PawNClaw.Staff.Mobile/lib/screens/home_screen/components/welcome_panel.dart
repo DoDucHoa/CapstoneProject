@@ -4,11 +4,9 @@ import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/models/booking.dart';
 
 class WelcomePanel extends StatelessWidget {
-  const WelcomePanel({Key? key, required this.username, required this.bookings})
-      : super(key: key);
+  const WelcomePanel({Key? key, required this.username}) : super(key: key);
 
   final String username;
-  final List<Booking> bookings;
 
   @override
   Widget build(BuildContext context) {

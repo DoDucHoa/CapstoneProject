@@ -7,7 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class BookingRepository implements BaseBookingRepository {
   final Dio _dio = Dio();
   @override
-  Future<List<Booking>?> getProcessingBooking({required int staffId}) async {
+  Future<List<BookingDetail>?> getProcessingBooking(
+      {required int staffId}) async {
     // TODO: implement getProcessingBooking
     final pref = await SharedPreferences.getInstance();
     try {
@@ -20,8 +21,9 @@ class BookingRepository implements BaseBookingRepository {
         _url,
       );
       print(response.data);
-      final bookings =
-          response.data.map<Booking>((e) => Booking.fromJson(e)).toList();
+      final bookings = response.data
+          .map<BookingDetail>((e) => BookingDetail.fromJson(e))
+          .toList();
       return bookings;
     } on DioError catch (e) {
       print(e.response?.data);

@@ -10,7 +10,7 @@ abstract class BookingState extends Equatable {
 class BookingInitial extends BookingState {}
 
 class BookingLoaded extends BookingState {
-  final List<Booking> bookings;
+  final List<BookingDetail> bookings;
 
   const BookingLoaded({required this.bookings});
 
