@@ -243,6 +243,7 @@ class BookingDetails {
   List<BookingActivities>? bookingActivities;
   List<PetBookingDetails>? petBookingDetails;
   List<FoodSchedules>? foodSchedules;
+  String? cageType;
 
   List<FoodSchedules>? remainFoodSchedules() {
     var done = bookingActivities != null ? bookingActivities!.length : 0;
@@ -266,7 +267,8 @@ class BookingDetails {
       // this.c,
       this.bookingActivities,
       this.petBookingDetails,
-      this.foodSchedules});
+      this.foodSchedules,
+      this.cageType});
 
   BookingDetails.fromJson(Map<String, dynamic> json) {
     // bookingId = json['bookingId'];
@@ -296,6 +298,7 @@ class BookingDetails {
         foodSchedules!.add(new FoodSchedules.fromJson(v));
       });
     }
+    cageType = json['cageType'];
   }
 
   Map<String, dynamic> toJson() {

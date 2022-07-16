@@ -376,7 +376,7 @@ namespace PawNClaw.Data.Repository
                         BookingId = bookingdetail.BookingId,
                         Price = bookingdetail.Price,
                         CageCode = bookingdetail.CageCode,
-                        CageType = bookingdetail.C.CageType.Description,
+                        CageType = bookingdetail.C.CageType.TypeName,
                         CenterId = bookingdetail.CenterId,
                         Duration = bookingdetail.Duration,
                         Note = bookingdetail.Note,

@@ -119,21 +119,23 @@ class _TodoListState extends State<TodoList> {
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
                                         Text(
-                                          // "Cho ăn ${getFeedByTime(remainFeedingActivites, times[index])[index].cageCode}",
-                                          "Cho ăn Cagecode",
+                                          "Cho ăn ${getFeedByTime(remainFeedingActivites, times[index])[index].cageCode}",
+                                          // "Cho ăn Cagecode",
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.w600,
                                             color: primaryFontColor,
                                           ),
                                         ),
-                                        Text(
-                                          // "${getFeedByTime(remainFeedingActivites, times[index])[index].cageCode}",
-                                          "cagetype",
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                            color: lightFontColor,
+                                        Container(
+                                          child: Text(
+                                            "${getFeedByTime(remainFeedingActivites, times[index])[index].cageType}",
+                                            // "cagetype",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600,
+                                              color: lightFontColor,
+                                            ),
                                           ),
                                         ),
                                       ],
