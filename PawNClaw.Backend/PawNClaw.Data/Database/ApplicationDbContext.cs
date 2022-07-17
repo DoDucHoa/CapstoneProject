@@ -126,7 +126,7 @@ namespace PawNClaw.Data.Database
 
             modelBuilder.Entity<BookingActivity>(entity =>
             {
-                entity.Property(e => e.ProvideTime).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.IsOnTime).HasDefaultValueSql("((0))");
 
                 entity.HasOne(d => d.BookingDetail)
                     .WithMany(p => p.BookingActivities)

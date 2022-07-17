@@ -217,6 +217,10 @@ namespace PawNClaw.Data.Repository
                         PetId = bookingact.PetId,
                         SupplyId = bookingact.SupplyId,
                         ServiceId = bookingact.ServiceId,
+                        ActivityTimeFrom = bookingact.ActivityTimeFrom,
+                        ActivityTimeTo = bookingact.ActivityTimeTo,
+                        BookingDetailId = bookingact.BookingDetailId,
+                        IsOnTime = bookingact.IsOnTime,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
@@ -337,6 +341,10 @@ namespace PawNClaw.Data.Repository
                         PetId = bookingact.PetId,
                         SupplyId = bookingact.SupplyId,
                         ServiceId = bookingact.ServiceId,
+                        ActivityTimeFrom = bookingact.ActivityTimeFrom,
+                        ActivityTimeTo = bookingact.ActivityTimeTo,
+                        BookingDetailId = bookingact.BookingDetailId,
+                        IsOnTime = bookingact.IsOnTime,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
@@ -349,6 +357,8 @@ namespace PawNClaw.Data.Repository
 
         public IEnumerable<Booking> GetBookingByCenterIdForStaff(int CenterId, int? StatusId)
         {
+            DateTime now = DateTime.Today;
+
             IQueryable<Booking> query = _dbSet
                 .Select(x => new Booking
                 {
@@ -441,6 +451,7 @@ namespace PawNClaw.Data.Repository
                         }
                     }),
                     BookingActivities = (ICollection<BookingActivity>)x.BookingActivities
+                    .Where(x => now.Date >= ((DateTime) x.ActivityTimeFrom).Date && now <= ((DateTime)x.ActivityTimeTo).Date)
                     .Select(bookingact => new BookingActivity
                     {
                         Id = bookingact.Id,
@@ -450,6 +461,13 @@ namespace PawNClaw.Data.Repository
                         PetId = bookingact.PetId,
                         SupplyId = bookingact.SupplyId,
                         ServiceId = bookingact.ServiceId,
+                        ActivityTimeFrom = bookingact.ActivityTimeFrom,
+                        ActivityTimeTo = bookingact.ActivityTimeTo,
+                        BookingDetailId = bookingact.BookingDetailId,
+                        IsOnTime = bookingact.IsOnTime,
+                        BookingDetail = bookingact.BookingDetail,
+                        Service = bookingact.Service,
+                        Supply = bookingact.Supply,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
                     })
                 })
@@ -496,6 +514,61 @@ namespace PawNClaw.Data.Repository
             }
 
             return query.ToList();
+        }
+
+        public Booking GetBookingForCreateActivity(int BookingId)
+        {
+            Booking query = _dbSet
+                .Select(x => new Booking
+                {
+                    Id = x.Id,
+                    StartBooking = x.StartBooking,
+                    EndBooking = x.EndBooking,
+                    BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
+                    .Select(bookingdetail => new BookingDetail
+                    {
+                        Id = bookingdetail.Id,
+                        BookingId = bookingdetail.BookingId,
+                        CageCode = bookingdetail.CageCode,
+                        CenterId = bookingdetail.CenterId,
+                        Duration = bookingdetail.Duration,
+                        Note = bookingdetail.Note,
+                        C = new Cage
+                        {
+                            Name = bookingdetail.C.Name,
+                            CageType = new CageType
+                            {
+                                TypeName = bookingdetail.C.CageType.TypeName,
+                                FoodSchedules = bookingdetail.C.CageType.FoodSchedules
+                            }
+                        }
+                    }),
+                    SupplyOrders = (ICollection<SupplyOrder>)x.SupplyOrders
+                    .Select(supplyorder => new SupplyOrder
+                    {
+                        SupplyId = supplyorder.SupplyId,
+                        BookingId = supplyorder.BookingId,
+                        PetId = supplyorder.PetId,
+                        Pet = new Pet
+                        {
+                            Name = supplyorder.Pet.Name,
+                        }
+                    }),
+                    ServiceOrders = (ICollection<ServiceOrder>)x.ServiceOrders
+                    .Select(serviceorder => new ServiceOrder
+                    {
+                        ServiceId = serviceorder.ServiceId,
+                        BookingId = serviceorder.BookingId,
+                        PetId = serviceorder.PetId,
+                        Pet = new Pet
+                        {
+                            Name = serviceorder.Pet.Name,
+                        }
+                    })
+                })
+                .SingleOrDefault(x => x.Id == BookingId);
+
+            return query;
         }
     }
 }

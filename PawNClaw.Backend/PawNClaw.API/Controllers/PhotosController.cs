@@ -160,7 +160,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpDateBrandPhoto([FromBody] UpdatePhotoParameter updatePhotoParameter)
+        public IActionResult UpDatePhoto([FromBody] UpdatePhotoParameter updatePhotoParameter)
         {
             try
             {

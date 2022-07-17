@@ -1,8 +1,8 @@
 import axios from '../../../utils/axios';
 
-const URL = '/api/brands';
+const URL = '/api/petcenters';
 
-const getBrands = async (page, rowsPerPage, filterStatus, searchName) => {
+const getCenters = async (page, rowsPerPage, filterStatus, searchName) => {
   const response = await axios.get(URL, {
     params: {
       Name: searchName,
@@ -14,12 +14,12 @@ const getBrands = async (page, rowsPerPage, filterStatus, searchName) => {
   return response.data;
 };
 
-const getBrand = async (idBrand) => {
-  const response = await axios.get(`${URL}/${idBrand}`);
+const getCenter = async (idCenter) => {
+  const response = await axios.get(`${URL}/${idCenter}`);
   return response.data;
 };
 
-const createBrand = async (userName, createdUser, phone, name, gender) => {
+const createCenter = async (userName, createdUser, phone, name, gender) => {
   const response = await axios.post(URL, {
     userName,
     createdUser,
@@ -30,7 +30,7 @@ const createBrand = async (userName, createdUser, phone, name, gender) => {
   return response.data;
 };
 
-const updateBrand = async (idBrand, name, phone, gender) => {
+const updateCenter = async (idCenter, name, phone, gender) => {
   const response = await axios.put(URL, {
     name,
     phone,
@@ -39,14 +39,14 @@ const updateBrand = async (idBrand, name, phone, gender) => {
   return response.status;
 };
 
-const banBrand = async (idBrand) => {
-  const response = await axios.delete(`${URL}/${idBrand}`);
+const banCenter = async (idCenter) => {
+  const response = await axios.delete(`${URL}/${idCenter}`);
   return response.data;
 };
 
-const unbanBrand = async (idBrand) => {
-  const response = await axios.put(`${URL}/restore/${idBrand}`);
+const unbanCenter = async (idCenter) => {
+  const response = await axios.put(`${URL}/restore/${idCenter}`);
   return response.data;
 };
 
-export { getBrand, getBrands, createBrand, banBrand, unbanBrand, updateBrand };
+export { getCenter, getCenters, createCenter, banCenter, unbanCenter, updateCenter };

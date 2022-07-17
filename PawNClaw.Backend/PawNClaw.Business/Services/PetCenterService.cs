@@ -24,7 +24,7 @@ namespace PawNClaw.Business.Services
         //Get All
         public PagedList<PetCenter> GetAll(string includeProperties, PagingParameter paging)
         {
-            var values = _petCenterRepository.GetAll(includeProperties: includeProperties);
+            var values = _petCenterRepository.GetAll(includeProperties: "Brand");
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
