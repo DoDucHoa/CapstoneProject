@@ -51,7 +51,7 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
     () => ({
       name: brandData?.name || '',
       description: brandData?.description || '',
-      createdUser: brandData?.createUser || 0,
+      createUser: brandData?.createUser || 0,
       modifyUser: brandData?.modifyUser || 0,
       ownerId: brandData?.ownerId || 0,
       avatarUrl: brandData?.avatarUrl || '',
@@ -95,7 +95,7 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
       if (!isEdit) {
         await createBrand(values.name, values.description, values.ownerInfo.id, accountInfo.id, accountInfo.id);
       } else {
-        await updateBrand(accountInfo.id, values.name, values.phoneNumber, values.gender);
+        await updateBrand(brandData.id, values.name, values.description, values.ownerId);
       }
       reset();
       enqueueSnackbar(!isEdit ? 'Tạo mới thành công' : 'Cập nhật thành công');
@@ -227,11 +227,11 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
   );
 }
 
-// --
+// ----------------------------------------------------------------------
 OwnerInfo.propTypes = {
   name: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
-  phone: PropTypes.string.isRequired,
+  phone: PropTypes.string,
 };
 function OwnerInfo({ name, email, phone }) {
   const isDesktop = useResponsive('up', 'sm');

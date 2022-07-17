@@ -30,11 +30,11 @@ const createBrand = async (name, description, ownerId, createUser, modifyUser) =
   return response.data;
 };
 
-const updateBrand = async (idBrand, name, phone, gender) => {
-  const response = await axios.put(URL, {
+const updateBrand = async (idBrand, name, description, ownerId) => {
+  const response = await axios.put(`${URL}/${idBrand}`, {
     name,
-    phone,
-    gender,
+    description,
+    ownerId,
   });
   return response.status;
 };
