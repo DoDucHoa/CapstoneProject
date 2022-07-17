@@ -217,6 +217,10 @@ namespace PawNClaw.Data.Repository
                         PetId = bookingact.PetId,
                         SupplyId = bookingact.SupplyId,
                         ServiceId = bookingact.ServiceId,
+                        ActivityTimeFrom = bookingact.ActivityTimeFrom,
+                        ActivityTimeTo = bookingact.ActivityTimeTo,
+                        BookingDetailId = bookingact.BookingDetailId,
+                        IsOnTime = bookingact.IsOnTime,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
@@ -337,6 +341,10 @@ namespace PawNClaw.Data.Repository
                         PetId = bookingact.PetId,
                         SupplyId = bookingact.SupplyId,
                         ServiceId = bookingact.ServiceId,
+                        ActivityTimeFrom = bookingact.ActivityTimeFrom,
+                        ActivityTimeTo = bookingact.ActivityTimeTo,
+                        BookingDetailId = bookingact.BookingDetailId,
+                        IsOnTime = bookingact.IsOnTime,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
@@ -453,6 +461,10 @@ namespace PawNClaw.Data.Repository
                         PetId = bookingact.PetId,
                         SupplyId = bookingact.SupplyId,
                         ServiceId = bookingact.ServiceId,
+                        ActivityTimeFrom = bookingact.ActivityTimeFrom,
+                        ActivityTimeTo = bookingact.ActivityTimeTo,
+                        BookingDetailId = bookingact.BookingDetailId,
+                        IsOnTime = bookingact.IsOnTime,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
                     })
                 })
