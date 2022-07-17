@@ -294,7 +294,9 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                           ),
                                           Column(
                                             children: [
-                                              (booking!.getUndoneSupplyAct() >
+                                              (booking!
+                                                          .getUndoneSupplyAct()
+                                                          .length >
                                                       0)
                                                   ? Container(
                                                       width: width * 0.7,

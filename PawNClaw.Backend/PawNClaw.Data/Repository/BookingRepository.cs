@@ -431,6 +431,7 @@ namespace PawNClaw.Data.Repository
                         Supply = supplyorder.Supply,
                         Pet = new Pet
                         {
+                            BreedName = supplyorder.Pet.BreedName,
                             Name = supplyorder.Pet.Name,
                         }
                     }),
@@ -447,6 +448,7 @@ namespace PawNClaw.Data.Repository
                         Service = serviceorder.Service,
                         Pet = new Pet
                         {
+                            BreedName = serviceorder.Pet.BreedName,
                             Name = serviceorder.Pet.Name,
                         }
                     }),

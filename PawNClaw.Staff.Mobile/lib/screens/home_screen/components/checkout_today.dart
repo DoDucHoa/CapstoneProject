@@ -1,68 +1,103 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pncstaff_mobile_application/blocs/auth/auth_bloc.dart';
+import 'package:pncstaff_mobile_application/common/components/loading_indicator.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/common/vn_locale.dart';
 import 'package:intl/intl.dart';
 import 'package:pncstaff_mobile_application/models/booking_detail.dart';
 import 'package:pncstaff_mobile_application/models/pet.dart';
+import 'package:pncstaff_mobile_application/models/pet_center.dart';
+import 'package:pncstaff_mobile_application/repositories/center/center_repository.dart';
+import 'package:pncstaff_mobile_application/screens/activity_screen/booking_activity.dart';
 
-class CheckoutToday extends StatelessWidget {
+class CheckoutToday extends StatefulWidget {
   const CheckoutToday({required this.bookings, Key? key}) : super(key: key);
 
   final List<BookingDetail> bookings;
 
   @override
+  State<CheckoutToday> createState() => _CheckoutTodayState();
+}
+
+class _CheckoutTodayState extends State<CheckoutToday> {
+  PetCenter? center;
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    var user = (BlocProvider.of<AuthBloc>(context).state as Authenticated).user;
+    CenterRepository().getCenterByStaff(user.id!).then((value) {
+      setState(() {
+        center = value;
+      });
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "${Localization().convertWeekDay(DateFormat('EEEE').format(DateTime.now()))}, ${DateFormat('d').format(DateTime.now())} tháng ${DateFormat('M').format(DateTime.now())}",
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
-              color: primaryFontColor,
-            ),
-          ),
-          ListView.builder(
-            physics: ClampingScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: 1,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: width * smallPadRate),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(right: width * smallPadRate),
-                      child: Text(
-                        "07:30",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: lightFontColor,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      child: ListView.builder(
-                          physics: ClampingScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: bookings.length,
-                          itemBuilder: (context, index) =>
-                              BookingCard(booking: bookings[index])),
-                    ),
-                  ],
+    return center != null
+        ? SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${Localization().convertWeekDay(DateFormat('EEEE').format(DateTime.now()))}, ${DateFormat('d').format(DateTime.now())} tháng ${DateFormat('M').format(DateTime.now())}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                    color: primaryFontColor,
+                  ),
                 ),
-              );
-            },
+                ListView.builder(
+                  physics: ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: 1,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: width * smallPadRate),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding:
+                                EdgeInsets.only(right: width * smallPadRate),
+                            child: Text(
+                              "${center!.openTime}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: lightFontColor,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            child: ListView.builder(
+                                physics: ClampingScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: widget.bookings.length,
+                                itemBuilder: (context, index) => InkWell(
+                                    onTap: () => Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                BookingActivityScreen(
+                                                    bookingId: widget
+                                                        .bookings[index].id))),
+                                    child: BookingCard(
+                                        booking: widget.bookings[index]))),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                )
+              ],
+            ),
           )
-        ],
-      ),
-    );
+        : LoadingIndicator(loadingText: "vui lòng chờ");
   }
 }
 
@@ -207,7 +242,7 @@ class BookingCard extends StatelessWidget {
                                   margin: EdgeInsets.only(right: 10),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
-                                    color: lightPrimaryColor,
+                                    color: lightPrimaryColor.withOpacity(0.3),
                                   ),
                                   child: Text(
                                     "Dịch vụ",
@@ -224,7 +259,7 @@ class BookingCard extends StatelessWidget {
                                       vertical: 5, horizontal: 10),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
-                                    color: lightPrimaryColor,
+                                    color: lightPrimaryColor.withOpacity(0.3),
                                   ),
                                   child: Text(
                                     "Đồ dùng",
