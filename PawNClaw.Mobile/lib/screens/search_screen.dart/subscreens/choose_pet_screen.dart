@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
+import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
+import 'package:pawnclaw_mobile_application/screens/home_screen/HomeScreen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/pet_bubble.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/pet_requests_dialog.dart';
 
@@ -80,7 +82,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
               ),
             ],
             leading: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen())),
               icon: Icon(
                 Icons.arrow_back_ios_new,
                 color: primaryFontColor,
@@ -210,9 +212,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                         );
                                       },
                                     )
-                                  : const Center(
-                                      child: CircularProgressIndicator(),
-                                    );
+                                  : const LoadingIndicator(loadingText: 'Vui lòng đợi');
                             },
                           ),
                         ),

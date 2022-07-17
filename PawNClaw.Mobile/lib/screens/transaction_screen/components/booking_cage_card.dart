@@ -68,14 +68,17 @@ class BookingCageCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Container(
+                    width: width/3
+                    ,child:
                   Text(
-                     'Chuồng ${bookingDetails.line!.toString()}',
+                     bookingDetails.cage!.name!,
                     style: TextStyle(
                       color: primaryFontColor,
                       fontWeight: FontWeight.w500,
                       fontSize: width * regularFontRate,
                     ),
-                  ),
+                  )),
                   Text(
                     bookingDetails.petBookingDetails!.fold(
                         "",
@@ -137,7 +140,7 @@ class BookingCageCard extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: " (" + bookingDetails.duration!.toString() + " giờ)",
+                    text: " (${bookingDetails.duration!.toInt().toString()} ngày)",
                     style: TextStyle(
                       color: lightFontColor,
                       fontWeight: FontWeight.w500,

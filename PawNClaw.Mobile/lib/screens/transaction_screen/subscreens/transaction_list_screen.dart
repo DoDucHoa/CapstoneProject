@@ -32,7 +32,7 @@ class _TransactionListState extends State<TransactionList> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return BlocProvider(
         create: (context) => TransactionBloc()..add(GetTransactions(account)),
         child: Scaffold(
@@ -70,7 +70,9 @@ class _TransactionListState extends State<TransactionList> {
                               shrinkWrap: true,
                               physics: ClampingScrollPhysics(),
                             ))
-                        : Center(child: CircularProgressIndicator());
+                        :Container(height: height, child: LoadingIndicator(loadingText: 'Đang tải đơn hàng')
+                          
+                        );
                   })
                 ],
               ),

@@ -24,6 +24,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
   TextEditingController _areaController = TextEditingController();
   DateTime? from;
   DateTime? to;
+  int? due;
   String? cityCode;
   String? districtCode;
   TextEditingController _fromController = TextEditingController();
@@ -103,6 +104,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                 ),
                 const Spacer(flex: 10),
                 GestureDetector(
+                  //change to selectSingleDate
                   onTap: () => selectSingleTime(
                     context,
                     (date) {
@@ -113,6 +115,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                             from = date;
                             _fromController.text =
                                 DateFormat("dd/MM/yyyy, h:mm a").format(date);
+                                due = getDue(from, to);
                             fromTimeError = null;
                           },
                         );
@@ -136,7 +139,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                         readOnly: true,
                         controller: _fromController,
                         decoration: InputDecoration(
-                          labelText: "From",
+                          labelText: "Gửi từ",
                           prefixIcon: Container(
                               width: 30,
                               height: 30,
@@ -165,27 +168,45 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                 ),
                 const Spacer(flex: 3),
                 GestureDetector(
-                  onTap: () => selectSingleTime(
-                    context,
-                    (date) {
-                      if (from == null ||
-                          (from != null && from!.compareTo(date) == -1)) {
-                        setState(
-                          () {
-                            to = date;
-                            _toController.text =
-                                DateFormat("dd/MM/yyyy, h:mm a").format(date);
-                            toTimeError = null;
-                          },
-                        );
-                      } else {
-                        setState(() {
-                          _toController.text = "";
-                          toTimeError = "Thời gian nhận phải sau thời gian gửi";
-                        });
-                      }
-                    },
-                  ),
+                  onTap: () async {
+                    setState(() {
+                      toTimeError = null;
+                    });
+                    if (from != null) {
+                      var date = await selectSingleDateFrom(context, from!);
+                      to = date!.add(new Duration(hours: 23));
+                      print('hour: ${to!.hour}');
+                      _toController.text =
+                          DateFormat("dd/MM/yyyy").format(date);
+                      due = getDue(from, to);
+                      print('due: $due');
+                    } else
+                      setState(() {
+                        toTimeError = 'Vui lòng chọn trước thời gian gửi';
+                      });
+                  },
+
+                  // selectSingleTime(
+                  //   context,
+                  //   (date) {
+                  //     if (from == null ||
+                  //         (from != null && from!.compareTo(date) == -1)) {
+                  //       setState(
+                  //         () {
+                  //           to = date;
+                  //           _toController.text =
+                  //               DateFormat("dd/MM/yyyy, h:mm a").format(date);
+                  //           toTimeError = null;
+                  //         },
+                  //       );
+                  //     } else {
+                  //       setState(() {
+                  //         _toController.text = "";
+                  //         toTimeError = "Thời gian nhận phải sau thời gian gửi";
+                  //       });
+                  //     }
+                  //   },
+                  // ),
                   child: Container(
                       padding: EdgeInsets.all(5),
                       margin: EdgeInsets.symmetric(vertical: 2),
@@ -196,7 +217,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                         enabled: false,
                         controller: _toController,
                         decoration: InputDecoration(
-                          labelText: "To",
+                          labelText: "Đến ngày",
                           prefixIcon: Container(
                               width: 30,
                               height: 30,
@@ -258,7 +279,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                         readOnly: true,
                         controller: _areaController,
                         decoration: InputDecoration(
-                          labelText: "Location",
+                          labelText: "Địa điểm",
                           prefixIcon: Container(
                               width: 30,
                               height: 30,
@@ -301,7 +322,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                               SearchCenter(
                                   (state as FillingInformation).requests,
                                   from!,
-                                  to!,
+                                  due!,
                                   cityCode!,
                                   districtCode!,
                                   0))
@@ -331,5 +352,12 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
         );
       },
     );
+  }
+
+  int getDue(from, to) {
+    int due;
+    due = to.day - from!.day;
+    if (due == 0) due = 1;
+    return due;
   }
 }

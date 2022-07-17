@@ -26,6 +26,7 @@ class CenterDetails extends StatefulWidget {
       required this.requests,
       required this.bookingDate,
       required this.endDate,
+      required this.due,
       Key? key})
       : super(key: key);
 
@@ -33,6 +34,7 @@ class CenterDetails extends StatefulWidget {
   final List<List<Pet>> requests;
   final DateTime bookingDate;
   final DateTime endDate;
+  final int due;
 
   @override
   State<CenterDetails> createState() => _CenterDetailsState();
@@ -68,12 +70,12 @@ class _CenterDetailsState extends State<CenterDetails> {
         create: (context) => BookingBloc()
           ..add(
             InitBooking(
-              startBooking: widget.bookingDate,
-              endBooking: widget.endDate,
-              centerId: widget.petCenterId,
-              request: widget.requests,
-              customerId: customerId,
-            ),
+                startBooking: widget.bookingDate,
+                endBooking: widget.endDate,
+                centerId: widget.petCenterId,
+                request: widget.requests,
+                customerId: customerId,
+                due: widget.due),
           ),
         child:
             BlocBuilder<BookingBloc, BookingState>(builder: (context, state) {
@@ -155,51 +157,65 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                     height: 65 / 2 - 10,
                                                   ),
                                                   Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: [
                                                       Container(
                                                         width: width * 2 / 3,
+                                                        height: width *
+                                                                largeFontRate +
+                                                            10,
                                                         child: Text(
                                                           center?.name ?? "",
                                                           style:
                                                               const TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  height: 1),
                                                         ),
                                                       ),
                                                       Expanded(
                                                           child: SizedBox()),
-                                                      Icon(
-                                                        Icons.star_rate_rounded,
-                                                        color:
-                                                            lightPrimaryColor,
-                                                      ),
-                                                      Text(
-                                                        center?.rating!
-                                                                .toString() ??
-                                                            "",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w700),
-                                                      ),
-                                                      Text(
-                                                        ' (' +
-                                                            (center?.rating!
-                                                                    .toString() ??
-                                                                "") +
-                                                            ')',
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w700,
+                                                      Wrap(
+                                                        crossAxisAlignment:
+                                                            WrapCrossAlignment
+                                                                .center,
+                                                        children: [
+                                                          Icon(
+                                                            Icons
+                                                                .star_rate_rounded,
                                                             color:
-                                                                lightFontColor),
+                                                                lightPrimaryColor,
+                                                          ),
+                                                          Text(
+                                                            center?.rating!
+                                                                    .toString() ??
+                                                                "",
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            ' (' +
+                                                                (center?.rating!
+                                                                        .toString() ??
+                                                                    "") +
+                                                                ')',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                color:
+                                                                    lightFontColor),
+                                                          )
+                                                        ],
                                                       )
                                                     ],
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
                                                   ),
                                                   Row(children: [
                                                     Padding(
@@ -224,19 +240,19 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                             children: [
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsets
-                                                                        .fromLTRB(
-                                                                            4,
-                                                                            3,
-                                                                            5,
-                                                                            2),
+                                                                    const EdgeInsets
+                                                                            .fromLTRB(
+                                                                        4,
+                                                                        3,
+                                                                        5,
+                                                                        2),
                                                                 child:
                                                                     Image.asset(
                                                                   'lib/assets/white-paw.png',
                                                                   width: 13,
                                                                 ),
                                                               ),
-                                                              Text(
+                                                              const Text(
                                                                 'Đối tác PawNClaw   ',
                                                                 style: TextStyle(
                                                                     fontSize:
@@ -252,31 +268,28 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                     ),
                                                   ]),
                                                   SizedBox(
-                                                    height: 15,
+                                                    height: 10,
                                                   ),
                                                   OutlinedButton.icon(
                                                       style: OutlinedButton.styleFrom(
                                                           shape: RoundedRectangleBorder(
                                                               borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10))),
-                                                      onPressed: () => Navigator
-                                                              .of(context)
+                                                                  BorderRadius.circular(
+                                                                      10))),
+                                                      onPressed: () => Navigator.of(
+                                                              context)
                                                           .push(MaterialPageRoute(
                                                               builder: (context) =>
-                                                                  ShowVouchers(vouchers:FAKE_VOUCHERS))),
+                                                                  ShowVouchers(
+                                                                      vouchers:
+                                                                          FAKE_VOUCHERS))),
                                                       icon: Image.asset(
                                                         'lib/assets/coupon.png',
                                                         width: 30,
                                                       ),
                                                       label: Container(
-                                                          padding:
-                                                              EdgeInsets.fromLTRB(
-                                                                  10,
-                                                                  15,
-                                                                  5,
-                                                                  15),
+                                                          padding: EdgeInsets.fromLTRB(
+                                                              10, 15, 5, 15),
                                                           child: Row(
                                                             children: [
                                                               Text(
@@ -294,6 +307,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                           )))
                                                 ],
                                               ))),
+
                                       Positioned(
                                         top: appbarSize * 0.45 - 65 / 2,
                                         left: 20,
@@ -504,27 +518,33 @@ class _CenterDetailsState extends State<CenterDetails> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15)),
                           onPressed: ()
-                          //ràng buộc chọn đủ số chuồng cho pet trước khi đặt hàng
-                              => ((state as BookingUpdated)
-                                      .booking
-                                      .bookingDetailCreateParameters!
-                                      .isNotEmpty && (state as BookingUpdated).booking.bookingDetailCreateParameters!.length == widget.requests.length)
+                              //ràng buộc chọn đủ số chuồng cho pet trước khi đặt hàng
+                              =>
+                              ((state as BookingUpdated)
+                                          .booking
+                                          .bookingDetailCreateParameters!
+                                          .isNotEmpty &&
+                                      (state as BookingUpdated)
+                                              .booking
+                                              .bookingDetailCreateParameters!
+                                              .length ==
+                                          widget.requests.length)
                                   ?
-                              // =>
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (_) => BlocProvider.value(
-                                        value: BlocProvider.of<BookingBloc>(
-                                            context),
-                                        child: ConfirmBooking(
-                                          center: center!,
-                                        ),
-                                      )))
-                          : ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    "Hãy chọn đủ chuồng cho pet trước khi tiến hành đặt lịch."),
-                              ),
-                            ),
+                                  // =>
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (_) => BlocProvider.value(
+                                            value: BlocProvider.of<BookingBloc>(
+                                                context),
+                                            child: ConfirmBooking(
+                                              center: center!,
+                                            ),
+                                          )))
+                                  : ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            "Hãy chọn đủ chuồng cho pet trước khi tiến hành đặt lịch."),
+                                      ),
+                                    ),
                           // onPressed: () async {
 
                           //   var state = BlocProvider.of<BookingBloc>(context).state;
@@ -587,7 +607,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                           //       style: TextStyle(color: primaryColor),
                           //     )),
                           )))
-              : LoadingIndicator(loadingText: 'Vui lòng chờ');
+              : LoadingIndicator(loadingText: 'Vui lòng đợi');
         }));
   }
 }

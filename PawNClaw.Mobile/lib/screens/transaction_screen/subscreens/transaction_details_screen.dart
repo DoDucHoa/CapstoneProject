@@ -139,12 +139,15 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                                       MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      widget.booking.center!.name!,
-                                      style: TextStyle(
-                                        fontSize: width * regularFontRate,
-                                        fontWeight: FontWeight.w500,
-                                        color: primaryFontColor,
+                                    Container(
+                                      height: width * regularFontRate,
+                                      child: Text(
+                                        widget.booking.center!.name!,
+                                        style: TextStyle(
+                                            fontSize: width * regularFontRate,
+                                            fontWeight: FontWeight.w500,
+                                            color: primaryFontColor,
+                                            height: 1),
                                       ),
                                     ),
                                     RichText(
@@ -158,8 +161,8 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                                             ),
                                           ),
                                           TextSpan(
-                                            text:
-                                                widget.booking.center!.address,
+                                            text: widget.booking.center!
+                                                .shortAddress(),
                                             style: TextStyle(
                                               color: lightFontColor,
                                               fontWeight: FontWeight.w600,
@@ -460,7 +463,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
       if (activeIndex > 0 && activeIndex < 3)
         Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: buildPreStatusCard(activeIndex, width)),
+            children: buildPreStatusCard(0, activeIndex, width)),
       Container(
         padding: EdgeInsets.only(top: 10),
         //margin: EdgeInsets.only(top: lineLength),
@@ -528,18 +531,30 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                     ))
               ],
             )),
-      )
+      ),
+      if (activeIndex >= 0 && activeIndex < 3)
+        Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: buildPreStatusCard(activeIndex + 1, 3, width)),
     ]);
   }
 
-  List<Widget> buildPreStatusCard(int activeIndex, double width) {
+  List<Widget> buildPreStatusCard(int fromIndex, int toIndex, double width) {
     List<Widget> list = [];
-    for (var i = 0; i < activeIndex; i++) {
+    for (var i = fromIndex; i < toIndex; i++) {
+      double top = lineLength - 5/2;
+      double bottom =  lineLength - 20 - width * extraSmallPadRate;
+      // if (i == toIndex - 1) {
+      //   bottom = top;
+      // }
+      if (i == fromIndex && i > 0) {
+        top = bottom;
+      }
       list.add(Container(
         width: width * (1 - mediumPadRate * 3 - regularPadRate),
         padding: EdgeInsets.only(
-            top: lineLength,
-            bottom: lineLength - 20 - width * extraSmallPadRate),
+            top: top,
+            bottom: bottom),
         //margin: EdgeInsets.only(bottom:(lineLength*currentstatus)/2 - 18 - width*smallPadRate),
         child: Text(STATUSLIST[i],
             style: TextStyle(

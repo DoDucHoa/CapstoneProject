@@ -15,24 +15,35 @@ class ItemCard extends StatelessWidget {
   final double sellPrice;
   final double discountPrice;
   final Widget redirect;
+  final int typeId;
+  final String id;
+
   const ItemCard(
       {Key? key,
       required this.name,
       required this.sellPrice,
       required this.discountPrice,
-      required this.redirect})
+      required this.redirect,
+      required this.typeId,
+      required this.id})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    // return BlocProvider(
+    //     create: (context) => BookingBloc(),
+    //     child:
+    //         BlocBuilder<BookingBloc, BookingState>(builder: (context, state) {
     return InkWell(
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                  value: BlocProvider.of<BookingBloc>(context),
-                  child: redirect,
-                ))).then((value) =>
+        onTap: () => Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (_) => BlocProvider.value(
+                      value: BlocProvider.of<BookingBloc>(context),
+                      child: redirect,
+                    )))
+            .then((value) =>
                 context.findRootAncestorStateOfType()!.setState(() {})),
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 10),
@@ -40,6 +51,12 @@ class ItemCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                //  (state is BookingUpdated) ?
+                //   Text(
+                //     'x' + name,
+                //     style: TextStyle(
+                //         fontSize: 15, fontWeight: FontWeight.w600),
+                //   ):
                 Text(
                   name,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
@@ -51,11 +68,9 @@ class ItemCard extends StatelessWidget {
                   children: [
                     Text(
                       NumberFormat.currency(
-                                  decimalDigits: 0,
-                                  symbol: 'đ',
-                                  locale: 'vi_vn')
-                              .format(
-                     discountPrice == 0 ? sellPrice : discountPrice),
+                              decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+                          .format(
+                              discountPrice == 0 ? sellPrice : discountPrice),
                       //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
                       style: TextStyle(fontSize: 13),
                     ),
@@ -64,11 +79,9 @@ class ItemCard extends StatelessWidget {
                     ),
                     if (discountPrice > 0)
                       Text(
-                       NumberFormat.currency(
-                                  decimalDigits: 0,
-                                  symbol: 'đ',
-                                  locale: 'vi_vn')
-                              .format(sellPrice),
+                        NumberFormat.currency(
+                                decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+                            .format(sellPrice),
                         style: TextStyle(
                             fontSize: 13,
                             color: lightFontColor,
@@ -122,4 +135,7 @@ class ItemCard extends StatelessWidget {
           ]),
         ));
   }
+  // )
+// );
+  // }
 }

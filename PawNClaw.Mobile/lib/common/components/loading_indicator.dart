@@ -19,7 +19,7 @@ class LoadingIndicator extends StatelessWidget {
               //const CircularProgressIndicator(),
               SizedBox(
                 height: width * 0.25,
-                child: Image.asset('lib/assets/paw-gif.gif'),
+                child: Image.asset('lib/assets/new-paw.gif'),
               ),
               const SizedBox(height: 5),
               Container(

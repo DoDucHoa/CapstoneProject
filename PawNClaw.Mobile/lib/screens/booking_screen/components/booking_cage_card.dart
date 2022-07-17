@@ -30,10 +30,12 @@ class BookingCageCard extends StatelessWidget {
         .firstWhere((element) => element.petId.toString() == petsId.toString());
     print(bookingCage.toString());
     CageTypes? cageType;
+    Cages? cage;
     cageTypes.forEach((element) {
-      element.cages!.forEach((cage) {
-        if (cage.code == bookingCage.cageCode) {
+      element.cages!.forEach((c) {
+        if (c.code == bookingCage.cageCode) {
           cageType = element;
+          cage = c;
         }
       });
     });
@@ -145,7 +147,7 @@ class BookingCageCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              cageType!.typeName!,
+              cage!.name!,
               style: TextStyle(
                 color: primaryFontColor,
                 fontWeight: FontWeight.w500,
@@ -168,7 +170,7 @@ class BookingCageCard extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: " (" + bookingCage.duration!.toString() + " giờ)",
+                    text: " (" + bookingCage.duration!.toString() + " ngày)",
                     style: TextStyle(
                       color: lightFontColor,
                       fontWeight: FontWeight.w500,

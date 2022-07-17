@@ -19,6 +19,7 @@ class PetCard extends StatefulWidget {
 class _PetCardState extends State<PetCard> {
   var isSelected = false;
   var isValid = true;
+  var isLock = false;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +41,7 @@ class _PetCardState extends State<PetCard> {
             top: width * smallPadRate,
             bottom: width * 0.015,
           ),
-          height: width * 0.5,
+          height: width * 0.47,
           width: width,
           decoration: BoxDecoration(
             color: Colors.white,
@@ -73,27 +74,27 @@ class _PetCardState extends State<PetCard> {
               SizedBox(
                 height: 10,
               ),
-              RichText(
-                text: TextSpan(
-                  children: [
-                    WidgetSpan(
-                      child: Icon(
-                        Icons.cake,
-                        size: width * smallFontRate,
-                        color: primaryColor,
-                      ),
-                    ),
-                    TextSpan(
-                      text: " " + DateFormat.yMd().format(widget.pet.birth!),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.cake,
+                    size: width * smallFontRate,
+                    color: primaryColor,
+                  ),
+                  Container(
+                    height: width * smallFontRate,
+                    child: Text(
+                      " " + DateFormat.yMd().format(widget.pet.birth!),
                       style: TextStyle(
-                        color: lightFontColor,
-                        fontWeight: FontWeight.w400,
-                        fontSize: width * smallFontRate,
-                      ),
+                          color: lightFontColor,
+                          fontWeight: FontWeight.w400,
+                          fontSize: width * smallFontRate,
+                          height: 1.2),
                     ),
-                  ],
-                ),
-              ),
+                  ),
+                ],
+              )
 
               // RichText(
               //   text: TextSpan(
@@ -178,41 +179,37 @@ class _PetCardState extends State<PetCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        WidgetSpan(
-                          child: Image.asset(
-                            'lib/assets/weight-icon.png',
-                            height: width * smallFontRate,
-                            //color: primaryColor,
-                          ),
-                        ),
-                        TextSpan(
-                          text: " " +
-                              widget.pet.weight!.toStringAsFixed(1) +
-                              " kg",
+                  Row(
+                    children: [
+                      Image.asset(
+                        'lib/assets/weight-icon.png',
+                        height: width * smallFontRate,
+                        //color: primaryColor,
+                      ),
+                      Container(
+                        height: width * smallFontRate,
+                        child: Text(
+                          " " + widget.pet.weight!.toStringAsFixed(1) + " kg",
                           style: TextStyle(
-                            color: lightFontColor,
-                            fontWeight: FontWeight.w400,
-                            fontSize: width * smallFontRate,
-                          ),
+                              color: lightFontColor,
+                              fontWeight: FontWeight.w400,
+                              fontSize: width * smallFontRate,
+                              height: 1.2),
                         ),
-                      ],
-                    ),
+                      )
+                    ],
                   ),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        WidgetSpan(
-                          child: Icon(
-                            Icons.square_foot,
-                            size: width * smallFontRate,
-                            color: primaryColor,
-                          ),
-                        ),
-                        TextSpan(
-                          text: " H: " +
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.square_foot,
+                        size: width * smallFontRate,
+                        color: primaryColor,
+                      ),
+                      Container(
+                        height: width * smallFontRate,
+                        child: Text(
+                          " H: " +
                               widget.pet.height!.toString() +
                               "cm - L: " +
                               widget.pet.length!.toString() +
@@ -221,10 +218,11 @@ class _PetCardState extends State<PetCard> {
                             color: lightFontColor,
                             fontWeight: FontWeight.w400,
                             fontSize: width * smallFontRate,
+                            height: 1.2
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -240,11 +238,32 @@ class _PetCardState extends State<PetCard> {
                     side: BorderSide(
                   width: 1,
                   strokeAlign: StrokeAlign.outside,
-                  color: (isSelected) ? primaryColor : disableColor,
+                  color: (isSelected || isLock) ? primaryColor : disableColor,
                 )),
               ),
               onPressed: isSelected
-                  ? () {}
+                  ? () {
+                      var state = BlocProvider.of<SearchBloc>(context).state;
+                      if (state is UpdatePetSelected &&
+                          state.requests.isNotEmpty) {
+                        for (var pets in state.requests) {
+                          for (var pet in pets) {
+                            if (pet.id == widget.pet.id) {
+                              setState(() {
+                                isLock = true;
+                              });
+                              break;
+                            }
+                          }
+                        }
+                      }
+                      if (!isLock) {
+                        setState(() {
+                          isSelected = false;
+                        });
+                        widget.onPressed();
+                      }
+                    }
                   : () {
                       var state = BlocProvider.of<SearchBloc>(context).state;
                       if (state is UpdatePetSelected && state.pets.isNotEmpty) {

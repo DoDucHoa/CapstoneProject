@@ -14,6 +14,7 @@ class BookingRepository implements BaseBookingRepository {
         'Authorization': 'Bearer ' + pref.get("jwtToken").toString()
       };
       var requestBody = booking.toJson();
+      print('requestbody here:');
       print(requestBody);
       const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/bookings";

@@ -37,7 +37,7 @@ class _SignInScreenState extends State<SignInScreen> {
           return const HomeScreen();
         } else
           return const Scaffold(
-              body: LoadingIndicator(loadingText: "Vui lòng đợi"));
+              body: LoadingIndicator(loadingText: "PawNClaw"));
       },
     );
   }
