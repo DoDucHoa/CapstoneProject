@@ -448,7 +448,7 @@ namespace PawNClaw.Data.Repository
                         Service = serviceorder.Service,
                         Pet = new Pet
                         {
-                            BreedName = supplyorder.Pet.BreedName,
+                            BreedName = serviceorder.Pet.BreedName,
                             Name = serviceorder.Pet.Name,
                         }
                     }),
