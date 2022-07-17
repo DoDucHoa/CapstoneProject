@@ -465,6 +465,9 @@ namespace PawNClaw.Data.Repository
                         ActivityTimeTo = bookingact.ActivityTimeTo,
                         BookingDetailId = bookingact.BookingDetailId,
                         IsOnTime = bookingact.IsOnTime,
+                        BookingDetail = bookingact.BookingDetail,
+                        Service = bookingact.Service,
+                        Supply = bookingact.Supply,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
                     })
                 })
