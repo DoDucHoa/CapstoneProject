@@ -95,6 +95,13 @@ namespace PawNClaw.API.Controllers
             return Ok(data);
         }
 
+        [HttpGet("staff/{id:int}")]
+        public IActionResult GetCenterByStaffId(int id)
+        {
+            var data = _petCenterService.GetByStaffId(id);
+            return Ok(data);
+        }
+
         [HttpGet("brand/{id:int}")]
         public IActionResult GetCentersByBrand(int id, PagingParameter paging)
         {

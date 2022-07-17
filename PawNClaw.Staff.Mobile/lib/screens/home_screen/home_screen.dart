@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: width,
                     child: TabBarView(children: [
                       TodoList(bookings: state.bookings),
-                      CheckoutToday(),
+                      CheckoutToday(bookings: state.bookings),
                       NextUpTasks(),
                     ]),
                   ),
