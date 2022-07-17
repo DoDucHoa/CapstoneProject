@@ -9,13 +9,13 @@ import useSettings from '../../../hooks/useSettings';
 // components
 import Page from '../../../components/Page';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
-import { getBrand } from './useCenterAPI';
+import { getCenter } from './useCenterAPI';
 // sections
-import UserNewEditForm from '../../../sections/@dashboard/brand/BrandNewEditForm';
+import CenterNewEditForm from '../../../sections/@dashboard/center/CenterNewEditForm';
 
 // ----------------------------------------------------------------------
 
-export default function UserCreate() {
+export default function CenterCreate() {
   const [adminData, setAdminData] = useState({});
 
   const { themeStretch } = useSettings();
@@ -26,24 +26,24 @@ export default function UserCreate() {
   const { id } = useParams();
   useEffect(() => {
     if (isEdit) {
-      getBrand(id).then((data) => {
+      getCenter(id).then((data) => {
         setAdminData(data);
       });
     }
   }, [id, isEdit]);
 
   return (
-    <Page title="Thương hiệu">
+    <Page title="Trung tâm">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading={!isEdit ? 'Thêm mới thương hiệu' : 'Sửa thông tin thương hiệu'}
+          heading={!isEdit ? 'Thêm mới trung tâm' : 'Sửa thông tin trung tâm'}
           links={[
             { name: 'Trang chủ', href: PATH_DASHBOARD.root },
-            { name: 'Danh sách thương hiệu', href: PATH_DASHBOARD.brand.list },
+            { name: 'Danh sách trung tâm', href: PATH_DASHBOARD.center.list },
             { name: !isEdit ? 'Thêm mới' : 'Sửa' },
           ]}
         />
-        <UserNewEditForm isEdit={isEdit} adminData={adminData} />
+        <CenterNewEditForm isEdit={isEdit} adminData={adminData} />
       </Container>
     </Page>
   );

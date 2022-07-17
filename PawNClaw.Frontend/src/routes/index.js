@@ -87,9 +87,9 @@ export default function Router() {
           path: 'center',
           children: [
             { path: '', element: <Navigate to="/dashboard/center/list" replace />, index: true },
-            { path: 'list', element: <OwnerList /> },
-            { path: 'new', element: <OwnerCreate /> },
-            { path: ':id/edit', element: <OwnerCreate /> },
+            { path: 'list', element: <CenterList /> },
+            { path: 'new', element: <CenterCreate /> },
+            { path: ':id/edit', element: <CenterCreate /> },
           ],
         },
         {
@@ -185,3 +185,7 @@ const BookingCalendar = Loadable(lazy(() => import('../pages/dashboard/Calendar'
 
 // BOOKING LIST
 const BookingList = Loadable(lazy(() => import('../pages/dashboard/BookingList/BookingList')));
+
+// CENTER
+const CenterList = Loadable(lazy(() => import('../pages/dashboard/Center/CenterList')));
+const CenterCreate = Loadable(lazy(() => import('../pages/dashboard/Center/CenterCreate')));

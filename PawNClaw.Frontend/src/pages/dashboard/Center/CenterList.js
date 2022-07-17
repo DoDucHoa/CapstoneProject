@@ -38,10 +38,10 @@ import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { TableEmptyRows, TableHeadCustom, TableNoData } from '../../../components/table';
 
 // sections
-import { BrandTableRow, BrandTableToolbar } from '../../../sections/@dashboard/brand/list';
+import { CenterTableRow, CenterTableToolbar } from '../../../sections/@dashboard/center/list';
 
 // API
-import { getBrands, banBrand, unbanBrand } from './useCenterAPI';
+import { getCenters, banCenter, unbanCenter } from './useCenterAPI';
 
 // ----------------------------------------------------------------------
 
@@ -52,10 +52,10 @@ const STATUS_OPTIONS = [
 ];
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Tên thương thiệu', align: 'left' },
-  { id: 'description', label: 'Mô tả', align: 'left' },
-  { id: 'ownerName', label: 'Chủ sở hữu', align: 'left' },
-  { id: 'status', label: 'Trạng thái', align: 'left' },
+  { id: 'name', label: 'Tên trung tâm', align: 'left' },
+  { id: 'address', label: 'Địa chỉ', align: 'left' },
+  { id: 'brandName', label: 'Thương hiệu', align: 'left' },
+  { id: 'status', label: 'Trạng thái', align: 'center' },
   { id: '' },
 ];
 
@@ -88,24 +88,24 @@ export default function CenterList() {
     setPage(0);
   };
 
-  const getBrandData = async () => {
-    const response = await getBrands(page, rowsPerPage, filterStatus, searchRequest);
+  const getCenterData = async () => {
+    const response = await getCenters(page, rowsPerPage, filterStatus, searchRequest);
     const { data, metadata } = response;
 
-    const brands = data.map((brand, index) => ({
-      id: brand.id,
+    const centers = data.map((center, index) => ({
+      id: center.id,
       avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`,
-      name: brand.name,
-      ownerName: brand.owner.name,
-      description: brand.description,
-      status: brand.status,
+      name: center.name,
+      address: center.address,
+      brandName: center.brand.name,
+      status: center.status,
     }));
-    setTableData(brands);
+    setTableData(centers);
     setMetadata(metadata);
   };
 
   useEffect(() => {
-    getBrandData();
+    getCenterData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, rowsPerPage, filterStatus, searchRequest]);
 
@@ -123,17 +123,17 @@ export default function CenterList() {
   };
 
   const handleEditRow = (id) => {
-    navigate(PATH_DASHBOARD.brand.edit(id));
+    navigate(PATH_DASHBOARD.center.edit(id));
   };
 
   const handleBanAdmin = async (id) => {
-    await banBrand(id);
-    await getBrandData();
+    await banCenter(id);
+    await getCenterData();
   };
 
   const handleUnbanAdmin = async (id) => {
-    await unbanBrand(id);
-    await getBrandData();
+    await unbanCenter(id);
+    await getCenterData();
   };
   const handleOpenBanDialog = (idAdmin) => {
     setSelectIdAdmin(idAdmin);
@@ -152,19 +152,19 @@ export default function CenterList() {
 
   return (
     <>
-      <Page title="Thương hiệu">
+      <Page title="Trung tâm">
         <Container maxWidth={themeStretch ? false : 'lg'}>
           <HeaderBreadcrumbs
-            heading="Danh sách thương hiệu"
-            links={[{ name: 'Trang chủ', href: PATH_DASHBOARD.root }, { name: 'Danh sách thương hiệu' }]}
+            heading="Danh sách trung tâm"
+            links={[{ name: 'Trang chủ', href: PATH_DASHBOARD.root }, { name: 'Danh sách trung tâm' }]}
             action={
               <Button
                 variant="contained"
                 component={RouterLink}
-                to={PATH_DASHBOARD.brand.new}
-                startIcon={<Iconify icon={'eva:plus-fill'}/>}
+                to={PATH_DASHBOARD.center.new}
+                startIcon={<Iconify icon={'eva:plus-fill'} />}
               >
-                Thêm mới thương hiệu
+                Thêm mới trung tâm
               </Button>
             }
           />
@@ -179,14 +179,14 @@ export default function CenterList() {
               sx={{ px: 2, bgcolor: 'background.neutral' }}
             >
               {STATUS_OPTIONS.map((tab) => (
-                <Tab disableRipple key={tab.key} label={tab.label} value={tab.value}/>
+                <Tab disableRipple key={tab.key} label={tab.label} value={tab.value} />
               ))}
             </Tabs>
 
-            <Divider/>
+            <Divider />
 
             {/* Filter dữ liệu */}
-            <BrandTableToolbar
+            <CenterTableToolbar
               filterName={filterName}
               onFilterName={handleFilterName}
               onEnterPress={handleSearchRequest}
@@ -196,11 +196,11 @@ export default function CenterList() {
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
                 <Table size={'medium'}>
-                  <TableHeadCustom order={order} orderBy={orderBy} headLabel={TABLE_HEAD} onSort={onSort}/>
+                  <TableHeadCustom order={order} orderBy={orderBy} headLabel={TABLE_HEAD} onSort={onSort} />
 
                   <TableBody>
                     {tableData.map((row) => (
-                      <BrandTableRow
+                      <CenterTableRow
                         key={row.id}
                         row={row}
                         onEditRow={() => handleEditRow(row.id)}
@@ -213,7 +213,7 @@ export default function CenterList() {
                       emptyRows={emptyRows(page, rowsPerPage, metadata.totalCount ? metadata.totalCount : 0)}
                     />
 
-                    <TableNoData isNotFound={isNotFound}/>
+                    <TableNoData isNotFound={isNotFound} />
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -261,10 +261,10 @@ function BanAdminDialog({ open, onClose, idAdmin, handleBanAdmin }) {
 
   return (
     <Dialog open={open} maxWidth="xs" onClose={onClose}>
-      <DialogTitle>Bạn có chắc chắn muốn khóa thương hiệu?</DialogTitle>
+      <DialogTitle>Bạn có chắc chắn muốn khóa trung tâm?</DialogTitle>
       <DialogContent>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Bạn vẫn có thể mở khóa thương hiệu này sau khi xác nhận!
+          Bạn vẫn có thể mở khóa trung tâm này sau khi xác nhận!
         </Typography>
       </DialogContent>
       <DialogActions>
