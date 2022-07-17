@@ -84,19 +84,24 @@ class _NextUpTasksState extends State<NextUpTasks> {
                     padding: EdgeInsets.zero,
                     physics: ClampingScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: bookings[index].getUndoneServiceAct(),
-                    itemBuilder: (context, index) => Padding(
-                          padding:
-                              EdgeInsets.only(left: width * regularPadRate),
-                          child: ActivityCard(
-                              activityName: "Pate mèo vị cá ngừ",
-                              note: "không có ghi chú",
-                              pet: Pet(
-                                  breedName: "Scottish Straight Cat",
-                                  name: "Alice"),
-                              booking: BookingDetail(),
-                              remainCount: 1),
-                        )),
+                    itemCount: bookings[index].getUndoneServiceAct().length,
+                    itemBuilder: (context, serIndex) {
+                      List<ServiceOrders> services =
+                          bookings[index].getUndoneServiceAct();
+                      return Padding(
+                        padding: EdgeInsets.only(left: width * regularPadRate),
+                        child: ActivityCard(
+                            activityName:
+                                "${services[serIndex].service!.description}",
+                            note: "${services[serIndex].note}",
+                            pet: services[serIndex].pet!,
+                            // Pet(
+                            //     breedName: "Scottish Straight Cat",
+                            //     name: "Alice"),
+                            booking: bookings[index],
+                            remainCount: 1),
+                      );
+                    }),
               ],
             ),
           );

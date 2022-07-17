@@ -184,14 +184,18 @@ class BookingDetail {
     return count;
   }
 
-  int getUndoneServiceAct() {
-    int count = 0;
+  List<ServiceOrders> getUndoneServiceAct() {
+    List<ServiceOrders> undone = [];
     this.bookingActivities!.forEach((element) {
-      if (element.service != null && element.provideTime == null) {
-        count++;
+      if (element.serviceId != null && element.provideTime == null) {
+        this.serviceOrders?.forEach((service) {
+          if (element.serviceId == service.service?.id) {
+            undone.add(service);
+          }
+        });
       }
     });
-    return count;
+    return undone;
   }
 
   int getDoneActivites() {
