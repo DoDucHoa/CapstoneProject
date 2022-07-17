@@ -15,16 +15,6 @@ class BookingDetail {
   double? totalSupply;
   double? totalService;
 
-  List<String> getAllStartTime() {
-    List<String> times = [];
-    this.bookingDetails!.forEach((element) {
-      element.foodSchedules!.forEach((element) {
-        times.add(element.fromTime!);
-      });
-    });
-    return times.toSet().toList();
-  }
-
   BookingDetail(
       {this.id,
       this.startBooking,
@@ -104,10 +94,43 @@ class BookingDetail {
     return data;
   }
 
+  List<String> getAllStartTime() {
+    List<String> times = [];
+    this.bookingDetails!.forEach((element) {
+      element.foodSchedules!.forEach((element) {
+        times.add(element.fromTime!);
+      });
+    });
+    return times.toSet().toList();
+  }
+
+  List<BookingDetails> getUndoneFeedingAct() {
+    List<BookingDetails> undone = [];
+    this.bookingActivities!.forEach((element) {
+      if (element.provideTime == null && element.bookingDetailId != null) {
+        this.bookingDetails!.forEach((booking) {
+          if (booking.id == element.bookingDetailId) {
+            undone.add(booking);
+          }
+        });
+      }
+    });
+    return undone;
+  }
+
+  List<BookingActivities> getUndoneActivities() {
+    return this
+        .bookingActivities!
+        .where((element) => element.provideTime == null)
+        .toList();
+  }
+
   int getSupplyActivities() {
     int count = 0;
-    this.supplyOrders!.forEach((element) {
-      count += element.quantity!;
+    this.bookingActivities!.forEach((element) {
+      if (element.supplyId != null) {
+        count++;
+      }
     });
 
     return count;
@@ -115,27 +138,30 @@ class BookingDetail {
 
   int getServiceActivities() {
     int count = 0;
-    this.serviceOrders!.forEach((element) {
-      count += element.quantity!;
+    this.bookingActivities!.forEach((element) {
+      if (element.serviceId != null) {
+        count++;
+      }
     });
     return count;
   }
 
   int getTotalActivities() {
-    return this.getSupplyActivities() + this.getServiceActivities();
+    return this.bookingActivities!.length;
   }
 
-  int getUndoneSupplyAct() {
-    int count = 0;
+  List<SupplyOrders> getUndoneSupplyAct() {
+    List<SupplyOrders> undone = [];
     this.bookingActivities!.forEach((element) {
-      this.supplyOrders!.forEach((order) {
-        if (order.petId == element.petId &&
-            order.supply!.id == element.supplyId) {
-          count++;
-        }
-      });
+      if (element.supplyId != null && element.provideTime == null) {
+        this.supplyOrders?.forEach((supply) {
+          if (element.supplyId == supply.supply?.id) {
+            undone.add(supply);
+          }
+        });
+      }
     });
-    return this.getSupplyActivities() - count;
+    return undone;
   }
 
   int getRemainSupplyAct(SupplyOrders supply) {
@@ -161,14 +187,11 @@ class BookingDetail {
   int getUndoneServiceAct() {
     int count = 0;
     this.bookingActivities!.forEach((element) {
-      this.serviceOrders!.forEach((order) {
-        if (order.petId == element.petId &&
-            order.service!.id == element.serviceId) {
-          count++;
-        }
-      });
+      if (element.service != null && element.provideTime == null) {
+        count++;
+      }
     });
-    return this.getSupplyActivities() - count;
+    return count;
   }
 
   int getDoneActivites() {
@@ -321,6 +344,13 @@ class BookingDetails {
           this.foodSchedules!.map((v) => v.toJson()).toList();
     }
     return data;
+  }
+
+  List<BookingActivities> getUndoneActivities() {
+    return this
+        .bookingActivities!
+        .where((element) => element.provideTime == null)
+        .toList();
   }
 }
 
@@ -700,13 +730,17 @@ class BookingActivities {
   String? provideTime;
   String? description;
   int? bookingId;
-  int? line;
+  int? bookingDetailId;
   int? petId;
   int? supplyId;
   int? serviceId;
+  DateTime? activityTimeFrom;
+  DateTime? activityTimeTo;
+  bool? isOnTime;
   Pet? pet;
   Service? service;
   Supply? supply;
+
   // List<Null>? photos;
 
   BookingActivities({
@@ -714,10 +748,13 @@ class BookingActivities {
     this.provideTime,
     this.description,
     this.bookingId,
-    this.line,
+    this.bookingDetailId,
     this.petId,
     this.supplyId,
     this.serviceId,
+    this.activityTimeFrom,
+    this.activityTimeTo,
+    this.isOnTime,
     this.pet,
     this.service,
     this.supply,
@@ -729,10 +766,13 @@ class BookingActivities {
     provideTime = json['provideTime'];
     description = json['description'];
     bookingId = json['bookingId'];
-    line = json['line'];
+    bookingDetailId = json['bookingDetailId'];
     petId = json['petId'];
     supplyId = json['supplyId'];
     serviceId = json['serviceId'];
+    activityTimeFrom = DateTime.tryParse(json['activityTimeFrom']);
+    activityTimeTo = DateTime.tryParse(json['activityTimeTo']);
+    isOnTime = json['isOnTime'];
     pet = json['pet'] != null ? Pet.fromJson(json['pet']) : null;
     service =
         json['service'] != null ? Service.fromJson(json['service']) : null;
@@ -751,10 +791,13 @@ class BookingActivities {
     data['provideTime'] = this.provideTime;
     data['description'] = this.description;
     data['bookingId'] = this.bookingId;
-    data['line'] = this.line;
+    data['bookingDetailId'] = this.bookingDetailId;
     data['petId'] = this.petId;
     data['supplyId'] = this.supplyId;
     data['serviceId'] = this.serviceId;
+    data['activityTimeFrom'] = this.activityTimeFrom;
+    data['activityTimeTo'] = this.activityTimeTo;
+    data['isOnTime'] = this.isOnTime;
     data['pet'] = this.pet;
     data['service'] = this.service;
     data['supply'] = this.supply;
