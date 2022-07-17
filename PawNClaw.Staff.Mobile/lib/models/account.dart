@@ -1,3 +1,6 @@
+import 'package:pncstaff_mobile_application/models/pet_center.dart';
+import 'package:pncstaff_mobile_application/repositories/center/center_repository.dart';
+
 class Account {
   String? _jwtToken;
   int? _id;
@@ -6,6 +9,7 @@ class Account {
   String? _phone;
   String? _email;
   String? _role;
+  PetCenter? _petcenter;
 
   Account(
       {String? jwtToken,
@@ -52,6 +56,7 @@ class Account {
   set email(String? email) => _email = email;
   String? get role => _role;
   set role(String? role) => _role = role;
+  PetCenter? get petcenter => _petcenter = petcenter;
 
   Account.fromJson(Map<String, dynamic> json) {
     _jwtToken = json['jwtToken'];
@@ -61,6 +66,9 @@ class Account {
     _phone = json['phone'];
     _email = json['email'];
     _role = json['role'];
+    CenterRepository()
+        .getCenterByStaff(this._id!)
+        .then((value) => _petcenter = value);
   }
 
   Map<String, dynamic> toJson() {

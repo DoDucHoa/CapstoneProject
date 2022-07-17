@@ -1,14 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pncstaff_mobile_application/blocs/auth/auth_bloc.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/common/vn_locale.dart';
 import 'package:intl/intl.dart';
 import 'package:pncstaff_mobile_application/models/booking_detail.dart';
 import 'package:pncstaff_mobile_application/models/pet.dart';
+import 'package:pncstaff_mobile_application/models/pet_center.dart';
+import 'package:pncstaff_mobile_application/repositories/center/center_repository.dart';
+import 'package:pncstaff_mobile_application/screens/activity_screen/booking_activity.dart';
 
-class CheckoutToday extends StatelessWidget {
+class CheckoutToday extends StatefulWidget {
   const CheckoutToday({required this.bookings, Key? key}) : super(key: key);
 
   final List<BookingDetail> bookings;
+
+  @override
+  State<CheckoutToday> createState() => _CheckoutTodayState();
+}
+
+class _CheckoutTodayState extends State<CheckoutToday> {
+  late PetCenter center;
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    var user = (BlocProvider.of<AuthBloc>(context).state as Authenticated).user;
+    CenterRepository().getCenterByStaff(user.id!).then((value) {
+      setState(() {
+        center = value;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +63,7 @@ class CheckoutToday extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(right: width * smallPadRate),
                       child: Text(
-                        "07:30",
+                        "${center.openTime}",
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: lightFontColor,
@@ -51,9 +75,16 @@ class CheckoutToday extends StatelessWidget {
                       child: ListView.builder(
                           physics: ClampingScrollPhysics(),
                           shrinkWrap: true,
-                          itemCount: bookings.length,
-                          itemBuilder: (context, index) =>
-                              BookingCard(booking: bookings[index])),
+                          itemCount: widget.bookings.length,
+                          itemBuilder: (context, index) => InkWell(
+                              onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          BookingActivityScreen(
+                                              bookingId:
+                                                  widget.bookings[index].id))),
+                              child: BookingCard(
+                                  booking: widget.bookings[index]))),
                     ),
                   ],
                 ),
@@ -207,7 +238,7 @@ class BookingCard extends StatelessWidget {
                                   margin: EdgeInsets.only(right: 10),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
-                                    color: lightPrimaryColor,
+                                    color: lightPrimaryColor.withOpacity(0.3),
                                   ),
                                   child: Text(
                                     "Dịch vụ",
@@ -224,7 +255,7 @@ class BookingCard extends StatelessWidget {
                                       vertical: 5, horizontal: 10),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
-                                    color: lightPrimaryColor,
+                                    color: lightPrimaryColor.withOpacity(0.3),
                                   ),
                                   child: Text(
                                     "Đồ dùng",
