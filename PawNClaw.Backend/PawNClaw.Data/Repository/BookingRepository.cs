@@ -431,6 +431,7 @@ namespace PawNClaw.Data.Repository
                         Supply = supplyorder.Supply,
                         Pet = new Pet
                         {
+                            BreedName = supplyorder.Pet.BreedName,
                             Name = supplyorder.Pet.Name,
                         }
                     }),
