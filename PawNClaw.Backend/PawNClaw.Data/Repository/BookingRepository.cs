@@ -129,6 +129,7 @@ namespace PawNClaw.Data.Repository
                     BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
                     .Select(bookingdetail => new BookingDetail
                     {
+                        Id = bookingdetail.Id,
                         BookingId = bookingdetail.BookingId,
                         Price = bookingdetail.Price,
                         CageCode = bookingdetail.CageCode,
@@ -255,6 +256,7 @@ namespace PawNClaw.Data.Repository
                     BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
                     .Select(bookingdetail => new BookingDetail
                     {
+                        Id = bookingdetail.Id,
                         BookingId = bookingdetail.BookingId,
                         Price = bookingdetail.Price,
                         CageCode = bookingdetail.CageCode,
