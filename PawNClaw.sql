@@ -640,13 +640,16 @@ GO
 CREATE TABLE BookingActivities
 (
     id INT IDENTITY PRIMARY KEY,
-	provide_time DATETIME DEFAULT GETDATE(),
+	provide_time DATETIME,  -- giờ thực hiện activity
 	description NVARCHAR(1024),
 	booking_id INT NOT NULL,
 	booking_detail_id INT,
 	pet_id INT,
 	supply_id INT,
-	service_id INT
+	service_id INT,
+	activity_time_from DATETIME,  -- giờ bắt đầu làm
+	activity_time_to DATETIME,  -- giờ kết thúc làm, nếu không làm trong khoảng này thì cảnh báo
+	is_on_time BIT DEFAULT 0  -- có đúng giờ hay không
 )
 ALTER TABLE dbo.BookingActivities ADD FOREIGN KEY (booking_id) REFERENCES [dbo].Bookings(id)
 GO
