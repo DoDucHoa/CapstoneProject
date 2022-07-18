@@ -115,7 +115,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                             from = date;
                             _fromController.text =
                                 DateFormat("dd/MM/yyyy, h:mm a").format(date);
-                                due = getDue(from, to);
+                            if (to != null)  { due = getDue(from, to);}
                             fromTimeError = null;
                           },
                         );
