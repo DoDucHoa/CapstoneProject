@@ -5,6 +5,7 @@ import 'package:pncstaff_mobile_application/blocs/booking/booking_bloc.dart';
 import 'package:pncstaff_mobile_application/common/components/elevated_container.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/models/booking.dart';
+import 'package:pncstaff_mobile_application/models/booking_detail.dart';
 import 'package:pncstaff_mobile_application/models/pet.dart';
 import 'package:intl/intl.dart';
 import 'package:pncstaff_mobile_application/screens/activity_screen/booking_activity.dart';
@@ -12,7 +13,7 @@ import 'package:pncstaff_mobile_application/screens/activity_screen/booking_acti
 class BookingCard extends StatelessWidget {
   const BookingCard({Key? key, required this.booking}) : super(key: key);
 
-  final Booking booking;
+  final BookingDetail booking;
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +29,7 @@ class BookingCard extends StatelessWidget {
     return InkWell(
       onTap: () => Navigator.of(context)
           .push(MaterialPageRoute(
-              builder: (context) =>
-                  BookingActivityScreen(bookingId: booking.id!)))
+              builder: (context) => BookingActivityScreen(booking: booking)))
           .then((_) => BlocProvider.of<BookingBloc>(context)
             ..add(GetProcessingBooking(user: user))),
       child: Container(

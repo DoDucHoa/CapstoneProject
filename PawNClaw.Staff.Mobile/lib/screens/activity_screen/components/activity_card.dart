@@ -26,7 +26,7 @@ class ActivityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return Visibility(
-      visible: remainCount > 0 ? true : false,
+      visible: remainCount == 0 ? false : true,
       child: Container(
         margin: EdgeInsets.only(
           // right: width * smallPadRate,

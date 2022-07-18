@@ -76,6 +76,7 @@ class _TodoListState extends State<TodoList> {
     ];
     print(remainFeedingActivites);
     return SingleChildScrollView(
+      padding: EdgeInsets.all(width * smallPadRate),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
