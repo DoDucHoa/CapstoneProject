@@ -46,21 +46,28 @@ class _PetRequestsDialogState extends State<PetRequestsDialog> {
                   shrinkWrap: true,
                   itemCount: widget.requests.length,
                   itemBuilder: (context, requestIndex) {
-                    return SizedBox(
-                      width: width * 0.5,
-                      height: width * 0.2,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: const ScrollPhysics(),
-                        itemCount: widget.requests[requestIndex].length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: ((context, index) {
-                          // return Text("data");
-                          return SelectedPetBubble(
-                              width: width,
-                              pet: widget.requests[requestIndex][index]);
-                        }),
-                      ),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Chuồng ${requestIndex + 1}', style: TextStyle(fontWeight: FontWeight.w500, color: lightFontColor),),
+                        SizedBox(
+                          width: width * 0.5,
+                          height: width * 0.25,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const ScrollPhysics(),
+                            itemCount: widget.requests[requestIndex].length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: ((context, index) {
+                              // return Text("data");
+                              return SelectedPetBubble(
+                                  width: width,
+                                  pet: widget.requests[requestIndex][index]);
+                            }),
+                          ),
+                        ),
+                        
+                      ],
                     );
                   }),
               const Spacer(),

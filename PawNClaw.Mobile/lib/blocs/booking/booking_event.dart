@@ -13,18 +13,20 @@ class InitBooking extends BookingEvent {
   final int centerId;
   final List<List<Pet>> request;
   final int customerId;
+  final int due;
 
   const InitBooking(
       {required this.startBooking,
       required this.endBooking,
       required this.centerId,
       required this.request,
-      required this.customerId});
+      required this.customerId,
+      required this.due});
 
   @override
   // TODO: implement props
   List<Object> get props =>
-      [startBooking, endBooking, centerId, request, customerId];
+      [startBooking, endBooking, centerId, request, customerId, due];
 }
 
 class SelectCage extends BookingEvent {

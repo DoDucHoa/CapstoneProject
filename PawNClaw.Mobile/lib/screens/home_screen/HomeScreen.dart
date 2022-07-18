@@ -81,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
         return LoadingIndicator(
-          loadingText: "Bạn chờ pnw xíu nhé",
+          loadingText: "PawNClaw xin chào!",
         );
       },
     );

@@ -15,6 +15,7 @@ class Center {
   List<CageTypes>? _cageTypes;
   List<Services>? _services;
   List<Supplies>? _supplies;
+  String? _endBooking;
 
   Center(
       {int? id,
@@ -30,7 +31,8 @@ class Center {
       String? brand,
       List<CageTypes>? cageTypes,
       List<Services>? services,
-      List<Supplies>? supplies}) {
+      List<Supplies>? supplies,
+      String? endBooking}) {
     if (id != null) {
       this._id = id;
     }
@@ -73,6 +75,9 @@ class Center {
     if (services != null) {
       this._services = services;
     }
+    if (endBooking != null) {
+      this._endBooking = endBooking;
+    }
   }
 
   int? get id => _id;
@@ -103,6 +108,7 @@ class Center {
   set services(List<Services>? services) => _services = services;
   List<Supplies>? get supplies => _supplies;
   set supplies(List<Supplies>? supplies) => _supplies = supplies;
+  String? get endBooking => _endBooking;
 
   Center.fromJson(Map<String, dynamic> json) {
     _id = json['id'];
@@ -134,6 +140,7 @@ class Center {
         _supplies!.add(new Supplies.fromJson(v));
       });
     }
+    _endBooking = json['endBooking'];
   }
 
   Map<String, dynamic> toJson() {
@@ -158,7 +165,13 @@ class Center {
     if (this._supplies != null) {
       data['supplies'] = this._supplies!.map((v) => v.toJson()).toList();
     }
+    data['endBooking'] = this._endBooking;
     return data;
+  }
+
+  String shortAddress(){
+    var splited = this.address!.split(",");
+    return splited[0] + ', ' + splited[1];
   }
 }
 
@@ -267,5 +280,27 @@ class Supplies {
     data['status'] = this.status;
     data['supplyTypeCode'] = this.supplyTypeCode;
     return data;
+  }
+}
+
+class SearchResponseModel {
+  List<Center>? petCenters;
+  String? city;
+  String? district;
+  String? districtName;
+  int? page;
+  String? result;
+
+  SearchResponseModel(
+      {this.petCenters,
+      this.city,
+      this.district,
+      this.districtName,
+      this.page,
+      this.result});
+  @override
+  String toString() {
+    // TODO: implement toString
+    return super.toString();
   }
 }

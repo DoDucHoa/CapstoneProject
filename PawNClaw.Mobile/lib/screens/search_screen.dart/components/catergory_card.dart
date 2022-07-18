@@ -52,6 +52,8 @@ class CatergoryCard extends StatelessWidget {
                 name: cage?.name ?? "",
                 sellPrice: cageType.totalPrice ?? 0,
                 discountPrice: 0,
+                id: cage!.code!,
+                typeId: 0,
                 redirect: CageDetails(
                   cageType: cageType,
                   cage: cage!,

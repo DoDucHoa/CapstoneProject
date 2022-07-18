@@ -42,16 +42,17 @@ class ConfirmRequest extends SearchEvent {
 class SearchCenter extends SearchEvent {
   final List<List<Pet>> requests;
   final DateTime timeFrom;
-  final DateTime timeTo;
+  //final DateTime timeTo;
+  final int due;
   final String cityCode;
   final String districtCode;
   final int pageNumber;
 
-  const SearchCenter(this.requests, this.timeFrom, this.timeTo, this.cityCode,
+  const SearchCenter(this.requests, this.timeFrom, this.due/*this.timeTo*/, this.cityCode,
       this.districtCode, this.pageNumber);
 
   @override
   // TODO: implement props
   List<Object> get props =>
-      [requests, timeFrom, timeTo, cityCode, districtCode, pageNumber];
+      [requests, timeFrom, due, cityCode, districtCode, pageNumber];
 }

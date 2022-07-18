@@ -47,16 +47,67 @@ class BookingInfoCard extends StatelessWidget {
                     color: Colors.white,
                   ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "THỜI GIAN",
-                        style: TextStyle(
-                          color: primaryFontColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: width * regularFontRate,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            "THỜI GIAN",
+                            style: TextStyle(
+                              color: primaryFontColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: width * regularFontRate,
+                            ),
+                          ),
+                          IconButton(
+                              //color: Colors.white,
+                              // padding: EdgeInsets.all(0),
+
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(15)),
+                                            ),
+                                            padding: EdgeInsets.all(20),
+                                            width: width * 0.5,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  'Thời gian Checkout dự kiến được dựa theo quy định của trung tâm. Trung tâm sẽ thu thêm phí nếu bạn đến đón các bé sau thời gian này nhé!',
+                                                  textAlign: TextAlign.justify,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Text('Đóng'))
+                                              ],
+                                            ),
+                                          ),
+                                        ));
+                              },
+                              icon: Icon(
+                                Icons.info_rounded,
+                                color: primaryColor,
+                                size: 18,
+                              ),
+                            )
+                        ],
                       ),
                       Container(
                         padding: EdgeInsets.all(width * smallPadRate * 0.5),
@@ -174,7 +225,7 @@ class BookingInfoCard extends StatelessWidget {
                   // margin:
                   //     EdgeInsets.symmetric(horizontal: width * mediumPadRate),
                   width: width,
-                  height: height * 0.3,
+                  height: height * 0.25,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(10),
@@ -186,13 +237,64 @@ class BookingInfoCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "CHI PHÍ DỰ KIẾN",
-                        style: TextStyle(
-                          color: primaryFontColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: width * regularFontRate,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            "CHI PHÍ DỰ KIẾN",
+                            style: TextStyle(
+                              color: primaryFontColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: width * regularFontRate,
+                            ),
+                          ),
+                          IconButton(
+                              //color: Colors.white,
+                              // padding: EdgeInsets.all(0),
+
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(15)),
+                                            ),
+                                            padding: EdgeInsets.all(20),
+                                            width: width * 0.5,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  'Chi phí trên được tính theo dự kiến, có thể thay đổi trong quá trình trung tâm cung cấp dịch vụ.',
+                                                  textAlign: TextAlign.justify,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Text('Đóng'))
+                                              ],
+                                            ),
+                                          ),
+                                        ));
+                              },
+                              icon: Icon(
+                                Icons.info_rounded,
+                                color: primaryColor,
+                                size: 18,
+                              ),
+                            )
+                        ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

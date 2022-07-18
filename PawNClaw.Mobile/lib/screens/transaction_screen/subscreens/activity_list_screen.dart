@@ -238,7 +238,7 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
                     body:
                         // bottom: PreferredSize(
                         // child:
-                        SingleChildScrollView(
+                         SingleChildScrollView(
                       child: Column(
                         children: [
                           // Container(
@@ -352,7 +352,7 @@ class _ActivityListScreenState extends State<ActivityListScreen> {
                     // preferredSize: Size(width/3*filterCount, width * mediumPadRate * 2)),
                     // ),
                   ))
-              : LoadingIndicator(loadingText: 'Chưa có hoạt động nào');
+              : LoadingIndicator(loadingText: 'Đang tải hoạt động');
         }));
   }
 

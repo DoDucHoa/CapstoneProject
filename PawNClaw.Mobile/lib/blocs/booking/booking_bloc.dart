@@ -14,15 +14,16 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     on<InitBooking>((event, emit) {
       BookingRequestModel booking = new BookingRequestModel(
         bookingCreateParameter: BookingCreateParameter(
-          centerId: event.centerId,
-          startBooking:
-              DateFormat('yyyy-MM-dd HH:mm:ss').format(event.startBooking),
-          endBooking:
-              DateFormat('yyyy-MM-dd HH:mm:ss').format(event.endBooking),
-          customerId: event.customerId,
-          createTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
-          statusId: 1,
-        ),
+            centerId: event.centerId,
+            startBooking:
+                DateFormat('yyyy-MM-dd HH:mm:ss').format(event.startBooking),
+            endBooking:
+                DateFormat('yyyy-MM-dd HH:mm:ss').format(event.endBooking),
+            customerId: event.customerId,
+            createTime:
+                DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+            statusId: 1,
+            due: event.due),
         bookingDetailCreateParameters: [],
         serviceOrderCreateParameters: [],
         supplyOrderCreateParameters: [],
@@ -31,17 +32,22 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     });
     on<SelectCage>((event, emit) {
       BookingRequestModel booking = (state as BookingUpdated).booking;
-      booking.bookingDetailCreateParameters!.add(
-        BookingDetailCreateParameters(
-          cageCode: event.cageCode,
-          price: event.price,
-          petId: event.petId,
-          duration: DateTime.parse(booking.bookingCreateParameter!.endBooking!)
-              .difference(
-                  DateTime.parse(booking.bookingCreateParameter!.startBooking!))
-              .inHours,
-        ),
+      BookingDetailCreateParameters details = BookingDetailCreateParameters(
+        cageCode: event.cageCode,
+        price: event.price,
+        petId: event.petId,
+        duration: booking.bookingCreateParameter!.due,
       );
+      int detectedIndex = booking.isCageSelected(details);
+      if (detectedIndex != -1) {
+        print('change cage');
+        booking.bookingDetailCreateParameters!.removeAt(detectedIndex);
+        booking.bookingDetailCreateParameters!.add(details);
+      } else {
+        print('new cage');
+        booking.bookingDetailCreateParameters!.add(details);
+      }
+      print(booking.bookingDetailCreateParameters!.last.toJson());
       emit(BookingUpdated(booking: booking));
     });
     on<SelectSupply>(
@@ -123,7 +129,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
           (state as BookingUpdated).booking.selectedPetsIds.toString());
     });
 
-     on<AddVoucher>((event, emit) {
+    on<AddVoucher>((event, emit) {
       BookingRequestModel booking = (state as BookingUpdated).booking;
       print('voucherCode : ' + event.voucherCode);
       booking.voucherCode = event.voucherCode;
