@@ -55,5 +55,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
                   event.timeFrom, event.due, searchResponse))
               : emit(SearchFail(searchResponse.result!, event.requests));
     });
+    on<BackToPetSelection>(
+      (event, emit) {
+        emit(UpdatePetSelected([], event.requests));
+      },
+    );
   }
 }
