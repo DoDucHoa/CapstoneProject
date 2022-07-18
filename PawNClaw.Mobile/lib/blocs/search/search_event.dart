@@ -48,11 +48,21 @@ class SearchCenter extends SearchEvent {
   final String districtCode;
   final int pageNumber;
 
-  const SearchCenter(this.requests, this.timeFrom, this.due/*this.timeTo*/, this.cityCode,
-      this.districtCode, this.pageNumber);
+  const SearchCenter(this.requests, this.timeFrom, this.due /*this.timeTo*/,
+      this.cityCode, this.districtCode, this.pageNumber);
 
   @override
   // TODO: implement props
   List<Object> get props =>
       [requests, timeFrom, due, cityCode, districtCode, pageNumber];
+}
+
+class BackToPetSelection extends SearchEvent {
+  final List<List<Pet>> requests;
+
+  const BackToPetSelection(this.requests);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [requests];
 }

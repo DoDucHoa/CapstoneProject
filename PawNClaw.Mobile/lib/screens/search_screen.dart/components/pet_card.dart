@@ -22,9 +22,27 @@ class _PetCardState extends State<PetCard> {
   var isLock = false;
 
   @override
+  void initState() {
+    // TODO: implement initState
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    var state = BlocProvider.of<SearchBloc>(context).state;
+    if (state is UpdatePetSelected && state.requests.isNotEmpty) {
+      for (var pets in state.requests) {
+        for (var pet in pets) {
+          if (pet.id == widget.pet.id) {
+            isLock = true;
+            break;
+          }
+        }
+      }
+    }
     return Stack(
       children: [
         // SizedBox(
@@ -215,11 +233,10 @@ class _PetCardState extends State<PetCard> {
                               widget.pet.length!.toString() +
                               " cm",
                           style: TextStyle(
-                            color: lightFontColor,
-                            fontWeight: FontWeight.w400,
-                            fontSize: width * smallFontRate,
-                            height: 1.2
-                          ),
+                              color: lightFontColor,
+                              fontWeight: FontWeight.w400,
+                              fontSize: width * smallFontRate,
+                              height: 1.2),
                         ),
                       ),
                     ],
@@ -233,7 +250,7 @@ class _PetCardState extends State<PetCard> {
           top: width * smallPadRate,
           child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: (isSelected) ? primaryColor : disableColor,
+                primary: (isSelected || isLock) ? primaryColor : disableColor,
                 shape: CircleBorder(
                     side: BorderSide(
                   width: 1,

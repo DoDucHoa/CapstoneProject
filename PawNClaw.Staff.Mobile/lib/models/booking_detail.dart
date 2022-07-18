@@ -165,20 +165,22 @@ class BookingDetail {
   }
 
   int getRemainSupplyAct(SupplyOrders supply) {
-    int count = supply.quantity!;
+    int count = 0;
     this.bookingActivities!.forEach((element) {
-      if (element.supplyId == supply.supply!.id) {
-        count--;
+      if (element.supplyId == supply.supply!.id &&
+          element.provideTime == null) {
+        count++;
       }
     });
     return count;
   }
 
   int getRemainServiceAct(ServiceOrders service) {
-    int count = service.quantity!;
+    int count = 0;
     this.bookingActivities!.forEach((element) {
-      if (element.serviceId == service.service!.id) {
-        count--;
+      if (element.serviceId == service.service!.id &&
+          element.provideTime == null) {
+        count++;
       }
     });
     return count;
@@ -201,18 +203,9 @@ class BookingDetail {
   int getDoneActivites() {
     int count = 0;
     this.bookingActivities!.forEach((element) {
-      this.supplyOrders?.forEach((order) {
-        if (order.petId == element.petId &&
-            order.supply?.id == element.supplyId) {
-          count++;
-        }
-      });
-      this.serviceOrders?.forEach((order) {
-        if (order.petId == element.petId &&
-            order.service?.id == element.serviceId) {
-          count++;
-        }
-      });
+      if (element.provideTime != null) {
+        count++;
+      }
     });
     return count;
   }
