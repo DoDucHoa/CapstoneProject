@@ -6,8 +6,6 @@ using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static PawNClaw.Data.Repository.PetCenterRepository;
 
 namespace PawNClaw.Business.Services
@@ -15,16 +13,18 @@ namespace PawNClaw.Business.Services
     public class PetCenterService
     {
         IPetCenterRepository _petCenterRepository;
+        IStaffRepository _staffRepository;
 
-        public PetCenterService(IPetCenterRepository petCenterRepository)
+        public PetCenterService(IPetCenterRepository petCenterRepository, IStaffRepository staffRepository)
         {
             _petCenterRepository = petCenterRepository;
+            _staffRepository = staffRepository;
         }
 
         //Get All
         public PagedList<PetCenter> GetAll(string includeProperties, PagingParameter paging)
         {
-            var values = _petCenterRepository.GetAll(includeProperties: includeProperties);
+            var values = _petCenterRepository.GetAll(includeProperties: "Brand");
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
@@ -89,6 +89,14 @@ namespace PawNClaw.Business.Services
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
             paging.PageSize);
+        }
+
+        //Get By Staff Id
+        public PetCenter GetByStaffId(int id)
+        {
+            var staff = _staffRepository.GetFirstOrDefault(x => x.Id == id);
+            var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == staff.CenterId);
+            return value;
         }
 
         //Get By Name

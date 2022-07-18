@@ -87,9 +87,9 @@ export default function Router() {
           path: 'center',
           children: [
             { path: '', element: <Navigate to="/dashboard/center/list" replace />, index: true },
-            { path: 'list', element: <OwnerList /> },
-            { path: 'new', element: <OwnerCreate /> },
-            { path: ':id/edit', element: <OwnerCreate /> },
+            { path: 'list', element: <CenterList /> },
+            { path: 'new', element: <CenterCreate /> },
+            { path: ':id/edit', element: <CenterCreate /> },
           ],
         },
         {
@@ -106,6 +106,15 @@ export default function Router() {
           children: [
             { path: '', element: <Navigate to="/dashboard/booking/calendar" replace />, index: true },
             { path: 'calendar', element: <BookingCalendar /> },
+          ],
+        },
+        {
+          path: 'booking-list',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/booking-list/list" replace />, index: true },
+            { path: 'list', element: <BookingList /> },
+            { path: 'new', element: <OwnerCreate /> },
+            { path: ':id/edit', element: <OwnerCreate /> },
           ],
         },
       ],
@@ -173,3 +182,10 @@ const BrandCreate = Loadable(lazy(() => import('../pages/dashboard/Brand/BrandCr
 
 // BOOKING CALENDAR
 const BookingCalendar = Loadable(lazy(() => import('../pages/dashboard/Calendar')));
+
+// BOOKING LIST
+const BookingList = Loadable(lazy(() => import('../pages/dashboard/BookingList/BookingList')));
+
+// CENTER
+const CenterList = Loadable(lazy(() => import('../pages/dashboard/Center/CenterList')));
+const CenterCreate = Loadable(lazy(() => import('../pages/dashboard/Center/CenterCreate')));

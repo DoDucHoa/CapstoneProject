@@ -224,13 +224,13 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
               Container(
                   margin: EdgeInsets.all(width * smallPadRate),
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: primaryBackgroundColor,
-                      // border: Border.all(
-                      //     width: 1.5,
-                      //     style: BorderStyle.solid,
-                      //     color: primaryColor)
-                      ),
+                    borderRadius: BorderRadius.circular(15),
+                    color: primaryBackgroundColor,
+                    // border: Border.all(
+                    //     width: 1.5,
+                    //     style: BorderStyle.solid,
+                    //     color: primaryColor)
+                  ),
                   child: DottedBorder(
                       color: primaryColor,
                       radius: Radius.circular(15),

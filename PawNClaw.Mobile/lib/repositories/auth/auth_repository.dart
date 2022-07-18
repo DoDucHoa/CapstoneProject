@@ -33,8 +33,8 @@ class AuthRepository implements BaseAuthRepository {
       await pref.setString("jwtToken", account.jwtToken ?? "");
       print(pref.get("jwtToken"));
       return account;
-    } catch (e) {
-      print(e);
+    } on DioError catch (e) {
+      print(e.response!.data);
       return null;
     }
   }

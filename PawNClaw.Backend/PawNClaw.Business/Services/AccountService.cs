@@ -2,11 +2,7 @@
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PawNClaw.Business.Services
 {
@@ -43,15 +39,13 @@ namespace PawNClaw.Business.Services
             {
                 values = values.Where(x => x.Phone.Trim().Equals(_requestParameter.Phone));
             }
-            if (_requestParameter.Status == true)
-            {
-                values = values.Where(x => x.Status == true);
-            }
-            else if (_requestParameter.Status == false)
-            {
-                values = values.Where(x => x.Status == false);
-            }
 
+            values = _requestParameter.Status switch
+            {
+                true => values.Where(x => x.Status == true),
+                false => values.Where(x => x.Status == false),
+                _ => values
+            };
 
             if (!string.IsNullOrWhiteSpace(_requestParameter.sort))
             {

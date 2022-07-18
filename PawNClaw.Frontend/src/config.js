@@ -68,3 +68,25 @@ export const defaultSettings = {
   themeLayout: 'horizontal',
   themeStretch: false,
 };
+
+// BOOKING STATUS
+// ----------------------------------------------------------------------
+
+export const BOOKING_STATUS = [
+  {
+    id: 1,
+    name: 'Đang Chờ',
+  },
+  {
+    id: 2,
+    name: 'Đang Xử Lí',
+  },
+  {
+    id: 3,
+    name: 'Hoàn Thành',
+  },
+  {
+    id: 4,
+    name: 'Hủy',
+  },
+];

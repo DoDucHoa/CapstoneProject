@@ -22,13 +22,13 @@ namespace PawNClaw.API.Controllers
             _bookingActivityService = bookingActivityService;
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize(Roles = "Owner,Staff")]
-        public async Task<ActionResult> CreateBookingActivity([FromBody] CreateBookingActivityControllerParameter createBookingActivityControllerParameter)
+        public async Task<ActionResult> UpdateBookingActivity([FromBody] UpdateBookingActivityParameter updateBookingActivityParameter)
         {
             try
             {
-                await _bookingActivityService.CreateBookingActivity(createBookingActivityControllerParameter);
+                await _bookingActivityService.UpdateActivity(updateBookingActivityParameter);
                 return Ok();
             }
             catch (Exception ex)

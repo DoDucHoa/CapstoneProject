@@ -38,10 +38,10 @@ import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { TableEmptyRows, TableHeadCustom, TableNoData } from '../../../components/table';
 
 // sections
-import { OwnerTableRow, OwnerTableToolbar } from '../../../sections/@dashboard/owner/list';
+import { BrandTableRow, BrandTableToolbar } from '../../../sections/@dashboard/brand/list';
 
 // API
-import { getBrands, banOwner, unbanOwner } from './useBrandAPI';
+import { getBrands, banBrand, unbanBrand } from './useBrandAPI';
 
 // ----------------------------------------------------------------------
 
@@ -53,8 +53,8 @@ const STATUS_OPTIONS = [
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Tên thương thiệu', align: 'left' },
-  { id: 'email', label: 'Chủ sở hữu', align: 'left' },
-  { id: 'phone', label: 'Ngày hoạt động', align: 'center' },
+  { id: 'description', label: 'Mô tả', align: 'left' },
+  { id: 'ownerName', label: 'Chủ sở hữu', align: 'left' },
   { id: 'status', label: 'Trạng thái', align: 'left' },
   { id: '' },
 ];
@@ -87,26 +87,24 @@ export default function BrandList() {
     setPage(0);
   };
 
-  const getOwnerData = async () => {
+  const getBrandData = async () => {
     const response = await getBrands(page, rowsPerPage, filterStatus, searchRequest);
     const { data, metadata } = response;
 
-    console.log('getOwnerData', data);
-
-    const owners = data.map((owner, index) => ({
-      id: owner.id,
+    const brands = data.map((brand, index) => ({
+      id: brand.id,
       avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`,
-      name: owner.name,
-      email: owner.email,
-      phoneNumber: owner.idNavigation.phone,
-      status: owner.idNavigation.status,
+      name: brand.name,
+      ownerName: brand.owner.name,
+      description: brand.description,
+      status: brand.status,
     }));
-    setTableData(owners);
+    setTableData(brands);
     setMetadata(metadata);
   };
 
   useEffect(() => {
-    getOwnerData();
+    getBrandData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, rowsPerPage, filterStatus, searchRequest]);
 
@@ -124,17 +122,17 @@ export default function BrandList() {
   };
 
   const handleEditRow = (id) => {
-    navigate(PATH_DASHBOARD.admin.edit(id));
+    navigate(PATH_DASHBOARD.brand.edit(id));
   };
 
   const handleBanAdmin = async (id) => {
-    await banOwner(id);
-    await getOwnerData();
+    await banBrand(id);
+    await getBrandData();
   };
 
   const handleUnbanAdmin = async (id) => {
-    await unbanOwner(id);
-    await getOwnerData();
+    await unbanBrand(id);
+    await getBrandData();
   };
   const handleOpenBanDialog = (idAdmin) => {
     setSelectIdAdmin(idAdmin);
@@ -162,7 +160,7 @@ export default function BrandList() {
               <Button
                 variant="contained"
                 component={RouterLink}
-                to={PATH_DASHBOARD.owner.new}
+                to={PATH_DASHBOARD.brand.new}
                 startIcon={<Iconify icon={'eva:plus-fill'} />}
               >
                 Thêm mới thương hiệu
@@ -187,7 +185,7 @@ export default function BrandList() {
             <Divider />
 
             {/* Filter dữ liệu */}
-            <OwnerTableToolbar
+            <BrandTableToolbar
               filterName={filterName}
               onFilterName={handleFilterName}
               onEnterPress={handleSearchRequest}
@@ -201,7 +199,7 @@ export default function BrandList() {
 
                   <TableBody>
                     {tableData.map((row) => (
-                      <OwnerTableRow
+                      <BrandTableRow
                         key={row.id}
                         row={row}
                         onEditRow={() => handleEditRow(row.id)}
@@ -262,10 +260,10 @@ function BanAdminDialog({ open, onClose, idAdmin, handleBanAdmin }) {
 
   return (
     <Dialog open={open} maxWidth="xs" onClose={onClose}>
-      <DialogTitle>Bạn có chắc chắn muốn khóa người này?</DialogTitle>
+      <DialogTitle>Bạn có chắc chắn muốn khóa thương hiệu?</DialogTitle>
       <DialogContent>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Bạn vẫn có thể mở khóa người này sau khi xác nhận!
+          Bạn vẫn có thể mở khóa thương hiệu này sau khi xác nhận!
         </Typography>
       </DialogContent>
       <DialogActions>

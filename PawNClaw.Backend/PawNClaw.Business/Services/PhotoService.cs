@@ -31,5 +31,39 @@ namespace PawNClaw.Business.Services
                 throw new Exception();
             }
         }
+
+        public bool UpdatePhoto(UpdatePhotoParameter updatePhotoParameter)
+        {
+            try
+            {
+                var photo = _photoRepository.Get(updatePhotoParameter.Id);
+
+                photo.Url = updatePhotoParameter.Url;
+
+                _photoRepository.Update(photo);
+                _photoRepository.SaveDbChange();
+
+                return true;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+
+        public bool DeletePhoto(int id)
+        {
+            try
+            {
+                _photoRepository.Remove(id);
+                _photoRepository.SaveDbChange();
+
+                return true;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
     }
 }

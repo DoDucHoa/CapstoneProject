@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
-import 'package:pawnclaw_mobile_application/repositories/booking.dart/base_booking_repository.dart';
+import 'package:pawnclaw_mobile_application/repositories/booking/base_booking_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BookingRepository implements BaseBookingRepository {
@@ -21,9 +21,8 @@ class BookingRepository implements BaseBookingRepository {
       var response = await _dio.post(_url, data: requestBody);
       final result = response.statusCode;
       return result.toString();
-    } catch (e) {
-      print(e);
-      return "Error";
+    } on DioError catch (e) {
+      throw Exception(e.response!.data['Message']);
     }
   }
 }

@@ -7,9 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static PawNClaw.Data.Repository.PetCenterRepository;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace PawNClaw.Business.Services
 {
@@ -21,10 +22,13 @@ namespace PawNClaw.Business.Services
         ICageRepository _cageRepository;
         ILocationRepository _locationRepository;
         IPetBookingDetailRepository _petBookingDetailRepository;
+        IDistrictRepository _districtRepository;
+        ICityRepository _cityRepository;
 
         public SearchService(IPetCenterRepository petCenterRepository, ILocationRepository locationRepository,
             IBookingRepository bookingRepository, IBookingDetailRepository bookingDetailRepository,
-            ICageRepository cageRepository, IPetBookingDetailRepository petBookingDetailRepository)
+            ICageRepository cageRepository, IPetBookingDetailRepository petBookingDetailRepository,
+            IDistrictRepository districtRepository, ICityRepository cityRepository)
         {
             _petCenterRepository = petCenterRepository;
             _locationRepository = locationRepository;
@@ -32,6 +36,8 @@ namespace PawNClaw.Business.Services
             _bookingDetailRepository = bookingDetailRepository;
             _cageRepository = cageRepository;
             _petBookingDetailRepository = petBookingDetailRepository;
+            _districtRepository = districtRepository;
+            _cityRepository = cityRepository;
         }
 
 
@@ -285,6 +291,11 @@ namespace PawNClaw.Business.Services
             //Check loaction
             var values = _petCenterRepository.SearchPetCenter(City, District);
 
+            foreach (var item in values)
+            {
+                Console.WriteLine(item.CageTypes.Count());
+            }
+
             //START Check valid time booking
             //This is 24 Hours format
             if (StartBooking == null || Due <= 0)
@@ -407,7 +418,7 @@ namespace PawNClaw.Business.Services
                 //            //throw new Exception("Pet is Booking Already");
                 //        }
                 //    }
-                    
+
                 //    if (CheckPetIsBooked)
                 //    {
                 //        break;
@@ -551,11 +562,90 @@ namespace PawNClaw.Business.Services
                 Photos = center.Photos
             });
 
-
-
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
             paging.PageSize);
+        }
+
+        public async Task<SearchPetCenterResponse> ReferenceCenter(string City, string District,
+            string StartBooking, int Due,
+            List<List<PetRequestForSearchCenter>> _petRequests, PagingParameter paging)
+        {
+            var values = MainSearchCenter_ver_2(City, District,
+                                                StartBooking, Due,
+                                                _petRequests, paging);
+
+            SearchPetCenterResponse searchPetCenterResponse = new SearchPetCenterResponse();
+
+            if (values.Count <= 0)
+            {
+                var city_code = _cityRepository.GetFirstOrDefault(x => x.Code.Equals(City)).Code;
+                var originDis = _districtRepository.GetFirstOrDefault(x => x.Code.Equals(District));
+                var districts = _districtRepository.GetAll(x => x.CityCode.Equals(city_code) && !x.Code.Equals(District));
+
+                var client = new HttpClient();
+                string url = "https://rsapi.goong.io/DistanceMatrix?origins=" + originDis.Latitude + "," + originDis.Longtitude + "&destinations=";
+
+
+                var lastitem = districts.Last();
+                foreach (var district in districts)
+                {
+                    if (district.Equals(lastitem))
+                    {
+                        url = url + district.Latitude + "," + district.Longtitude;
+                    }
+                    else
+                    {
+                        url = url + district.Latitude + "," + district.Longtitude + "%7C";
+                    }
+                }
+                url = url + "&api_key=r81jNaUAOipzIiuOoPIN1S3m0vaURbdE2LldWk7z";
+
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                var result = await response.Content.ReadAsStringAsync();
+                var cust = JObject.Parse(result);
+
+                var districtdistance = new Dictionary<District, int>();
+                for (int i = 0; i < districts.LongCount() - 1; i++)
+                {
+                    var distance = cust["rows"][0]["elements"][i]["distance"]["value"].ToString();
+                    districtdistance.Add(districts.ToList()[i], int.Parse(distance));
+                }
+
+                districtdistance = districtdistance.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
+                int count = 1;
+                foreach (var item in districtdistance)
+                {
+                    if (count <= 3)
+                    {
+                        values = MainSearchCenter_ver_2(City, item.Key.Code,
+                                                    StartBooking, Due,
+                                                    _petRequests, paging);
+
+                        count++;
+                        if (values.Count > 0)
+                        {
+                            
+                            searchPetCenterResponse.City = City;
+                            searchPetCenterResponse.District = item.Key.Code;
+                            searchPetCenterResponse.DistrictName = item.Key.Name;
+                            searchPetCenterResponse.petCenters = values;
+
+                            return searchPetCenterResponse;
+                        }
+                    }
+                }
+            }
+
+            searchPetCenterResponse.City = City;
+            searchPetCenterResponse.District = District;
+            searchPetCenterResponse.DistrictName = "";
+            searchPetCenterResponse.petCenters = values;
+
+            return searchPetCenterResponse;
         }
     }
 }

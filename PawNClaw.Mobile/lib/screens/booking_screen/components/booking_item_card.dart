@@ -19,7 +19,6 @@ class BookingItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     var bookingSupplies = booking.supplyOrderCreateParameters!
         .where((element) => element.petId == pet.id)
         .toList();
@@ -99,31 +98,29 @@ class BookingItemCard extends StatelessWidget {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text.rich(
-            TextSpan(
-              text: supplies[index].name!,
-              style: TextStyle(
-                      color: primaryFontColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: width * regularFontRate * 0.8,
-                    ),
-              children: <InlineSpan>[
-                TextSpan(
-                  text: " x" +
-                         bookingSupplies
-                            .firstWhere((element) =>
-                                element.petId == pet.id &&
-                                element.supplyId == supplies[index].id)
-                            .quantity
-                            .toString(),
-                  style: TextStyle(
-                      color: lightFontColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: width * regularFontRate * 0.8,
-                    ),
-                )
-              ]
-            )),
+                  Text.rich(TextSpan(
+                      text: supplies[index].name!,
+                      style: TextStyle(
+                        color: primaryFontColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: width * regularFontRate * 0.8,
+                      ),
+                      children: <InlineSpan>[
+                        TextSpan(
+                          text: " x" +
+                              bookingSupplies
+                                  .firstWhere((element) =>
+                                      element.petId == pet.id &&
+                                      element.supplyId == supplies[index].id)
+                                  .quantity
+                                  .toString(),
+                          style: TextStyle(
+                            color: lightFontColor,
+                            fontWeight: FontWeight.w500,
+                            fontSize: width * regularFontRate * 0.8,
+                          ),
+                        )
+                      ])),
                   // Text(
                   //   supplies[index].name! +
                   //       " x" +
@@ -140,15 +137,13 @@ class BookingItemCard extends StatelessWidget {
                   //   ),
                   // ),
                   Text(
-                   NumberFormat.currency(
-                                  decimalDigits: 0,
-                                  symbol: 'đ',
-                                  locale: 'vi_vn')
-                              .format(bookingSupplies
+                    NumberFormat.currency(
+                            decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+                        .format(bookingSupplies
                             .firstWhere((element) =>
                                 element.petId == pet.id &&
                                 element.supplyId == supplies[index].id)
-                            .totalPrice) ,
+                            .totalPrice),
                     style: TextStyle(
                       color: primaryFontColor,
                       fontWeight: FontWeight.w500,
@@ -166,31 +161,29 @@ class BookingItemCard extends StatelessWidget {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                   Text.rich(
-            TextSpan(
-              text: services[index].description!,
-              style: TextStyle(
-                      color: primaryFontColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: width * regularFontRate * 0.8,
-                    ),
-              children: <InlineSpan>[
-                TextSpan(
-                  text: " x" +
-                        bookingServices
-                            .firstWhere((element) =>
-                                element.petId == pet.id &&
-                                element.serviceId == services[index].id)
-                            .quantity
-                            .toString(),
-                  style: TextStyle(
-                      color: lightFontColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: width * regularFontRate * 0.8,
-                    ),
-                )
-              ]
-            )),
+                  Text.rich(TextSpan(
+                      text: services[index].description!,
+                      style: TextStyle(
+                        color: primaryFontColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: width * regularFontRate * 0.8,
+                      ),
+                      children: <InlineSpan>[
+                        TextSpan(
+                          text: " x" +
+                              bookingServices
+                                  .firstWhere((element) =>
+                                      element.petId == pet.id &&
+                                      element.serviceId == services[index].id)
+                                  .quantity
+                                  .toString(),
+                          style: TextStyle(
+                            color: lightFontColor,
+                            fontWeight: FontWeight.w500,
+                            fontSize: width * regularFontRate * 0.8,
+                          ),
+                        )
+                      ])),
                   // Text(
                   //   services[index].description!
                   //   +
@@ -209,13 +202,11 @@ class BookingItemCard extends StatelessWidget {
                   // ),
                   Text(
                     NumberFormat.currency(
-                                  decimalDigits: 0,
-                                  symbol: 'đ',
-                                  locale: 'vi_vn')
-                              .format(bookingServices
+                            decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+                        .format(bookingServices
                             .firstWhere((element) =>
                                 element.serviceId == services[index].id)
-                            .totalPrice) ,
+                            .totalPrice),
                     style: TextStyle(
                       color: primaryFontColor,
                       fontWeight: FontWeight.w500,

@@ -11,18 +11,18 @@ namespace PawNClaw.API.Controllers
     [Authorize]
     public class BrandController : ControllerBase
     {
-        private readonly BrandService _BrandService;
+        private readonly BrandService _brandService;
 
-        public BrandController(BrandService BrandService)
+        public BrandController(BrandService brandService)
         {
-            _BrandService = BrandService;
+            _brandService = brandService;
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin,Mod")]
         public IActionResult GetBrands([FromQuery] string Name, [FromQuery] bool? Status, [FromQuery] string dir, [FromQuery] PagingParameter _paging)
         {
-            var data = _BrandService.GetBrands(Name, Status, dir, _paging);
+            var data = _brandService.GetBrands(Name, Status, dir, _paging);
             var metadata = new
             {
                 data.TotalCount,
@@ -35,11 +35,11 @@ namespace PawNClaw.API.Controllers
             return Ok(new { data, metadata });
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         [Authorize(Roles = "Admin,Mod")]
         public IActionResult GetBrandById(int id)
         {
-            var data = _BrandService.GetBrandById(id);
+            var data = _brandService.GetBrandById(id);
             return Ok(data);
         }
 
@@ -47,44 +47,45 @@ namespace PawNClaw.API.Controllers
         [Authorize(Roles = "Admin,Mod")]
         public IActionResult Add([FromBody] CreateBrandParameter brand)
         {
-            if (_BrandService.Add(brand) != -1)
+            if (_brandService.Add(brand) != -1)
             {
                 return Ok();
             }
             return BadRequest();
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Update(int id, [FromBody] BrandRequestParameter brand)
+        public IActionResult Update([FromRoute] int id, [FromBody] BrandRequestParameter brand)
         {
-            var brandDb = _BrandService.GetBrandById(id);
+            var brandDb = _brandService.GetBrandById(id);
             brandDb.Name = brand.Name;
             brandDb.Description = brand.Description;
+            brandDb.OwnerId = brand.OwnerId;
 
-            if (_BrandService.Update(brandDb))
+            if (_brandService.Update(brandDb))
             {
                 return Ok();
             }
             return BadRequest();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         [Authorize(Roles = "Admin,Mod")]
         public IActionResult Delete(int id)
         {
-            if (_BrandService.Delete(id))
+            if (_brandService.Delete(id))
             {
                 return Ok();
             }
             return BadRequest();
         }
 
-        [HttpPut("restore/{id}")]
+        [HttpPut("restore/{id:int}")]
         [Authorize(Roles = "Admin,Mod")]
         public IActionResult Restore(int id)
         {
-            if (_BrandService.Restore(id))
+            if (_brandService.Restore(id))
             {
                 return Ok();
             }

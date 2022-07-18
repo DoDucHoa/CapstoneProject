@@ -28,6 +28,12 @@ namespace PawNClaw.Data.Database
         public int? SupplyId { get; set; }
         [Column("service_id")]
         public int? ServiceId { get; set; }
+        [Column("activity_time_from", TypeName = "datetime")]
+        public DateTime? ActivityTimeFrom { get; set; }
+        [Column("activity_time_to", TypeName = "datetime")]
+        public DateTime? ActivityTimeTo { get; set; }
+        [Column("is_on_time")]
+        public bool? IsOnTime { get; set; }
 
         [ForeignKey(nameof(BookingId))]
         [InverseProperty("BookingActivities")]

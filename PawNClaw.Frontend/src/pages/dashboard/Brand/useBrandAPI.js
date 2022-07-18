@@ -14,39 +14,39 @@ const getBrands = async (page, rowsPerPage, filterStatus, searchName) => {
   return response.data;
 };
 
-const getOwner = async (idOwner) => {
-  const response = await axios.get(`${URL}/${idOwner}`);
+const getBrand = async (idBrand) => {
+  const response = await axios.get(`${URL}/${idBrand}`);
   return response.data;
 };
 
-const createOwner = async (userName, createdUser, phone, name, gender) => {
+const createBrand = async (name, description, ownerId, createUser, modifyUser) => {
   const response = await axios.post(URL, {
-    userName,
-    createdUser,
-    phone,
     name,
-    gender,
+    description,
+    ownerId,
+    createUser,
+    modifyUser,
   });
   return response.data;
 };
 
-const updateOwner = async (idOwner, name, phone, gender) => {
-  const response = await axios.put(URL, {
+const updateBrand = async (idBrand, name, description, ownerId) => {
+  const response = await axios.put(`${URL}/${idBrand}`, {
     name,
-    phone,
-    gender,
+    description,
+    ownerId,
   });
   return response.status;
 };
 
-const banOwner = async (idOwner) => {
-  const response = await axios.delete(`${URL}/${idOwner}`);
+const banBrand = async (idBrand) => {
+  const response = await axios.delete(`${URL}/${idBrand}`);
   return response.data;
 };
 
-const unbanOwner = async (idOwner) => {
-  const response = await axios.put(`${URL}/restore/${idOwner}`);
+const unbanBrand = async (idBrand) => {
+  const response = await axios.put(`${URL}/restore/${idBrand}`);
   return response.data;
 };
 
-export { getOwner, getBrands, createOwner, banOwner, unbanOwner, updateOwner };
+export { getBrand, getBrands, createBrand, banBrand, unbanBrand, updateBrand };

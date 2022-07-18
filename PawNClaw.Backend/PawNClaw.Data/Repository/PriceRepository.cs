@@ -34,7 +34,7 @@ namespace PawNClaw.Data.Repository
             try
             {
 
-                for (var dt = _startBooking; dt.Date <= _endBooking.Date; dt = dt.AddDays(1))
+                for (var dt = _startBooking; dt.Date < _endBooking.Date; dt = dt.AddDays(1))
                 {
                     //Check if have any price is specify date
                     if (query.Any(x => x.PriceTypeCode.Equals("PRICE-004")))

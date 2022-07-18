@@ -7,7 +7,7 @@ import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/models/fake_data.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
-import 'package:pawnclaw_mobile_application/repositories/booking.dart/booking_repository.dart';
+import 'package:pawnclaw_mobile_application/repositories/booking/booking_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/booking_screen/components/booking_item_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/booking_success_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/vouchers_screen.dart';
