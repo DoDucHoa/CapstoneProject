@@ -26,6 +26,7 @@ class CenterDetails extends StatefulWidget {
       required this.requests,
       required this.bookingDate,
       required this.endDate,
+      required this.due,
       Key? key})
       : super(key: key);
 
@@ -33,6 +34,7 @@ class CenterDetails extends StatefulWidget {
   final List<List<Pet>> requests;
   final DateTime bookingDate;
   final DateTime endDate;
+  final int due;
 
   @override
   State<CenterDetails> createState() => _CenterDetailsState();
@@ -68,12 +70,12 @@ class _CenterDetailsState extends State<CenterDetails> {
         create: (context) => BookingBloc()
           ..add(
             InitBooking(
-              startBooking: widget.bookingDate,
-              endBooking: widget.endDate,
-              centerId: widget.petCenterId,
-              request: widget.requests,
-              customerId: customerId,
-            ),
+                startBooking: widget.bookingDate,
+                endBooking: widget.endDate,
+                centerId: widget.petCenterId,
+                request: widget.requests,
+                customerId: customerId,
+                due: widget.due),
           ),
         child:
             BlocBuilder<BookingBloc, BookingState>(builder: (context, state) {
@@ -155,51 +157,65 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                     height: 65 / 2 - 10,
                                                   ),
                                                   Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: [
                                                       Container(
                                                         width: width * 2 / 3,
+                                                        height: width *
+                                                                largeFontRate +
+                                                            10,
                                                         child: Text(
                                                           center?.name ?? "",
                                                           style:
                                                               const TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  height: 1),
                                                         ),
                                                       ),
                                                       Expanded(
                                                           child: SizedBox()),
-                                                      Icon(
-                                                        Icons.star_rate_rounded,
-                                                        color:
-                                                            lightPrimaryColor,
-                                                      ),
-                                                      Text(
-                                                        center?.rating!
-                                                                .toString() ??
-                                                            "",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w700),
-                                                      ),
-                                                      Text(
-                                                        ' (' +
-                                                            (center?.rating!
-                                                                    .toString() ??
-                                                                "") +
-                                                            ')',
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w700,
+                                                      Wrap(
+                                                        crossAxisAlignment:
+                                                            WrapCrossAlignment
+                                                                .center,
+                                                        children: [
+                                                          Icon(
+                                                            Icons
+                                                                .star_rate_rounded,
                                                             color:
-                                                                lightFontColor),
+                                                                lightPrimaryColor,
+                                                          ),
+                                                          Text(
+                                                            center?.rating!
+                                                                    .toString() ??
+                                                                "",
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            ' (' +
+                                                                (center?.rating!
+                                                                        .toString() ??
+                                                                    "") +
+                                                                ')',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                color:
+                                                                    lightFontColor),
+                                                          )
+                                                        ],
                                                       )
                                                     ],
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
                                                   ),
                                                   Row(children: [
                                                     Padding(
@@ -224,19 +240,19 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                             children: [
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsets
-                                                                        .fromLTRB(
-                                                                            4,
-                                                                            3,
-                                                                            5,
-                                                                            2),
+                                                                    const EdgeInsets
+                                                                            .fromLTRB(
+                                                                        4,
+                                                                        3,
+                                                                        5,
+                                                                        2),
                                                                 child:
                                                                     Image.asset(
                                                                   'lib/assets/white-paw.png',
                                                                   width: 13,
                                                                 ),
                                                               ),
-                                                              Text(
+                                                              const Text(
                                                                 'Đối tác PawNClaw   ',
                                                                 style: TextStyle(
                                                                     fontSize:
@@ -252,7 +268,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                     ),
                                                   ]),
                                                   SizedBox(
-                                                    height: 15,
+                                                    height: 10,
                                                   ),
                                                   OutlinedButton.icon(
                                                       style: OutlinedButton.styleFrom(
@@ -291,6 +307,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                           )))
                                                 ],
                                               ))),
+
                                       Positioned(
                                         top: appbarSize * 0.45 - 65 / 2,
                                         left: 20,
@@ -590,7 +607,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                           //       style: TextStyle(color: primaryColor),
                           //     )),
                           )))
-              : LoadingIndicator(loadingText: 'Vui lòng chờ');
+              : LoadingIndicator(loadingText: 'Vui lòng đợi');
         }));
   }
 }

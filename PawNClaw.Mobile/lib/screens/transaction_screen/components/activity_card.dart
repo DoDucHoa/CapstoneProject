@@ -47,7 +47,7 @@ class ActivityCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(activity.pet!.name!, style: TextStyle(color: Colors.black, fontSize: 13, fontWeight: FontWeight.w700),),
-              Text('Pet breed is here', style: TextStyle(color: lightFontColor, fontSize: 13)),
+              Text(activity.pet!.breedName!, style: TextStyle(color: lightFontColor, fontSize: 13)),
             ],
           )
         ]),

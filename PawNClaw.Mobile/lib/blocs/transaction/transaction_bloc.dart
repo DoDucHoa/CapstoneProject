@@ -16,8 +16,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       final transactions =
           await _transactionRepository.getTransactions(event.account.id!);
       if (transactions != null) {
-        transactions
-            .sort(((a, b) => a.createTime!.isBefore(b.createTime!) ? 1 : -1));
+        transactions.sort((a, b) => b.createTime!.compareTo(a.createTime!));
         emit(TransactionLoaded(transactions));
       }
     });

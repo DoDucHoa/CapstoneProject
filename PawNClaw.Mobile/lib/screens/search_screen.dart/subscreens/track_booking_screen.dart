@@ -2,12 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:im_stepper/main.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
+import 'package:pawnclaw_mobile_application/models/pet.dart';
+import 'package:pawnclaw_mobile_application/screens/home_screen/HomeScreen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/booking_info_card.dart';
+
+import '../../../blocs/booking/booking_bloc.dart';
+import '../../booking_screen/components/booking_cage_card.dart';
+import '../../booking_screen/components/booking_item_card.dart';
 
 class TrackBooking extends StatefulWidget {
   const TrackBooking({required this.center, required this.booking, Key? key})
@@ -42,12 +49,18 @@ class _TrackBookingState extends State<TrackBooking> {
     BookingRequestModel booking = widget.booking;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    List<List<Pet>>? requests = [];
+   var state = BlocProvider.of<BookingBloc>(context).state;
+    requests = (state as BookingUpdated).requests;
+  List<Pet>? pets = [];
+  requests!.forEach((pets) => pets.forEach((pet) { pets.add(pet);}),);
+
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           toolbarHeight: regularPadRate * width,
           leading: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: ((context) => HomeScreen()))),
             icon: Icon(
               Icons.arrow_back_ios_new,
               color: primaryFontColor,
@@ -153,7 +166,8 @@ class _TrackBookingState extends State<TrackBooking> {
                             lineDotRadius: 0.7,
                             stepReachedAnimationEffect: Curves.easeIn,
                           )),
-                      buildStatusCard(currentstatus, width)
+                      buildStatusCard(currentstatus, width),
+
                       //     Stepper(
                       //       onStepTapped: (value) => setState(() {
                       //         currentstatus = value;
@@ -167,9 +181,135 @@ class _TrackBookingState extends State<TrackBooking> {
                       //     Step(title: Text(''), content: Text('Đặt lich thành công'),state: (currentstatus > 2)? StepState.complete:StepState.indexed, isActive: (currentstatus > 2)?true:false)
                       //   ],
                       // )
+                      buildSeperator(MediaQuery.of(context).size),
+                      Container(
+                    padding: EdgeInsets.all(width * mediumPadRate),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "THÔNG TIN CHUỒNG",
+                          style: TextStyle(
+                            color: primaryFontColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: width * regularFontRate,
+                          ),
+                        ),
+                        ListView.builder(
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            itemCount: booking.bookingDetailCreateParameters!.length,
+                            itemBuilder: (context, index) {
+                              return BookingCageCard(
+                                booking:booking,
+                                request: requests![index],
+                                center: widget.center,
+                              );
+                            }),
+                        // ListView.builder(
+                        //     shrinkWrap: true,
+                        //     physics: ClampingScrollPhysics(),
+                        //     itemCount: pets.length,
+                        //     itemBuilder: (context, index) {
+                        //       return BookingItemCard(
+                        //         booking: state.booking,
+                        //         pet: pets[index],
+                        //         center: center,
+                        //       );
+                        //     }),
+                      ],
+                    ),
+                  ),
+                   SizedBox(
+                          height: width * extraSmallPadRate,
+                        ),
+                      
+                 Container(
+                          padding: EdgeInsets.all(width * mediumPadRate),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "THÚ CƯNG",
+                                style: TextStyle(
+                                  color: primaryFontColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: width * regularFontRate,
+                                ),
+                              ),
+                              // ListView.builder(
+                              //     shrinkWrap: true,
+                              //     physics: ClampingScrollPhysics(),
+                              //     itemCount: state.requests!.length,
+                              //     itemBuilder: (context, index) {
+                              //       return BookingCageCard(
+                              //         booking: state.booking,
+                              //         request: state.requests![index],
+                              //         center: center,
+                              //       );
+                              //     }),
+                              ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: ClampingScrollPhysics(),
+                                  itemCount: pets.length,
+                                  itemBuilder: (context, index) {
+                                    return (state.booking.hasAdditionalItems(pets[index].id!)) ?
+                                     BookingItemCard(
+                                      booking: state.booking,
+                                      pet: pets[index],
+                                      center: widget.center,
+                                    ):  Container();
+                                  }),
+                            ],
+                          ),
+                        )
+                      ,
                     ],
-                  ))
+                  )),
+                  
             ])));
+  }
+
+  Widget buildSeperator(Size size) {
+    return Column(
+      children: [
+        Container(
+          color: frameColor,
+          height: 15,
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(15),
+                bottomRight: Radius.circular(15)),
+            child: Container(
+              color: Colors.white,
+            ),
+          ),
+        ),
+        Container(
+          height: size.height * extraSmallPadRate,
+          color: frameColor,
+        ),
+        Container(
+          color: frameColor,
+          height: 15,
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+            child: Container(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   List<Icon> buildIcon(int activeIndex) {

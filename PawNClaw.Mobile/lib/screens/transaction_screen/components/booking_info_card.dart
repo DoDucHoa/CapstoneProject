@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl/intl.dart';
+import 'package:pawnclaw_mobile_application/common/components/primary_button.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/booking.dart';
 import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
 import 'package:pawnclaw_mobile_application/models/transaction_details.dart';
 
 class BookingInfoCard extends StatelessWidget {
-  const BookingInfoCard({required this.booking, required this.details, Key? key}) : super(key: key);
+  const BookingInfoCard(
+      {required this.booking, required this.details, Key? key})
+      : super(key: key);
 
   final Booking booking;
   final TransactionDetails details;
@@ -61,14 +64,61 @@ class BookingInfoCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "THỜI GIAN",
-                        style: TextStyle(
-                          color: primaryFontColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: width * regularFontRate,
+                      Row(children: [
+                        Text(
+                          "THỜI GIAN",
+                          style: TextStyle(
+                            color: primaryFontColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: width * regularFontRate,
+                          ),
                         ),
-                      ),
+                        IconButton(
+                          padding: EdgeInsets.all(0),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) => Dialog(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(15)),
+                                        ),
+                                        padding: EdgeInsets.all(20),
+                                        width: width * 0.5,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Text(
+                                              'Thời gian Checkout dự kiến được dựa theo quy định của trung tâm. Trung tâm sẽ thu thêm phí nếu bạn đến đón các bé sau thời gian này nhé! ',
+                                              textAlign: TextAlign.justify,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w700),
+                                            ),
+                                            const SizedBox(
+                                              height: 15,
+                                            ),
+                                            
+                                            PrimaryButton(
+                                                text: 'Đóng',
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                contextWidth: width)
+                                          ],
+                                        ),
+                                      ),
+                                    ));
+                          },
+                          icon: const Icon(
+                            Icons.info_rounded,
+                            color: primaryColor,
+                            size: 18,
+                          ),
+                        )
+                      ]),
                       Container(
                         padding: EdgeInsets.all(width * smallPadRate * 0.5),
                         decoration: BoxDecoration(
@@ -89,7 +139,8 @@ class BookingInfoCard extends StatelessWidget {
                                 ),
                                 Text(
                                   DateFormat('HH:mm, dd/MM/yyyy').format(
-                                      DateTime.parse(booking.startBooking!.toString())),
+                                      DateTime.parse(
+                                          booking.startBooking!.toString())),
                                   style: TextStyle(
                                     color: primaryFontColor,
                                     fontWeight: FontWeight.w500,
@@ -114,7 +165,8 @@ class BookingInfoCard extends StatelessWidget {
                                 ),
                                 Text(
                                   DateFormat('HH:mm, dd/MM/yyyy').format(
-                                      DateTime.parse(booking.endBooking!.toString())),
+                                      DateTime.parse(
+                                          booking.endBooking!.toString())),
                                   style: TextStyle(
                                     color: primaryFontColor,
                                     fontWeight: FontWeight.w500,
@@ -181,7 +233,7 @@ class BookingInfoCard extends StatelessWidget {
                   // margin:
                   //     EdgeInsets.symmetric(horizontal: width * mediumPadRate),
                   width: width,
-                  height: height * lines*smallPadRate + 20,
+                  height: height * lines * smallPadRate + 20,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(10),
@@ -194,87 +246,63 @@ class BookingInfoCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                          children: [
-                            Text(
-                              "CHI PHÍ DỰ KIẾN",
-                              style: TextStyle(
-                                color: primaryFontColor,
-                                fontWeight: FontWeight.w600,
-                                fontSize: width * regularFontRate,
-                              ),
-                            ),
-                            // SizedBox(
-                            //   width: 5,
-                            // ),
-                            IconButton(
-                              //color: Colors.white,
-                              // padding: EdgeInsets.all(0),
-
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) => Dialog(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(15)),
-                                            ),
-                                            padding: EdgeInsets.all(20),
-                                            width: width * 0.5,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text(
-                                                  'Chi phí trên được tính theo dự kiến, có thể thay đổi trong quá trình trung tâm cung cấp dịch vụ.',
-                                                  textAlign: TextAlign.justify,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w700),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                ElevatedButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                    child: Container(width: width*(0.5 - 2*extraSmallPadRate),child: Center(child: Text('Đóng'))))
-                                              ],
-                                            ),
-                                          ),
-                                        ));
-                              },
-                              icon: Icon(
-                                Icons.info_rounded,
-                                color: primaryColor,
-                                size: 18,
-                              ),
-                            )
-                          ],
-                        ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                           if (haveServiceOrder) Text(
-                            "Dịch vụ",
+                          Text(
+                            "CHI PHÍ DỰ KIẾN",
                             style: TextStyle(
                               color: primaryFontColor,
-                              fontSize: width * regularFontRate * 0.8,
+                              fontWeight: FontWeight.w600,
+                              fontSize: width * regularFontRate,
                             ),
                           ),
-                          if (haveServiceOrder)Text(
-                            NumberFormat.currency(
-                                  decimalDigits: 0,
-                                  symbol: '',
-                                ).format(details.getTotalServices()) +
-                                "đ",
-                            style: TextStyle(
-                              color: primaryFontColor,
-                              fontWeight: FontWeight.w500,
-                              fontSize: width * regularFontRate * 0.8,
+                          // SizedBox(
+                          //   width: 5,
+                          // ),
+                          IconButton(
+                            //color: Colors.white,
+                            // padding: EdgeInsets.all(0),
+
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => Dialog(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(15)),
+                                          ),
+                                          padding: EdgeInsets.all(20),
+                                          width: width * 0.5,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                'Chi phí trên được tính theo dự kiến, có thể thay đổi trong quá trình trung tâm cung cấp dịch vụ.',
+                                                textAlign: TextAlign.justify,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                              ),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              PrimaryButton(
+                                                text: 'Đóng',
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                contextWidth: width)
+                                            ],
+                                          ),
+                                        ),
+                                      ));
+                            },
+                            icon: Icon(
+                              Icons.info_rounded,
+                              color: primaryColor,
+                              size: 18,
                             ),
                           )
                         ],
@@ -282,25 +310,53 @@ class BookingInfoCard extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          if (haveSupplyOrder) Text(
-                            "Đồ dùng",
-                            style: TextStyle(
-                              color: primaryFontColor,
-                              fontSize: width * regularFontRate * 0.8,
+                          if (haveServiceOrder)
+                            Text(
+                              "Dịch vụ",
+                              style: TextStyle(
+                                color: primaryFontColor,
+                                fontSize: width * regularFontRate * 0.8,
+                              ),
                             ),
-                          ),
-                           if (haveSupplyOrder)Text(
-                            NumberFormat.currency(
-                                  decimalDigits: 0,
-                                  symbol: '',
-                                ).format(details.getTotalSupplies()) +
-                                "đ",
-                            style: TextStyle(
-                              color: primaryFontColor,
-                              fontWeight: FontWeight.w500,
-                              fontSize: width * regularFontRate * 0.8,
+                          if (haveServiceOrder)
+                            Text(
+                              NumberFormat.currency(
+                                    decimalDigits: 0,
+                                    symbol: '',
+                                  ).format(details.getTotalServices()) +
+                                  "đ",
+                              style: TextStyle(
+                                color: primaryFontColor,
+                                fontWeight: FontWeight.w500,
+                                fontSize: width * regularFontRate * 0.8,
+                              ),
+                            )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          if (haveSupplyOrder)
+                            Text(
+                              "Đồ dùng",
+                              style: TextStyle(
+                                color: primaryFontColor,
+                                fontSize: width * regularFontRate * 0.8,
+                              ),
                             ),
-                          )
+                          if (haveSupplyOrder)
+                            Text(
+                              NumberFormat.currency(
+                                    decimalDigits: 0,
+                                    symbol: '',
+                                  ).format(details.getTotalSupplies()) +
+                                  "đ",
+                              style: TextStyle(
+                                color: primaryFontColor,
+                                fontWeight: FontWeight.w500,
+                                fontSize: width * regularFontRate * 0.8,
+                              ),
+                            )
                         ],
                       ),
                       Row(
@@ -310,7 +366,7 @@ class BookingInfoCard extends StatelessWidget {
                             "Chi phí khách sạn x " +
                                 details.bookingDetails!.first.duration!
                                     .toStringAsFixed(0) +
-                                " giờ",
+                                " ngày",
                             style: TextStyle(
                               color: primaryFontColor,
                               fontSize: width * regularFontRate * 0.8,
@@ -354,13 +410,14 @@ class BookingInfoCard extends StatelessWidget {
                           : SizedBox(
                               height: 0,
                             ),
-                            
                       Container(
                         width: width,
                         height: 1.5,
                         color: Colors.black12,
                       ),
-                      SizedBox(height: 5,),
+                      SizedBox(
+                        height: 5,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -386,7 +443,9 @@ class BookingInfoCard extends StatelessWidget {
                           )
                         ],
                       ),
-                      SizedBox(height: 5,),
+                      SizedBox(
+                        height: 5,
+                      ),
                     ],
                   ),
                 ),

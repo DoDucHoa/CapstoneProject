@@ -13,7 +13,7 @@ const lightFontColor = Colors.black45;
 
 //Font size rate (by width of device)
 const double extraLargeFontRate = 0.11;
-const double largeFontRate = 0.063;
+const double largeFontRate = 0.06;
 const double regularFontRate = 0.05;
 const double smallFontRate = 0.035;
 

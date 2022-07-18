@@ -7,13 +7,12 @@ import 'dart:convert';
 import 'package:pawnclaw_mobile_application/models/activity.dart';
 
 class TransactionDetails {
-  TransactionDetails({
-    this.bookingId,
-    this.bookingDetails,
-    this.serviceOrders,
-    this.supplyOrders,
-    this.bookingActivities
-  });
+  TransactionDetails(
+      {this.bookingId,
+      this.bookingDetails,
+      this.serviceOrders,
+      this.supplyOrders,
+      this.bookingActivities});
   int? bookingId;
   List<BookingDetail>? bookingDetails;
   List<ServiceOrder>? serviceOrders;
@@ -27,21 +26,20 @@ class TransactionDetails {
 
   factory TransactionDetails.fromJson(Map<String, dynamic> json) =>
       TransactionDetails(
-        bookingId: json["id"],
-        bookingDetails: List<BookingDetail>.from(
-            json["bookingDetails"].map((x) => BookingDetail.fromJson(x))),
-        serviceOrders: json["serviceOrders"] != null
-            ? List<ServiceOrder>.from(
-                json["serviceOrders"].map((x) => ServiceOrder.fromJson(x)))
-            : null,
-        supplyOrders: json["supplyOrders"] != null
-            ? List<SupplyOrder>.from(
-                json["supplyOrders"].map((x) => SupplyOrder.fromJson(x)))
-            : null,
-        bookingActivities: json["bookingActivities"] != null
-            ? List<BookingActivities>.from(json["bookingActivities"].map((x) => BookingActivities.fromJson(x)))
-            :null
-      );
+          bookingId: json["id"],
+          bookingDetails: List<BookingDetail>.from(
+              json["bookingDetails"].map((x) => BookingDetail.fromJson(x))),
+          serviceOrders: json["serviceOrders"] != null
+              ? List<ServiceOrder>.from(
+                  json["serviceOrders"].map((x) => ServiceOrder.fromJson(x)))
+              : null,
+          supplyOrders: json["supplyOrders"] != null
+              ? List<SupplyOrder>.from(
+                  json["supplyOrders"].map((x) => SupplyOrder.fromJson(x)))
+              : null,
+          bookingActivities: List<BookingActivities>.from(
+              json["bookingActivities"]
+                  .map((x) => BookingActivities.fromJson(x))));
 
   Map<String, dynamic> toJson() => {
         "id": bookingId,
@@ -51,7 +49,8 @@ class TransactionDetails {
             List<ServiceOrder>.from(serviceOrders!.map((x) => x.toJson())),
         "supplyOrders":
             List<SupplyOrder>.from(supplyOrders!.map((x) => x.toJson())),
-        "bookingActivities": List<BookingActivities>.from(bookingActivities!.map((x) => x.toJson()))
+        "bookingActivities": List<BookingActivities>.from(
+            bookingActivities!.map((x) => x.toJson()))
       };
 
   double getTotalServices() {
@@ -90,34 +89,54 @@ class TransactionDetails {
     return pets;
   }
 
-  bool haveItems(Pet pet){
+  List<Pet> getPetsInCage(int bookingDetailId) {
+    List<Pet> pets = [];
+    this.bookingDetails!
+        .where((e) => e.id == bookingDetailId)
+        .first
+        .petBookingDetails!
+        .forEach((p) {
+      pets.add(p.pet!);
+    });
+
+    this.bookingDetails!.forEach(print);
+    // this.bookingDetails!.forEach((b) {
+    //   b.petBookingDetails!.forEach((p) {
+    //     pets.add(p.pet!);
+    //   });
+    // });
+    print(pets);
+    return pets;
+  }
+
+  bool haveItems(Pet pet) {
     for (var element in this.serviceOrders!) {
-      if (element.petId == pet.id){
+      if (element.petId == pet.id) {
         return true;
       }
     }
     for (var element in this.supplyOrders!) {
-      if (element.petId == pet.id){
+      if (element.petId == pet.id) {
         return true;
       }
     }
     return false;
   }
 
-  List<Activity> getFeedActivities(){
+  List<Activity> getFeedActivities() {
     List<Activity> FEED_ACTS = [];
     for (var act in this.bookingActivities!) {
-      if (act.line != null) {
-        for (var pet in getPets()) {
-          if (pet.id == act.petId) {
+      if (act.bookingDetailId != null && act.provideTime != null) {
+        for (var pet in getPetsInCage(act.bookingDetailId!)) {
             FEED_ACTS.add(Activity(
                 id: 0,
                 time: DateTime.parse(act.provideTime!),
                 type: ActivityType(0),
                 product: Product(
                     id: 0,
-                    name: this.bookingDetails!
-                        .where((e) => e.line == act.line)
+                    name: this
+                        .bookingDetails!
+                        .where((e) => e.id == act.bookingDetailId)
                         .first
                         .cage!
                         .cageType!
@@ -126,18 +145,20 @@ class TransactionDetails {
                     note: act.description != null
                         ? act.description!
                         : 'Cho ${pet.name} ăn'),
-                pet: pet, imgUrl:  act.photo!.isNotEmpty ? act.photo!.first.url:null));
-          }
+                pet: pet,
+                imgUrl: act.photo!.isNotEmpty ? act.photo!.first.url : null));
         }
       }
+      
+      print(FEED_ACTS);
     }
     return FEED_ACTS;
   }
 
-  List<Activity> getSupplyActivities(){
+  List<Activity> getSupplyActivities() {
     List<Activity> SUPPLY_ACTS = [];
     for (var act in this.bookingActivities!) {
-      if (act.supplyId != null) {
+      if (act.supplyId != null && act.provideTime != null) {
         for (var pet in getPets()) {
           if (pet.id == act.petId) {
             SUPPLY_ACTS.add(Activity(
@@ -146,7 +167,8 @@ class TransactionDetails {
                 type: ActivityType(1),
                 product: Product(
                     id: 0,
-                    name: this.supplyOrders!
+                    name: this
+                        .supplyOrders!
                         .where((e) => e.supplyId == act.supplyId)
                         .first
                         .supply!
@@ -155,7 +177,8 @@ class TransactionDetails {
                     note: act.description != null
                         ? act.description!
                         : 'Không có chú thích'),
-                pet: pet,imgUrl: act.photo!.isNotEmpty ? act.photo!.first.url:null));
+                pet: pet,
+                imgUrl: act.photo!.isNotEmpty ? act.photo!.first.url : null));
           }
         }
       }
@@ -163,10 +186,10 @@ class TransactionDetails {
     return SUPPLY_ACTS;
   }
 
-  List<Activity> getServiceActivities(){
+  List<Activity> getServiceActivities() {
     List<Activity> SERVICE_ACTS = [];
     for (var act in this.bookingActivities!) {
-      if (act.serviceId != null) {
+      if (act.serviceId != null && act.provideTime != null) {
         for (var pet in getPets()) {
           if (pet.id == act.petId) {
             SERVICE_ACTS.add(Activity(
@@ -175,7 +198,8 @@ class TransactionDetails {
                 type: ActivityType(2),
                 product: Product(
                     id: 0,
-                    name: this.serviceOrders!
+                    name: this
+                        .serviceOrders!
                         .where((e) => e.serviceId == act.serviceId)
                         .first
                         .service!
@@ -184,7 +208,8 @@ class TransactionDetails {
                     note: act.description != null
                         ? act.description!
                         : 'Không có chú thích'),
-                pet: pet,imgUrl:  act.photo!.isNotEmpty ? act.photo!.first.url:null));
+                pet: pet,
+                imgUrl: act.photo!.isNotEmpty ? act.photo!.first.url : null));
           }
         }
       }
@@ -192,7 +217,7 @@ class TransactionDetails {
     return SERVICE_ACTS;
   }
 
-  List<Activity> getAllActivities(){
+  List<Activity> getAllActivities() {
     List<Activity> list = getFeedActivities();
     list.addAll(getServiceActivities());
     list.addAll(getSupplyActivities());
@@ -204,19 +229,18 @@ class TransactionDetails {
 class BookingDetail {
   BookingDetail(
       {this.bookingId,
-      this.line,
+      this.id,
       this.price,
       this.duration,
       this.petBookingDetails,
       this.cage});
 
   int? bookingId;
-  int? line;
+  int? id;
   double? price;
   double? duration;
   List<PetBookingDetail>? petBookingDetails;
   Cage? cage;
-
 
   factory BookingDetail.fromRawJson(String str) =>
       BookingDetail.fromJson(json.decode(str));
@@ -225,7 +249,7 @@ class BookingDetail {
 
   factory BookingDetail.fromJson(Map<String, dynamic> json) => BookingDetail(
       bookingId: json["bookingId"],
-      line: json["line"],
+      id: json["id"],
       price: json["price"].toDouble(),
       duration: json["duration"].toDouble(),
       petBookingDetails: List<PetBookingDetail>.from(
@@ -234,32 +258,37 @@ class BookingDetail {
 
   Map<String, dynamic> toJson() => {
         "bookingId": bookingId,
-        "line": line,
+        "id": id,
         "price": price,
         "duration": duration,
         "petBookingDetails": List<PetBookingDetail>.from(
             petBookingDetails!.map((x) => x.toJson())),
         "c": cage!.toJson()
       };
-  List<Pet> getPets(){
+  List<Pet> getPets() {
     List<Pet> pets = [];
-    this.petBookingDetails!.forEach((element) {pets.add(element.pet!);});
+    this.petBookingDetails!.forEach((element) {
+      pets.add(element.pet!);
+    });
     return pets;
   }
 }
 
 class Cage {
-  Cage({this.cageType});
+  Cage({this.cageType, this.name});
 
   CageType? cageType;
+  String? name;
   factory Cage.fromRawJson(String str) => Cage.fromJson(json.decode(str));
 
   factory Cage.fromJson(Map<String, dynamic> json) => Cage(
         cageType: CageType.fromJson(json["cageType"]),
+        name: json["name"]
       );
 
   Map<String, dynamic> toJson() => {
         "cageType": cageType!.toJson(),
+        "name": name
       };
 
   String toRawJson() => json.encode(toJson());
@@ -308,51 +337,46 @@ class PetBookingDetail {
 }
 
 class Pet {
-  Pet({
-    this.id,
-    this.name,
-    this.weight,
-    this.height,
-    this.length
-  });
+  Pet({this.id, this.name, this.weight, this.height, this.length, this.breedName});
 
   int? id;
   String? name;
   double? weight;
   double? length;
   double? height;
+  String? breedName;
 
   factory Pet.fromRawJson(String str) => Pet.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
   factory Pet.fromJson(Map<String, dynamic> json) => Pet(
-        id: json["id"],
-        name: json["name"],
-        weight: json["weight"].toDouble(),
-        height: json["height"].toDouble(),
-        length: json["length"].toDouble()
-      );
+      id: json["id"],
+      name: json["name"],
+      weight: json["weight"].toDouble(),
+      height: json["height"].toDouble(),
+      length: json["length"].toDouble(),
+      breedName: json["breedName"]);
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
         "weight": weight,
         "height": height,
-        "length": length
+        "length": length,
+        "breedName": breedName
       };
 }
 
 class ServiceOrder {
-  ServiceOrder({
-    this.serviceId,
-    this.quantity,
-    this.sellPrice,
-    this.totalPrice,
-    this.petId,
-    this.service,
-    this.note
-  });
+  ServiceOrder(
+      {this.serviceId,
+      this.quantity,
+      this.sellPrice,
+      this.totalPrice,
+      this.petId,
+      this.service,
+      this.note});
 
   int? serviceId;
   int? quantity;
@@ -368,14 +392,13 @@ class ServiceOrder {
   String toRawJson() => json.encode(toJson());
 
   factory ServiceOrder.fromJson(Map<String, dynamic> json) => ServiceOrder(
-        serviceId: json["serviceId"],
-        quantity: json["quantity"],
-        sellPrice: json["sellPrice"].toDouble(),
-        totalPrice: json["totalPrice"].toDouble(),
-        petId: json["petId"],
-        service: Service.fromJson(json["service"]),
-        note: json['note']
-      );
+      serviceId: json["serviceId"],
+      quantity: json["quantity"],
+      sellPrice: json["sellPrice"].toDouble(),
+      totalPrice: json["totalPrice"].toDouble(),
+      petId: json["petId"],
+      service: Service.fromJson(json["service"]),
+      note: json['note']);
 
   Map<String, dynamic> toJson() => {
         "serviceId": serviceId,
@@ -419,15 +442,14 @@ class Service {
 }
 
 class SupplyOrder {
-  SupplyOrder({
-    this.supplyId,
-    this.quantity,
-    this.sellPrice,
-    this.totalPrice,
-    this.petId,
-    this.supply,
-    this.note
-  });
+  SupplyOrder(
+      {this.supplyId,
+      this.quantity,
+      this.sellPrice,
+      this.totalPrice,
+      this.petId,
+      this.supply,
+      this.note});
 
   int? supplyId;
   int? quantity;
@@ -443,14 +465,13 @@ class SupplyOrder {
   String toRawJson() => json.encode(toJson());
 
   factory SupplyOrder.fromJson(Map<String, dynamic> json) => SupplyOrder(
-        supplyId: json["supplyId"],
-        quantity: json["quantity"],
-        sellPrice: json["sellPrice"].toDouble(),
-        totalPrice: json["totalPrice"].toDouble(),
-        petId: json["petId"],
-        supply: Supply.fromJson(json["supply"]),
-        note: json["note"]
-      );
+      supplyId: json["supplyId"],
+      quantity: json["quantity"],
+      sellPrice: json["sellPrice"].toDouble(),
+      totalPrice: json["totalPrice"].toDouble(),
+      petId: json["petId"],
+      supply: Supply.fromJson(json["supply"]),
+      note: json["note"]);
 
   Map<String, dynamic> toJson() => {
         "supplyId": supplyId,
@@ -498,7 +519,7 @@ class BookingActivities {
   String? provideTime;
   String? description;
   int? bookingId;
-  int? line;
+  int? bookingDetailId;
   int? petId;
   int? supplyId;
   int? serviceId;
@@ -506,28 +527,33 @@ class BookingActivities {
   Service? service;
   Supply? supply;
   List<Photo>? photo;
+  String? activityTimeFrom;
+  String? activityTimeTo;
+  bool? isOnTime;
 
-  BookingActivities({
-    this.id,
-    this.provideTime,
-    this.description,
-    this.bookingId,
-    this.line,
-    this.petId,
-    this.supplyId,
-    this.serviceId,
-    this.pet,
-    this.service,
-    this.supply,
-    this.photo
-  });
+  BookingActivities(
+      {this.id,
+      this.provideTime,
+      this.description,
+      this.bookingId,
+      this.bookingDetailId,
+      this.petId,
+      this.supplyId,
+      this.serviceId,
+      this.pet,
+      this.service,
+      this.supply,
+      this.photo,
+      this.activityTimeFrom,
+      this.activityTimeTo,
+      this.isOnTime});
 
   BookingActivities.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     provideTime = json['provideTime'];
     description = json['description'];
     bookingId = json['bookingId'];
-    line = json['line'];
+    bookingDetailId = json['bookingDetailId'];
     petId = json['petId'];
     supplyId = json['supplyId'];
     serviceId = json['serviceId'];
@@ -535,10 +561,12 @@ class BookingActivities {
     service =
         json['service'] != null ? Service.fromJson(json['service']) : null;
     supply = json['supply'] != null ? Supply.fromJson(json['supply']) : null;
-    photo = json['photos'] != null ? List<Photo>.from(
-                json["photos"].map((x) => Photo.fromJson(x)))
-            : null;
-    
+    photo = json['photos'] != null
+        ? List<Photo>.from(json["photos"].map((x) => Photo.fromJson(x)))
+        : null;
+    activityTimeFrom = json['activityTimeFrom'];
+    activityTimeTo = json['activityTimeTo'];
+    isOnTime = json['isOnTime'];
   }
 
   Map<String, dynamic> toJson() {
@@ -547,7 +575,7 @@ class BookingActivities {
     data['provideTime'] = this.provideTime;
     data['description'] = this.description;
     data['bookingId'] = this.bookingId;
-    data['line'] = this.line;
+    data['bookingDetailId'] = this.bookingDetailId;
     data['petId'] = this.petId;
     data['supplyId'] = this.supplyId;
     data['serviceId'] = this.serviceId;
@@ -555,12 +583,17 @@ class BookingActivities {
     data['service'] = this.service;
     data['supply'] = this.supply;
     data['photos'] = this.photo;
+    data['activityTimeFrom'] = this.activityTimeFrom;
+    data['activityTimeTo'] = this.activityTimeTo;
+    data['isOnTime'] = this.isOnTime;
+
     // if (this.photos != null) {
     //   data['photos'] = this.photos!.map((v) => v.toJson()).toList();
     // }
     return data;
   }
 }
+
 class Photo {
   int? photoTypeId;
   int? idActor;
