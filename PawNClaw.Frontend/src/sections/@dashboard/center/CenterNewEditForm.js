@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import * as Yup from 'yup';
 import { useSnackbar } from 'notistack';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
@@ -15,43 +15,73 @@ import { fData } from '../../../utils/formatNumber';
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
 import useAuth from '../../../hooks/useAuth';
+import useResponsive from '../../../hooks/useResponsive';
 // components
 import Label from '../../../components/Label';
-import { FormProvider, RHFSelect, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
-import { createBrand, updateBrand } from '../../../pages/dashboard/Brand/useBrandAPI';
+import { FormProvider, RHFTextField, RHFUploadAvatar, RHFTimePicker } from '../../../components/hook-form';
+import { createCenter, updateCenter } from '../../../pages/dashboard/Center/useCenterAPI';
+import BrandDialog from './BrandDialog';
+import Iconify from '../../../components/Iconify';
 
 // ----------------------------------------------------------------------
 
-BrandNewEditForm.propTypes = {
+CenterNewEditForm.propTypes = {
   isEdit: PropTypes.bool,
-  brandData: PropTypes.object,
+  centerData: PropTypes.object,
 };
 
-export default function BrandNewEditForm({ isEdit, brandData }) {
+export default function CenterNewEditForm({ isEdit, centerData }) {
+  // STATE
   const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState(false);
   const { accountInfo, register } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
+  useEffect(() => {
+    if (isEdit && centerData) {
+      reset(defaultValues);
+    }
+    if (!isEdit) {
+      reset(defaultValues);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEdit, centerData]);
+
+  // ----------------------------------------------------------------------
+  // FORM
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Bắt buộc nhập'),
+    address: Yup.string().required('Bắt buộc nhập'),
+    phone: Yup.string().required('Bắt buộc nhập'),
+    openTime: Yup.string().nullable().required('Bắt buộc nhập'),
+    closeTime: Yup.string().nullable().required('Bắt buộc nhập'),
     description: Yup.string(),
-    createdUser: Yup.number().required(),
+    createUser: Yup.number().required(),
     modifyUser: Yup.number().required(),
-    ownerId: Yup.number().required('Bắt buộc nhập'),
+    brandId: Yup.number().required('Bắt buộc nhập'),
     avatarUrl: Yup.mixed().test('required', 'Ảnh thương hiệu bắt buộc nhập', (value) => value !== ''),
+    checkin: Yup.string().nullable().required('Bắt buộc nhập'),
+    checkout: Yup.string().nullable().required('Bắt buộc nhập'),
+    brandInfo: Yup.mixed().nullable().required('Thương hiệu bắt buộc nhập*'),
   });
 
   const defaultValues = useMemo(
     () => ({
-      name: brandData?.name || '',
-      description: brandData?.description || '',
-      createdUser: brandData?.createdUser || 0,
-      modifyUser: brandData?.modifyUser || 0,
-      ownerId: brandData?.ownerId || 0,
-      avatarUrl: brandData?.avatarUrl || '',
+      name: centerData?.name || '',
+      address: centerData?.address || '',
+      phone: centerData?.phone || '',
+      openTime: centerData?.openTime || '',
+      closeTime: centerData?.closeTime || '',
+      description: centerData?.description || '',
+      createUser: centerData?.createdUser || 0,
+      modifyUser: centerData?.modifyUser || 0,
+      brandId: centerData?.ownerId || 0,
+      avatarUrl: centerData?.avatarUrl || '',
+      checkin: centerData?.checkin || '',
+      checkout: centerData?.checkout || '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [brandData]
+    [centerData]
   );
 
   const methods = useForm({
@@ -64,30 +94,22 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
     watch,
     setValue,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
 
   const values = watch();
 
-  useEffect(() => {
-    if (isEdit && brandData) {
-      reset(defaultValues);
-    }
-    if (!isEdit) {
-      reset(defaultValues);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEdit, brandData]);
-
+  // ----------------------------------------------------------------------
+  // HANDLE SUBMIT
   const onSubmit = async () => {
     try {
       if (!isEdit) {
         await Promise.all([
-          createBrand(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender), // create account on Backend
+          createCenter(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender), // create account on Backend
           register(values.email, values.password), // create account on Firebase
         ]);
       } else {
-        await updateBrand(accountInfo.id, values.name, values.phoneNumber, values.gender);
+        await updateCenter(accountInfo.id, values.name, values.phoneNumber, values.gender);
       }
 
       reset();
@@ -98,6 +120,8 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
     }
   };
 
+  // FUNCTION
+  // function to handle change avatar
   const handleDrop = useCallback(
     (acceptedFiles) => {
       const file = acceptedFiles[0];
@@ -114,6 +138,16 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
     [setValue]
   );
 
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
+
+  const handleOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const { brandInfo } = values;
+
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
@@ -121,10 +155,10 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
           <Card sx={{ py: 10, px: 3 }}>
             {isEdit && (
               <Label
-                color={brandData.status !== 'true' ? 'error' : 'success'}
+                color={centerData.status !== 'true' ? 'error' : 'success'}
                 sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
               >
-                {brandData.status !== 'true' ? 'Đã khóa' : 'Hoạt động'}
+                {centerData.status !== 'true' ? 'Đã khóa' : 'Hoạt động'}
               </Label>
             )}
 
@@ -156,33 +190,61 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
 
         <Grid item xs={12} md={8}>
           <Card sx={{ p: 3 }}>
-            <Box
-              sx={{
-                display: 'grid',
-                columnGap: 2,
-                rowGap: 3,
-                gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(1, 1fr)' },
-              }}
-            >
-              <RHFTextField name="name" label="Tên thương hiệu" disabled={isEdit} />
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <RHFTextField name="name" label="Tên trung tâm" disabled={isEdit} />
+              </Grid>
 
-              <RHFTextField name="description" multiline rows={3} label="Mô tả" />
+              <Grid item xs={12}>
+                <RHFTextField name="address" label="Địa chỉ" disabled={isEdit} />
+              </Grid>
 
-              <RHFSelect name="ownerId" label="Giới tính">
-                <option key="1" value="1">
-                  Nam
-                </option>
-                <option key="2" value="2">
-                  Nữ
-                </option>
-                <option key="3" value="3">
-                  Khác
-                </option>
-              </RHFSelect>
-            </Box>
+              <Grid item xs={12}>
+                <RHFTextField name="phone" label="Số điện thoại" />
+              </Grid>
+
+              <Grid item xs={6}>
+                <RHFTimePicker name="openTime" label="Giờ mở cửa" />
+              </Grid>
+              <Grid item xs={6}>
+                <RHFTimePicker name="closeTime" label="Giờ đóng cửa" />
+              </Grid>
+
+              <Grid item xs={6}>
+                <RHFTimePicker name="checkin" label="Giờ checkin" />
+              </Grid>
+              <Grid item xs={6}>
+                <RHFTimePicker name="checkout" label="Giờ checkout" />
+              </Grid>
+
+              <Grid item xs={12}>
+                <RHFTextField name="description" multiline rows={3} label="Mô tả" />
+              </Grid>
+
+              <Grid item xs={12}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Typography>Thương hiệu</Typography>
+                  <Button
+                    onClick={handleOpen}
+                    sx={{ width: 100, ml: 5 }}
+                    variant="text"
+                    startIcon={<Iconify icon={brandInfo ? 'eva:edit-fill' : 'eva:plus-fill'} color="primary" />}
+                  >
+                    {brandInfo ? 'Thay đổi' : 'Thêm'}
+                  </Button>
+                </Box>
+                {brandInfo ? (
+                  <OwnerInfo brandName={brandInfo.name} ownerName={brandInfo.owner.name} />
+                ) : (
+                  <Typography typography="caption" sx={{ color: 'error.main' }}>
+                    {errors.brandInfo ? errors.brandInfo.message : null}
+                  </Typography>
+                )}
+              </Grid>
+            </Grid>
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
-              <Button to={PATH_DASHBOARD.brand.list} color="error" variant="contained" component={RouterLink}>
+              <Button to={PATH_DASHBOARD.center.list} color="error" variant="contained" component={RouterLink}>
                 Hủy
               </Button>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
@@ -192,6 +254,33 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
           </Card>
         </Grid>
       </Grid>
+
+      <BrandDialog
+        open={openDialog}
+        onClose={handleClose}
+        selected={(brandId) => brandInfo?.id === brandId}
+        onSelect={(brandInfo) => setValue('brandInfo', brandInfo)}
+      />
     </FormProvider>
+  );
+}
+
+// ----------------------------------------------------------------------
+OwnerInfo.propTypes = {
+  brandName: PropTypes.string.isRequired,
+  ownerName: PropTypes.string.isRequired,
+};
+function OwnerInfo({ brandName, ownerName }) {
+  const isDesktop = useResponsive('up', 'sm');
+
+  return (
+    <Box sx={{ border: '1px dashed grey', p: 1, borderRadius: 1, maxWidth: isDesktop ? '60%' : '100%' }}>
+      <Typography sx={{ color: 'primary.main', fontWeight: 'fontWeightMedium' }} variant="subtitle2">
+        {brandName}
+      </Typography>
+      <Typography sx={{ my: 0.5 }} variant="caption">
+        Chủ sở hữu: <b>{ownerName}</b>
+      </Typography>
+    </Box>
   );
 }
