@@ -12,15 +12,15 @@ namespace PawNClaw.Data.Database
     {
         public BookingDetail()
         {
+            BookingActivities = new HashSet<BookingActivity>();
             PetBookingDetails = new HashSet<PetBookingDetail>();
         }
 
         [Key]
+        [Column("id")]
+        public int Id { get; set; }
         [Column("booking_id")]
         public int BookingId { get; set; }
-        [Key]
-        [Column("line")]
-        public int Line { get; set; }
         [Column("price", TypeName = "numeric(19, 5)")]
         public decimal? Price { get; set; }
         [Required]
@@ -31,6 +31,9 @@ namespace PawNClaw.Data.Database
         public int CenterId { get; set; }
         [Column("duration", TypeName = "numeric(19, 5)")]
         public decimal? Duration { get; set; }
+        [Column("note")]
+        [StringLength(512)]
+        public string Note { get; set; }
 
         [ForeignKey(nameof(BookingId))]
         [InverseProperty("BookingDetails")]
@@ -38,7 +41,14 @@ namespace PawNClaw.Data.Database
         [ForeignKey("CageCode,CenterId")]
         [InverseProperty(nameof(Cage.BookingDetails))]
         public virtual Cage C { get; set; }
+        [InverseProperty(nameof(BookingActivity.BookingDetail))]
+        public virtual ICollection<BookingActivity> BookingActivities { get; set; }
         [InverseProperty(nameof(PetBookingDetail.BookingDetail))]
         public virtual ICollection<PetBookingDetail> PetBookingDetails { get; set; }
+
+        [NotMapped]
+        public ICollection<FoodSchedule> FoodSchedules { get; set; }
+        [NotMapped]
+        public string CageType { get; internal set; }
     }
 }

@@ -12,8 +12,11 @@ namespace PawNClaw.Data.Database
     {
         public Pet()
         {
+            BookingActivities = new HashSet<BookingActivity>();
             PetBookingDetails = new HashSet<PetBookingDetail>();
             PetHealthHistories = new HashSet<PetHealthHistory>();
+            ServiceOrders = new HashSet<ServiceOrder>();
+            SupplyOrders = new HashSet<SupplyOrder>();
         }
 
         [Key]
@@ -39,6 +42,9 @@ namespace PawNClaw.Data.Database
         [Column("pet_type_code")]
         [StringLength(32)]
         public string PetTypeCode { get; set; }
+        [Column("breed_name")]
+        [StringLength(256)]
+        public string BreedName { get; set; }
 
         [ForeignKey(nameof(CustomerId))]
         [InverseProperty("Pets")]
@@ -46,9 +52,18 @@ namespace PawNClaw.Data.Database
         [ForeignKey(nameof(PetTypeCode))]
         [InverseProperty(nameof(PetType.Pets))]
         public virtual PetType PetTypeCodeNavigation { get; set; }
+        [InverseProperty(nameof(BookingActivity.Pet))]
+        public virtual ICollection<BookingActivity> BookingActivities { get; set; }
         [InverseProperty(nameof(PetBookingDetail.Pet))]
         public virtual ICollection<PetBookingDetail> PetBookingDetails { get; set; }
         [InverseProperty(nameof(PetHealthHistory.Pet))]
         public virtual ICollection<PetHealthHistory> PetHealthHistories { get; set; }
+        [InverseProperty(nameof(ServiceOrder.Pet))]
+        public virtual ICollection<ServiceOrder> ServiceOrders { get; set; }
+        [InverseProperty(nameof(SupplyOrder.Pet))]
+        public virtual ICollection<SupplyOrder> SupplyOrders { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }

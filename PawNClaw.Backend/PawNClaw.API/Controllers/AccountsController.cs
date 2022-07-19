@@ -24,7 +24,7 @@ namespace PawNClaw.API.Controllers
             _accountService = accountService;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public IActionResult GetAccount(int id)
         {
             var data = _accountService.GetAccountById(id);
@@ -73,10 +73,10 @@ namespace PawNClaw.API.Controllers
             return BadRequest();
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(int Id, [FromBody] AccountRequestParameter account)
+        [HttpPut("{id:int}")]
+        public IActionResult Update(int id, [FromBody] AccountRequestParameter account)
         {
-            var accountDb = _accountService.GetAccountById(Id);
+            var accountDb = _accountService.GetAccountById(id);
             accountDb.DeviceId = account.DeviceId;
             accountDb.RoleCode = account.RoleCode;
             if (_accountService.Update(accountDb))
@@ -86,7 +86,7 @@ namespace PawNClaw.API.Controllers
             return BadRequest();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         [Authorize(Roles = "Admin,Mod")]
         public IActionResult DeleteForMod(int id)
         {
@@ -103,7 +103,7 @@ namespace PawNClaw.API.Controllers
             return BadRequest();
         }
 
-        [HttpDelete("admin/{id}")]
+        [HttpDelete("admin/{id:int}")]
         [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
@@ -119,7 +119,7 @@ namespace PawNClaw.API.Controllers
             return BadRequest();
         }
 
-        [HttpPut("restore/{id}")]
+        [HttpPut("restore/{id:int}")]
         [Authorize(Roles = "Admin,Mod")]
         public IActionResult Restore(int id)
         {

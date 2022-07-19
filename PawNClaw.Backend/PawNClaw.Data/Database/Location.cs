@@ -20,15 +20,30 @@ namespace PawNClaw.Data.Database
         [Column("latitude")]
         [StringLength(64)]
         public string Latitude { get; set; }
-        [Column("city_id")]
-        public int? CityId { get; set; }
-        [Column("district_id")]
-        public int? DistrictId { get; set; }
-        [Column("ward_id")]
-        public int? WardId { get; set; }
+        [Required]
+        [Column("city_code")]
+        [StringLength(32)]
+        public string CityCode { get; set; }
+        [Required]
+        [Column("district_code")]
+        [StringLength(32)]
+        public string DistrictCode { get; set; }
+        [Required]
+        [Column("ward_code")]
+        [StringLength(32)]
+        public string WardCode { get; set; }
 
+        [ForeignKey(nameof(CityCode))]
+        [InverseProperty(nameof(City.Locations))]
+        public virtual City CityCodeNavigation { get; set; }
+        [ForeignKey(nameof(DistrictCode))]
+        [InverseProperty(nameof(District.Locations))]
+        public virtual District DistrictCodeNavigation { get; set; }
         [ForeignKey(nameof(Id))]
         [InverseProperty(nameof(PetCenter.Location))]
         public virtual PetCenter IdNavigation { get; set; }
+        [ForeignKey(nameof(WardCode))]
+        [InverseProperty(nameof(Ward.Locations))]
+        public virtual Ward WardCodeNavigation { get; set; }
     }
 }

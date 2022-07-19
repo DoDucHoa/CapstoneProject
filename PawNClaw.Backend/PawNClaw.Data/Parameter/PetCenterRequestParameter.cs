@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PawNClaw.Data.Database;
+using PawNClaw.Data.Helper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,5 +28,13 @@ namespace PawNClaw.Data.Parameter
         public string sort { get; set; } = null;
         public string fields { get; set; } = null;
         public string includeProperties { get; set; } = null;
+    }
+
+    public class SearchPetCenterResponse
+    {
+        public PagedList<PetCenter> petCenters { get; set; }
+        public string City { get; set; }
+        public string District { get; set; }
+        public string DistrictName { get; set; }
     }
 }

@@ -12,7 +12,9 @@ namespace PawNClaw.Data.Database
     {
         public Booking()
         {
+            BookingActivities = new HashSet<BookingActivity>();
             BookingDetails = new HashSet<BookingDetail>();
+            PetHealthHistories = new HashSet<PetHealthHistory>();
             ServiceOrders = new HashSet<ServiceOrder>();
             SupplyOrders = new HashSet<SupplyOrder>();
         }
@@ -45,6 +47,19 @@ namespace PawNClaw.Data.Database
         public int CustomerId { get; set; }
         [Column("center_id")]
         public int CenterId { get; set; }
+        [Column("rating")]
+        public byte? Rating { get; set; }
+        [Column("customer_note")]
+        [StringLength(512)]
+        public string CustomerNote { get; set; }
+        [Column("staff_note")]
+        [StringLength(512)]
+        public string StaffNote { get; set; }
+
+        [NotMapped]
+        public decimal? TotalSupply { get; set; }
+        [NotMapped]
+        public decimal? TotalService { get; set; }
 
         [ForeignKey(nameof(CenterId))]
         [InverseProperty(nameof(PetCenter.Bookings))]
@@ -60,11 +75,18 @@ namespace PawNClaw.Data.Database
         public virtual Voucher VoucherCodeNavigation { get; set; }
         [InverseProperty("IdNavigation")]
         public virtual GeneralLedger GeneralLedger { get; set; }
+        [InverseProperty(nameof(BookingActivity.Booking))]
+        public virtual ICollection<BookingActivity> BookingActivities { get; set; }
         [InverseProperty(nameof(BookingDetail.Booking))]
         public virtual ICollection<BookingDetail> BookingDetails { get; set; }
+        [InverseProperty(nameof(PetHealthHistory.Booking))]
+        public virtual ICollection<PetHealthHistory> PetHealthHistories { get; set; }
         [InverseProperty(nameof(ServiceOrder.Booking))]
         public virtual ICollection<ServiceOrder> ServiceOrders { get; set; }
         [InverseProperty(nameof(SupplyOrder.Booking))]
         public virtual ICollection<SupplyOrder> SupplyOrders { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }

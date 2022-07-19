@@ -53,20 +53,74 @@ namespace PawNClaw.API
             services.AddTransient<AdminService, AdminService>();
 
             services.AddTransient<IOwnerRepository, OwnerRepository>();
+            services.AddTransient<OwnerService, OwnerService>();
 
             services.AddTransient<IStaffRepository, StaffRepository>();
+            services.AddTransient<StaffServicecs, StaffServicecs>();
 
             services.AddTransient<ICustomerRepository, CustomerRepository>();
 
-            services.AddTransient<IBookingDetailRepository, BookingDetailRepository>();
+            services.AddTransient<IBrandRepository, BrandRepository>();
+            services.AddTransient<BrandService, BrandService>();
 
             services.AddTransient<IPetCenterRepository, PetCenterRepository>();
+            services.AddTransient<PetCenterService, PetCenterService>();
+
+            services.AddTransient<IServiceRepository, ServiceRepository>();
+            services.AddTransient<ServiceServices, ServiceServices>();
+
+            services.AddTransient<IServicePriceRepository, ServicePriceRepository>();
+            services.AddTransient<ServicePriceService, ServicePriceService>();
+
+
+            services.AddTransient<IBookingDetailRepository, BookingDetailRepository>();
+            services.AddTransient<BookingDetailService, BookingDetailService>();
+
+            services.AddTransient<IPetRepository, PetRepository>();
+            services.AddTransient<PetService, PetService>();
 
             services.AddTransient<ILocationRepository, LocationRepository>();
 
             services.AddTransient<IBookingRepository, BookingRepository>();
+            services.AddTransient<BookingService, BookingService>();
+
+            services.AddTransient<IBookingActivityRepository, BookingActivityRepository>();
+            services.AddTransient<BookingActivityService, BookingActivityService>();
+
+            services.AddTransient<IBookingStatusRepository, BookingStatusRepository>();
+            services.AddTransient<BookingStatusService, BookingStatusService>();
+
+            services.AddTransient<IPetBookingDetailRepository, PetBookingDetailRepository>();
+            services.AddTransient<PetBookingDetailService, PetBookingDetailService>();
+
+            services.AddTransient<IPetHealthHistoryRepository, PetHealthHistoryRepository>();
+            services.AddTransient<PetHealthHistoryService, PetHealthHistoryService>();
+
+            services.AddTransient<IServiceOrderRepository, ServiceOrderRepository>();
+            services.AddTransient<ServiceOrderService, ServiceOrderService>();
+
+            services.AddTransient<ISupplyOrderRepository, SupplyOrderRepository>();
+            services.AddTransient<SupplyOrderService, SupplyOrderService>();
+
+            services.AddTransient<ISupplyRepository, SupplyRepository>();
 
             services.AddTransient<ICageRepository, CageRepository>();
+
+            services.AddTransient<ICageTypeRepository, CageTypeRepository>();
+            services.AddTransient<CageTypeService, CageTypeService>();
+
+            services.AddTransient<IPriceRepository, PriceRepository>();
+            services.AddTransient<PriceRepository, PriceRepository>();
+
+            services.AddTransient<IPhotoRepository, PhotoRepository>();
+            services.AddTransient<PhotoRepository, PhotoRepository>();
+            services.AddTransient<PhotoService, PhotoService>();
+
+            services.AddTransient<ICityRepository, CityRepository>();
+            services.AddTransient<CityService, CityService>();
+
+            services.AddTransient<IDistrictRepository, DistrictRepository>();
+            services.AddTransient<DistrictService, DistrictService>();
 
             services.AddControllers();
             services.AddControllersWithViews()

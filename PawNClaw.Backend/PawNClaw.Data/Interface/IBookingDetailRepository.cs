@@ -10,5 +10,7 @@ namespace PawNClaw.Data.Interface
     public interface IBookingDetailRepository : IRepository<BookingDetail>
     {
         public IEnumerable<BookingDetail> GetBookingDetailForSearch(int Id);
+
+        public BookingDetail GetBookingDetail(int BookingId, int Line);
     }
 }

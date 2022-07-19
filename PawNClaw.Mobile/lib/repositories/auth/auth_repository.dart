@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/models/account.dart';
 import 'package:pawnclaw_mobile_application/repositories/auth/base_auth_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository implements BaseAuthRepository {
   final auth.FirebaseAuth _firebaseAuth;
@@ -16,6 +18,7 @@ class AuthRepository implements BaseAuthRepository {
   @override
   Future<Account?> signIn({required String token}) async {
     // TODO: implement signIn
+    final pref = await SharedPreferences.getInstance();
     var deviceId = await _getId();
     try {
       var requestBody = {
@@ -27,9 +30,11 @@ class AuthRepository implements BaseAuthRepository {
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/auth/sign-in";
       var response = await _dio.post(_url, data: requestBody);
       final account = Account.fromJson(response.data);
+      await pref.setString("jwtToken", account.jwtToken ?? "");
+      print(pref.get("jwtToken"));
       return account;
-    } catch (e) {
-      print(e);
+    } on DioError catch (e) {
+      print(e.response!.data);
       return null;
     }
   }
@@ -69,7 +74,7 @@ class AuthRepository implements BaseAuthRepository {
         'Phone': phone,
         'Name': name,
         'Birth': birthday.toIso8601String(),
-        'RoleCode': '05'
+        'RoleCode': 'CUS'
       };
       print(requestBody);
       const String _url =

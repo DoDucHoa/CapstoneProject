@@ -23,9 +23,20 @@ namespace PawNClaw.Data.Database
         [Column("center_name")]
         [StringLength(256)]
         public string CenterName { get; set; }
+        [Column("weight", TypeName = "numeric(19, 5)")]
+        public decimal? Weight { get; set; }
+        [Column("height", TypeName = "numeric(19, 5)")]
+        public decimal? Height { get; set; }
+        [Column("length", TypeName = "numeric(19, 5)")]
+        public decimal? Length { get; set; }
         [Column("pet_id")]
         public int PetId { get; set; }
+        [Column("booking_id")]
+        public int BookingId { get; set; }
 
+        [ForeignKey(nameof(BookingId))]
+        [InverseProperty("PetHealthHistories")]
+        public virtual Booking Booking { get; set; }
         [ForeignKey(nameof(PetId))]
         [InverseProperty("PetHealthHistories")]
         public virtual Pet Pet { get; set; }

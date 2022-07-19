@@ -26,9 +26,9 @@ namespace PawNClaw.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public IActionResult GetAdmins([FromQuery] AdminRequestParameter _requestParameter, [FromQuery] PagingParameter _paging)
+        public IActionResult GetAdmins([FromQuery] string Name, [FromQuery] bool? Status, [FromQuery] string dir , [FromQuery] string sort, [FromQuery] PagingParameter _paging)
         {
-            var data = _adminService.GetAdmins(_requestParameter, _paging);
+            var data = _adminService.GetAdmins(Name, Status, dir, sort, _paging);
             var metadata = new
             {
                 data.TotalCount,
@@ -41,9 +41,17 @@ namespace PawNClaw.API.Controllers
             return Ok(new { data, metadata });
         }
 
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult GetAdminById(int id)
+        {
+            var data = _adminService.GetAdminById(id);
+            return Ok(data);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public IActionResult Add([FromBody] Admin admin)
+        public IActionResult Add([FromBody] CreateAdminParameter admin)
         {
             if (_adminService.Add(admin) != -1)
             {
@@ -54,13 +62,13 @@ namespace PawNClaw.API.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Update(int Id, [FromBody] AdminRequestParameter admin)
+        public IActionResult Update(int id, [FromBody] AdminRequestParameter admin)
         {
-            var adminDb = _adminService.GetAdminById(Id);
+            var adminDb = _adminService.GetAdminById(id);
             adminDb.Email = admin.Email;
             adminDb.Name = admin.Name;
 
-            if (_adminService.Update(adminDb))
+            if (_adminService.Update(adminDb, admin.Phone))
             {
                 return Ok();
             }
@@ -78,11 +86,11 @@ namespace PawNClaw.API.Controllers
             return BadRequest();
         }
 
+
         [HttpPut("restore/{id}")]
         [Authorize(Roles = "Admin")]
         public IActionResult Restore(int id)
         {
-
             if (_adminService.Restore(id))
             {
                 return Ok();

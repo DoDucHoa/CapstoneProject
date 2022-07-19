@@ -35,23 +35,20 @@ export const PATH_PAGE = {
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   general: {
-    app: path(ROOTS_DASHBOARD, '/app'),
-    ecommerce: path(ROOTS_DASHBOARD, '/ecommerce'),
-    analytics: path(ROOTS_DASHBOARD, '/analytics'),
-    banking: path(ROOTS_DASHBOARD, '/banking'),
-    booking: path(ROOTS_DASHBOARD, '/booking'),
+    booking: path(ROOTS_DASHBOARD, '/bookingchart'),
   },
-  mail: {
-    root: path(ROOTS_DASHBOARD, '/mail'),
-    all: path(ROOTS_DASHBOARD, '/mail/all'),
+  admin: {
+    root: path(ROOTS_DASHBOARD, '/admin'),
+    list: path(ROOTS_DASHBOARD, '/admin/list'),
+    new: path(ROOTS_DASHBOARD, '/admin/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/admin/${id}/edit`),
   },
-  chat: {
-    root: path(ROOTS_DASHBOARD, '/chat'),
-    new: path(ROOTS_DASHBOARD, '/chat/new'),
-    view: (name) => path(ROOTS_DASHBOARD, `/chat/${name}`),
+  owner: {
+    root: path(ROOTS_DASHBOARD, '/owner'),
+    list: path(ROOTS_DASHBOARD, '/owner/list'),
+    new: path(ROOTS_DASHBOARD, '/owner/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/owner/${id}/edit`),
   },
-  calendar: path(ROOTS_DASHBOARD, '/calendar'),
-  kanban: path(ROOTS_DASHBOARD, '/kanban'),
   user: {
     root: path(ROOTS_DASHBOARD, '/user'),
     new: path(ROOTS_DASHBOARD, '/user/new'),
@@ -62,38 +59,28 @@ export const PATH_DASHBOARD = {
     edit: (name) => path(ROOTS_DASHBOARD, `/user/${name}/edit`),
     demoEdit: path(ROOTS_DASHBOARD, `/user/reece-chung/edit`),
   },
-  eCommerce: {
-    root: path(ROOTS_DASHBOARD, '/e-commerce'),
-    shop: path(ROOTS_DASHBOARD, '/e-commerce/shop'),
-    list: path(ROOTS_DASHBOARD, '/e-commerce/list'),
-    checkout: path(ROOTS_DASHBOARD, '/e-commerce/checkout'),
-    new: path(ROOTS_DASHBOARD, '/e-commerce/product/new'),
-    view: (name) => path(ROOTS_DASHBOARD, `/e-commerce/product/${name}`),
-    edit: (name) => path(ROOTS_DASHBOARD, `/e-commerce/product/${name}/edit`),
-    demoEdit: path(ROOTS_DASHBOARD, '/e-commerce/product/nike-blazer-low-77-vintage/edit'),
-    demoView: path(ROOTS_DASHBOARD, '/e-commerce/product/nike-air-force-1-ndestrukt'),
+  booking: {
+    root: path(ROOTS_DASHBOARD, '/booking'),
+    calendar: path(ROOTS_DASHBOARD, '/booking/calendar'),
+    new: path(ROOTS_DASHBOARD, '/booking/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/booking/${id}/edit`),
   },
-  invoice: {
-    root: path(ROOTS_DASHBOARD, '/invoice'),
-    list: path(ROOTS_DASHBOARD, '/invoice/list'),
-    new: path(ROOTS_DASHBOARD, '/invoice/new'),
-    view: (id) => path(ROOTS_DASHBOARD, `/invoice/${id}`),
-    edit: (id) => path(ROOTS_DASHBOARD, `/invoice/${id}/edit`),
-    demoEdit: path(ROOTS_DASHBOARD, '/invoice/e99f09a7-dd88-49d5-b1c8-1daf80c2d7b1/edit'),
-    demoView: path(ROOTS_DASHBOARD, '/invoice/e99f09a7-dd88-49d5-b1c8-1daf80c2d7b5'),
+  bookingList: {
+    root: path(ROOTS_DASHBOARD, '/booking-list'),
+    list: path(ROOTS_DASHBOARD, '/booking-list/list'),
+    new: path(ROOTS_DASHBOARD, '/booking-list/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/booking-list/${id}/edit`),
   },
-  blog: {
-    root: path(ROOTS_DASHBOARD, '/blog'),
-    posts: path(ROOTS_DASHBOARD, '/blog/posts'),
-    new: path(ROOTS_DASHBOARD, '/blog/new'),
-    view: (title) => path(ROOTS_DASHBOARD, `/blog/post/${title}`),
-    demoView: path(ROOTS_DASHBOARD, '/blog/post/apply-these-7-secret-techniques-to-improve-event'),
+  brand: {
+    root: path(ROOTS_DASHBOARD, '/brand'),
+    list: path(ROOTS_DASHBOARD, '/brand/list'),
+    new: path(ROOTS_DASHBOARD, '/brand/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/brand/${id}/edit`),
   },
-  admin: {
-    root: path(ROOTS_DASHBOARD, '/admin'),
-    list: path(ROOTS_DASHBOARD, '/admin/list'),
-    new: path(ROOTS_DASHBOARD, '/admin/new'),
+  center: {
+    root: path(ROOTS_DASHBOARD, '/center'),
+    list: path(ROOTS_DASHBOARD, '/center/list'),
+    new: path(ROOTS_DASHBOARD, '/center/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/center/${id}/edit`),
   },
 };
-
-export const PATH_DOCS = 'https://docs-minimals.vercel.app/introduction';

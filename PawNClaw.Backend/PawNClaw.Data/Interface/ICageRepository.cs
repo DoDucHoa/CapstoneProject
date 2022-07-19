@@ -9,6 +9,10 @@ namespace PawNClaw.Data.Interface
 {
     public interface ICageRepository : IRepository<Cage>
     {
-        public int CountCageByCageTypeIDExceptBusyCage(int Id, List<string> cageCodesInvalid);
+        public int CountCageByCageTypeIDExceptBusyCage(int Id, bool IsSingle, List<string> cageCodesInvalid);
+
+        public Cage GetCageWithCageType(string CageCode, int CenterId);
+
+        public Cage GetCage(string Code, int CenterId);
     }
 }

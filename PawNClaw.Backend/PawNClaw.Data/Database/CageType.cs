@@ -14,6 +14,7 @@ namespace PawNClaw.Data.Database
         public CageType()
         {
             Cages = new HashSet<Cage>();
+            FoodSchedules = new HashSet<FoodSchedule>();
             Prices = new HashSet<Price>();
         }
 
@@ -48,18 +49,26 @@ namespace PawNClaw.Data.Database
         [Column("center_id")]
         public int CenterId { get; set; }
 
+        [NotMapped]
+        public string TotalPrice { get; set; }
+
         [ForeignKey(nameof(CenterId))]
         [InverseProperty(nameof(PetCenter.CageTypes))]
         public virtual PetCenter Center { get; set; }
         [ForeignKey(nameof(CreateUser))]
-        [InverseProperty(nameof(Staff.CageTypeCreateUserNavigations))]
-        public virtual Staff CreateUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.CageTypeCreateUserNavigations))]
+        public virtual Account CreateUserNavigation { get; set; }
         [ForeignKey(nameof(ModifyUser))]
-        [InverseProperty(nameof(Staff.CageTypeModifyUserNavigations))]
-        public virtual Staff ModifyUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.CageTypeModifyUserNavigations))]
+        public virtual Account ModifyUserNavigation { get; set; }
         [InverseProperty(nameof(Cage.CageType))]
         public virtual ICollection<Cage> Cages { get; set; }
+        [InverseProperty(nameof(FoodSchedule.CageType))]
+        public virtual ICollection<FoodSchedule> FoodSchedules { get; set; }
         [InverseProperty(nameof(Price.CageType))]
         public virtual ICollection<Price> Prices { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }

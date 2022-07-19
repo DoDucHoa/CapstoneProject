@@ -23,4 +23,43 @@ namespace PawNClaw.Data.Parameter
         public string fields { get; set; } = null;
         public string includeProperties { get; set; } = null;
     }
+
+    public class UpdatePetRequestParameter
+    {
+        public int Id { get; set; }
+        public decimal Weight { get; set; }
+        public decimal Length { get; set; }
+        public decimal Height { get; set; }
+    }
+
+    public class UpdatePetRequestForCusParameter
+    {
+        public int Id { get; set; }
+        public decimal Weight { get; set; }
+        public decimal Length { get; set; }
+        public decimal Height { get; set; }
+        public string Name { get; set; }
+        public DateTime? Birth { get; set; }
+    }
+
+    public class CreatePetRequestParameter
+    {
+        public decimal Weight { get; set; }
+        public decimal Length { get; set; }
+        public decimal Height { get; set; }
+        public string Name { get; set; }
+        public DateTime? Birth { get; set; }
+        public bool Status { get; set; }
+        public int CustomerId { get; set; }
+        public string PetTypeCode { get; set; }
+        public string BreedName { get; set; }
+    }
+
+    public class PetRequestForSearchCenter
+    {
+        public int Id { get; set; }
+        public decimal Weight { get; set; }
+        public decimal Length { get; set; }
+        public decimal Height { get; set; }
+    }
 }

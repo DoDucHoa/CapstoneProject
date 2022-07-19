@@ -4,13 +4,14 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
 import interactionPlugin from '@fullcalendar/interaction';
+import { isEmpty } from 'lodash';
 //
 import { useState, useRef, useEffect } from 'react';
 // @mui
-import { Card, Button, Container, DialogTitle } from '@mui/material';
+import { Card, Container, DialogTitle } from '@mui/material';
 // redux
 import { useDispatch, useSelector } from '../../redux/store';
-import { getEvents, openModal, closeModal, updateEvent, selectEvent, selectRange } from '../../redux/slices/calendar';
+import { getEvents, closeModal, getBookingDetails } from '../../redux/slices/calendar';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // hooks
@@ -18,21 +19,12 @@ import useSettings from '../../hooks/useSettings';
 import useResponsive from '../../hooks/useResponsive';
 // components
 import Page from '../../components/Page';
-import Iconify from '../../components/Iconify';
 import { DialogAnimate } from '../../components/animate';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 // sections
 import { CalendarForm, CalendarStyle, CalendarToolbar } from '../../sections/@dashboard/calendar';
 
 // ----------------------------------------------------------------------
-
-const selectedEventSelector = (state) => {
-  const { events, selectedEventId } = state.calendar;
-  if (selectedEventId) {
-    return events.find((_event) => _event.id === selectedEventId);
-  }
-  return null;
-};
 
 export default function Calendar() {
   const { themeStretch } = useSettings();
@@ -47,9 +39,7 @@ export default function Calendar() {
 
   const [view, setView] = useState(isDesktop ? 'dayGridMonth' : 'listWeek');
 
-  const selectedEvent = useSelector(selectedEventSelector);
-
-  const { events, isOpenModal, selectedRange } = useSelector((state) => state.calendar);
+  const { events, isOpenModal, bookingDetails, bookingStatuses, petData } = useSelector((state) => state.calendar);
 
   useEffect(() => {
     dispatch(getEvents());
@@ -64,24 +54,6 @@ export default function Calendar() {
       setView(newView);
     }
   }, [isDesktop]);
-
-  const handleClickToday = () => {
-    const calendarEl = calendarRef.current;
-    if (calendarEl) {
-      const calendarApi = calendarEl.getApi();
-      calendarApi.today();
-      setDate(calendarApi.getDate());
-    }
-  };
-
-  const handleChangeView = (newView) => {
-    const calendarEl = calendarRef.current;
-    if (calendarEl) {
-      const calendarApi = calendarEl.getApi();
-      calendarApi.changeView(newView);
-      setView(newView);
-    }
-  };
 
   const handleClickDatePrev = () => {
     const calendarEl = calendarRef.current;
@@ -101,49 +73,8 @@ export default function Calendar() {
     }
   };
 
-  const handleSelectRange = (arg) => {
-    const calendarEl = calendarRef.current;
-    if (calendarEl) {
-      const calendarApi = calendarEl.getApi();
-      calendarApi.unselect();
-    }
-    dispatch(selectRange(arg.start, arg.end));
-  };
-
   const handleSelectEvent = (arg) => {
-    dispatch(selectEvent(arg.event.id));
-  };
-
-  const handleResizeEvent = async ({ event }) => {
-    try {
-      dispatch(
-        updateEvent(event.id, {
-          allDay: event.allDay,
-          start: event.start,
-          end: event.end,
-        })
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleDropEvent = async ({ event }) => {
-    try {
-      dispatch(
-        updateEvent(event.id, {
-          allDay: event.allDay,
-          start: event.start,
-          end: event.end,
-        })
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleAddEvent = () => {
-    dispatch(openModal());
+    dispatch(getBookingDetails(arg.event.id));
   };
 
   const handleCloseModal = () => {
@@ -156,33 +87,15 @@ export default function Calendar() {
         <HeaderBreadcrumbs
           heading="Calendar"
           links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Calendar' }]}
-          moreLink="https://fullcalendar.io/docs/react"
-          action={
-            <Button
-              variant="contained"
-              startIcon={<Iconify icon={'eva:plus-fill'} width={20} height={20} />}
-              onClick={handleAddEvent}
-            >
-              New Event
-            </Button>
-          }
         />
 
         <Card>
           <CalendarStyle>
-            <CalendarToolbar
-              date={date}
-              view={view}
-              onNextDate={handleClickDateNext}
-              onPrevDate={handleClickDatePrev}
-              onToday={handleClickToday}
-              onChangeView={handleChangeView}
-            />
+            <CalendarToolbar date={date} onNextDate={handleClickDateNext} onPrevDate={handleClickDatePrev} />
             <FullCalendar
               weekends
-              editable
-              droppable
-              selectable
+              defaultAllDay
+              showNonCurrentDates={false}
               events={events}
               ref={calendarRef}
               rerenderDelay={10}
@@ -191,12 +104,7 @@ export default function Calendar() {
               dayMaxEventRows={3}
               eventDisplay="block"
               headerToolbar={false}
-              allDayMaintainDuration
-              eventResizableFromStart
-              select={handleSelectRange}
-              eventDrop={handleDropEvent}
               eventClick={handleSelectEvent}
-              eventResize={handleResizeEvent}
               height={isDesktop ? 720 : 'auto'}
               plugins={[listPlugin, dayGridPlugin, timelinePlugin, timeGridPlugin, interactionPlugin]}
             />
@@ -204,9 +112,13 @@ export default function Calendar() {
         </Card>
 
         <DialogAnimate open={isOpenModal} onClose={handleCloseModal}>
-          <DialogTitle>{selectedEvent ? 'Edit Event' : 'Add Event'}</DialogTitle>
-
-          <CalendarForm event={selectedEvent || {}} range={selectedRange} onCancel={handleCloseModal} />
+          <DialogTitle>Khách hàng: {isEmpty(bookingDetails) ? '' : bookingDetails.customer.name}</DialogTitle>
+          <CalendarForm
+            selectedEvent={bookingDetails || {}}
+            onCancel={handleCloseModal}
+            bookingStatuses={bookingStatuses}
+            petData={petData}
+          />
         </DialogAnimate>
       </Container>
     </Page>

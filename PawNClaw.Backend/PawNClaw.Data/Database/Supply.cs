@@ -12,13 +12,13 @@ namespace PawNClaw.Data.Database
     {
         public Supply()
         {
+            BookingActivities = new HashSet<BookingActivity>();
             SupplyOrders = new HashSet<SupplyOrder>();
         }
 
         [Key]
-        [Column("code")]
-        [StringLength(32)]
-        public string Code { get; set; }
+        [Column("id")]
+        public int Id { get; set; }
         [Required]
         [Column("name")]
         [StringLength(256)]
@@ -43,17 +43,33 @@ namespace PawNClaw.Data.Database
         [Column("supply_type_code")]
         [StringLength(32)]
         public string SupplyTypeCode { get; set; }
+        [Column("center_id")]
+        public int CenterId { get; set; }
 
+        [ForeignKey(nameof(CenterId))]
+        [InverseProperty(nameof(PetCenter.Supplies))]
+        public virtual PetCenter Center { get; set; }
         [ForeignKey(nameof(CreateUser))]
-        [InverseProperty(nameof(Staff.SupplyCreateUserNavigations))]
-        public virtual Staff CreateUserNavigation { get; set; }
+        [InverseProperty(nameof(Staff.SupplyCreateUser1s))]
+        public virtual Staff CreateUser1 { get; set; }
+        [ForeignKey(nameof(CreateUser))]
+        [InverseProperty(nameof(Account.SupplyCreateUserNavigations))]
+        public virtual Account CreateUserNavigation { get; set; }
         [ForeignKey(nameof(ModifyUser))]
-        [InverseProperty(nameof(Staff.SupplyModifyUserNavigations))]
-        public virtual Staff ModifyUserNavigation { get; set; }
+        [InverseProperty(nameof(Staff.SupplyModifyUser1s))]
+        public virtual Staff ModifyUser1 { get; set; }
+        [ForeignKey(nameof(ModifyUser))]
+        [InverseProperty(nameof(Account.SupplyModifyUserNavigations))]
+        public virtual Account ModifyUserNavigation { get; set; }
         [ForeignKey(nameof(SupplyTypeCode))]
         [InverseProperty(nameof(SupplyType.Supplies))]
         public virtual SupplyType SupplyTypeCodeNavigation { get; set; }
-        [InverseProperty(nameof(SupplyOrder.SupplyCodeNavigation))]
+        [InverseProperty(nameof(BookingActivity.Supply))]
+        public virtual ICollection<BookingActivity> BookingActivities { get; set; }
+        [InverseProperty(nameof(SupplyOrder.Supply))]
         public virtual ICollection<SupplyOrder> SupplyOrders { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }

@@ -1,290 +1,280 @@
-import { paramCase } from 'change-case';
-import { useState } from 'react';
+import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+
 // @mui
 import {
   Box,
   Tab,
   Tabs,
   Card,
+  Dialog,
   Table,
-  Switch,
   Button,
-  Tooltip,
   Divider,
   TableBody,
   Container,
-  IconButton,
   TableContainer,
   TablePagination,
-  FormControlLabel,
+  DialogTitle,
+  DialogActions,
+  Typography,
+  DialogContent,
 } from '@mui/material';
+
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
+
 // hooks
 import useTabs from '../../../hooks/useTabs';
 import useSettings from '../../../hooks/useSettings';
-import useTable, { getComparator, emptyRows } from '../../../hooks/useTable';
-// _mock_
-import { _userList } from '../../../_mock';
+import useTable, { emptyRows } from '../../../hooks/useTable';
+
 // components
 import Page from '../../../components/Page';
 import Iconify from '../../../components/Iconify';
 import Scrollbar from '../../../components/Scrollbar';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
-import { TableEmptyRows, TableHeadCustom, TableNoData, TableSelectedActions } from '../../../components/table';
+import { TableEmptyRows, TableHeadCustom, TableNoData } from '../../../components/table';
+
 // sections
-import { UserTableToolbar, UserTableRow } from '../../../sections/@dashboard/user/list';
+import { AdminTableRow, AdminTableToolbar } from '../../../sections/@dashboard/admin/list';
+
+// API
+import { getAdmins, banAdmin, unbanAdmin } from './useAdminAPI';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = ['all', 'active', 'banned'];
-
-const ROLE_OPTIONS = [
-  'all',
-  'ux designer',
-  'full stack designer',
-  'backend developer',
-  'project manager',
-  'leader',
-  'ui designer',
-  'ui/ux designer',
-  'front end developer',
-  'full stack developer',
+const STATUS_OPTIONS = [
+  { key: 0, value: '', label: 'Tất cả' },
+  { key: 1, value: 'true', label: 'Hoạt động' },
+  { key: 2, value: 'false', label: 'Đã khóa' },
 ];
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', align: 'left' },
-  { id: 'company', label: 'Company', align: 'left' },
-  { id: 'role', label: 'Role', align: 'left' },
-  { id: 'isVerified', label: 'Verified', align: 'center' },
-  { id: 'status', label: 'Status', align: 'left' },
+  { id: 'name', label: 'Họ Tên', align: 'left' },
+  { id: 'email', label: 'Email', align: 'left' },
+  { id: 'phone', label: 'Số điện thoại', align: 'left' },
+  { id: 'status', label: 'Trạng thái', align: 'left' },
   { id: '' },
 ];
 
 // ----------------------------------------------------------------------
 
 export default function UserList() {
+  const [tableData, setTableData] = useState([]);
+  const [metadata, setMetadata] = useState({});
+  const [filterName, setFilterName] = useState('');
+  const [searchRequest, setSearchRequest] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectIdAdmin, setSelectIdAdmin] = useState();
+
   const {
-    dense,
     page,
     order,
     orderBy,
     rowsPerPage,
     setPage,
     //
-    selected,
-    setSelected,
-    onSelectRow,
-    onSelectAllRows,
-    //
     onSort,
-    onChangeDense,
     onChangePage,
     onChangeRowsPerPage,
   } = useTable();
+
+  const { currentTab: filterStatus, onChangeTab } = useTabs('');
+  const onChangeFilterStatus = (event, newValue) => {
+    onChangeTab(event, newValue);
+    setPage(0);
+  };
+
+  const getAdminData = async () => {
+    const response = await getAdmins(page, rowsPerPage, filterStatus, searchRequest);
+    const { data, metadata } = response;
+
+    const admins = data.map((admin, index) => ({
+      id: admin.id,
+      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`,
+      name: admin.name,
+      email: admin.email,
+      phoneNumber: admin.idNavigation.phone,
+      status: admin.idNavigation.status,
+    }));
+    setTableData(admins);
+    setMetadata(metadata);
+  };
+
+  useEffect(() => {
+    getAdminData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, rowsPerPage, filterStatus, searchRequest]);
 
   const { themeStretch } = useSettings();
 
   const navigate = useNavigate();
 
-  const [tableData, setTableData] = useState(_userList);
-
-  const [filterName, setFilterName] = useState('');
-
-  const [filterRole, setFilterRole] = useState('all');
-
-  const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all');
-
   const handleFilterName = (filterName) => {
     setFilterName(filterName);
+  };
+
+  const handleSearchRequest = (name) => {
+    setSearchRequest(name);
     setPage(0);
   };
 
-  const handleFilterRole = (event) => {
-    setFilterRole(event.target.value);
-  };
-
-  const handleDeleteRow = (id) => {
-    const deleteRow = tableData.filter((row) => row.id !== id);
-    setSelected([]);
-    setTableData(deleteRow);
-  };
-
-  const handleDeleteRows = (selected) => {
-    const deleteRows = tableData.filter((row) => !selected.includes(row.id));
-    setSelected([]);
-    setTableData(deleteRows);
-  };
-
   const handleEditRow = (id) => {
-    navigate(PATH_DASHBOARD.user.edit(paramCase(id)));
+    navigate(PATH_DASHBOARD.admin.edit(id));
   };
 
-  const dataFiltered = applySortFilter({
-    tableData,
-    comparator: getComparator(order, orderBy),
-    filterName,
-    filterRole,
-    filterStatus,
-  });
+  const handleBanAdmin = async (id) => {
+    await banAdmin(id);
+    await getAdminData();
+  };
 
-  const denseHeight = dense ? 52 : 72;
+  const handleUnbanAdmin = async (id) => {
+    await unbanAdmin(id);
+    await getAdminData();
+  };
+  const handleOpenBanDialog = (idAdmin) => {
+    setSelectIdAdmin(idAdmin);
+    setOpenDialog(true);
+  };
+
+  const handleCloseBanDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const denseHeight = 72;
 
   const isNotFound =
-    (!dataFiltered.length && !!filterName) ||
-    (!dataFiltered.length && !!filterRole) ||
-    (!dataFiltered.length && !!filterStatus);
+    (!(metadata.totalCount ? metadata.totalCount : 0) && !!filterName) ||
+    (!(metadata.totalCount ? metadata.totalCount : 0) && !!filterStatus);
 
   return (
-    <Page title="Admin: List">
-      <Container maxWidth={themeStretch ? false : 'lg'}>
-        <HeaderBreadcrumbs
-          heading="Morderator List"
-          links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Morderator List' }]}
-          action={
-            <Button
-              variant="contained"
-              component={RouterLink}
-              to={PATH_DASHBOARD.admin.new}
-              startIcon={<Iconify icon={'eva:plus-fill'} />}
-            >
-              New Moderator
-            </Button>
-          }
-        />
-
-        <Card>
-          <Tabs
-            allowScrollButtonsMobile
-            variant="scrollable"
-            scrollButtons="auto"
-            value={filterStatus}
-            onChange={onChangeFilterStatus}
-            sx={{ px: 2, bgcolor: 'background.neutral' }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab disableRipple key={tab} label={tab} value={tab} />
-            ))}
-          </Tabs>
-
-          <Divider />
-
-          <UserTableToolbar
-            filterName={filterName}
-            filterRole={filterRole}
-            onFilterName={handleFilterName}
-            onFilterRole={handleFilterRole}
-            optionsRole={ROLE_OPTIONS}
+    <>
+      <Page title="Người điều hành">
+        <Container maxWidth={themeStretch ? false : 'lg'}>
+          <HeaderBreadcrumbs
+            heading="Danh sách người điều hành"
+            links={[{ name: 'Trang chủ', href: PATH_DASHBOARD.root }, { name: 'Danh sách người điều hành' }]}
+            action={
+              <Button
+                variant="contained"
+                component={RouterLink}
+                to={PATH_DASHBOARD.admin.new}
+                startIcon={<Iconify icon={'eva:plus-fill'} />}
+              >
+                Thêm mới người điều hành
+              </Button>
+            }
           />
 
-          {/* Scrollbar dùng để tạo scroll ngang cho giao diện điện thoại */}
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
-              {selected.length > 0 && (
-                <TableSelectedActions
-                  dense={dense}
-                  numSelected={selected.length}
-                  rowCount={tableData.length}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      tableData.map((row) => row.id)
-                    )
-                  }
-                  actions={
-                    <Tooltip title="Delete">
-                      <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
-                        <Iconify icon={'eva:trash-2-outline'} />
-                      </IconButton>
-                    </Tooltip>
-                  }
-                />
-              )}
+          <Card>
+            <Tabs
+              allowScrollButtonsMobile
+              variant="scrollable"
+              scrollButtons="auto"
+              value={filterStatus}
+              onChange={onChangeFilterStatus}
+              sx={{ px: 2, bgcolor: 'background.neutral' }}
+            >
+              {STATUS_OPTIONS.map((tab) => (
+                <Tab disableRipple key={tab.key} label={tab.label} value={tab.value} />
+              ))}
+            </Tabs>
 
-              <Table size={dense ? 'small' : 'medium'}>
-                <TableHeadCustom
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
-                  numSelected={selected.length}
-                  onSort={onSort}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      tableData.map((row) => row.id)
-                    )
-                  }
-                />
+            <Divider />
 
-                <TableBody>
-                  {dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-                    <UserTableRow
-                      key={row.id}
-                      row={row}
-                      selected={selected.includes(row.id)}
-                      onSelectRow={() => onSelectRow(row.id)}
-                      onDeleteRow={() => handleDeleteRow(row.id)}
-                      onEditRow={() => handleEditRow(row.name)}
+            {/* Filter dữ liệu */}
+            <AdminTableToolbar
+              filterName={filterName}
+              onFilterName={handleFilterName}
+              onEnterPress={handleSearchRequest}
+            />
+
+            {/* Scrollbar dùng để tạo scroll ngang cho giao diện điện thoại */}
+            <Scrollbar>
+              <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
+                <Table size={'medium'}>
+                  <TableHeadCustom order={order} orderBy={orderBy} headLabel={TABLE_HEAD} onSort={onSort} />
+
+                  <TableBody>
+                    {tableData.map((row) => (
+                      <AdminTableRow
+                        key={row.id}
+                        row={row}
+                        onEditRow={() => handleEditRow(row.id)}
+                        onDeleteRow={() => (row.status ? handleOpenBanDialog(row.id) : handleUnbanAdmin(row.id))}
+                      />
+                    ))}
+
+                    <TableEmptyRows
+                      height={denseHeight}
+                      emptyRows={emptyRows(page, rowsPerPage, metadata.totalCount ? metadata.totalCount : 0)}
                     />
-                  ))}
 
-                  <TableEmptyRows height={denseHeight} emptyRows={emptyRows(page, rowsPerPage, tableData.length)} />
+                    <TableNoData isNotFound={isNotFound} />
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Scrollbar>
 
-                  <TableNoData isNotFound={isNotFound} />
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Scrollbar>
+            <Box sx={{ position: 'relative' }}>
+              <TablePagination
+                labelRowsPerPage="Số dòng trên trang"
+                labelDisplayedRows={({ from, to, count }) => `${from} đến ${to} trên ${count}`}
+                rowsPerPageOptions={[5, 10, 15, 20]}
+                component="div"
+                count={metadata.totalCount ? metadata.totalCount : 0}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={onChangePage}
+                onRowsPerPageChange={onChangeRowsPerPage}
+              />
+            </Box>
+          </Card>
+        </Container>
+      </Page>
 
-          <Box sx={{ position: 'relative' }}>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={dataFiltered.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={onChangePage}
-              onRowsPerPageChange={onChangeRowsPerPage}
-            />
-
-            <FormControlLabel
-              control={<Switch checked={dense} onChange={onChangeDense} />}
-              label="Dense"
-              sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
-            />
-          </Box>
-        </Card>
-      </Container>
-    </Page>
+      <BanAdminDialog
+        open={openDialog}
+        onClose={handleCloseBanDialog}
+        idAdmin={selectIdAdmin}
+        handleBanAdmin={handleBanAdmin}
+      />
+    </>
   );
 }
 
 // ----------------------------------------------------------------------
+BanAdminDialog.propTypes = {
+  open: PropTypes.bool,
+  onClose: PropTypes.func,
+  idAdmin: PropTypes.number,
+  handleBanAdmin: PropTypes.func,
+};
 
-function applySortFilter({ tableData, comparator, filterName, filterStatus, filterRole }) {
-  const stabilizedThis = tableData.map((el, index) => [el, index]);
+function BanAdminDialog({ open, onClose, idAdmin, handleBanAdmin }) {
+  const onConfirm = () => {
+    handleBanAdmin(idAdmin);
+    onClose();
+  };
 
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-
-  tableData = stabilizedThis.map((el) => el[0]);
-
-  if (filterName) {
-    tableData = tableData.filter((item) => item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1);
-  }
-
-  if (filterStatus !== 'all') {
-    tableData = tableData.filter((item) => item.status === filterStatus);
-  }
-
-  if (filterRole !== 'all') {
-    tableData = tableData.filter((item) => item.role === filterRole);
-  }
-
-  return tableData;
+  return (
+    <Dialog open={open} maxWidth="xs" onClose={onClose}>
+      <DialogTitle>Bạn có chắc chắn muốn khóa người này?</DialogTitle>
+      <DialogContent>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          Bạn vẫn có thể mở khóa người này sau khi xác nhận!
+        </Typography>
+      </DialogContent>
+      <DialogActions>
+        <Button color="error" onClick={onClose}>
+          Hủy
+        </Button>
+        <Button color="primary" onClick={onConfirm} autoFocus>
+          Xác Nhận
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }

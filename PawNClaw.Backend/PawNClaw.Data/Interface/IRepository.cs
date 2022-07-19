@@ -36,5 +36,6 @@ namespace PawNClaw.Data.Interface
         //Remove một chuỗi entity
         void RemoveRange(IEnumerable<T> entity);
         bool SaveDbChange();
+        public Task<bool> SaveDbChangeAsync();
     }
 }

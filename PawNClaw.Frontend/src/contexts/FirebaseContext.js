@@ -7,8 +7,10 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  // updatePassword,
 } from 'firebase/auth';
-import { getFirestore, collection, doc, getDoc, setDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 //
 import { FIREBASE_API } from '../config';
 
@@ -18,6 +20,11 @@ import { setSession, setAccountInfoSession } from '../utils/jwt';
 
 // ----------------------------------------------------------------------
 
+const token = window.localStorage.getItem('accessToken');
+if (token) {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+}
+
 const ADMIN_EMAILS = ['hhoa0978@gmail.com', 'pawnclaw.ad@gmail.com'];
 
 const firebaseApp = initializeApp(FIREBASE_API);
@@ -25,6 +32,8 @@ const firebaseApp = initializeApp(FIREBASE_API);
 const AUTH = getAuth(firebaseApp);
 
 const DB = getFirestore(firebaseApp);
+
+const storage = getStorage(firebaseApp);
 
 // user: chứa thông tin user của firebase
 // accountInfo: chứa thông tin user của backend
@@ -73,8 +82,10 @@ const AuthContext = createContext({
   ...initialState,
   method: 'firebase',
   login: () => Promise.resolve(),
-  register: () => Promise.resolve(),
+  register: (email, password) => Promise.resolve(email, password),
   logout: () => Promise.resolve(),
+  uploadPhoto: (path, file) => Promise.resolve(path, file),
+  // changePassword: (password) => Promise.resolve(password),
 });
 
 // ----------------------------------------------------------------------
@@ -120,24 +131,12 @@ function AuthProvider({ children }) {
     }
   }, [dispatch]);
 
-  const getBackendToken = async (idToken, signInMethod) => {
-    const response = await axios.post('/api/auth/sign-in', {
-      idToken,
-      signInMethod,
-    });
-
-    const { jwtToken, ...userData } = response.data;
-    console.log('jwtToken: ', jwtToken);
-    setSession(jwtToken);
-    setAccountInfoSession(JSON.stringify(userData));
-    return userData;
-  };
-
   const login = async (email, password) => {
     const userCredentials = await signInWithEmailAndPassword(AUTH, email, password);
 
     if (userCredentials) {
       const { accessToken } = userCredentials.user;
+      console.log('accessToken: ', accessToken);
       const userData = await getBackendToken(accessToken, 'Email');
       if (userData) {
         dispatch({
@@ -151,16 +150,7 @@ function AuthProvider({ children }) {
     }
   };
 
-  const register = (email, password, firstName, lastName) =>
-    createUserWithEmailAndPassword(AUTH, email, password).then(async (res) => {
-      const userRef = doc(collection(DB, 'users'), res.user?.uid);
-
-      await setDoc(userRef, {
-        uid: res.user?.uid,
-        email,
-        displayName: `${firstName} ${lastName}`,
-      });
-    });
+  const register = (email, password) => createUserWithEmailAndPassword(AUTH, email, password);
 
   const logout = () => {
     signOut(AUTH);
@@ -168,6 +158,37 @@ function AuthProvider({ children }) {
     setAccountInfoSession(null);
     dispatch({ type: 'LOGOUT' });
   };
+
+  // create function upload photo to Firebase use async
+  const uploadPhoto = (path, file) => {
+    const storageRef = ref(storage, `${path}/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        // const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        // console.log("Upload is " + progress + "% done");
+        switch (snapshot.state) {
+          case 'paused':
+            console.log('Upload is paused');
+            break;
+          case 'running':
+            console.log('Upload is running');
+            break;
+          default:
+            break;
+        }
+      },
+      (error) => {
+        console.log(error.code);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => console.log('downloadURL: ', downloadURL));
+      }
+    );
+  };
+
+  // const changePassword = (password) => updatePassword(AUTH.currentUser, password);
 
   return (
     <AuthContext.Provider
@@ -192,6 +213,8 @@ function AuthProvider({ children }) {
         login,
         register,
         logout,
+        uploadPhoto,
+        // changePassword,
       }}
     >
       {children}
@@ -200,3 +223,24 @@ function AuthProvider({ children }) {
 }
 
 export { AuthContext, AuthProvider };
+
+const getBackendToken = async (idToken, signInMethod) => {
+  try {
+    const response = await axios.post('/api/auth/sign-in', {
+      idToken,
+      signInMethod,
+    });
+
+    if (response.statusText === 'OK') {
+      const { jwtToken, ...userData } = response.data;
+      console.log('jwtToken: ', `Bearer ${jwtToken}`);
+      setSession(jwtToken);
+      setAccountInfoSession(JSON.stringify(userData));
+      return userData;
+    }
+    return null;
+  } catch (error) {
+    console.log('error: ', error);
+    return null;
+  }
+};

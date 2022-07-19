@@ -12,7 +12,9 @@ const initialState = {
   events: [],
   isOpenModal: false,
   selectedEventId: null,
-  selectedRange: null,
+  bookingDetails: {},
+  bookingStatuses: [],
+  petData: [],
 };
 
 const slice = createSlice({
@@ -36,11 +38,14 @@ const slice = createSlice({
       state.events = action.payload;
     },
 
-    // CREATE EVENT
-    createEventSuccess(state, action) {
-      const newEvent = action.payload;
+    // UPDATE BOOKING STATUS
+    updateBookingStatusSuccess(state) {
       state.isLoading = false;
-      state.events = [...state.events, newEvent];
+    },
+
+    // CREATE PET HEALTH DATA SUCCESS
+    createPetHealthDataSuccess(state) {
+      state.isLoading = false;
     },
 
     // UPDATE EVENT
@@ -57,25 +62,24 @@ const slice = createSlice({
       state.events = updateEvent;
     },
 
-    // DELETE EVENT
-    deleteEventSuccess(state, action) {
-      const { eventId } = action.payload;
-      const deleteEvent = state.events.filter((event) => event.id !== eventId);
-      state.events = deleteEvent;
-    },
-
     // SELECT EVENT
     selectEvent(state, action) {
-      const eventId = action.payload;
+      const bookingDetails = action.payload;
       state.isOpenModal = true;
-      state.selectedEventId = eventId;
+      state.bookingDetails = bookingDetails;
+      state.isLoading = false;
     },
 
-    // SELECT RANGE
-    selectRange(state, action) {
-      const { start, end } = action.payload;
-      state.isOpenModal = true;
-      state.selectedRange = { start, end };
+    // GET BOOKING STATUS
+    getBookingStatusesSuccess(state, action) {
+      state.bookingStatuses = action.payload;
+      state.isLoading = false;
+    },
+
+    // GET PET DATA
+    getPetDataSuccess(state, action) {
+      state.petData = action.payload;
+      state.isLoading = false;
     },
 
     // OPEN MODAL
@@ -87,7 +91,6 @@ const slice = createSlice({
     closeModal(state) {
       state.isOpenModal = false;
       state.selectedEventId = null;
-      state.selectedRange = null;
     },
   },
 });
@@ -96,16 +99,33 @@ const slice = createSlice({
 export default slice.reducer;
 
 // Actions
-export const { openModal, closeModal, selectEvent } = slice.actions;
+export const { openModal, closeModal, selectEvent, getBookingStatusesSuccess, getPetDataSuccess, startLoading } =
+  slice.actions;
 
 // ----------------------------------------------------------------------
+
+const statusColor = {
+  1: 'orange',
+  2: 'blue',
+  3: 'green',
+  4: 'red',
+};
 
 export function getEvents() {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('/api/calendar/events');
-      dispatch(slice.actions.getEventsSuccess(response.data.events));
+      const response = await axios.get('/api/bookings');
+
+      const bookingData = response.data.map((booking) => ({
+        id: booking.id,
+        title: booking.customer.name,
+        start: booking.startBooking,
+        color: booking.color,
+        textColor: statusColor[booking.statusId],
+      }));
+
+      dispatch(slice.actions.getEventsSuccess(bookingData));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -114,12 +134,48 @@ export function getEvents() {
 
 // ----------------------------------------------------------------------
 
-export function createEvent(newEvent) {
+export function getBookingDetails(bookingId) {
   return async () => {
-    dispatch(slice.actions.startLoading());
+    dispatch(startLoading());
     try {
-      const response = await axios.post('/api/calendar/events/new', newEvent);
-      dispatch(slice.actions.createEventSuccess(response.data.event));
+      const response = await axios.get(`/api/bookings/for-staff/${bookingId}`);
+
+      const bookingDetails = {
+        id: response.data.id,
+        customer: response.data.customer,
+        total: response.data.total,
+        createTime: response.data.createTime,
+        startBooking: response.data.startBooking,
+        endBooking: response.data.endBooking,
+        statusId: response.data.statusId,
+        customerNote: response.data.customerNote,
+        staffNote: response.data.staffNote,
+        bookingDetails: response.data.bookingDetails,
+        serviceOrders: response.data.serviceOrders,
+        supplyOrders: response.data.supplyOrders,
+        petHealthHistories: response.data.petHealthHistories,
+      };
+
+      const bookingStatusesResponse = await axios.get('/api/bookingstatuses');
+
+      const petData = bookingDetails.bookingDetails.map((data) => ({
+        cageCode: data.cageCode,
+        line: data.line,
+        price: data.price,
+        duration: data.duration,
+        petBookingDetails: data.petBookingDetails.map((row) => ({
+          id: row.pet.id,
+          name: row.pet.name,
+          weight: row.pet.petHealthHistories[0]?.weight || '',
+          height: row.pet.petHealthHistories[0]?.height || '',
+          length: row.pet.petHealthHistories[0]?.length || '',
+          description: row.pet.petHealthHistories[0]?.description || '',
+        })),
+      }));
+
+      dispatch(selectEvent(bookingDetails));
+      dispatch(getBookingStatusesSuccess(bookingStatusesResponse.data));
+      dispatch(getPetDataSuccess(petData));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -128,15 +184,12 @@ export function createEvent(newEvent) {
 
 // ----------------------------------------------------------------------
 
-export function updateEvent(eventId, updateEvent) {
+export function updateBookingStatus({ id, statusId, staffNote }) {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.post('/api/calendar/events/update', {
-        eventId,
-        updateEvent,
-      });
-      dispatch(slice.actions.updateEventSuccess(response.data.event));
+      await axios.put('/api/bookings', { id, statusId, staffNote });
+      dispatch(slice.actions.updateBookingStatusSuccess());
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -159,13 +212,31 @@ export function deleteEvent(eventId) {
 
 // ----------------------------------------------------------------------
 
-export function selectRange(start, end) {
+export function createPetHealthStatus({ petData }, bookingId) {
   return async () => {
-    dispatch(
-      slice.actions.selectRange({
-        start: start.getTime(),
-        end: end.getTime(),
-      })
-    );
+    dispatch(slice.actions.startLoading());
+
+    try {
+      petData.map(async (data) => {
+        data.petBookingDetails.map(async (pet) => {
+          await axios.post('/api/pethealthhistories', {
+            isUpdatePet: true,
+            createPetHealthHistoryParameter: {
+              petId: pet.id,
+              bookingId,
+              weight: pet.weight,
+              height: pet.height,
+              length: pet.length,
+              description: pet.description,
+              centerName: 'Dogily',
+            },
+          });
+        });
+      });
+
+      dispatch(slice.actions.createPetHealthDataSuccess());
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
   };
 }

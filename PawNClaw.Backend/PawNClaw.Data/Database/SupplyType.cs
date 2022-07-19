@@ -35,11 +35,11 @@ namespace PawNClaw.Data.Database
         public bool? Status { get; set; }
 
         [ForeignKey(nameof(CreateUser))]
-        [InverseProperty(nameof(Admin.SupplyTypeCreateUserNavigations))]
-        public virtual Admin CreateUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.SupplyTypeCreateUserNavigations))]
+        public virtual Account CreateUserNavigation { get; set; }
         [ForeignKey(nameof(ModifyUser))]
-        [InverseProperty(nameof(Admin.SupplyTypeModifyUserNavigations))]
-        public virtual Admin ModifyUserNavigation { get; set; }
+        [InverseProperty(nameof(Account.SupplyTypeModifyUserNavigations))]
+        public virtual Account ModifyUserNavigation { get; set; }
         [InverseProperty(nameof(Supply.SupplyTypeCodeNavigation))]
         public virtual ICollection<Supply> Supplies { get; set; }
     }

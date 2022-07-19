@@ -1,4 +1,4 @@
-import { paramCase, capitalCase } from 'change-case';
+import { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 // @mui
 import { Container } from '@mui/material';
@@ -6,40 +6,44 @@ import { Container } from '@mui/material';
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
 import useSettings from '../../../hooks/useSettings';
-// _mock_
-import { _userList } from '../../../_mock';
 // components
 import Page from '../../../components/Page';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
+import { getAdmin } from './useAdminAPI';
 // sections
-import UserNewEditForm from '../../../sections/@dashboard/user/UserNewEditForm';
+import UserNewEditForm from '../../../sections/@dashboard/admin/AdminNewEditForm';
 
 // ----------------------------------------------------------------------
 
 export default function UserCreate() {
+  const [adminData, setAdminData] = useState({});
+
   const { themeStretch } = useSettings();
-
   const { pathname } = useLocation();
-
-  const { name = '' } = useParams();
 
   const isEdit = pathname.includes('edit');
 
-  const currentUser = _userList.find((user) => paramCase(user.name) === name);
+  const { id } = useParams();
+  useEffect(() => {
+    if (isEdit) {
+      getAdmin(id).then((data) => {
+        setAdminData(data);
+      });
+    }
+  }, [id, isEdit]);
 
   return (
-    <Page title="User: Create a new user">
+    <Page title="Người điều hành">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading={!isEdit ? 'Create a new user' : 'Edit user'}
+          heading={!isEdit ? 'Thêm mới người điều hành' : 'Sửa thông tin người điều hành'}
           links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.root },
-            { name: 'User', href: PATH_DASHBOARD.user.list },
-            { name: !isEdit ? 'New user' : capitalCase(name) },
+            { name: 'Trang chủ', href: PATH_DASHBOARD.root },
+            { name: 'Danh sách người điều hành', href: PATH_DASHBOARD.admin.list },
+            { name: !isEdit ? 'Thêm mới' : 'Sửa' },
           ]}
         />
-
-        <UserNewEditForm isEdit={isEdit} currentUser={currentUser} />
+        <UserNewEditForm isEdit={isEdit} adminData={adminData} />
       </Container>
     </Page>
   );

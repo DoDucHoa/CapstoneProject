@@ -12,7 +12,7 @@ DialogAnimate.propTypes = {
   onClose: PropTypes.func,
   open: PropTypes.bool.isRequired,
   sx: PropTypes.object,
-  variants: PropTypes.object
+  variants: PropTypes.object,
 };
 
 export default function DialogAnimate({ open = false, variants, onClose, children, sx, ...other }) {
@@ -21,7 +21,7 @@ export default function DialogAnimate({ open = false, variants, onClose, childre
       {open && (
         <Dialog
           fullWidth
-          maxWidth="xs"
+          maxWidth="lg"
           open={open}
           onClose={onClose}
           PaperComponent={(props) => (
@@ -32,14 +32,14 @@ export default function DialogAnimate({ open = false, variants, onClose, childre
                   distance: 120,
                   durationIn: 0.32,
                   durationOut: 0.24,
-                  easeIn: 'easeInOut'
+                  easeIn: 'easeInOut',
                 }).inUp)}
               sx={{
                 width: '100%',
                 height: '100%',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
               }}
             >
               <Box onClick={onClose} sx={{ width: '100%', height: '100%', position: 'fixed' }} />

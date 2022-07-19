@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
+import 'package:pawnclaw_mobile_application/common/date_picker.dart';
 import 'package:pawnclaw_mobile_application/common/input_validation.dart';
 import 'package:intl/intl.dart';
 
@@ -30,44 +31,32 @@ class _SignUpFormState extends State<SignUpForm> {
     super.initState();
   }
 
-  _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDatePickerMode: DatePickerMode.year,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1920),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null && picked != _selectedDate)
-      setState(() {
-        _selectedDate = picked;
-        _birthController.text = DateFormat.yMd().format(picked);
-      });
-  }
-
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
-        padding: const EdgeInsets.all(35),
+        padding: EdgeInsets.all(width * regularPadRate),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Spacer(flex: 35),
-            const Text(
-              "Welcome!",
+            Text(
+              "Chào mừng!",
               style: TextStyle(
-                fontSize: 65,
+                color: primaryFontColor,
+                fontSize: width * extraLargeFontRate,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const Spacer(flex: 1),
-            const Text(
-              "Please fill your information to finish signing up",
+            Text(
+              "Hãy điền thông tin của bạn để hoàn tất đăng nhập",
               style: TextStyle(
-                color: Colors.black54,
-                fontSize: 20,
+                color: lightFontColor,
+                fontSize: width * largeFontRate,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -75,8 +64,12 @@ class _SignUpFormState extends State<SignUpForm> {
             TextField(
               controller: _nameController,
               decoration: InputDecoration(
-                labelText: "Name",
+                labelText: "Tên",
                 errorText: nameError,
+                prefixIcon: Icon(
+                  Icons.person,
+                  color: primaryColor,
+                ),
               ),
               onChanged: (input) => setState(() {
                 nameError = InputValidator().isEmpty(input);
@@ -86,7 +79,11 @@ class _SignUpFormState extends State<SignUpForm> {
             TextField(
               controller: _phoneController,
               decoration: InputDecoration(
-                labelText: "Phone",
+                labelText: "Số điện thoại",
+                prefixIcon: Icon(
+                  Icons.phone,
+                  color: primaryColor,
+                ),
               ),
               readOnly: true,
             ),
@@ -94,8 +91,12 @@ class _SignUpFormState extends State<SignUpForm> {
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
-                labelText: "Email",
+                labelText: "Địa chỉ email",
                 errorText: emailError,
+                prefixIcon: Icon(
+                  Icons.mail,
+                  color: primaryColor,
+                ),
               ),
               onChanged: (input) => setState(() {
                 emailError = InputValidator().isEmpty(input) ??
@@ -105,13 +106,22 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
             const Spacer(flex: 3),
             GestureDetector(
-              onTap: () => _selectDate(context),
+              onTap: () async {
+                final DateTime? picked = await selectSingleDate(context);
+                setState(() {
+                  _selectedDate = picked ?? DateTime.now();
+                  _birthController.text =
+                      DateFormat('dd/MM/yyyy').format(picked!);
+                });
+              },
               child: TextField(
                 enabled: false,
                 controller: _birthController,
                 decoration: InputDecoration(
-                    labelText: "Birth",
-                    errorText: InputValidator().isEmpty(_birthController.text)),
+                  labelText: "Ngày sinh",
+                  errorText: InputValidator().isEmpty(_birthController.text),
+                  prefixIcon: const Icon(Icons.calendar_month),
+                ),
                 readOnly: true,
               ),
             ),
@@ -133,9 +143,10 @@ class _SignUpFormState extends State<SignUpForm> {
                               _selectedDate));
                         }
                       : () {},
-                  child: const Text(
+                  child: Text(
                     "Confirm",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: TextStyle(
+                        color: Colors.white, fontSize: width * regularFontRate),
                   ),
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(

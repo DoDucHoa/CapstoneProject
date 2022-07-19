@@ -2,10 +2,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
+import 'package:pawnclaw_mobile_application/blocs/transaction/transaction_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/repositories/auth/auth_repository.dart';
+import 'package:pawnclaw_mobile_application/repositories/pet/pet_repository.dart';
+import 'package:pawnclaw_mobile_application/repositories/transaction/transaction_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/home_screen/HomeScreen.dart';
 import 'package:pawnclaw_mobile_application/screens/signin_screen/SignInScreen.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'blocs/authentication/auth_bloc.dart';
 
@@ -16,7 +21,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key); 
 
   // This widget is the root of your application.
   @override
@@ -30,7 +35,9 @@ class MyApp extends StatelessWidget {
           create: (context) => AuthBloc(authRepository: AuthRepository())
             ..add(CheckingCurrentAuth(user)),
         ),
-      ],
+        BlocProvider(
+            create: (context) => PetBloc(petRepository: PetRepository())),
+      ], 
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'PawnClaw',
@@ -38,7 +45,16 @@ class MyApp extends StatelessWidget {
           primarySwatch:
               MaterialColor(primaryColor.value, getSwatch(primaryColor)),
         ),
-        home: SignInScreen(),
+        home: const SignInScreen(),
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('en'), 
+          const Locale('vi')
+          ],
       ),
     );
   }

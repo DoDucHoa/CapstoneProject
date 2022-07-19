@@ -1,17 +1,15 @@
 ﻿using FirebaseAdmin.Auth;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
+using PawNClaw.Data.Const;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
-using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,10 +23,14 @@ namespace PawNClaw.Business.Services
         private readonly IOwnerRepository _ownerRepository;
         private readonly IStaffRepository _staffRepository;
         private readonly ICustomerRepository _customerRepository;
+        private readonly IPhotoRepository _photoRepository;
+
+        private readonly ApplicationDbContext _db;
 
         public AuthService(IAccountRepository userInfoRepository, IRoleRepository roleRepository,
             IAdminRepository adminRepository, IOwnerRepository ownerRepository,
-            IStaffRepository staffRepository, ICustomerRepository customerRepository)
+            IStaffRepository staffRepository, ICustomerRepository customerRepository,
+            IPhotoRepository photoRepository, ApplicationDbContext db)
         {
             _repository = userInfoRepository;
             _roleRepository = roleRepository;
@@ -36,12 +38,13 @@ namespace PawNClaw.Business.Services
             _ownerRepository = ownerRepository;
             _staffRepository = staffRepository;
             _customerRepository = customerRepository;
+            _photoRepository = photoRepository;
+            _db = db;
         }
 
         //register
-        public async Task<LoginViewModel> Register(LoginRequestModel loginrequestmodel, AccountRequestParameter _account, CustomerRequestParameter _customer)
+        public async Task<LoginViewModel> Register(LoginRequestModel loginrequestmodel, AccountCreateParameter _account, CustomerCreateParameter _customer)
         {
-
             var userViewModel = await VerifyFirebaseTokenIdRegister(loginrequestmodel.IdToken, _account, _customer);
             var claims = new List<Claim>
             {
@@ -58,7 +61,7 @@ namespace PawNClaw.Business.Services
         }
 
         //verify for register
-        public async Task<LoginViewModel> VerifyFirebaseTokenIdRegister(string idtoken, AccountRequestParameter _account, CustomerRequestParameter _customer)
+        public async Task<LoginViewModel> VerifyFirebaseTokenIdRegister(string idtoken, AccountCreateParameter _account, CustomerCreateParameter _customer)
         {
             FirebaseToken decodedtoken;
             try
@@ -83,33 +86,34 @@ namespace PawNClaw.Business.Services
 
             Customer customerToDb = new Customer();
             customerToDb.Name = _customer.Name;
-            customerToDb.Status = true;
-            customerToDb.Birth = _customer.Birth;
 
-            try
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                if (_repository.GetFirstOrDefault(x => x.UserName.Trim().Equals(accountToDb.UserName)) != null
-                    || _repository.GetFirstOrDefault(x => x.Phone.Trim().Equals(accountToDb.Phone)) != null)
+                try
                 {
+                    if (_repository.GetFirstOrDefault(x => x.UserName.Trim().Equals(accountToDb.UserName)) != null
+                        || _repository.GetFirstOrDefault(x => x.Phone.Trim().Equals(accountToDb.Phone)) != null)
+                    {
+                        throw new Exception();
+                    }
+                    _repository.Add(accountToDb);
+                    _repository.SaveDbChange();
+                    customerToDb.Id = accountToDb.Id;
+                    _customerRepository.Add(customerToDb);
+                    _customerRepository.SaveDbChange();
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
                     throw new Exception();
                 }
-                _repository.Add(accountToDb);
-                _repository.SaveDbChange();
-                customerToDb.Id = accountToDb.Id;
-                _customerRepository.Add(customerToDb);
-                _customerRepository.SaveDbChange();
             }
-            catch
-            {
-                throw new Exception();
-            }
-
 
             // query account table in db
             var account = new Account();
             try
             {
-
                 account = _repository.GetFirstOrDefault(x => x.Phone.Equals(user.PhoneNumber));
 
                 //Not in database
@@ -152,7 +156,6 @@ namespace PawNClaw.Business.Services
                 throw new Exception();
             }
 
-
             var loginViewModel = new LoginViewModel
             {
                 Id = account.Id,
@@ -161,6 +164,7 @@ namespace PawNClaw.Business.Services
                 Name = Name,
                 Phone = account.Phone,
                 Email = Email,
+                Url = null,
                 JwtToken = null
             };
             return loginViewModel;
@@ -172,7 +176,7 @@ namespace PawNClaw.Business.Services
             var userViewModel = await VerifyFirebaseTokenId(loginRequestModel.IdToken, loginRequestModel.deviceId, loginRequestModel.SignInMethod);
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Name, userViewModel.Name != null ? userViewModel.Name : ""),
+                new(ClaimTypes.Name, userViewModel.Name ?? ""),
                 new(ClaimTypes.Email, userViewModel.UserName),
                 new(ClaimTypes.Role, userViewModel.Role),
             };
@@ -208,11 +212,16 @@ namespace PawNClaw.Business.Services
                     case "Email":
                         account = _repository.GetFirstOrDefault(x => x.UserName.Equals(user.Email));
                         break;
+
                     case "Google":
                         account = _repository.GetFirstOrDefault(x => x.UserName.Equals(user.Email));
                         break;
+
                     case "Phone":
                         account = _repository.GetFirstOrDefault(x => x.Phone.Equals(user.PhoneNumber));
+                        break;
+
+                    default:
                         break;
                 }
 
@@ -244,35 +253,50 @@ namespace PawNClaw.Business.Services
 
             string Name = null;
             string Email = null;
+
             //Get data for loginViewModel
             try
             {
                 string roleCode = account.RoleCode.Trim();
                 switch (roleCode)
                 {
-                    case "01":
+                    case "AD":
                         Name = _adminRepository.Get(account.Id).Name;
                         Email = _adminRepository.Get(account.Id).Email;
                         break;
-                    case "02":
+
+                    case "MOD":
                         Name = _adminRepository.Get(account.Id).Name;
                         Email = _adminRepository.Get(account.Id).Email;
                         break;
-                    case "03":
+
+                    case "OWN":
                         Name = _ownerRepository.Get(account.Id).Name;
                         Email = _ownerRepository.Get(account.Id).Email;
                         break;
-                    case "04":
+
+                    case "STF":
                         break;
-                    case "05":
+
+                    case "CUS":
                         Name = _customerRepository.Get(account.Id).Name;
                         Email = account.UserName;
+                        break;
+
+                    default:
                         break;
                 }
             }
             catch
             {
                 throw new Exception();
+            }
+
+            var photo = _photoRepository.GetPhotosByIdActorAndPhotoType(account.Id, PhotoTypesConst.Account);
+            string url = null;
+            if (photo.Count() > 0)
+            {
+                url = photo.First().Url;
             }
 
             var loginViewModel = new LoginViewModel
@@ -283,6 +307,7 @@ namespace PawNClaw.Business.Services
                 Name = Name,
                 Phone = account.Phone,
                 Email = Email,
+                Url = url,
                 JwtToken = null
             };
 
@@ -307,7 +332,7 @@ namespace PawNClaw.Business.Services
             {
                 Subject = new ClaimsIdentity(claims),
                 //Expires = DateTime.Now.AddDays(5),
-                //Expires = DateTime.Now.AddDays(7),
+                Expires = DateTime.Now.AddDays(30),
                 SigningCredentials = signinCredentials,
             };
 
@@ -315,7 +340,6 @@ namespace PawNClaw.Business.Services
             var tokenStr = tokenHandler.WriteToken(token);
 
             return tokenStr;
-
         }
 
         //public string GenerateRefreshToken()
