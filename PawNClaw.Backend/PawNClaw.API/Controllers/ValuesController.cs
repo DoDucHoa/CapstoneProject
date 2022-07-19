@@ -19,10 +19,13 @@ namespace PawNClaw.API.Controllers
 
         PriceRepository priceRepository;
 
-        public ValuesController(SearchService service, PriceRepository priceRepository)
+        BookingService bookingService;
+
+        public ValuesController(SearchService service, PriceRepository priceRepository, BookingService bookingService)
         {
             this.service = service;
             this.priceRepository = priceRepository;
+            this.bookingService = bookingService;
         }
 
         [HttpGet]
@@ -31,6 +34,12 @@ namespace PawNClaw.API.Controllers
         public IActionResult TestAuthToken()
         {
             return Ok("Admin-Oke");
+        }
+
+        [HttpPost]
+        public IActionResult TestGet(int CenterId, int? StatusId, string CageCode)
+        {
+            return Ok(bookingService.GetBookingByCageCode(CenterId, StatusId, CageCode));
         }
     }
 }

@@ -414,5 +414,13 @@ namespace PawNClaw.Business.Services
 
             return true;
         }
+
+        //Get Booking By Cage Code For Search Activity
+        public Booking GetBookingByCageCode(int CenterId, int? StatusId, string CageCode)
+        {
+            var values = _bookingRepository.GetBookingByCageCodeForStaff(CenterId, StatusId, CageCode);
+
+            return values;
+        }
     }
 }

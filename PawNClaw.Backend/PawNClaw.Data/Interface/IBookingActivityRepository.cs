@@ -11,5 +11,7 @@ namespace PawNClaw.Data.Interface
     public interface IBookingActivityRepository : IRepository<BookingActivity>
     {
         public int CreateBookingAcivities(CreateBookingActivityParameter createBookingActivityParameter);
+
+        public IEnumerable<BookingActivity> GetBookingActivitiesByBookingAndPetId(int BookingId, int BookingDetailId, int PetId);
     }
 }
