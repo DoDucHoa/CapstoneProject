@@ -8,6 +8,8 @@ Future<DateTime?> selectSingleDate(BuildContext context) async {
     initialDate: DateTime.now(),
     firstDate: DateTime(1920),
     lastDate: DateTime.now(),
+    locale: const Locale('vi','VI'),
+    
   );
 }
 
@@ -25,6 +27,17 @@ Future<DateTime?> selectSingleTime(
     onCancel: () {},
   );
   return result;
+}
+
+Future<DateTime?> selectSingleDateFrom(BuildContext context, DateTime startDate) async {
+  return await showDatePicker(
+    context: context,
+    initialDatePickerMode: DatePickerMode.day,
+    initialDate: startDate,
+    firstDate: startDate,
+    lastDate: DateTime(2050),// halt: cần thêm ràng buộc
+    locale: const Locale('vi','VI'),
+  );
 }
 
 // DateTime RoundUp(DateTime dt, TimeSpan d)

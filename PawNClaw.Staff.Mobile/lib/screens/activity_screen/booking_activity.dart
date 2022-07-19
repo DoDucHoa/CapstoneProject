@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:pncstaff_mobile_application/blocs/activity/activity_bloc.dart';
+import 'package:pncstaff_mobile_application/blocs/booking/booking_bloc.dart';
 import 'package:pncstaff_mobile_application/common/components/loading_indicator.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/common/services/upload_service.dart';
@@ -17,38 +18,22 @@ import 'package:pncstaff_mobile_application/screens/activity_screen/subscreens/s
 import 'subscreens/service_activity.dart';
 
 class BookingActivityScreen extends StatefulWidget {
-  const BookingActivityScreen({required this.bookingId, Key? key})
+  const BookingActivityScreen({required this.booking, Key? key})
       : super(key: key);
 
-  final int? bookingId;
+  final BookingDetail? booking;
 
   @override
   State<BookingActivityScreen> createState() => _BookingActivityScreenState();
 }
 
 class _BookingActivityScreenState extends State<BookingActivityScreen> {
-  BookingDetail? booking;
   List<Pet> pets = [];
 
   @override
   void initState() {
     // TODO: implement initState
 
-    BookingRepository()
-        .getBookingDetail(bookingId: widget.bookingId!)
-        .then((value) {
-      value.bookingDetails!.forEach(
-        (element) => element.petBookingDetails!.forEach((element) {
-          pets.add(element.pet!);
-        }),
-      );
-      setState(
-        () {
-          booking = value;
-          pets = pets;
-        },
-      );
-    });
     super.initState();
   }
 
@@ -56,10 +41,11 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    var booking = widget.booking;
     return booking != null
         ? BlocProvider(
             create: (context) =>
-                ActivityBloc()..add(InitActivity(booking: booking!)),
+                ActivityBloc()..add(InitActivity(booking: booking)),
             child: BlocBuilder<ActivityBloc, ActivityState>(
               builder: (context, state) {
                 return Scaffold(
@@ -114,7 +100,7 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      booking!.customer!.name ?? "",
+                                      booking.customer!.name ?? "",
                                       style: TextStyle(
                                         fontSize: width * largeFontRate,
                                         fontWeight: FontWeight.w500,
@@ -124,7 +110,7 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                     GestureDetector(
                                       onTap: () {
                                         Clipboard.setData(ClipboardData(
-                                            text: booking!.customer!
+                                            text: booking.customer!
                                                 .idNavigation!.phone!));
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
@@ -143,7 +129,7 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                             ),
                                             TextSpan(
                                               text:
-                                                  " ${booking!.customer!.idNavigation!.phone!.replaceFirst("+84", "0")}",
+                                                  " ${booking.customer!.idNavigation!.phone!.replaceFirst("+84", "0")}",
                                               style: TextStyle(
                                                 color: lightFontColor,
                                                 fontWeight: FontWeight.w600,
@@ -183,7 +169,7 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                   ),
                                   Text(
                                     DateFormat('HH:mm, dd/MM/yyyy')
-                                        .format(booking!.startBooking!),
+                                        .format(booking.startBooking!),
                                     style: TextStyle(
                                       color: primaryFontColor,
                                       fontWeight: FontWeight.w500,
@@ -209,7 +195,7 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                   ),
                                   Text(
                                     DateFormat('HH:mm, dd/MM/yyyy')
-                                        .format(booking!.endBooking!),
+                                        .format(booking.endBooking!),
                                     style: TextStyle(
                                       color: primaryFontColor,
                                       fontWeight: FontWeight.w500,
@@ -225,8 +211,8 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                           padding: const EdgeInsets.all(30),
                           child: CircularPercentIndicator(
                             radius: height * 0.15,
-                            percent: booking!.getDoneActivites() /
-                                booking!.getTotalActivities(),
+                            percent: booking.getDoneActivites() /
+                                booking.getTotalActivities(),
                             lineWidth: 18,
                             fillColor: Colors.white,
                             progressColor: primaryColor,
@@ -239,8 +225,8 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: (booking!.getDoneActivites() /
-                                            booking!.getTotalActivities() *
+                                    text: (booking.getDoneActivites() /
+                                            booking.getTotalActivities() *
                                             100)
                                         .toStringAsFixed(0),
                                     style: TextStyle(
@@ -261,9 +247,8 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                             ),
                           ),
                         ),
-                        (booking!.getTotalActivities() -
-                                    booking!.getDoneActivites() >
-                                0)
+                        (booking.getTotalActivities() >
+                                booking.getDoneActivites())
                             ? InkWell(
                                 borderRadius: BorderRadius.circular(20),
                                 onTap: () => showCupertinoDialog(
@@ -294,7 +279,9 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                           ),
                                           Column(
                                             children: [
-                                              (booking!.getUndoneSupplyAct() >
+                                              (booking
+                                                          .getUndoneSupplyAct()
+                                                          .length >
                                                       0)
                                                   ? Container(
                                                       width: width * 0.7,
@@ -310,7 +297,7 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                                                   .circular(
                                                                       20)),
                                                       child: Text(
-                                                        "Cung cấp ${booking!.getUndoneSupplyAct()} vật dụng để hoàn thành",
+                                                        "Cung cấp ${booking.getUndoneSupplyAct().length} vật dụng để hoàn thành",
                                                         style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -319,7 +306,36 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                                       ),
                                                     )
                                                   : Container(),
-                                              (booking!.getUndoneServiceAct() >
+                                              (booking
+                                                          .getUndoneServiceAct()
+                                                          .length >
+                                                      0)
+                                                  ? Container(
+                                                      width: width * 0.7,
+                                                      padding: EdgeInsets.all(
+                                                          width * 0.03),
+                                                      margin: EdgeInsets.only(
+                                                          top: width * 0.03),
+                                                      decoration: BoxDecoration(
+                                                          color:
+                                                              backgroundColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      20)),
+                                                      child: Text(
+                                                        "Cung cấp ${booking.getUndoneServiceAct().length} dịch vụ để hoàn thành",
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : Container(),
+                                              (booking
+                                                          .getUndoneFeedingAct()
+                                                          .length >
                                                       0)
                                                   ? Container(
                                                       width: width * 0.7,
@@ -337,7 +353,7 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                                                   .circular(
                                                                       20)),
                                                       child: Text(
-                                                        "Cung cấp ${booking!.getUndoneServiceAct()} dịch vụ để hoàn thành",
+                                                        "Cho ăn ${booking.getUndoneFeedingAct().length} lần để hoàn thành",
                                                         style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -382,7 +398,7 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                         ),
                                       ),
                                       Text(
-                                          "${booking!.getDoneActivites()}/${booking!.getTotalActivities()}")
+                                          "${booking.getDoneActivites()}/${booking.getTotalActivities()}")
                                     ],
                                   ),
                                 ),
@@ -439,8 +455,11 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                   InkWell(
                                     onTap: () => Navigator.of(context)
                                         .push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          SupplyActivity(booking: booking!),
+                                      builder: (_) => BlocProvider.value(
+                                          value: BlocProvider.of<BookingBloc>(
+                                              context),
+                                          child:
+                                              SupplyActivity(booking: booking)),
                                     )),
                                     child: Container(
                                       margin: EdgeInsets.only(
@@ -473,8 +492,9 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                               ),
                                             ),
                                             Text(
-                                              booking!
+                                              booking
                                                   .getUndoneSupplyAct()
+                                                  .length
                                                   .toString(),
                                               style: TextStyle(
                                                   fontWeight: FontWeight.w600,
@@ -493,11 +513,13 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                     ),
                                   ),
                                   InkWell(
-                                    onTap: () => Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          ServiceActivity(booking: booking!),
-                                    )),
+                                    onTap: () => Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (_) => BlocProvider.value(
+                                                value: BlocProvider.of<
+                                                    BookingBloc>(context),
+                                                child: ServiceActivity(
+                                                    booking: booking)))),
                                     child: Container(
                                       margin: EdgeInsets.only(
                                           right: width * smallPadRate),
@@ -529,8 +551,9 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                                               ),
                                             ),
                                             Text(
-                                              booking!
+                                              booking
                                                   .getUndoneServiceAct()
+                                                  .length
                                                   .toString(),
                                               style: TextStyle(
                                                   fontWeight: FontWeight.w600,

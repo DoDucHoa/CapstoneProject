@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
+import 'package:pawnclaw_mobile_application/screens/home_screen/HomeScreen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/track_booking_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -87,7 +88,8 @@ class _BookingSuccessState extends State<BookingSuccess> {
               SizedBox(
                 height: width * smallPadRate,
               ),
-              Text('Congratulations!'),
+              Text('Đặt lịch thành công!',style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, height: 1.5),),
+              Text('Bạn có thể xem thêm chi tiết\n ở mục Đơn hàng.',style: TextStyle(fontSize: 15, height: 1.5),textAlign: TextAlign.center,),
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: width * mediumPadRate,
@@ -96,10 +98,12 @@ class _BookingSuccessState extends State<BookingSuccess> {
                 child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => TrackBooking(
-                                center: widget.center,
-                                booking: widget.booking,
-                              )));
+                          builder: (context) => HomeScreen()));
+                      // Navigator.of(context).push(MaterialPageRoute(
+                      //     builder: (context) => TrackBooking(
+                      //           center: widget.center,
+                      //           booking: widget.booking,
+                      //         )));
                     },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -110,7 +114,7 @@ class _BookingSuccessState extends State<BookingSuccess> {
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: Center(
                         child: Text(
-                          "ĐÓNG",
+                          "Quay về trang chủ",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),

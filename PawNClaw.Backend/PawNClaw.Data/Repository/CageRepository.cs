@@ -52,5 +52,12 @@ namespace PawNClaw.Data.Repository
 
             return query;
         }
+
+        public Cage GetCage(string Code, int CenterId)
+        {
+            Cage query = _dbSet.Find(Code, CenterId);
+
+            return query;
+        }
     }
 }

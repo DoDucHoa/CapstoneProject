@@ -6,6 +6,7 @@ import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/common/vn_locale.dart';
 import 'package:intl/intl.dart';
 import 'package:pncstaff_mobile_application/models/booking_detail.dart';
+import 'package:pncstaff_mobile_application/screens/activity_screen/booking_activity.dart';
 import 'package:pncstaff_mobile_application/screens/home_screen/subscreens/booking_cage.dart';
 
 class TodoList extends StatefulWidget {
@@ -24,27 +25,17 @@ class _TodoListState extends State<TodoList> {
     super.initState();
   }
 
-  List<FoodSchedules>? getRemainFood(BookingDetails detail) {
-    List<FoodSchedules> result = detail.foodSchedules!;
-    if (detail.bookingActivities != null &&
-        detail.bookingActivities!.length > 0) {
-      int length = detail.bookingActivities!.length;
-      for (var i = 0; i < length; i++) {
-        result.removeAt(0);
-        detail.bookingActivities!.removeAt(0);
-      }
-      return result;
-    }
-    return result;
-  }
-
   List<BookingDetails>? getRemainFoodByTime(
       String time, List<BookingDetails> details) {
-    List<BookingDetails>? result = [];
+    List<BookingDetails> result = [];
     details.forEach((detail) {
-      getRemainFood(detail)?.forEach((element) {
-        if (element.fromTime == time) {
-          result!.add(detail);
+      var booking = widget.bookings
+          .firstWhere((element) => element.id == detail.bookingId);
+      booking.getUndoneActivities().forEach((element) {
+        if ((DateFormat('HH:mm').format(element.activityTimeFrom!) ==
+                time.substring(0, 5)) &&
+            (element.provideTime == null)) {
+          result.add(detail);
         }
       });
     });
@@ -54,11 +45,7 @@ class _TodoListState extends State<TodoList> {
     return result;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
-    var bookings = widget.bookings;
+  List<String> getAllTimeMarks(List<BookingDetail> bookings) {
     List<String> times = [];
     bookings.forEach((element) {
       times.addAll(element.getAllStartTime());
@@ -69,25 +56,27 @@ class _TodoListState extends State<TodoList> {
     times.sort(
       (a, b) => a.compareTo(b),
     );
-    print(times);
+    return times;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    var bookings = widget.bookings;
+    List<String> times = getAllTimeMarks(bookings);
     List<BookingDetails> remainFeedingActivites = [];
-    times.forEach(
-      (time) {
-        bookings.forEach((booking) {
-          booking.bookingDetails!.forEach((detail) {
-            var remain = getRemainFood(detail);
-            remain!.forEach((remain) {
-              if (remain.fromTime == time) {
-                remainFeedingActivites.add(detail);
-              }
-            });
-          });
-        });
+    bookings.forEach(
+      (element) {
+        remainFeedingActivites.addAll(element.getUndoneFeedingAct());
       },
     );
-    print(remainFeedingActivites.toSet().toList());
-    print(bookings[0].bookingDetails![0].foodSchedules);
+    remainFeedingActivites = [
+      ...{...remainFeedingActivites}
+    ];
+    print(remainFeedingActivites);
     return SingleChildScrollView(
+      padding: EdgeInsets.all(width * smallPadRate),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -137,12 +126,16 @@ class _TodoListState extends State<TodoList> {
                                   return InkWell(
                                     onTap: () => Navigator.of(context).push(
                                         MaterialPageRoute(
-                                            builder: (context) => BookingCageScreen(
-                                                bookings: bookings,
-                                                bookingDetail: getRemainFoodByTime(
-                                                        times[timeIdx],
-                                                        remainFeedingActivites)![
-                                                    index]))),
+                                            builder: (_) => BlocProvider.value(
+                                                value: BlocProvider.of<
+                                                    BookingBloc>(context),
+                                                child: BookingCageScreen(
+                                                    bookings: bookings,
+                                                    bookingDetail:
+                                                        getRemainFoodByTime(
+                                                                times[timeIdx],
+                                                                remainFeedingActivites)![
+                                                            index])))),
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: width * smallPadRate,

@@ -1,3 +1,6 @@
+import 'package:pncstaff_mobile_application/models/pet_center.dart';
+import 'package:pncstaff_mobile_application/repositories/center/center_repository.dart';
+
 class Account {
   String? _jwtToken;
   int? _id;

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:pncstaff_mobile_application/blocs/activity/activity_bloc.dart';
+import 'package:pncstaff_mobile_application/blocs/booking/booking_bloc.dart';
 import 'package:pncstaff_mobile_application/common/components/loading_indicator.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/common/services/upload_service.dart';
@@ -257,10 +258,12 @@ class _BookingCageScreenState extends State<BookingCageScreen> {
       // ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => ActivityDetail(
+            builder: (_) => BlocProvider.value(
+                value: BlocProvider.of<BookingBloc>(context),
+                child: ActivityDetail(
                   pet: pets[selectedIndex],
                   cage: bookingDetail,
-                ))),
+                )))),
         label: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

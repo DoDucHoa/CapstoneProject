@@ -184,9 +184,12 @@ class TransactionCard extends StatelessWidget {
                     SizedBox(
                       width: 10,
                     ),
-                    Text(
-                      booking.center!.name!,
-                      style: TextStyle(),
+                    Container(
+                      height: 15,
+                      child: Text(
+                        booking.center!.name!,
+                        style: TextStyle(fontSize: 15, height: 1),
+                      ),
                     ),
                     Expanded(child: SizedBox()),
                     Text(

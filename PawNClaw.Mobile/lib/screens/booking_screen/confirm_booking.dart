@@ -97,36 +97,65 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            // mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                center.name ?? "",
-                                style: TextStyle(
-                                  fontSize: width * largeFontRate,
-                                  fontWeight: FontWeight.w500,
-                                  color: primaryFontColor,
+                              Container(
+                                height: width * largeFontRate,
+                                child: Text(
+                                  center.name ?? "",
+                                  style: TextStyle(
+                                      fontSize: width * largeFontRate,
+                                      fontWeight: FontWeight.w500,
+                                      color: primaryFontColor,
+                                      height: 1),
                                 ),
                               ),
-                              RichText(
-                                text: TextSpan(
-                                  children: [
-                                    WidgetSpan(
-                                      child: Icon(
-                                        Icons.location_on_rounded,
-                                        size: width * regularFontRate,
-                                        color: primaryColor,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: center.address ?? "",
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on_rounded,
+                                    size: width * regularFontRate,
+                                    color: primaryColor,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Container(
+                                    width: width * 0.5,
+                                    child: Text(
+                                      center.address!,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                       style: TextStyle(
                                         color: lightFontColor,
                                         fontWeight: FontWeight.w400,
                                         fontSize: width * smallFontRate,
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
+                                  ),
+                                ],
+                              )
+                              // RichText(
+                              //   text: TextSpan(
+                              //     children: [
+                              //       WidgetSpan(
+                              //         child: Icon(
+                              //           Icons.location_on_rounded,
+                              //           size: width * regularFontRate,
+                              //           color: primaryColor,
+                              //         ),
+                              //       ),
+                              //       TextSpan(
+                              //         text: center.address ?? "",
+                              //         style: TextStyle(
+                              //           color: lightFontColor,
+                              //           fontWeight: FontWeight.w400,
+                              //           fontSize: width * smallFontRate,
+                              //         ),
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
                             ],
                           ),
                         )
@@ -141,23 +170,69 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                       vertical: width * smallPadRate,
                     ),
                     width: width,
-                    height: height * 0.15,
+                    //height: height * 0.15,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.white,
                     ),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "THỜI GIAN",
-                          style: TextStyle(
-                            color: primaryFontColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: width * regularFontRate,
+                        Row(children: [
+                          Text(
+                            "THỜI GIAN",
+                            style: TextStyle(
+                              color: primaryFontColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: width * regularFontRate,
+                            ),
                           ),
-                        ),
+                          IconButton(
+                            padding: EdgeInsets.all(0),
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => Dialog(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(15)),
+                                          ),
+                                          padding: EdgeInsets.all(20),
+                                          width: width * 0.5,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                'Thời gian Checkout dự kiến được dựa theo quy định của trung tâm. Trung tâm sẽ thu thêm phí nếu bạn đến đón các bé sau thời gian này nhé! ',
+                                                textAlign: TextAlign.justify,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Đóng'))
+                                            ],
+                                          ),
+                                        ),
+                                      ));
+                            },
+                            icon: Icon(
+                              Icons.info_rounded,
+                              color: primaryColor,
+                              size: 18,
+                            ),
+                          )
+                        ]),
                         Container(
                           padding: EdgeInsets.all(width * smallPadRate * 0.5),
                           decoration: BoxDecoration(
@@ -223,6 +298,9 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                             ],
                           ),
                         ),
+                        SizedBox(
+                          height: width * smallPadRate,
+                        )
                       ],
                     ),
                   ),
@@ -311,11 +389,14 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                   physics: ClampingScrollPhysics(),
                                   itemCount: pets.length,
                                   itemBuilder: (context, index) {
-                                    return BookingItemCard(
-                                      booking: state.booking,
-                                      pet: pets[index],
-                                      center: center,
-                                    );
+                                    return (state.booking.hasAdditionalItems(
+                                            pets[index].id!))
+                                        ? BookingItemCard(
+                                            booking: state.booking,
+                                            pet: pets[index],
+                                            center: center,
+                                          )
+                                        : Container();
                                   }),
                             ],
                           ),
@@ -512,7 +593,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                   state.booking.bookingDetailCreateParameters!
                                       .first.duration!
                                       .toStringAsFixed(0) +
-                                  " giờ",
+                                  " ngày",
                               style: TextStyle(
                                 color: primaryFontColor,
                                 fontSize: width * regularFontRate * 0.8,

@@ -26,4 +26,13 @@ namespace PawNClaw.Data.Parameter
         public CreateBookingActivityParameter createBookingActivityParameter { get; set; }
         public CreatePhotoParameter createPhotoParameter { get; set; }
     }
+
+    public class UpdateBookingActivityParameter
+    {
+        public int Id { get; set; }
+        public DateTime? ProvideTime { get; set; }
+        public string Description { get; set; }
+
+        public CreatePhotoParameter createPhotoParameter { get; set; }
+    }
 }

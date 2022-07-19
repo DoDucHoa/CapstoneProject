@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pncstaff_mobile_application/blocs/booking/booking_bloc.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/common/services/upload_service.dart';
 import 'package:pncstaff_mobile_application/models/activity_request_model.dart';
@@ -26,10 +28,49 @@ class ActivityDetail extends StatefulWidget {
 
 class _ActivityDetailState extends State<ActivityDetail> {
   String? imageUrl;
+
+  int getActivityId(
+      SupplyOrders? supply, ServiceOrders? service, BookingDetails? cage) {
+    int result;
+    if (supply != null) {
+      BookingDetail booking =
+          (BlocProvider.of<BookingBloc>(context).state as BookingLoaded)
+              .bookings
+              .firstWhere((element) => element.id == supply.bookingId);
+      result = booking.bookingActivities!
+          .firstWhere((element) =>
+              element.supplyId == supply.supply!.id &&
+              element.provideTime == null)
+          .id!;
+    } else if (service != null) {
+      BookingDetail booking =
+          (BlocProvider.of<BookingBloc>(context).state as BookingLoaded)
+              .bookings
+              .firstWhere((element) => element.id == service.bookingId);
+      result = booking.bookingActivities!
+          .firstWhere((element) =>
+              element.serviceId == service.service!.id &&
+              element.provideTime == null)
+          .id!;
+    } else {
+      BookingDetail booking =
+          (BlocProvider.of<BookingBloc>(context).state as BookingLoaded)
+              .bookings
+              .firstWhere((element) => element.id == cage!.bookingId);
+      result = booking.bookingActivities!
+          .firstWhere((element) =>
+              element.bookingDetailId == cage!.id &&
+              element.provideTime == null)
+          .id!;
+    }
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     var supply = widget.supply;
     var service = widget.service;
+    var cage = widget.cage;
     var pet = widget.pet;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -239,28 +280,19 @@ class _ActivityDetailState extends State<ActivityDetail> {
                           ? () async {
                               ActivityRequestModel activity =
                                   ActivityRequestModel(
-                                createBookingActivityParameter:
-                                    CreateBookingActivityParameter(
-                                  bookingId: supply?.bookingId ??
-                                      service?.bookingId ??
-                                      widget.cage?.bookingId,
-                                  description: widget.cage == null
-                                      ? "Cung cấp ${supply?.supply?.name ?? service?.service?.description}"
-                                      : "Cho ăn",
-                                  provideTime: DateFormat('yyyy-MM-dd HH:mm:ss')
-                                      .format(DateTime.now()),
-                                  serviceId: service?.service?.id,
-                                  supplyId: supply?.supply?.id,
-                                  bookingDetailId: widget.cage?.id,
-                                  petId: pet.id,
-                                ),
+                                id: getActivityId(supply, service, cage),
+                                description: widget.cage == null
+                                    ? "Cung cấp ${supply?.supply?.name ?? service?.service?.description}"
+                                    : "Cho ăn",
+                                provideTime: DateFormat('yyyy-MM-dd HH:mm:ss')
+                                    .format(DateTime.now()),
                                 createPhotoParameter: CreatePhotoParameter(
                                   photoTypeId: 11,
                                   url: imageUrl,
                                 ),
                               );
                               String? result = await ActivityRepository()
-                                  .addNewActivity(activity);
+                                  .updateActivity(activity);
                               print(result);
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => HomeScreen(),

@@ -12,5 +12,7 @@ namespace PawNClaw.Data.Interface
         public int CountCageByCageTypeIDExceptBusyCage(int Id, bool IsSingle, List<string> cageCodesInvalid);
 
         public Cage GetCageWithCageType(string CageCode, int CenterId);
+
+        public Cage GetCage(string Code, int CenterId);
     }
 }

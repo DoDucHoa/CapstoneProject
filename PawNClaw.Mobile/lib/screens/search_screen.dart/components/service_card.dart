@@ -31,7 +31,8 @@ class _ServiceCardState extends State<ServiceCard> {
             builder: (_) => BlocProvider.value(
                   value: BlocProvider.of<BookingBloc>(context),
                   child: redirect,
-                ))),
+                ))).then((value) =>
+                context.findRootAncestorStateOfType()!.setState(() {})),
         child: Container(
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(15)),

@@ -15,18 +15,27 @@ class ItemCard extends StatelessWidget {
   final double sellPrice;
   final double discountPrice;
   final Widget redirect;
+  final int typeId;
+  final String id;
+
   const ItemCard(
       {Key? key,
       required this.name,
       required this.sellPrice,
       required this.discountPrice,
-      required this.redirect})
+      required this.redirect,
+      required this.typeId,
+      required this.id})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    // return BlocProvider(
+    //     create: (context) => BookingBloc(),
+    //     child:
+    //         BlocBuilder<BookingBloc, BookingState>(builder: (context, state) {
     return InkWell(
         onTap: () => Navigator.of(context)
             .push(MaterialPageRoute(
@@ -42,6 +51,12 @@ class ItemCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                //  (state is BookingUpdated) ?
+                //   Text(
+                //     'x' + name,
+                //     style: TextStyle(
+                //         fontSize: 15, fontWeight: FontWeight.w600),
+                //   ):
                 Text(
                   name,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
@@ -120,4 +135,7 @@ class ItemCard extends StatelessWidget {
           ]),
         ));
   }
+  // )
+// );
+  // }
 }

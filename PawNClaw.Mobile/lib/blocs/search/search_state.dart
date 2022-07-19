@@ -46,14 +46,27 @@ class FillingInformation extends SearchState {
 }
 
 class SearchCompleted extends SearchState {
+  final SearchResponseModel searchResponse;
   final List<Center> centers;
   final List<List<Pet>> requests;
   final DateTime bookingDate;
-  final DateTime endDate;
+  
+  //final DateTime endDate;
+  final int due;
   const SearchCompleted(
-      this.centers, this.requests, this.bookingDate, this.endDate);
+      this.centers, this.requests, this.bookingDate, this.due, this.searchResponse);// this.endDate);
 
   @override
   // TODO: implement props
-  List<Object> get props => [centers, requests, bookingDate, endDate];
+  List<Object> get props => [centers, requests, bookingDate, due, searchResponse];
+}
+
+class SearchFail extends SearchState{
+  final String errorMessage;
+  final List<List<Pet>> requests;
+  const SearchFail(this.errorMessage, this.requests);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [errorMessage];
 }

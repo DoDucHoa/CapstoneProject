@@ -1,16 +1,16 @@
 class ActivityRequestModel {
-  CreateBookingActivityParameter? createBookingActivityParameter;
+  int? id;
+  String? provideTime;
+  String? description;
   CreatePhotoParameter? createPhotoParameter;
 
   ActivityRequestModel(
-      {this.createBookingActivityParameter, this.createPhotoParameter});
+      {this.id, this.provideTime, this.description, this.createPhotoParameter});
 
   ActivityRequestModel.fromJson(Map<String, dynamic> json) {
-    createBookingActivityParameter =
-        json['createBookingActivityParameter'] != null
-            ? new CreateBookingActivityParameter.fromJson(
-                json['createBookingActivityParameter'])
-            : null;
+    id = json['id'];
+    provideTime = json['provideTime'];
+    description = json['description'];
     createPhotoParameter = json['createPhotoParameter'] != null
         ? new CreatePhotoParameter.fromJson(json['createPhotoParameter'])
         : null;
@@ -18,54 +18,12 @@ class ActivityRequestModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.createBookingActivityParameter != null) {
-      data['createBookingActivityParameter'] =
-          this.createBookingActivityParameter!.toJson();
-    }
+    data['id'] = this.id;
+    data['provideTime'] = this.provideTime;
+    data['description'] = this.description;
     if (this.createPhotoParameter != null) {
       data['createPhotoParameter'] = this.createPhotoParameter!.toJson();
     }
-    return data;
-  }
-}
-
-class CreateBookingActivityParameter {
-  String? provideTime;
-  String? description;
-  int? bookingId;
-  int? bookingDetailId;
-  int? petId;
-  int? supplyId;
-  int? serviceId;
-
-  CreateBookingActivityParameter(
-      {this.provideTime,
-      this.description,
-      this.bookingId,
-      this.bookingDetailId,
-      this.petId,
-      this.supplyId,
-      this.serviceId});
-
-  CreateBookingActivityParameter.fromJson(Map<String, dynamic> json) {
-    provideTime = json['provideTime'];
-    description = json['description'];
-    bookingId = json['bookingId'];
-    bookingDetailId = json['bookingDetailId'];
-    petId = json['petId'];
-    supplyId = json['supplyId'];
-    serviceId = json['serviceId'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['provideTime'] = this.provideTime;
-    data['description'] = this.description;
-    data['bookingId'] = this.bookingId;
-    data['bookingDetailId'] = this.bookingDetailId;
-    data['petId'] = this.petId;
-    data['supplyId'] = this.supplyId;
-    data['serviceId'] = this.serviceId;
     return data;
   }
 }

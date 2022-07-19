@@ -56,6 +56,8 @@ class SupplyTypeCard extends StatelessWidget {
                 name: supply.name!,
                 sellPrice: supply.sellPrice!,
                 discountPrice: supply.discountPrice!,
+                id: supply.id.toString(),
+                typeId: 1,
                 redirect: SupplyDetails(
                   supply: supply,
                 ),

@@ -31,15 +31,28 @@ class CageDetails extends StatefulWidget {
 
 class _CageDetailsState extends State<CageDetails> {
   int activeIndex = 0;
-  List<int> selectedPetIds = [];
+  List<int>? selectedPetIds = null;
+
+  bool isSuitable(List<Pet> request, CageTypes cageTypes) {
+    if (cageTypes.isSingle!) return request.length == 1;
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
     var state = BlocProvider.of<BookingBloc>(context).state;
     var requests = (state as BookingUpdated).requests;
-    requests![0].forEach((element) {
-      selectedPetIds.add(element.id!);
-    });
+    bool haveAvailableRequests = false;
+    for (var element in requests!) {
+      if (isSuitable(element, widget.cageType)) {
+        haveAvailableRequests = true;
+        selectedPetIds = [];
+        element.forEach((element) {
+          selectedPetIds!.add(element.id!);
+        });
+        break;
+      }
+    }
 
     Size size = MediaQuery.of(context).size;
     double appbarSize = size.height * 0.35;
@@ -106,26 +119,31 @@ class _CageDetailsState extends State<CageDetails> {
               )
             ];
           },
-          body: buildContent(cageType, cage, size, context, requests),
+          body: buildContent(cageType, cage, size, context, requests!),
         ),
         floatingActionButton: Container(
             padding: EdgeInsets.only(left: 30),
             //decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15))),
             child: ElevatedButton(
-              onPressed: () {
-                print(context.read<BookingBloc>().state);
-                BlocProvider.of<BookingBloc>(context).add(SelectCage(
-                  price: cageType.totalPrice!,
-                  cageCode: cage.code!,
-                  petId: state.booking.selectedPetsIds == null
-                      ? selectedPetIds
-                      : state.booking.selectedPetsIds!,
-                ));
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Thêm chuồng thành công.")));
-                print('cart count' + state.booking.getCartCount().toString());
-                Navigator.of(context).pop();
-              },
+              onPressed: (selectedPetIds != null)
+                  ? () {
+                      print(context.read<BookingBloc>().state);
+                      // print('selected petid');
+                      // print(selectedPetIds);
+                      BlocProvider.of<BookingBloc>(context).add(SelectCage(
+                        price: cageType.totalPrice!,
+                        cageCode: cage.code!,
+                        petId: state.booking.selectedPetsIds == null
+                            ? selectedPetIds!
+                            : state.booking.selectedPetsIds!,
+                      ));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Thêm chuồng thành công.")));
+                      print('cart count' +
+                          state.booking.getCartCount().toString());
+                      Navigator.of(context).pop();
+                    }
+                  : null,
               // => showCupertinoDialog(
               //   barrierDismissible: false,
               //   context: context,
@@ -151,7 +169,8 @@ class _CageDetailsState extends State<CageDetails> {
                   'Thêm vào giỏ hàng - ' +
                       NumberFormat.currency(
                               decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
-                          .format(cageType.totalPrice),
+                          .format(cageType.totalPrice! *
+                              state.booking.bookingCreateParameter!.due!),
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
                 Expanded(child: SizedBox(height: 45)),
@@ -202,7 +221,7 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
                 children: [
                   Text(
                     NumberFormat.currency(
-                            decimalDigits: 0, symbol: '', locale: 'vi_vn')
+                            decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
                         .format(cageType
                             .totalPrice), //  == 0 ? sellPrice : discountPrice),
                     //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
@@ -269,7 +288,9 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
         ),
         ChooseRequestCard(
             requests: requests,
+            cageType: cageType,
             callback: (val) {
+              print('value: ');
               print(val);
               BlocProvider.of<BookingBloc>(context)
                   .add(SelectRequest(petId: val));

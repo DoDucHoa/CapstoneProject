@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class BookingRequestModel {
   BookingCreateParameter? bookingCreateParameter;
   List<BookingDetailCreateParameters>? bookingDetailCreateParameters;
@@ -34,6 +36,8 @@ class BookingRequestModel {
     return data;
   }
 
+  String toRawJson() => json.encode(toJson());
+
   double getTotalSupply() {
     double total = 0;
     this.supplyOrderCreateParameters!.forEach((element) {
@@ -63,6 +67,7 @@ class BookingRequestModel {
         this.getTotalSupply() + this.getTotalCage() + this.getTotalService();
     return total;
   }
+
   int getCartCount() {
     int count = 0;
     this.supplyOrderCreateParameters!.forEach((element) {
@@ -77,6 +82,61 @@ class BookingRequestModel {
     print('count ${count}');
     return count;
   }
+
+  int isCageSelected(BookingDetailCreateParameters bookingDetails){
+    if (this.bookingDetailCreateParameters == null || this.bookingDetailCreateParameters!.isEmpty)
+    return -1;
+    for (int i = 0; i < this.bookingDetailCreateParameters!.length; i++) {
+      for (var petId in this.bookingDetailCreateParameters![i].petId!) {
+        if (bookingDetails.petId!.first == petId)
+        { 
+          return i;}
+      }
+    }
+    return -1;
+  }
+
+  int isAddedToCart(int typeId, String itemId) {
+    switch (typeId) {
+      case 0:
+        {
+          int count = 0;
+          this.bookingDetailCreateParameters!.forEach((element) {
+            if (element.cageCode == itemId) count++;
+          });
+          return count;
+        }
+      case 1:
+        {
+          for (var element in this.supplyOrderCreateParameters!) {
+            if (element.supplyId.toString() == itemId) return element.quantity!;
+          }
+          break;
+        }
+      case 2:
+        {
+          for (var element in this.serviceOrderCreateParameters!) {
+            if (element.serviceId.toString() == itemId)
+              return element.quantity!;
+          }
+        }
+    }
+    return 0;
+  }
+  bool hasAdditionalItems(int petId){
+    if (this.supplyOrderCreateParameters == null && this.serviceOrderCreateParameters == null)
+      return false;
+    for (var supply in this.supplyOrderCreateParameters!) {
+      if (supply.petId == petId)
+        return true;
+    }
+    for (var service in this.serviceOrderCreateParameters!) {
+      if (service.petId == petId)
+        return true;
+    }
+    return false;
+  }
+
 }
 
 class BookingCreateParameter {
@@ -84,11 +144,12 @@ class BookingCreateParameter {
   String? startBooking;
   String? endBooking;
   int? statusId;
-  Null? voucherCode;
+  String? voucherCode;
   double? total;
   int? customerId;
   int? centerId;
   String? customerNote;
+  int? due;
 
   BookingCreateParameter(
       {this.createTime,
@@ -99,7 +160,8 @@ class BookingCreateParameter {
       this.total,
       this.customerId,
       this.centerId,
-      this.customerNote});
+      this.customerNote,
+      this.due});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();

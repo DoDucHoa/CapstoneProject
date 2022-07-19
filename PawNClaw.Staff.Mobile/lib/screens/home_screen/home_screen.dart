@@ -100,13 +100,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ];
                   }),
                   body: Container(
-                    padding: EdgeInsets.all(width * smallPadRate),
                     color: frameColor,
                     width: width,
                     child: TabBarView(children: [
                       TodoList(bookings: state.bookings),
                       CheckoutToday(bookings: state.bookings),
-                      NextUpTasks(),
+                      NextUpTasks(bookings: state.bookings),
                     ]),
                   ),
                 ),

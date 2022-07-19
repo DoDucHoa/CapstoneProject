@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/models/booking.dart';
+import 'package:pncstaff_mobile_application/models/booking_detail.dart';
 import 'package:pncstaff_mobile_application/models/pet.dart';
 import 'package:pncstaff_mobile_application/repositories/booking/booking_repository.dart';
 import 'package:intl/intl.dart';
@@ -10,7 +11,7 @@ import 'booking_card.dart';
 class HomeBody extends StatefulWidget {
   const HomeBody({Key? key, required this.bookings}) : super(key: key);
 
-  final List<Booking> bookings;
+  final List<BookingDetail> bookings;
 
   @override
   State<HomeBody> createState() => _HomeBodyState();

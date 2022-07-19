@@ -2,9 +2,9 @@ import 'package:pawnclaw_mobile_application/models/center.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
 
 abstract class BaseCenterRepository {
-  Future<List<Center>?> searchCenterToBooking(
+  Future<SearchResponseModel?> searchCenterToBooking(
       DateTime timeFrom,
-      DateTime timeTo,
+      int due,
       List<List<Pet>> requests,
       String city,
       String district,

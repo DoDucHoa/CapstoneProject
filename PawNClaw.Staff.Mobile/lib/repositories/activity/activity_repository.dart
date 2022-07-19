@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ActivityRepository implements BaseActivityRepository {
   final Dio _dio = Dio();
   @override
-  Future<String?> addNewActivity(ActivityRequestModel activity) async {
+  Future<String?> updateActivity(ActivityRequestModel activity) async {
     // TODO: implement addNewActivity
     final pref = await SharedPreferences.getInstance();
     try {
@@ -17,7 +17,7 @@ class ActivityRepository implements BaseActivityRepository {
       const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/bookingactivities";
       print(requestBody);
-      var response = await _dio.post(_url, data: requestBody);
+      var response = await _dio.put(_url, data: requestBody);
       switch (response.statusCode) {
         case 200:
           return "success";
