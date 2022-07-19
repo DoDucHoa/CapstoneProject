@@ -127,5 +127,18 @@ namespace PawNClaw.API.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpGet("get-booking-cagecode")]
+        public IActionResult TestGet(int CenterId, int? StatusId, string CageCode)
+        {
+            try
+            {
+                return Ok(_bookingService.GetBookingByCageCode(CenterId, StatusId, CageCode));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

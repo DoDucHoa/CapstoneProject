@@ -30,5 +30,10 @@ namespace PawNClaw.Data.Repository
 
             return bookingActivity.Id;
         }
+
+        public IEnumerable<BookingActivity> GetBookingActivitiesByBookingAndPetId(int BookingId, int BookingDetailId, int PetId)
+        {
+            return _dbSet.Where(x => (x.BookingId == BookingId && x.BookingDetailId == BookingDetailId) || (x.BookingId == BookingId && x.PetId == PetId));
+        }
     }
 }

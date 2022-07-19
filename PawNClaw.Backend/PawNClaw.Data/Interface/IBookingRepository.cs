@@ -25,5 +25,7 @@ namespace PawNClaw.Data.Interface
         public IEnumerable<Booking> GetBookingByCustomerId(int CustomerId, int? StatusId);
 
         public Booking GetBookingForCreateActivity(int BookingId);
+
+        public Booking GetBookingByCageCodeForStaff(int CenterId, int? StatusId, string CageCode);
     }
 }
