@@ -83,4 +83,34 @@ export const PATH_DASHBOARD = {
     new: path(ROOTS_DASHBOARD, '/center/new'),
     edit: (id) => path(ROOTS_DASHBOARD, `/center/${id}/edit`),
   },
+  staff: {
+    root: path(ROOTS_DASHBOARD, '/staff'),
+    list: path(ROOTS_DASHBOARD, '/staff/list'),
+    new: path(ROOTS_DASHBOARD, '/staff/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/staff/${id}/edit`),
+  },
+  cage: {
+    root: path(ROOTS_DASHBOARD, '/cage'),
+    list: path(ROOTS_DASHBOARD, '/cage/list'),
+    new: path(ROOTS_DASHBOARD, '/cage/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/cage/${id}/edit`),
+  },
+  price: {
+    root: path(ROOTS_DASHBOARD, '/price'),
+    list: path(ROOTS_DASHBOARD, '/price/list'),
+    new: path(ROOTS_DASHBOARD, '/price/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/price/${id}/edit`),
+  },
+  supply: {
+    root: path(ROOTS_DASHBOARD, '/supply'),
+    list: path(ROOTS_DASHBOARD, '/supply/list'),
+    new: path(ROOTS_DASHBOARD, '/supply/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/supply/${id}/edit`),
+  },
+  service: {
+    root: path(ROOTS_DASHBOARD, '/service'),
+    list: path(ROOTS_DASHBOARD, '/service/list'),
+    new: path(ROOTS_DASHBOARD, '/service/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/service/${id}/edit`),
+  },
 };

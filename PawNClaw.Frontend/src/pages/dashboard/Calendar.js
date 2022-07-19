@@ -1,3 +1,5 @@
+import { useState, useRef, useEffect } from 'react';
+//
 import FullCalendar from '@fullcalendar/react'; // => request placed at the top
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -5,8 +7,6 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
 import interactionPlugin from '@fullcalendar/interaction';
 import { isEmpty } from 'lodash';
-//
-import { useState, useRef, useEffect } from 'react';
 // @mui
 import { Card, Container, DialogTitle } from '@mui/material';
 // redux
@@ -23,7 +23,6 @@ import { DialogAnimate } from '../../components/animate';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 // sections
 import { CalendarForm, CalendarStyle, CalendarToolbar } from '../../sections/@dashboard/calendar';
-
 // ----------------------------------------------------------------------
 
 export default function Calendar() {
@@ -85,7 +84,7 @@ export default function Calendar() {
     <Page title="Calendar">
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <HeaderBreadcrumbs
-          heading="Calendar"
+          heading="Lịch đặt"
           links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Calendar' }]}
         />
 

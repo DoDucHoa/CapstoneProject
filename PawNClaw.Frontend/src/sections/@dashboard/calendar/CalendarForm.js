@@ -45,9 +45,10 @@ CalendarForm.propTypes = {
   onCancel: PropTypes.func,
   bookingStatuses: PropTypes.array,
   petData: PropTypes.array,
+  updateStatusColor: PropTypes.func,
 };
 
-export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses, petData }) {
+export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses, petData, updateStatusColor }) {
   // STATE
   // ----------------------------------------------------------------------
   const [openSupplyDialogForm, setOpenSupplyDialogForm] = useState(false);
@@ -59,6 +60,22 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
   const { id, statusId, startBooking, endBooking, total, customerNote, serviceOrders, supplyOrders } = selectedEvent;
+
+  // bookingStatuses = bookingStatuses.filter((status) => {
+  //   if (statusId === 2) {
+  //     return status.id === 2 || status.id === 3;
+  //   }
+
+  //   if (statusId === 3) {
+  //     return status.id === 3;
+  //   }
+
+  //   if (statusId === 4) {
+  //     return status.id === 4;
+  //   }
+
+  //   return status;
+  // });
 
   const isDesktop = useResponsive('up', 'sm');
 
@@ -162,6 +179,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
     try {
       dispatch(createPetHealthStatus(data, id));
       dispatch(updateBookingStatus(data));
+      updateStatusColor(data.id, data.statusId);
       enqueueSnackbar('Cập nhật thành công!');
       onCancel();
     } catch (error) {
@@ -171,7 +189,6 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
 
   // RETURN
   // ----------------------------------------------------------------------
-
   return (
     <>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -220,7 +237,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                 <Typography variant="caption">Giá tiền</Typography>
                 <Typography variant="h6">{fCurrency(cage.price)} ₫</Typography>
               </Grid>
-              {isDesktop && (
+              {statusId === 1 && isDesktop && (
                 <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                   <Box>
                     <Button
@@ -233,7 +250,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                   </Box>
                 </Grid>
               )}
-              {!isDesktop && (
+              {statusId === 1 && !isDesktop && (
                 <Grid item xs={12}>
                   <Button
                     variant="contained"
@@ -256,6 +273,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                     </Grid>
                     <Grid item xs={6} sm={2}>
                       <RHFTextField
+                        disabled={statusId !== 1}
                         name={`petData[${cageIndex}].petBookingDetails[${petIndex}].height`}
                         type="number"
                         label="Chiều cao (cm)"
@@ -263,6 +281,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                     </Grid>
                     <Grid item xs={6} sm={2}>
                       <RHFTextField
+                        disabled={statusId !== 1}
                         name={`petData[${cageIndex}].petBookingDetails[${petIndex}].length`}
                         type="number"
                         label="Chiều dài (cm)"
@@ -270,6 +289,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                     </Grid>
                     <Grid item xs={6} sm={2}>
                       <RHFTextField
+                        disabled={statusId !== 1}
                         name={`petData[${cageIndex}].petBookingDetails[${petIndex}].weight`}
                         type="number"
                         label="Cân nặng (kg)"
@@ -277,6 +297,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                     </Grid>
                     <Grid item xs={6} sm={4}>
                       <RHFTextField
+                        disabled={statusId !== 1}
                         name={`petData[${cageIndex}].petBookingDetails[${petIndex}].description`}
                         label="Tình trạng sức khỏe"
                       />
@@ -295,9 +316,11 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
               <Typography paragraph variant="overline" sx={{ color: 'red' }}>
                 Đồ dùng
               </Typography>
-              <Button variant="contained" color="warning" onClick={handleOpenSupplyDialogForm}>
-                Chỉnh sửa
-              </Button>
+              {statusId === 1 && (
+                <Button variant="contained" color="warning" onClick={handleOpenSupplyDialogForm}>
+                  Chỉnh sửa
+                </Button>
+              )}
             </Box>
 
             <Scrollbar>
@@ -355,9 +378,11 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
               <Typography paragraph variant="overline" sx={{ color: 'blue' }}>
                 Dịch vụ
               </Typography>
-              <Button variant="contained" color="warning" onClick={handleOpenServiceDialogForm}>
-                Chỉnh sửa
-              </Button>
+              {statusId === 1 && (
+                <Button variant="contained" color="warning" onClick={handleOpenServiceDialogForm}>
+                  Chỉnh sửa
+                </Button>
+              )}
             </Box>
             <Scrollbar>
               <TableContainer sx={{ minWidth: 300 }}>
@@ -418,7 +443,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
             </Box>
           </Grid>
           <Grid item xs={12}>
-            <RHFTextField name="staffNote" label="Ghi chú của nhân viên" multiline rows={3} />
+            <RHFTextField disabled={statusId !== 1} name="staffNote" label="Ghi chú của nhân viên" multiline rows={3} />
           </Grid>
         </Grid>
 
@@ -427,6 +452,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
           {bookingStatuses.length > 0 && (
             <Grid item xs={8} md={4}>
               <RHFSelect
+                // disabled={statusId === 3 || statusId === 4}
                 fullWidth
                 name="statusId"
                 label="Trạng thái Booking"

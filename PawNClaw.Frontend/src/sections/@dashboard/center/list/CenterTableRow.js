@@ -51,7 +51,7 @@ export default function BrandTableRow({ row, onEditRow, onDeleteRow }) {
 
       <TableCell align="left">{brandName}</TableCell>
 
-      <TableCell align="left">
+      <TableCell align="center">
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
           color={(status === false && 'error') || 'success'}
