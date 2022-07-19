@@ -29,4 +29,11 @@ namespace PawNClaw.Data.Parameter
         public int statusId { get; set; }
         public string staffNote { get; set; } = null;
     }
+    
+    public class CheckSizePet
+    {
+        public List<PetRequestForSearchCenter> petRequestForSearchCenters { get; set; }
+        public string CageCode { get; set; }
+        public int CenterId { get; set; }
+    }
 }

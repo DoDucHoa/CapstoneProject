@@ -389,5 +389,30 @@ namespace PawNClaw.Business.Services
             return values;
         }
 
+        //Check Size Pet With Cage
+        public bool CheckSizePet(List<PetRequestForSearchCenter> petRequestForSearchCenters, string CageCode, int CenterId)
+        {
+            decimal PetHeight = 0;
+            decimal PetWidth = 0;
+
+            foreach (var item in petRequestForSearchCenters)
+            {
+                if (PetHeight < (decimal)(item.Height + SearchConst.HeightAdd))
+                {
+                    PetHeight = (decimal)(item.Height + SearchConst.HeightAdd);
+                }
+
+                PetWidth += (decimal)Math.Round((((double)item.Length) + ((double)item.Height)) / SearchConst.WidthRatio, 0);
+            }
+
+            var cage = _cageRepository.GetCageWithCageType(CageCode, CenterId);
+
+            if (PetHeight > cage.CageType.Height || PetWidth > cage.CageType.Width)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }
