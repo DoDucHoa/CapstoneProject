@@ -80,29 +80,40 @@ const navConfig = [
         path: PATH_DASHBOARD.center.list,
         icon: ICONS.center,
       },
+    ],
+  },
+
+  // CENTER MANAGEMENT
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Quản Lý Trung Tâm',
+    items: [
+      // OWNER
       {
         title: 'Nhân viên',
-        path: PATH_DASHBOARD.center.list,
+        path: PATH_DASHBOARD.staff.list,
         icon: ICONS.staff,
       },
+
+      // STAFF
       {
         title: 'Chuồng',
-        path: PATH_DASHBOARD.center.list,
+        path: PATH_DASHBOARD.cage.list,
         icon: ICONS.cage,
       },
       {
         title: 'Giá chuồng',
-        path: PATH_DASHBOARD.center.list,
+        path: PATH_DASHBOARD.price.list,
         icon: ICONS.price,
       },
       {
         title: 'Đồ dùng',
-        path: PATH_DASHBOARD.center.list,
+        path: PATH_DASHBOARD.supply.list,
         icon: ICONS.food,
       },
       {
         title: 'Dịch vụ',
-        path: PATH_DASHBOARD.center.list,
+        path: PATH_DASHBOARD.service.list,
         icon: ICONS.service,
       },
     ],

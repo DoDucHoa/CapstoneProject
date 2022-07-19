@@ -1,0 +1,19 @@
+[build]
+  base = "PawNClaw.Frontend/"
+  publish = "build/"
+  command = "CI= npm run build"
+
+[[redirects]]
+  from = "/*"
+  to = "/"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/404"
+  status = 404
+
+[[redirects]]
+  from = "/*"
+  to = "/500"
+  status = 500

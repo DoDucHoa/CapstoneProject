@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 // @mui
 import { Box, Card, Container, Table, TableBody, TableContainer } from '@mui/material';
@@ -31,8 +32,8 @@ const TABLE_HEAD = [
 
 export default function BookingList() {
   // STATE
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
   const [bookingStatus, setBookingStatus] = useState(3);
 
   const [tableData, setTableData] = useState([]);
@@ -41,6 +42,8 @@ export default function BookingList() {
   const [searchRequest, setSearchRequest] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
   const [selectIdAdmin, setSelectIdAdmin] = useState();
+
+  const { events, isOpenModal, bookingDetails, bookingStatuses, petData } = useSelector((state) => state.calendar);
 
   // CONFIG
   const { themeStretch } = useSettings();
