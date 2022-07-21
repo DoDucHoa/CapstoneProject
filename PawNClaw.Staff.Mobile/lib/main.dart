@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pncstaff_mobile_application/blocs/search/search_bloc.dart';
+import 'package:pncstaff_mobile_application/repositories/booking/booking_repository.dart';
 
 import 'blocs/auth/auth_bloc.dart';
 import 'common/constants.dart';
@@ -28,6 +30,10 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => AuthBloc(authRepository: AuthRepository())
             ..add(CheckingCurrentAuth(user)),
+        ),
+        BlocProvider(
+          create: (context) =>
+              SearchBloc(bookingRepository: BookingRepository()),
         ),
       ],
       child: MaterialApp(

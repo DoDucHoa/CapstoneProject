@@ -17,7 +17,6 @@ class CenterRepository implements BaseCenterRepository {
       String city,
       String district,
       int pageNumber) async {
-        
     final pref = await SharedPreferences.getInstance();
     var searchResponseModel;
     Response? response;
@@ -42,8 +41,9 @@ class CenterRepository implements BaseCenterRepository {
       const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/petcenters/main-search";
       response = await _dio.post(_url, data: requestBody);
-      
+
       if (response.statusCode == 200) {
+        print(response.data);
         var data = response.data['data'];
 
         print(data["petCenters"]);
@@ -67,11 +67,11 @@ class CenterRepository implements BaseCenterRepository {
         print(response.data);
         return searchResponseModel;
       }
-      
     } catch (e) {
       //print(response!.statusMessage);
       print((e as DioError).message);
-      searchResponseModel = SearchResponseModel(result: e.response != null ? e.response!.data["Message"] : "error");
+      searchResponseModel = SearchResponseModel(
+          result: e.response != null ? e.response!.data["Message"] : "error");
       return searchResponseModel;
     }
   }

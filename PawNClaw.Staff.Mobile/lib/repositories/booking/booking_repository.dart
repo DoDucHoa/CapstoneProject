@@ -54,4 +54,28 @@ class BookingRepository implements BaseBookingRepository {
       throw Exception(e);
     }
   }
+
+  @override
+  Future<BookingDetail> searchBookingByCagecode(
+      {required int centerId, required String cageCode}) async {
+    // TODO: implement searchBookingByCagecode
+    final pref = await SharedPreferences.getInstance();
+    try {
+      _dio.options.headers = {
+        'Authorization': 'Bearer ' + pref.get("jwtToken").toString()
+      };
+      final String _url =
+          "https://pawnclawdevelopmentapi.azurewebsites.net/api/bookings/get-booking-cagecode";
+      var params = {'CenterId': centerId, 'StatusId': 2, 'CageCode': cageCode};
+      // "https://192.168.31.133/api/bookings/center/$staffId?statusId=2";
+      print(params);
+      var response = await _dio.get(_url, queryParameters: params);
+      print(response.data);
+      final booking = BookingDetail.fromJson(response.data);
+      return booking;
+    } on DioError catch (e) {
+      print(e.response?.data);
+      throw Exception(e);
+    }
+  }
 }
