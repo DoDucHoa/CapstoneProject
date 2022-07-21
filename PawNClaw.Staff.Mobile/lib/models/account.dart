@@ -9,6 +9,7 @@ class Account {
   String? _phone;
   String? _email;
   String? _role;
+  PetCenter? _center;
 
   Account(
       {String? jwtToken,
@@ -55,6 +56,8 @@ class Account {
   set email(String? email) => _email = email;
   String? get role => _role;
   set role(String? role) => _role = role;
+  PetCenter? get petCenter => _center;
+  set petCenter(PetCenter? center) => _center = center;
 
   Account.fromJson(Map<String, dynamic> json) {
     _jwtToken = json['jwtToken'];
