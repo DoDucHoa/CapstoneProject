@@ -75,6 +75,14 @@ const reducer = (state, action) => {
     };
   }
 
+  if (action.type === 'LOAD_ACCOUNT_INFO') {
+    const { accountInfo } = action.payload;
+    return {
+      ...state,
+      accountInfo,
+    };
+  }
+
   return state;
 };
 

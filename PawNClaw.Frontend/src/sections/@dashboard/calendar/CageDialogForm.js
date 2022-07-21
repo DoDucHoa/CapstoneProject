@@ -70,6 +70,7 @@ export default function CageDialogForm({ open, onClose, cageSearchParam, booking
   const {
     control,
     watch,
+    setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
@@ -120,7 +121,10 @@ export default function CageDialogForm({ open, onClose, cageSearchParam, booking
               name="cageType"
               render={({ field, fieldState: { error } }) => (
                 <Autocomplete
-                  onChange={(event, newValue) => field.onChange(newValue)}
+                  onChange={(event, newValue) => {
+                    field.onChange(newValue);
+                    setValue('cageCode', '');
+                  }}
                   options={options.map((option) => option.typeName)}
                   noOptionsText="Không có loại chuồng phù hợp"
                   renderInput={(params) => (
@@ -136,6 +140,7 @@ export default function CageDialogForm({ open, onClose, cageSearchParam, booking
               name="cageCode"
               render={({ field, fieldState: { error } }) => (
                 <Autocomplete
+                  value={field.value}
                   onChange={(event, newValue) => field.onChange(newValue)}
                   options={cages.map((option) => option.code)}
                   noOptionsText="Không có chuồng phù hợp"
