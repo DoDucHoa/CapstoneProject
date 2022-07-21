@@ -291,16 +291,11 @@ namespace PawNClaw.Business.Services
             //Check loaction
             var values = _petCenterRepository.SearchPetCenter(City, District);
 
-            foreach (var item in values)
-            {
-                Console.WriteLine(item.CageTypes.Count());
-            }
-
             //START Check valid time booking
             //This is 24 Hours format
             if (StartBooking == null || Due <= 0)
             {
-                throw new Exception("StartBooking or EndBooking is NULL");
+                throw new Exception("StartBooking is NULL");
             }
             DateTime _startBooking = DateTime.ParseExact(s: StartBooking, format: SearchConst.DateFormat,
                                                         CultureInfo.InvariantCulture);
@@ -628,7 +623,7 @@ namespace PawNClaw.Business.Services
                         count++;
                         if (values.Count > 0)
                         {
-                            
+
                             searchPetCenterResponse.City = City;
                             searchPetCenterResponse.District = item.Key.Code;
                             searchPetCenterResponse.DistrictName = item.Key.Name;
@@ -646,6 +641,250 @@ namespace PawNClaw.Business.Services
             searchPetCenterResponse.petCenters = values;
 
             return searchPetCenterResponse;
+        }
+
+        //Search Center By Name
+        public PagedList<PetCenter> SearchCenterByName(string Name, PagingParameter paging)
+        {
+            var values = _petCenterRepository.GetAll(x => x.Name.Contains(Name) && x.Status == true);
+
+            return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
+            paging.PageNumber,
+            paging.PageSize);
+        }
+
+        //Check Center Is Avaliable With Request
+        public PetCenter CheckCenter(int id, List<List<PetRequestParameter>> _petRequests, string StartBooking, int Due)
+        {
+            var value = _petCenterRepository.GetPetCenterByIdAfterSearchName(id);
+
+            //--------------------------------------------------------------------------------------------
+            //This is 24 Hours format
+            if (StartBooking == null || Due <= 0)
+            {
+                throw new Exception("StartBooking is NULL");
+            }
+            DateTime _startBooking = DateTime.ParseExact(s: StartBooking, format: SearchConst.DateFormat,
+                                                        CultureInfo.InvariantCulture);
+
+            if (DateTime.Compare(_startBooking, DateTime.Now) <= 0)
+            {
+                throw new Exception("StartBooking is INVALID");
+            }
+            //END Check valid time booking
+
+            foreach (var petIds in _petRequests)
+            {
+                foreach (var petId in petIds)
+                {
+                    if (_petBookingDetailRepository.GetAll(x => x.PetId == petId.Id &&
+                            (DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) >= 0
+                            && DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.EndBooking) < 0)).Count() != 0)
+                    {
+                        throw new Exception("Pet is Booking Already");
+                    }
+                }
+            }
+
+            string petCenterOpenTime = _petCenterRepository.GetFirstOrDefault(x => x.Id == value.Id).OpenTime;
+            string petCenterCloseTime = _petCenterRepository.GetFirstOrDefault(x => x.Id == value.Id).CloseTime;
+
+            //String format = petCenterOpenTime.Length == 5 ? "H\\:mm\\:ss" : "HH\\:mm\\:ss";
+
+            TimeSpan _petCenterOpenTime = TimeSpan.ParseExact(input: petCenterOpenTime, format: SearchConst.TimeFormat,
+                                                            CultureInfo.InvariantCulture);
+
+            //format = petCenterCloseTime.Length == 5 ? "H\\:mm\\:ss" : "HH\\:mm\\:ss";
+
+            TimeSpan _petCenterCloseTime = TimeSpan.ParseExact(input: petCenterCloseTime, format: SearchConst.TimeFormat,
+                                                            CultureInfo.InvariantCulture);
+
+            if (_petCenterOpenTime < _startBooking.TimeOfDay && _petCenterCloseTime > _startBooking.TimeOfDay)
+            {
+
+            }
+            else
+            {
+                throw new Exception("StartBooking is INVALID");
+            }
+
+            //START Check Size of Pet
+            List<PetSizeCage> PetSizes = new List<PetSizeCage>();
+
+            foreach (var _petRequest in _petRequests)
+            {
+                int Count = 0;
+                decimal Height = 0;
+                decimal Width = 0;
+                foreach (var _pet in _petRequest)
+                {
+                    if (Height < (decimal)(_pet.Height + SearchConst.HeightAdd))
+                    {
+                        Height = (decimal)(_pet.Height + SearchConst.HeightAdd);
+                    }
+
+                    Width += (decimal)Math.Round((((double)_pet.Length) + ((double)_pet.Height)) / SearchConst.WidthRatio, 0);
+                    Count += 1;
+                }
+
+                PetSizeCage petSize = new PetSizeCage();
+                petSize.Height = Height;
+                petSize.Width = Width;
+                if (Count > 1) petSize.IsSingle = false;
+                PetSizes.Add(petSize);
+            }
+            //END Check Size of Pet
+
+            //START Check valid cage for pet
+            //Check free cage in time booking
+            //Check amount of cage with amount of pet
+            //Check size of cage with size of pet (merge with upper line)
+            //Get cage code of center store to Map
+            List<BookingDetail> BookingDetails = new List<BookingDetail>();
+            List<string> CageCodesNotValid = new List<string>();
+            Dictionary<int, List<string>> CenterWithCage = new Dictionary<int, List<string>>();
+
+            TimeSpan diffOfDates = DateTime.Parse(value.Checkout.ToString()).TimeOfDay.Subtract(_startBooking.TimeOfDay);
+
+            DateTime _endBooking = _startBooking.AddDays(Due).AddHours(diffOfDates.Hours);
+
+            value.EndBooking = _endBooking;
+
+            var BookingOfCenter = _bookingRepository.GetBookingValidSearch(value.Id, _startBooking, _endBooking);
+
+            //If BookingOfCenter is null => That center have cage free for pet
+            if (BookingOfCenter.Count() == 0)
+            {
+                var CageTypes = value.CageTypes;
+
+                //Check is fields that check center have any cage valid for pet
+                bool Check = false;
+                List<int> CageTypeCodeIsSelect = new List<int>();
+                foreach (var petsize in PetSizes)
+                {
+                    Check = false;
+
+                    foreach (var cagetype in CageTypes)
+                    {
+                        if (cagetype.Height >= petsize.Height && cagetype.Width >= petsize.Width)
+                        {
+                            //CageTypeValidCode.Add(cagetype.Id);
+
+                            int CageAmount = 1;
+                            int CageTypeCodeIsSelectAmount = CageTypeCodeIsSelect.Where(x => x == cagetype.Id).Count();
+                            if (CageTypeCodeIsSelectAmount > 0)
+                            {
+                                CageAmount += CageTypeCodeIsSelectAmount;
+                            }
+                            if (_cageRepository.CountCageByCageTypeIDExceptBusyCage(cagetype.Id, petsize.IsSingle, CageCodesNotValid) >= CageAmount)
+                            {
+                                Check = true;
+                                CageTypeCodeIsSelect.Add(cagetype.Id);
+                                break;
+                            }
+                        }
+                    }
+
+                    //If check here is null that 1 of those pet dont have cage in this center
+                    if (!Check)
+                    {
+                        break;
+                    }
+                }
+
+                if (Check)
+                {
+                }
+                else
+                {
+                    throw new Exception("This center not avaliable with request");
+                }
+            }
+            else
+            {
+                foreach (var booking in BookingOfCenter)
+                {
+                    //This code is get booking detail of all busy bookings in center
+                    BookingDetails = _bookingDetailRepository.GetBookingDetailForSearch(booking.Id).ToList();
+                    foreach (var bookingdetail in BookingDetails)
+                    {
+                        CageCodesNotValid.Add(bookingdetail.CageCode);
+                    }
+                }
+                //Here is cage of the center is invalid time with booking
+                //CenterWithCage.Add(center.Id, CageCodesNotValid);
+                //Check center cagetype is valid size
+                //List<int> CageTypeValidCode = new List<int>();
+                var CageTypes = value.CageTypes;
+
+                //Check is fields that check center have any cage valid for pet
+                bool Check = false;
+                List<int> CageTypeCodeIsSelect = new List<int>();
+                foreach (var petsize in PetSizes)
+                {
+                    foreach (var cagetype in CageTypes)
+                    {
+                        if (cagetype.Height >= petsize.Height && cagetype.Width >= petsize.Width)
+                        {
+                            //CageTypeValidCode.Add(cagetype.Id);
+                            int CageAmount = 1;
+                            int CageTypeCodeIsSelectAmount = CageTypeCodeIsSelect.Where(x => x == cagetype.Id).Count();
+                            if (CageTypeCodeIsSelectAmount > 0)
+                            {
+                                CageAmount += CageTypeCodeIsSelectAmount;
+                            }
+                            if (_cageRepository.CountCageByCageTypeIDExceptBusyCage(cagetype.Id, petsize.IsSingle, CageCodesNotValid) >= CageAmount)
+                            {
+                                Check = true;
+                                CageTypeCodeIsSelect.Add(cagetype.Id);
+                                break;
+                            }
+                            else
+                            {
+                                Check = false;
+                            }
+                        }
+                        else
+                        {
+                            Check = false;
+                        }
+                    }
+
+                    //If check here is null that 1 of those pet dont have cage in this center
+                    if (!Check)
+                    {
+                        break;
+                    }
+                }
+
+                if (Check)
+                {
+                }
+                else
+                {
+                    throw new Exception("This center not avaliable with request");
+                }
+            }
+            //End check cage in Center
+
+            PetSizeCage petSizeCages = new PetSizeCage
+            {
+                Height = PetSizes.Min(x => x.Height),
+                Width = PetSizes.Min(x => x.Width),
+                IsSingle = true
+            };
+
+            try
+            {
+                var data = _petCenterRepository.GetPetCenterById(id, petSizeCages, StartBooking, value.EndBooking.ToString());
+
+                return data;
+            }
+            catch
+            {
+                throw new Exception("Get Pet Center By Id Exception");
+            }
+
         }
     }
 }

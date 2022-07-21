@@ -4,25 +4,18 @@ import { Container, Alert, AlertTitle } from '@mui/material';
 // ----------------------------------------------------------------------
 
 RoleBasedGuard.propTypes = {
-  accessibleRoles: PropTypes.array, // Example ['admin', 'leader']
-  children: PropTypes.node
+  accessibleRoles: PropTypes.array,
+  currentRole: PropTypes.string,
+  children: PropTypes.node,
 };
 
-const useCurrentRole = () => {
-  // Logic here to get current user role
-  const role = 'admin';
-  return role;
-};
-
-export default function RoleBasedGuard({ accessibleRoles, children }) {
-  const currentRole = useCurrentRole();
-
-  if (!accessibleRoles.includes(currentRole)) {
+export default function RoleBasedGuard({ accessibleRoles, currentRole, children }) {
+  if (!accessibleRoles.includes(currentRole.toLowerCase())) {
     return (
       <Container>
         <Alert severity="error">
-          <AlertTitle>Permission Denied</AlertTitle>
-          You do not have permission to access this page
+          <AlertTitle>Từ chối quyền truy cập</AlertTitle>
+          Bạn không có quyền truy cập vào trang này!
         </Alert>
       </Container>
     );
