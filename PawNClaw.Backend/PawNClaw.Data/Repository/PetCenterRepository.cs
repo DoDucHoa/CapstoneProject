@@ -37,7 +37,7 @@ namespace PawNClaw.Data.Repository
                 .Include(x => x.Location)
                 .Include(x => x.CageTypes)
                 .Where(x => x.Location.CityCode.Trim().Equals(City)
-                                            && x.Location.DistrictCode.Trim().Equals(District))
+                                            && x.Location.DistrictCode.Trim().Equals(District) && x.Status == true)
                 .Select(x => new PetCenter
                 {
                     Id = x.Id,
@@ -244,6 +244,45 @@ namespace PawNClaw.Data.Repository
                 .SingleOrDefault(x => x.Id == id);
 
             return center;
+        }
+
+        public PetCenter GetPetCenterByIdAfterSearchName(int id)
+        {
+            PetCenter query = _dbSet
+                .Include(x => x.Location)
+                .Include(x => x.CageTypes)
+                .Where(x => x.Id == id)
+                .Select(x => new PetCenter
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Address = x.Address,
+                    Phone = x.Phone,
+                    Rating = x.Rating,
+                    CreateDate = x.CreateDate,
+                    Status = x.Status,
+                    OpenTime = x.OpenTime,
+                    CloseTime = x.CloseTime,
+                    Description = x.Description,
+                    BrandId = x.BrandId,
+                    Checkin = x.Checkin,
+                    Checkout = x.Checkout,
+                    CageTypes = (ICollection<CageType>)x.CageTypes.Select(cagetype => new CageType
+                    {
+                        Id = cagetype.Id,
+                        TypeName = cagetype.TypeName,
+                        Description = cagetype.Description,
+                        Height = cagetype.Height,
+                        Width = cagetype.Width,
+                        Length = cagetype.Length,
+                        IsSingle = cagetype.IsSingle,
+                        Status = cagetype.Status,
+                        CenterId = cagetype.CenterId
+                    }),
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
+                }).FirstOrDefault();
+
+            return query;
         }
 
         public string checkTotalPriceOfCageType(string StartBooking, string EndBooking)
