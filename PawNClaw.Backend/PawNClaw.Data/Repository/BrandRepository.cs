@@ -19,5 +19,10 @@ namespace PawNClaw.Data.Repository
         {
             return _dbSet.Include(x => x.Owner).ThenInclude(y => y.IdNavigation).FirstOrDefault(brand => brand.Id == id);
         }
+
+        public Brand GetBrandByOwner(int OwnerId)
+        {
+            return _dbSet.Include(x => x.PetCenters).FirstOrDefault(brand => brand.OwnerId == OwnerId);
+        }
     }
 }
