@@ -122,6 +122,9 @@ namespace PawNClaw.API
             services.AddTransient<IDistrictRepository, DistrictRepository>();
             services.AddTransient<DistrictService, DistrictService>();
 
+            services.AddScoped<ISponsorBannerRepository, SponsorBannerRepository>();
+            services.AddScoped<SponsorBannerService, SponsorBannerService>();
+
             services.AddControllers();
             services.AddControllersWithViews()
                     .AddNewtonsoftJson(options =>

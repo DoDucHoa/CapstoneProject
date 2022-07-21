@@ -113,5 +113,32 @@ namespace PawNClaw.API.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpPost("check-size")]
+        public IActionResult CheckCage([FromBody] CheckSizePet checkSizePet)
+        {
+            try
+            {
+                var data = _bookingService.CheckSizePet(checkSizePet.petRequestForSearchCenters, checkSizePet.CageCode, checkSizePet.CenterId);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("get-booking-cagecode")]
+        public IActionResult TestGet(int CenterId, int? StatusId, string CageCode)
+        {
+            try
+            {
+                return Ok(_bookingService.GetBookingByCageCode(CenterId, StatusId, CageCode));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

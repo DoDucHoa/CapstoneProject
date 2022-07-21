@@ -1,3 +1,5 @@
+import { useState, useRef, useEffect } from 'react';
+//
 import FullCalendar from '@fullcalendar/react'; // => request placed at the top
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -5,8 +7,6 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
 import interactionPlugin from '@fullcalendar/interaction';
 import { isEmpty } from 'lodash';
-//
-import { useState, useRef, useEffect } from 'react';
 // @mui
 import { Card, Container, DialogTitle } from '@mui/material';
 // redux
@@ -23,7 +23,8 @@ import { DialogAnimate } from '../../components/animate';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 // sections
 import { CalendarForm, CalendarStyle, CalendarToolbar } from '../../sections/@dashboard/calendar';
-
+// config
+import { BOOKING_STATUS_COLOR } from '../../config';
 // ----------------------------------------------------------------------
 
 export default function Calendar() {
@@ -36,7 +37,7 @@ export default function Calendar() {
   const calendarRef = useRef(null);
 
   const [date, setDate] = useState(new Date());
-
+  const [bookings, setBookings] = useState([]);
   const [view, setView] = useState(isDesktop ? 'dayGridMonth' : 'listWeek');
 
   const { events, isOpenModal, bookingDetails, bookingStatuses, petData } = useSelector((state) => state.calendar);
@@ -44,6 +45,10 @@ export default function Calendar() {
   useEffect(() => {
     dispatch(getEvents());
   }, [dispatch]);
+
+  useEffect(() => {
+    setBookings(events);
+  }, [events]);
 
   useEffect(() => {
     const calendarEl = calendarRef.current;
@@ -81,11 +86,26 @@ export default function Calendar() {
     dispatch(closeModal());
   };
 
+  const handleChangeBookingStatusColor = (bookingId, statusId) => {
+    const bookingIndex = bookings.findIndex((booking) => booking.id === bookingId);
+    // eslint-disable-next-line no-var
+    var data = [...bookings];
+    if (bookingIndex !== -1) {
+      const detail = data[bookingIndex];
+      data.splice(bookingIndex, 1);
+      const result = [
+        { id: detail.id, title: detail.title, start: detail.start, textColor: BOOKING_STATUS_COLOR[statusId] },
+        ...data,
+      ];
+      setBookings(result);
+    }
+  };
+
   return (
     <Page title="Calendar">
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <HeaderBreadcrumbs
-          heading="Calendar"
+          heading="Lịch đặt"
           links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Calendar' }]}
         />
 
@@ -96,7 +116,7 @@ export default function Calendar() {
               weekends
               defaultAllDay
               showNonCurrentDates={false}
-              events={events}
+              events={bookings}
               ref={calendarRef}
               rerenderDelay={10}
               initialDate={date}
@@ -118,6 +138,7 @@ export default function Calendar() {
             onCancel={handleCloseModal}
             bookingStatuses={bookingStatuses}
             petData={petData}
+            updateStatusColor={handleChangeBookingStatusColor}
           />
         </DialogAnimate>
       </Container>

@@ -21,8 +21,17 @@ namespace PawNClaw.Data.Repository
         public int CountCageByCageTypeIDExceptBusyCage(int Id, bool IsSingle, List<string> cageCodesInvalid)
         {
             IQueryable<Cage> query = _dbSet;
-            return query.Include("CageType").Where(x => x.CageTypeId == Id
+
+            if (IsSingle == false)
+            {
+                return query.Include("CageType").Where(x => x.CageTypeId == Id
                                 && !cageCodesInvalid.Contains(x.Code) && x.IsOnline == true && x.CageType.IsSingle == IsSingle).Count();
+            }
+            else
+            {
+                return query.Include("CageType").Where(x => x.CageTypeId == Id
+                                && !cageCodesInvalid.Contains(x.Code) && x.IsOnline == true).Count();
+            }
         }
 
         public Cage GetCageWithCageType(string CageCode, int CenterId)
@@ -49,6 +58,13 @@ namespace PawNClaw.Data.Repository
                     }
                 })
                 .SingleOrDefault(x => x.Code.Trim().Equals(CageCode) && x.CenterId == CenterId);
+
+            return query;
+        }
+
+        public Cage GetCage(string Code, int CenterId)
+        {
+            Cage query = _dbSet.Find(Code, CenterId);
 
             return query;
         }
