@@ -155,7 +155,7 @@ class BookingDetail {
     this.bookingActivities!.forEach((element) {
       if (element.supplyId != null && element.provideTime == null) {
         this.supplyOrders?.forEach((supply) {
-          if (element.supplyId == supply.supply?.id) {
+          if (element.petId == supply.petId) {
             undone.add(supply);
           }
         });
@@ -191,7 +191,7 @@ class BookingDetail {
     this.bookingActivities!.forEach((element) {
       if (element.serviceId != null && element.provideTime == null) {
         this.serviceOrders?.forEach((service) {
-          if (element.serviceId == service.service?.id) {
+          if (element.petId == service.petId) {
             undone.add(service);
           }
         });
