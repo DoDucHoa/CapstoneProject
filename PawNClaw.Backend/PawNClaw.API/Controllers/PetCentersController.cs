@@ -72,6 +72,21 @@ namespace PawNClaw.API.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("check_center")]
+        public IActionResult GetCenterByIdAfterSearch([FromBody] GetCenterByIdAfterSearchnameRequestModel model)
+        {
+            try
+            {
+                var data = _searchService.CheckCenter(model.id, model._petRequests, model.StartBooking, model.Due);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         [HttpGet]
         public IActionResult GetCenters([FromQuery] string name, [FromQuery] bool? status, [FromQuery] string sort, [FromQuery] PagingParameter paging, string includeProperties)
         {
@@ -193,6 +208,25 @@ namespace PawNClaw.API.Controllers
             if (_petCenterService.Restore(id))
                 return Ok();
             return BadRequest();
+        }
+
+        [HttpGet]
+        [Route("search-name")]
+        public IActionResult SearchByName(string name, PagingParameter paging)
+        {
+            var data = _searchService.SearchCenterByName(name, paging);
+
+            var metadata = new
+            {
+                data.TotalCount,
+                data.PageSize,
+                data.CurrentPage,
+                data.TotalPages,
+                data.HasNext,
+                data.HasPrevious
+            };
+
+            return Ok(new { data, metadata });
         }
     }
 }
