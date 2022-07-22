@@ -16,7 +16,7 @@ import { FIREBASE_API } from '../config';
 
 // utils
 import axios from '../utils/axios';
-import { setSession, setAccountInfoSession } from '../utils/jwt';
+import { setSession, setAccountInfoSession, setCenterInfoSession } from '../utils/jwt';
 
 // ----------------------------------------------------------------------
 
@@ -42,27 +42,31 @@ const initialState = {
   isInitialized: false,
   user: null,
   accountInfo: null,
+  centerInfo: null,
+  centerId: null,
 };
 
 const reducer = (state, action) => {
   if (action.type === 'INITIALIZE') {
-    const { isAuthenticated, user, accountInfo } = action.payload;
+    const { isAuthenticated, user, accountInfo, centerInfo } = action.payload;
     return {
       ...state,
       isAuthenticated,
       isInitialized: true,
       user,
       accountInfo,
+      centerInfo,
     };
   }
 
   if (action.type === 'LOGIN') {
-    const { user, accountInfo } = action.payload;
+    const { user, accountInfo, centerInfo } = action.payload;
     return {
       ...state,
       isAuthenticated: true,
       user,
       accountInfo,
+      centerInfo,
     };
   }
 
@@ -72,14 +76,16 @@ const reducer = (state, action) => {
       isAuthenticated: false,
       user: null,
       accountInfo: null,
+      centerInfo: null,
+      centerId: null,
     };
   }
 
-  if (action.type === 'LOAD_ACCOUNT_INFO') {
-    const { accountInfo } = action.payload;
+  if (action.type === 'CHANGE_CENTER') {
+    const { centerId } = action.payload;
     return {
       ...state,
-      accountInfo,
+      centerId,
     };
   }
 
@@ -93,6 +99,7 @@ const AuthContext = createContext({
   register: (email, password) => Promise.resolve(email, password),
   logout: () => Promise.resolve(),
   uploadPhoto: (path, file) => Promise.resolve(path, file),
+  changeCenter: () => null,
   // changePassword: (password) => Promise.resolve(password),
 });
 
@@ -109,6 +116,8 @@ function AuthProvider({ children }) {
 
   useEffect(() => {
     const accountInfo = JSON.parse(window.localStorage.getItem('accountInfo'));
+    const centerInfo = JSON.parse(window.localStorage.getItem('centerInfo'));
+
     if (accountInfo) {
       onAuthStateChanged(AUTH, async (user) => {
         if (user) {
@@ -122,19 +131,19 @@ function AuthProvider({ children }) {
 
           dispatch({
             type: 'INITIALIZE',
-            payload: { isAuthenticated: true, user, accountInfo },
+            payload: { isAuthenticated: true, user, accountInfo, centerInfo },
           });
         } else {
           dispatch({
             type: 'INITIALIZE',
-            payload: { isAuthenticated: false, user: null, accountInfo: null },
+            payload: { isAuthenticated: false, user: null, accountInfo: null, centerInfo: null },
           });
         }
       });
     } else {
       dispatch({
         type: 'INITIALIZE',
-        payload: { isAuthenticated: false, user: null, accountInfo: null },
+        payload: { isAuthenticated: false, user: null, accountInfo: null, centerInfo: null },
       });
     }
   }, [dispatch]);
@@ -144,14 +153,17 @@ function AuthProvider({ children }) {
 
     if (userCredentials) {
       const { accessToken } = userCredentials.user;
-      console.log('accessToken: ', accessToken);
+
       const userData = await getBackendToken(accessToken, 'Email');
+      const petCenter = await getPetCenter(userData.id);
+
       if (userData) {
         dispatch({
           type: 'LOGIN',
           payload: {
             user: userCredentials.user,
             accountInfo: userData,
+            centerInfo: petCenter,
           },
         });
       }
@@ -164,6 +176,7 @@ function AuthProvider({ children }) {
     signOut(AUTH);
     setSession(null);
     setAccountInfoSession(null);
+    setCenterInfoSession(null);
     dispatch({ type: 'LOGOUT' });
   };
 
@@ -196,6 +209,13 @@ function AuthProvider({ children }) {
     );
   };
 
+  const changeCenter = (centerId) => {
+    dispatch({
+      type: 'CHANGE_CENTER',
+      payload: { centerId },
+    });
+  };
+
   // const changePassword = (password) => updatePassword(AUTH.currentUser, password);
 
   return (
@@ -222,6 +242,7 @@ function AuthProvider({ children }) {
         register,
         logout,
         uploadPhoto,
+        changeCenter,
         // changePassword,
       }}
     >
@@ -241,10 +262,24 @@ const getBackendToken = async (idToken, signInMethod) => {
 
     if (response.statusText === 'OK') {
       const { jwtToken, ...userData } = response.data;
-      console.log('jwtToken: ', `Bearer ${jwtToken}`);
+
       setSession(jwtToken);
       setAccountInfoSession(JSON.stringify(userData));
       return userData;
+    }
+    return null;
+  } catch (error) {
+    console.log('error: ', error);
+    return null;
+  }
+};
+
+const getPetCenter = async (idOwner) => {
+  try {
+    const response = await axios.get(`/api/brands/owner/${idOwner}`);
+    if (response.statusText === 'OK') {
+      setCenterInfoSession(JSON.stringify(response.data));
+      return response.data;
     }
     return null;
   } catch (error) {

@@ -105,11 +105,11 @@ export const { openModal, closeModal, selectEvent, getBookingStatusesSuccess, ge
 
 // ----------------------------------------------------------------------
 
-export function getEvents() {
+export function getEvents(CenterId) {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('/api/bookings');
+      const response = await axios.get(`/api/bookings?CenterId=${CenterId}`);
 
       const bookingData = response.data.map((booking) => ({
         id: booking.id,
