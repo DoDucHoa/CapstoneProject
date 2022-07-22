@@ -118,35 +118,11 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("brand/{id:int}")]
-        public IActionResult GetCentersByBrand(int id, PagingParameter paging)
+        public IActionResult GetCentersByBrand(int id)
         {
-            var data = _petCenterService.GetByBrand(id, paging);
-            var metadata = new
-            {
-                data.TotalCount,
-                data.PageSize,
-                data.CurrentPage,
-                data.TotalPages,
-                data.HasNext,
-                data.HasPrevious
-            };
-            return Ok(new { data, metadata });
-        }
-
-        [HttpGet("name/{name}")]
-        public IActionResult GetCenterByName(string name, PagingParameter paging)
-        {
-            var data = _petCenterService.GetByName(name, paging);
-            var metadata = new
-            {
-                data.TotalCount,
-                data.PageSize,
-                data.CurrentPage,
-                data.TotalPages,
-                data.HasNext,
-                data.HasPrevious
-            };
-            return Ok(new { data, metadata });
+            var data = _petCenterService.GetByBrand(id);
+            
+            return Ok(data);
         }
 
         [HttpPost]
@@ -212,7 +188,7 @@ namespace PawNClaw.API.Controllers
 
         [HttpGet]
         [Route("search-name")]
-        public IActionResult SearchByName(string name, PagingParameter paging)
+        public IActionResult SearchByName(string name, [FromQuery] PagingParameter paging)
         {
             var data = _searchService.SearchCenterByName(name, paging);
 
