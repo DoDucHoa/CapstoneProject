@@ -51,8 +51,7 @@ namespace PawNClaw.Business.Services
         //Update New Cage For Booking Detail
         public async Task<bool> UpdateCageOfBookingDetail(UpdateBookingDetailParameter updateBookingDetailParameter)
         {
-            var value = _bookingDetailRepository.GetBookingDetail(updateBookingDetailParameter.BookingId,
-                updateBookingDetailParameter.Line);
+            var value = _bookingDetailRepository.Get(updateBookingDetailParameter.Id);
 
             //var petbookingdetails = _petBookingDetailRepository.GetAll(x => x.BookingId == updateBookingDetailParameter.BookingId
             //                                                        && x.Line == updateBookingDetailParameter.Line);
@@ -94,7 +93,7 @@ namespace PawNClaw.Business.Services
                     _bookingDetailRepository.Update(value);
                     await _bookingDetailRepository.SaveDbChangeAsync();
 
-                    var booking = _bookingRepository.GetBookingForCustomer(updateBookingDetailParameter.BookingId);
+                    var booking = _bookingRepository.GetBookingForCustomer(value.BookingId);
 
                     var serviceOrders = booking.ServiceOrders;
 
