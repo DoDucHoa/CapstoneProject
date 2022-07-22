@@ -21,7 +21,14 @@ namespace PawNClaw.Data.Repository
 
         public IEnumerable<ServiceOrder> GetServiceOrdersByPetIdAndBookingId(int BookingId, int PetId)
         {
-            return _dbSet.Where(x => x.BookingId == BookingId && x.PetId == PetId);
+            return _dbSet.Where(x => x.BookingId == BookingId && x.PetId == PetId).Select(x => new ServiceOrder { 
+                BookingId = x.BookingId,
+                Note = x.Note,
+                PetId = x.PetId,
+                ServiceId = x.ServiceId,
+                Service = x.Service,
+                Quantity = x.Quantity
+            });
         }
     }
 }

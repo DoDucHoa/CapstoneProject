@@ -57,51 +57,59 @@ class _CheckoutTodayState extends State<CheckoutToday> {
                     color: primaryFontColor,
                   ),
                 ),
-                ListView.builder(
-                  physics: ClampingScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: 1,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: width * smallPadRate),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
+                (bookings.isNotEmpty)
+                    ? ListView.builder(
+                        physics: ClampingScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: 1,
+                        itemBuilder: (context, index) {
+                          return Padding(
                             padding:
-                                EdgeInsets.only(right: width * smallPadRate),
-                            child: Text(
-                              "${center!.openTime}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: lightFontColor,
-                                fontSize: 18,
-                              ),
+                                EdgeInsets.only(bottom: width * smallPadRate),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      right: width * smallPadRate),
+                                  child: Text(
+                                    "${center!.openTime}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: lightFontColor,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                                Flexible(
+                                  child: ListView.builder(
+                                      physics: ClampingScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: bookings.length,
+                                      itemBuilder: (context, index) => InkWell(
+                                          onTap: () => Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                                  builder: (_) => BlocProvider.value(
+                                                      value: BlocProvider.of<
+                                                          BookingBloc>(context),
+                                                      child: BookingActivityScreen(
+                                                          booking: bookings[index])))),
+                                          child: BookingCard(booking: bookings[index]))),
+                                ),
+                              ],
                             ),
+                          );
+                        },
+                      )
+                    : Padding(
+                        padding: EdgeInsets.only(top: width * smallPadRate),
+                        child: Center(
+                          child: Text(
+                            "Không có booking nào check-out hôm nay.",
+                            style: TextStyle(fontStyle: FontStyle.italic),
                           ),
-                          Flexible(
-                            child: ListView.builder(
-                                physics: ClampingScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: bookings.length,
-                                itemBuilder: (context, index) => InkWell(
-                                    onTap: () => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (_) => BlocProvider.value(
-                                                value:
-                                                    BlocProvider.of<BookingBloc>(
-                                                        context),
-                                                child: BookingActivityScreen(
-                                                    booking:
-                                                        bookings[index])))),
-                                    child:
-                                        BookingCard(booking: bookings[index]))),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                )
+                        ),
+                      )
               ],
             ),
           )

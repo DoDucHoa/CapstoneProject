@@ -88,107 +88,124 @@ class _TodoListState extends State<TodoList> {
               color: primaryFontColor,
             ),
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: times.length,
-            physics: ClampingScrollPhysics(),
-            itemBuilder: (context, timeIdx) {
-              return getRemainFoodByTime(
-                          times[timeIdx], remainFeedingActivites)!
-                      .isNotEmpty
-                  ? Padding(
-                      padding: EdgeInsets.only(bottom: width * smallPadRate),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
+          (remainFeedingActivites.isNotEmpty)
+              ? ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: times.length,
+                  physics: ClampingScrollPhysics(),
+                  itemBuilder: (context, timeIdx) {
+                    return getRemainFoodByTime(
+                                times[timeIdx], remainFeedingActivites)!
+                            .isNotEmpty
+                        ? Padding(
                             padding:
-                                EdgeInsets.only(right: width * smallPadRate),
-                            child: Text(
-                              times[timeIdx].substring(0, 5),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: lightFontColor,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                          Flexible(
-                            child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: ClampingScrollPhysics(),
-                                itemCount: getRemainFoodByTime(
-                                  times[timeIdx],
-                                  remainFeedingActivites,
-                                )!
-                                    .length,
-                                itemBuilder: (context, index) {
-                                  return InkWell(
-                                    onTap: () => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (_) => BlocProvider.value(
-                                                value: BlocProvider.of<
-                                                    BookingBloc>(context),
-                                                child: BookingCageScreen(
-                                                    bookings: bookings,
-                                                    bookingDetail:
-                                                        getRemainFoodByTime(
-                                                                times[timeIdx],
-                                                                remainFeedingActivites)![
-                                                            index])))),
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: width * smallPadRate,
-                                        vertical: width * extraSmallPadRate,
-                                      ),
-                                      margin: EdgeInsets.only(
-                                          bottom: width * extraSmallPadRate),
-                                      width: width * 0.7,
-                                      height: height * 0.095,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
-                                        color: Colors.white,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              Text(
-                                                "Cho ăn ${getRemainFoodByTime(times[timeIdx], remainFeedingActivites)![index].cageCode}",
-                                                // "Cho ăn Cagecode",
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: primaryFontColor,
-                                                ),
-                                              ),
-                                              Text(
-                                                "${getRemainFoodByTime(times[timeIdx], remainFeedingActivites)![index].cageType}",
-                                                // "cagetype",
-                                                style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: lightFontColor,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                                EdgeInsets.only(bottom: width * smallPadRate),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      right: width * smallPadRate),
+                                  child: Text(
+                                    times[timeIdx].substring(0, 5),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: lightFontColor,
+                                      fontSize: 18,
                                     ),
-                                  );
-                                }),
-                          ),
-                        ],
-                      ),
-                    )
-                  : Container();
-            },
-          ),
+                                  ),
+                                ),
+                                Flexible(
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: ClampingScrollPhysics(),
+                                      itemCount: getRemainFoodByTime(
+                                        times[timeIdx],
+                                        remainFeedingActivites,
+                                      )!
+                                          .length,
+                                      itemBuilder: (context, index) {
+                                        return InkWell(
+                                          onTap: () => Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                                  builder: (_) => BlocProvider.value(
+                                                      value: BlocProvider.of<
+                                                          BookingBloc>(context),
+                                                      child: BookingCageScreen(
+                                                          bookings: bookings,
+                                                          bookingDetail:
+                                                              getRemainFoodByTime(
+                                                                  times[
+                                                                      timeIdx],
+                                                                  remainFeedingActivites)![index])))),
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: width * smallPadRate,
+                                              vertical:
+                                                  width * extraSmallPadRate,
+                                            ),
+                                            margin: EdgeInsets.only(
+                                                bottom:
+                                                    width * extraSmallPadRate),
+                                            width: width * 0.7,
+                                            height: height * 0.095,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              color: Colors.white,
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    Text(
+                                                      "Cho ăn ${getRemainFoodByTime(times[timeIdx], remainFeedingActivites)![index].cageCode}",
+                                                      // "Cho ăn Cagecode",
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: primaryFontColor,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "${getRemainFoodByTime(times[timeIdx], remainFeedingActivites)![index].cageType}",
+                                                      // "cagetype",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: lightFontColor,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container();
+                  },
+                )
+              : Padding(
+                  padding: EdgeInsets.only(top: width * smallPadRate),
+                  child: Center(
+                    child: Text(
+                      "Không còn chuồng nào cần cho ăn.",
+                      style: TextStyle(fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                ),
         ],
       ),
     );

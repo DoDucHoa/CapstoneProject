@@ -42,6 +42,7 @@ import { checkSize } from './useCalendarAPI';
 // ----------------------------------------------------------------------
 
 CalendarForm.propTypes = {
+  centerId: PropTypes.number,
   selectedEvent: PropTypes.object,
   onCancel: PropTypes.func,
   bookingStatuses: PropTypes.array,
@@ -49,10 +50,16 @@ CalendarForm.propTypes = {
   updateStatusColor: PropTypes.func,
 };
 
-export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses, petData, updateStatusColor }) {
+export default function CalendarForm({
+  centerId,
+  selectedEvent,
+  onCancel,
+  bookingStatuses,
+  petData,
+  updateStatusColor,
+}) {
   // STATE
   // ----------------------------------------------------------------------
-  const centerId = 1;
   const [openSupplyDialogForm, setOpenSupplyDialogForm] = useState(false);
   const [openServiceDialogForm, setOpenServiceDialogForm] = useState(false);
   const [openCageDialogForm, setOpenCageDialogForm] = useState(false);

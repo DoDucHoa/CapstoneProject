@@ -66,119 +66,150 @@ class _NextUpTasksState extends State<NextUpTasks> {
     var bookings = widget.bookings;
     return SingleChildScrollView(
       padding: EdgeInsets.all(width * smallPadRate),
-      child: ListView.builder(
-        padding: EdgeInsets.zero,
-        physics: ClampingScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: bookings.length,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: EdgeInsets.only(bottom: width * smallPadRate),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: CircleAvatar(
-                        backgroundImage: AssetImage("lib/assets/cus0.png"),
-                        backgroundColor: Colors.white,
-                        radius: height * 0.03,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Text(
-                        bookings[index].customer!.name!,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18,
+      child: (bookings
+                  .firstWhere(
+                      (element) =>
+                          element.getUndoneSupplyAct().isNotEmpty ||
+                          element.getUndoneServiceAct().isNotEmpty,
+                      orElse: () => BookingDetail(id: -1))
+                  .id !=
+              -1)
+          ? ListView.builder(
+              padding: EdgeInsets.zero,
+              physics: ClampingScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: bookings.length,
+              itemBuilder: (context, index) {
+                return (bookings[index].getUndoneServiceAct().isNotEmpty ||
+                        bookings[index].getUndoneSupplyAct().isNotEmpty)
+                    ? Container(
+                        margin: EdgeInsets.only(bottom: width * smallPadRate),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: CircleAvatar(
+                                    backgroundImage:
+                                        AssetImage("lib/assets/cus0.png"),
+                                    backgroundColor: Colors.white,
+                                    radius: height * 0.03,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: Text(
+                                    bookings[index].customer!.name!,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    color: lightFontColor,
+                                    height: 1,
+                                  ),
+                                )
+                              ],
+                            ),
+                            ListView.builder(
+                                padding: EdgeInsets.zero,
+                                physics: ClampingScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount:
+                                    bookings[index].getUndoneSupplyAct().length,
+                                itemBuilder: (context, supIndex) {
+                                  List<SupplyOrders> supplies =
+                                      getPetForSupplies(bookings[index],
+                                          bookings[index].getUndoneSupplyAct());
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                        left: width * regularPadRate),
+                                    child: InkWell(
+                                      onTap: () => Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (_) =>
+                                                  BlocProvider.value(
+                                                      value: BlocProvider.of<
+                                                          BookingBloc>(context),
+                                                      child: ActivityDetail(
+                                                        pet: supplies[supIndex]
+                                                            .pet!,
+                                                        supply:
+                                                            supplies[supIndex],
+                                                      )))),
+                                      child: ActivityCard(
+                                          activityName:
+                                              "${supplies[supIndex].supply!.name}",
+                                          note: "${supplies[supIndex].note}",
+                                          pet: supplies[supIndex].pet!,
+                                          // Pet(
+                                          //     breedName: "Scottish Straight Cat",
+                                          //     name: "Alice"),
+                                          booking: bookings[index],
+                                          remainCount: 1),
+                                    ),
+                                  );
+                                }),
+                            ListView.builder(
+                                padding: EdgeInsets.zero,
+                                physics: ClampingScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: bookings[index]
+                                    .getUndoneServiceAct()
+                                    .length,
+                                itemBuilder: (context, serIndex) {
+                                  List<ServiceOrders> services =
+                                      getPetForServices(
+                                          bookings[index],
+                                          bookings[index]
+                                              .getUndoneServiceAct());
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                        left: width * regularPadRate),
+                                    child: InkWell(
+                                      onTap: () => Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (_) =>
+                                                  BlocProvider.value(
+                                                      value: BlocProvider.of<
+                                                          BookingBloc>(context),
+                                                      child: ActivityDetail(
+                                                        pet: services[serIndex]
+                                                            .pet!,
+                                                        service:
+                                                            services[serIndex],
+                                                      )))),
+                                      child: ActivityCard(
+                                          activityName:
+                                              "${services[serIndex].service!.description}",
+                                          note: "${services[serIndex].note}",
+                                          pet: services[serIndex].pet!,
+                                          // Pet(
+                                          //     breedName: "Scottish Straight Cat",
+                                          //     name: "Alice"),
+                                          booking: bookings[index],
+                                          remainCount: 1),
+                                    ),
+                                  );
+                                }),
+                          ],
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        color: lightFontColor,
-                        height: 1,
-                      ),
-                    )
-                  ],
-                ),
-                ListView.builder(
-                    padding: EdgeInsets.zero,
-                    physics: ClampingScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: bookings[index].getUndoneSupplyAct().length,
-                    itemBuilder: (context, supIndex) {
-                      List<SupplyOrders> supplies = getPetForSupplies(
-                          bookings[index],
-                          bookings[index].getUndoneSupplyAct());
-                      return Padding(
-                        padding: EdgeInsets.only(left: width * regularPadRate),
-                        child: InkWell(
-                          onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (_) => BlocProvider.value(
-                                      value:
-                                          BlocProvider.of<BookingBloc>(context),
-                                      child: ActivityDetail(
-                                        pet: supplies[supIndex].pet!,
-                                        supply: supplies[supIndex],
-                                      )))),
-                          child: ActivityCard(
-                              activityName:
-                                  "${supplies[supIndex].supply!.name}",
-                              note: "${supplies[supIndex].note}",
-                              pet: supplies[supIndex].pet!,
-                              // Pet(
-                              //     breedName: "Scottish Straight Cat",
-                              //     name: "Alice"),
-                              booking: bookings[index],
-                              remainCount: 1),
-                        ),
-                      );
-                    }),
-                ListView.builder(
-                    padding: EdgeInsets.zero,
-                    physics: ClampingScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: bookings[index].getUndoneServiceAct().length,
-                    itemBuilder: (context, serIndex) {
-                      List<ServiceOrders> services = getPetForServices(
-                          bookings[index],
-                          bookings[index].getUndoneServiceAct());
-                      return Padding(
-                        padding: EdgeInsets.only(left: width * regularPadRate),
-                        child: InkWell(
-                          onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (_) => BlocProvider.value(
-                                      value:
-                                          BlocProvider.of<BookingBloc>(context),
-                                      child: ActivityDetail(
-                                        pet: services[serIndex].pet!,
-                                        service: services[serIndex],
-                                      )))),
-                          child: ActivityCard(
-                              activityName:
-                                  "${services[serIndex].service!.description}",
-                              note: "${services[serIndex].note}",
-                              pet: services[serIndex].pet!,
-                              // Pet(
-                              //     breedName: "Scottish Straight Cat",
-                              //     name: "Alice"),
-                              booking: bookings[index],
-                              remainCount: 1),
-                        ),
-                      );
-                    }),
-              ],
+                      )
+                    : Container();
+              },
+            )
+          : Center(
+              child: Text(
+                "Không còn dịch vụ hay vật dụng nào chưa cung cấp.",
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
             ),
-          );
-        },
-      ),
     );
   }
 }

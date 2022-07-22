@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Parameter;
+using System;
 
 namespace PawNClaw.API.Controllers
 {
@@ -91,5 +92,20 @@ namespace PawNClaw.API.Controllers
             }
             return BadRequest();
         }
+
+        [HttpGet("owner/{id:int}")]
+        [Authorize(Roles = "Admin,Mod,Owner")]
+        public IActionResult GetBrandByOwnerId(int id)
+        {
+            try
+            {
+                return Ok(_brandService.GetBrandByOwnerId(id));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
     }
 }
