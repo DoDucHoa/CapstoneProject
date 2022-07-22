@@ -9,5 +9,6 @@ namespace PawNClaw.Data.Interface
 {
     public interface ISponsorBannerRepository : IRepository<SponsorBanner>
     {
+        public IEnumerable<SponsorBanner> GetSponsorBannersWithPhoto();
     }
 }
