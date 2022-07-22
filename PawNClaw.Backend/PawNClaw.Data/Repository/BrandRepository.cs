@@ -27,6 +27,7 @@ namespace PawNClaw.Data.Repository
         public Brand GetBrandByOwner(int OwnerId)
         {
             return _dbSet.Include(x => x.PetCenters)
+                .Where(brand => brand.OwnerId == OwnerId)
                 .Select(x => new Brand {
                     Id = x.Id,
                     Name = x.Name,
@@ -51,7 +52,7 @@ namespace PawNClaw.Data.Repository
                     }),
                     Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.Brand)
                 })
-                .FirstOrDefault(brand => brand.OwnerId == OwnerId);
+                .FirstOrDefault();
         }
     }
 }
