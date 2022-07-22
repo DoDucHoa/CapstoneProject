@@ -20,7 +20,7 @@ namespace PawNClaw.Business.Services
         public IEnumerable<SponsorBanner> GetSponsorBanners()
         {
             DateTime today = DateTime.Today;
-            return _sponsorBannerRepository.GetAll(x => x.Status == true && ((DateTime)x.StartDate).Date <= today && ((DateTime)x.EndDate).Date >= today);
+            return _sponsorBannerRepository.GetSponsorBannersWithPhoto();
         }
     }
 }

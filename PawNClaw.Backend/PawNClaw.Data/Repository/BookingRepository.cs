@@ -621,7 +621,8 @@ namespace PawNClaw.Data.Repository
                         .Select(pet => new PetBookingDetail
                         {
                             BookingDetailId = pet.BookingDetailId,
-                            PetId = pet.PetId
+                            PetId = pet.PetId,
+                            Pet = pet.Pet
                         })
                     })
                     .Where(bookingdetail => bookingdetail.CageCode.Equals(CageCode))
