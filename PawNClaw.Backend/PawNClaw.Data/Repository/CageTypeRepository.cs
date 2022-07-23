@@ -94,7 +94,8 @@ namespace PawNClaw.Data.Repository
                         && DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
                         ||
                         (DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
-                        && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))))
+                        && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))
+                        && (bookingdetail.Booking.StatusId == 1 || bookingdetail.Booking.StatusId == 2)))
             });
             }
             else
@@ -126,7 +127,8 @@ namespace PawNClaw.Data.Repository
                         && DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
                         ||
                         (DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
-                        && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))))
+                        && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))
+                        && (bookingdetail.Booking.StatusId == 1 || bookingdetail.Booking.StatusId == 2)))
             });
             }
 
