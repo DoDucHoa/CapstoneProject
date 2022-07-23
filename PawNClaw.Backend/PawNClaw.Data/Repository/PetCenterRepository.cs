@@ -225,7 +225,7 @@ namespace PawNClaw.Data.Repository
                         SupplyTypeCode = s.SupplyTypeCode,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(s.Id, PhotoTypesConst.Supply)
                     }),
-                    Services = (ICollection<Service>)x.Services.Where(ser => ser.Status == true && ser.ServiceOrders.Count > 0)
+                    Services = (ICollection<Service>)x.Services.Where(ser => ser.Status == true && ser.ServicePrices.Count > 0)
                     .Select(ser => new Service
                     {
                         Id = ser.Id,
@@ -239,7 +239,8 @@ namespace PawNClaw.Data.Repository
                             MinWeight = price.MinWeight,
                             MaxWeight = price.MaxWeight
                         })
-                    })
+                    }),
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
                 })
                 .SingleOrDefault(x => x.Id == id);
 
