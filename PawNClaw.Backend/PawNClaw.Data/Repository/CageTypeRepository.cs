@@ -59,9 +59,14 @@ namespace PawNClaw.Data.Repository
             PetSizeCage petSize = new PetSizeCage();
             petSize.Height = Height;
             petSize.Width = Width;
+            petSize.IsSingle = true;
             if (Count > 1) petSize.IsSingle = false;
 
-            IQueryable<CageType> query = _dbSet
+            IQueryable<CageType> query;
+
+            if (!petSize.IsSingle)
+            {
+                query = _dbSet
             .Where(cagetype => cagetype.Height >= petSize.Height
                 && cagetype.Width >= petSize.Width
                 && cagetype.CenterId == CenterId
@@ -80,7 +85,7 @@ namespace PawNClaw.Data.Repository
                 Status = cagetype.Status,
                 CenterId = cagetype.CenterId,
                 TotalPrice = _priceRepository.checkTotalPriceOfCageType(cagetype.Id, StartBooking, EndBooking),
-                Cages = (ICollection<Cage>)cagetype.Cages.Where(cage => cage.Status == true 
+                Cages = (ICollection<Cage>)cagetype.Cages.Where(cage => cage.Status == true
                         && !cage.BookingDetails.Any(bookingdetail =>
                         ((DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
                         && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
@@ -91,7 +96,39 @@ namespace PawNClaw.Data.Repository
                         (DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
                         && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))))
             });
-
+            }
+            else
+            {
+                query = _dbSet
+            .Where(cagetype => cagetype.Height >= petSize.Height
+                && cagetype.Width >= petSize.Width
+                && cagetype.CenterId == CenterId
+                && cagetype.Status == true)
+            .Include(catype => catype.Cages)
+            .Select(cagetype => new CageType
+            {
+                Id = cagetype.Id,
+                TypeName = cagetype.TypeName,
+                Description = cagetype.Description,
+                Height = cagetype.Height,
+                Width = cagetype.Width,
+                Length = cagetype.Length,
+                IsSingle = cagetype.IsSingle,
+                Status = cagetype.Status,
+                CenterId = cagetype.CenterId,
+                TotalPrice = _priceRepository.checkTotalPriceOfCageType(cagetype.Id, StartBooking, EndBooking),
+                Cages = (ICollection<Cage>)cagetype.Cages.Where(cage => cage.Status == true
+                        && !cage.BookingDetails.Any(bookingdetail =>
+                        ((DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
+                        && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
+                        ||
+                        (DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.StartBooking) >= 0
+                        && DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
+                        ||
+                        (DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
+                        && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))))
+            });
+            }
 
             List<CageType> cageTypes = new List<CageType>();
             foreach (var cageType in query)
