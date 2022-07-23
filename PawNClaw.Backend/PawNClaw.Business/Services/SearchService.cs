@@ -310,7 +310,7 @@ namespace PawNClaw.Business.Services
             {
                 foreach (var petId in petIds)
                 {
-                    if (_petBookingDetailRepository.GetAll(x => x.PetId == petId.Id &&
+                    if (_petBookingDetailRepository.GetAll(x => x.PetId == petId.Id && (x.BookingDetail.Booking.StatusId == 2 || x.BookingDetail.Booking.StatusId == 1) &&
                             (DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) >= 0
                             && DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.EndBooking) < 0)).Count() != 0)
                     {
