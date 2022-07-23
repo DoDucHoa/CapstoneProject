@@ -98,21 +98,22 @@ namespace PawNClaw.Business.Services
             int Id = 0;
 
             //Check cage is booking and pet is booking in time
-            //foreach (var bookingDetailCreateParameter in bookingDetailCreateParameters)
-            //{
-            //    if (_cageRepository.GetAll(cage => cage.Code.Trim().Equals(bookingDetailCreateParameter.CageCode) && cage.BookingDetails.Any(bookingdetail =>
-            //                    ((DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
-            //                    && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
-            //                    ||
-            //                    (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) >= 0
-            //                    && DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
-            //                    ||
-            //                    (DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
-            //                    && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0)))).Count() != 0)
-            //    {
-            //        throw new Exception("This Cage Has Been Used With Booking Time");
-            //    }
-            //}
+            foreach (var bookingDetailCreateParameter in bookingDetailCreateParameters)
+            {
+                if (_cageRepository.GetAll(cage => cage.Code.Trim().Equals(bookingDetailCreateParameter.CageCode) && cage.BookingDetails.Any(bookingdetail =>
+                                ((DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
+                                ||
+                                (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) >= 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
+                                ||
+                                (DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))
+                                && (bookingdetail.Booking.StatusId == 1 || bookingdetail.Booking.StatusId == 2))).Count() != 0)
+                {
+                    throw new Exception("This Cage Has Been Used With Booking Time");
+                }
+            }
 
 
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
