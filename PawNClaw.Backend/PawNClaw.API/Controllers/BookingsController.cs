@@ -31,7 +31,12 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                var create = await _bookingActivityService.CreateBookingActivityAfterConfirm(updateStatusParameter.id);
+                bool create = false;
+
+                if (updateStatusParameter.statusId == 2)
+                {
+                    create = await _bookingActivityService.CreateBookingActivityAfterConfirm(updateStatusParameter.id);
+                }
 
                 if (create)
                 {
