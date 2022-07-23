@@ -31,7 +31,7 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                bool create = false;
+                bool create = true;
 
                 if (updateStatusParameter.statusId == 2)
                 {
