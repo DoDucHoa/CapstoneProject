@@ -283,7 +283,10 @@ namespace PawNClaw.Data.Repository
                         Length = cagetype.Length,
                         IsSingle = cagetype.IsSingle,
                         Status = cagetype.Status,
-                        CenterId = cagetype.CenterId
+                        CenterId = cagetype.CenterId,
+                        Cages = cagetype.Cages,
+                        MinPrice = cagetype.Prices.Min(x => x.UnitPrice),
+                        MaxPrice = cagetype.Prices.Max(x => x.UnitPrice),
                     }),
                     Supplies = (ICollection<Supply>)x.Supplies.Where(s => s.Quantity > 0 && s.Status == true)
                     .Select(s => new Supply
