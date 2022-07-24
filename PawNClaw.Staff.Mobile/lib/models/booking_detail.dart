@@ -106,14 +106,12 @@ class BookingDetail {
 
   List<BookingDetails> getUndoneFeedingAct() {
     List<BookingDetails> undone = [];
-    this.bookingActivities!.forEach((element) {
-      if (element.provideTime == null && element.bookingDetailId != null) {
-        this.bookingDetails!.forEach((booking) {
-          if (booking.id == element.bookingDetailId) {
-            undone.add(booking);
-          }
-        });
-      }
+    this.bookingDetails!.forEach((booking) {
+      booking.bookingActivities?.forEach((element) {
+        if (element.provideTime == null) {
+          undone.add(booking);
+        }
+      });
     });
     return undone;
   }
@@ -180,6 +178,16 @@ class BookingDetail {
     this.bookingActivities!.forEach((element) {
       if (element.serviceId == service.service!.id &&
           element.provideTime == null) {
+        count++;
+      }
+    });
+    return count;
+  }
+
+  int getRemainFeedingAct() {
+    int count = 0;
+    this.bookingActivities!.forEach((element) {
+      if (element.bookingDetailId != null && element.provideTime == null) {
         count++;
       }
     });

@@ -1,4 +1,5 @@
 ﻿using PawNClaw.Data.Database;
+using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
 using System;
@@ -49,6 +50,80 @@ namespace PawNClaw.Business.Services
             catch
             {
                 throw new Exception();
+            }
+        }
+
+        public bool ShiftCage(List<String> cageCodes, int centerId)
+        {
+            try
+            {
+                _cageRepository.UpdateCageStatus(cageCodes, centerId);
+                _cageRepository.SaveDbChange();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw e;
+            }
+        }
+
+        //Get Cages
+        public PagedList<Cage> getCages(CageRequestParameter cageRequestParameter, PagingParameter pagingParameter)
+        {
+            try
+            {
+                var values = _cageRepository.GetAll(includeProperties: cageRequestParameter.includeProperties).Where(x=>x.CenterId == cageRequestParameter.CenterId);
+
+                if(!string.IsNullOrWhiteSpace(cageRequestParameter.Code))
+                {
+                    values = values.Where(x => cageRequestParameter.Code.Equals(x.Code.Trim()));
+                }
+
+                if(cageRequestParameter.CageTypeId != null)
+                {
+                    values = values.Where(x => x.CageTypeId == cageRequestParameter.CageTypeId);
+                }
+
+                if(cageRequestParameter.IsOnline != null)
+                {
+                    values = cageRequestParameter.IsOnline switch
+                    {
+                        true => values.Where(x => x.IsOnline == true),
+                        false => values.Where(x => x.IsOnline == false),
+                        _ => values
+                    };
+                }
+
+                if (cageRequestParameter.Status != null)
+                {
+                    values = cageRequestParameter.Status switch
+                    {
+                        true => values.Where(x => x.Status == true),
+                        false => values.Where(x => x.Status == false),
+                        _ => values
+                    };
+                }
+
+                if (!string.IsNullOrWhiteSpace(cageRequestParameter.sort))
+                {
+                    switch (cageRequestParameter.sort)
+                    {
+                        case "code":
+                            if (cageRequestParameter.dir == "asc")
+                                values = values.OrderBy(d => d.Code);
+                            else if (cageRequestParameter.dir == "desc")
+                                values = values.OrderByDescending(d => d.Code);
+                            break;
+                    }
+                }
+
+                return PagedList<Cage>.ToPagedList(values.AsQueryable(),pagingParameter.PageNumber,pagingParameter.PageSize);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw e;
             }
         }
     }

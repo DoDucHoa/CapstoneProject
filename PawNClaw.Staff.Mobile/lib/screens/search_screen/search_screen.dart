@@ -8,6 +8,7 @@ import 'package:pncstaff_mobile_application/models/pet.dart';
 import 'package:pncstaff_mobile_application/screens/activity_screen/components/pet_card.dart';
 import 'package:pncstaff_mobile_application/screens/activity_screen/subscreens/service_activity.dart';
 import 'package:pncstaff_mobile_application/screens/activity_screen/subscreens/supply_activity.dart';
+import 'package:pncstaff_mobile_application/screens/home_screen/subscreens/booking_cage.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -29,7 +30,6 @@ class _SearchScreenState extends State<SearchScreen> {
       }
       if (state is SearchDone) {
         var booking = state.booking;
-        List<SupplyOrders> supplies = booking.getUndoneSupplyAct();
         List<Pet> pets = [];
         booking.bookingDetails!.forEach(
           (element) {
@@ -95,96 +95,170 @@ class _SearchScreenState extends State<SearchScreen> {
                 padding: EdgeInsets.symmetric(horizontal: width * smallPadRate),
                 scrollDirection: Axis.horizontal,
                 child: Row(children: [
-                  InkWell(
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            SupplyActivity(booking: booking))),
-                    child: Container(
-                      margin: EdgeInsets.only(right: width * smallPadRate),
-                      width: width * 0.3,
-                      height: width * 0.3,
-                      decoration: BoxDecoration(
-                        color: lightPrimaryColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(width * smallPadRate * 0.7),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  color: primaryColor,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Icon(
-                                Icons.shopping_cart_rounded,
-                                color: Colors.white,
+                  (booking.getRemainFeedingAct() > 0)
+                      ? InkWell(
+                          onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => BookingCageScreen(
+                                      booking: booking,
+                                      bookingDetail:
+                                          booking.bookingDetails!.first))),
+                          child: Container(
+                            margin:
+                                EdgeInsets.only(right: width * smallPadRate),
+                            width: width * 0.3,
+                            height: width * 0.3,
+                            decoration: BoxDecoration(
+                              color: lightPrimaryColor.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.all(width * smallPadRate * 0.7),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        color: primaryColor,
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Icon(
+                                      Icons.local_fire_department,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    booking.getRemainFeedingAct().toString(),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 25,
+                                        color: primaryFontColor),
+                                  ),
+                                  Text(
+                                    "Cho ăn",
+                                    style: TextStyle(
+                                        color: primaryFontColor, fontSize: 18),
+                                  ),
+                                ],
                               ),
                             ),
-                            Text(
-                              booking.getUndoneSupplyAct().length.toString(),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 25,
-                                  color: primaryFontColor),
+                          ),
+                        )
+                      : Container(),
+                  (booking.getUndoneSupplyAct().isNotEmpty)
+                      ? InkWell(
+                          onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      SupplyActivity(booking: booking))),
+                          child: Container(
+                            margin:
+                                EdgeInsets.only(right: width * smallPadRate),
+                            width: width * 0.3,
+                            height: width * 0.3,
+                            decoration: BoxDecoration(
+                              color: lightPrimaryColor.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                            Text(
-                              "Đồ dùng",
-                              style: TextStyle(
-                                  color: primaryFontColor, fontSize: 18),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            ServiceActivity(booking: booking))),
-                    child: Container(
-                      margin: EdgeInsets.only(right: width * smallPadRate),
-                      width: width * 0.3,
-                      height: width * 0.3,
-                      decoration: BoxDecoration(
-                        color: lightPrimaryColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(width * smallPadRate * 0.7),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  color: primaryColor,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Icon(
-                                Icons.back_hand,
-                                color: Colors.white,
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.all(width * smallPadRate * 0.7),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        color: primaryColor,
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Icon(
+                                      Icons.shopping_cart_rounded,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    booking
+                                        .getUndoneSupplyAct()
+                                        .length
+                                        .toString(),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 25,
+                                        color: primaryFontColor),
+                                  ),
+                                  Text(
+                                    "Đồ dùng",
+                                    style: TextStyle(
+                                        color: primaryFontColor, fontSize: 18),
+                                  ),
+                                ],
                               ),
                             ),
-                            Text(
-                              booking.getUndoneServiceAct().length.toString(),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 25,
-                                  color: primaryFontColor),
+                          ),
+                        )
+                      : Container(),
+                  (booking.getUndoneServiceAct().isNotEmpty)
+                      ? InkWell(
+                          onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ServiceActivity(booking: booking))),
+                          child: Container(
+                            margin:
+                                EdgeInsets.only(right: width * smallPadRate),
+                            width: width * 0.3,
+                            height: width * 0.3,
+                            decoration: BoxDecoration(
+                              color: lightPrimaryColor.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                            Text(
-                              "Dịch vụ",
-                              style: TextStyle(
-                                  color: primaryFontColor, fontSize: 18),
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.all(width * smallPadRate * 0.7),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        color: primaryColor,
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Icon(
+                                      Icons.back_hand,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    booking
+                                        .getUndoneServiceAct()
+                                        .length
+                                        .toString(),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 25,
+                                        color: primaryFontColor),
+                                  ),
+                                  Text(
+                                    "Dịch vụ",
+                                    style: TextStyle(
+                                        color: primaryFontColor, fontSize: 18),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                          ),
+                        )
+                      : Container(),
                   // Container(
                   //   margin: EdgeInsets.only(
                   //       right: width * smallPadRate),

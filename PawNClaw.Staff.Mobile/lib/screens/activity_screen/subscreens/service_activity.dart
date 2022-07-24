@@ -39,6 +39,7 @@ class _ServiceActivityState extends State<ServiceActivity> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
     final booking = widget.booking;
     List<ServiceOrders> services =
         getPetForServices(booking, booking.getUndoneServiceAct());
@@ -68,18 +69,24 @@ class _ServiceActivityState extends State<ServiceActivity> {
           shrinkWrap: true,
           itemBuilder: (context, index) => InkWell(
             onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => BlocProvider.value(
-                    value: BlocProvider.of<BookingBloc>(context),
-                    child: ActivityDetail(
+                builder: (context) => ActivityDetail(
                       pet: services[index].pet!,
                       service: services[index],
-                    )))),
-            child: ActivityCard(
-              activityName: services[index].service!.description!,
-              note: services[index].note ?? "Không có ghi chú",
-              remainCount: booking.getRemainServiceAct(services[index]),
-              booking: booking,
-              pet: services[index].pet!,
+                      booking: booking,
+                    ))),
+            child: Container(
+              margin: EdgeInsets.only(
+                right: width * smallPadRate,
+                left: width * smallPadRate,
+                top: width * smallPadRate,
+              ),
+              child: ActivityCard(
+                activityName: services[index].service!.description!,
+                note: services[index].note ?? "Không có ghi chú",
+                remainCount: booking.getRemainServiceAct(services[index]),
+                booking: booking,
+                pet: services[index].pet!,
+              ),
             ),
           ),
           itemCount: services.length,

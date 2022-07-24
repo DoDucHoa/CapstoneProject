@@ -28,11 +28,6 @@ class ActivityCard extends StatelessWidget {
     return Visibility(
       visible: remainCount == 0 ? false : true,
       child: Container(
-        margin: EdgeInsets.only(
-          // right: width * smallPadRate,
-          left: width * smallPadRate,
-          top: width * smallPadRate,
-        ),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15),
@@ -47,24 +42,27 @@ class ActivityCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "${activityName} x${remainCount}",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700),
-                ),
-                Text(
-                  note,
-                  style: TextStyle(
-                      color: lightFontColor,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600),
-                ),
-              ],
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${activityName} x${remainCount}",
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700),
+                  ),
+                  Text(
+                    note,
+                    style: TextStyle(
+                        color: lightFontColor,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
             )
           ]),
           SizedBox(

@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PawNClaw.Data.Database;
+using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +69,24 @@ namespace PawNClaw.Data.Repository
             Cage query = _dbSet.Find(Code, CenterId);
 
             return query;
+        }
+
+        public bool UpdateCageStatus(List<string> CageCodes, int centerId)
+        {
+            foreach (String code in CageCodes)
+            {
+                var cage = _dbSet.First(x => x.Code.Equals(code) && x.CenterId == centerId);
+                if (cage.IsOnline) 
+                    {
+                        cage.IsOnline = false; 
+                        _dbSet.Update(cage);
+                    }
+                else 
+                    {
+                        cage.IsOnline = true; _dbSet.Update(cage);
+                    }
+            }
+            return (_db.SaveChanges() >= 0);    
         }
     }
 }
