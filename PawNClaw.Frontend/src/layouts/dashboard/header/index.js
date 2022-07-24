@@ -5,6 +5,7 @@ import { Box, Stack, AppBar, Toolbar } from '@mui/material';
 // hooks
 import useOffSetTop from '../../../hooks/useOffSetTop';
 import useResponsive from '../../../hooks/useResponsive';
+import useAuth from '../../../hooks/useAuth';
 // utils
 import cssStyles from '../../../utils/cssStyles';
 // config
@@ -14,11 +15,12 @@ import Logo from '../../../components/Logo';
 import Iconify from '../../../components/Iconify';
 import { IconButtonAnimate } from '../../../components/animate';
 //
-import Searchbar from './Searchbar';
 import AccountPopover from './AccountPopover';
-import LanguagePopover from './LanguagePopover';
-import ContactsPopover from './ContactsPopover';
-import NotificationsPopover from './NotificationsPopover';
+import CenterPropover from './CenterPropover';
+// import Searchbar from './Searchbar';
+// import LanguagePopover from './LanguagePopover';
+// import ContactsPopover from './ContactsPopover';
+// import NotificationsPopover from './NotificationsPopover';
 
 // ----------------------------------------------------------------------
 
@@ -60,6 +62,8 @@ DashboardHeader.propTypes = {
 export default function DashboardHeader({ onOpenSidebar, isCollapse = false, verticalLayout = false }) {
   const isOffset = useOffSetTop(HEADER.DASHBOARD_DESKTOP_HEIGHT) && !verticalLayout;
 
+  const { centerInfo, changeCenter } = useAuth();
+
   const isDesktop = useResponsive('up', 'lg');
 
   return (
@@ -78,13 +82,14 @@ export default function DashboardHeader({ onOpenSidebar, isCollapse = false, ver
           </IconButtonAnimate>
         )}
 
-        <Searchbar />
+        {/* <Searchbar /> */}
         <Box sx={{ flexGrow: 1 }} />
 
         <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
-          <LanguagePopover />
-          <NotificationsPopover />
-          <ContactsPopover />
+          {/* <LanguagePopover /> */}
+          {/* <NotificationsPopover /> */}
+          {/* <ContactsPopover /> */}
+          {centerInfo && <CenterPropover petCenters={centerInfo.petCenters} onChange={changeCenter} />}
           <AccountPopover />
         </Stack>
       </Toolbar>

@@ -562,6 +562,7 @@ namespace PawNClaw.Data.Repository
                         SupplyId = supplyorder.SupplyId,
                         BookingId = supplyorder.BookingId,
                         PetId = supplyorder.PetId,
+                        Quantity = supplyorder.Quantity,
                         Pet = new Pet
                         {
                             Name = supplyorder.Pet.Name,
@@ -573,6 +574,7 @@ namespace PawNClaw.Data.Repository
                         ServiceId = serviceorder.ServiceId,
                         BookingId = serviceorder.BookingId,
                         PetId = serviceorder.PetId,
+                        Quantity = serviceorder.Quantity,
                         Pet = new Pet
                         {
                             Name = serviceorder.Pet.Name,

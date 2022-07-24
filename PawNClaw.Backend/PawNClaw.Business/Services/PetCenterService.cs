@@ -82,13 +82,11 @@ namespace PawNClaw.Business.Services
         }
 
         //Get By Brand Id
-        public PagedList<PetCenter> GetByBrand(int id, PagingParameter paging)
+        public IEnumerable<PetCenter> GetByBrand(int id)
         {
             var values = _petCenterRepository.GetAll(x => x.BrandId == id);
 
-            return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
-            paging.PageNumber,
-            paging.PageSize);
+            return values;
         }
 
         //Get By Staff Id

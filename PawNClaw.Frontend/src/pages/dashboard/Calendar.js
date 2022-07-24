@@ -9,14 +9,15 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { isEmpty } from 'lodash';
 // @mui
 import { Card, Container, DialogTitle } from '@mui/material';
+// hooks
+import useAuth from '../../hooks/useAuth';
+import useSettings from '../../hooks/useSettings';
+import useResponsive from '../../hooks/useResponsive';
 // redux
 import { useDispatch, useSelector } from '../../redux/store';
 import { getEvents, closeModal, getBookingDetails } from '../../redux/slices/calendar';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
-// hooks
-import useSettings from '../../hooks/useSettings';
-import useResponsive from '../../hooks/useResponsive';
 // components
 import Page from '../../components/Page';
 import { DialogAnimate } from '../../components/animate';
@@ -28,6 +29,7 @@ import { BOOKING_STATUS_COLOR } from '../../config';
 // ----------------------------------------------------------------------
 
 export default function Calendar() {
+  const { centerId } = useAuth();
   const { themeStretch } = useSettings();
 
   const dispatch = useDispatch();
@@ -43,8 +45,8 @@ export default function Calendar() {
   const { events, isOpenModal, bookingDetails, bookingStatuses, petData } = useSelector((state) => state.calendar);
 
   useEffect(() => {
-    dispatch(getEvents());
-  }, [dispatch]);
+    dispatch(getEvents(centerId));
+  }, [dispatch, centerId]);
 
   useEffect(() => {
     setBookings(events);
@@ -106,7 +108,7 @@ export default function Calendar() {
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <HeaderBreadcrumbs
           heading="Lịch đặt"
-          links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Calendar' }]}
+          links={[{ name: 'Trang chủ', href: PATH_DASHBOARD.root }, { name: 'Lịch đặt' }]}
         />
 
         <Card>
@@ -134,6 +136,7 @@ export default function Calendar() {
         <DialogAnimate open={isOpenModal} onClose={handleCloseModal}>
           <DialogTitle>Khách hàng: {isEmpty(bookingDetails) ? '' : bookingDetails.customer.name}</DialogTitle>
           <CalendarForm
+            centerId={centerId}
             selectedEvent={bookingDetails || {}}
             onCancel={handleCloseModal}
             bookingStatuses={bookingStatuses}
