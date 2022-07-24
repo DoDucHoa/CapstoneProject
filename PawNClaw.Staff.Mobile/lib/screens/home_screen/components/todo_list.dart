@@ -25,17 +25,26 @@ class _TodoListState extends State<TodoList> {
     super.initState();
   }
 
+  BookingDetail? getBookingByDetail(
+      BookingDetails detail, List<BookingDetail> bookings) {
+    var result;
+    bookings.forEach((booking) {
+      if (booking.bookingDetails!.contains(detail) == true) {
+        result = booking;
+      }
+    });
+    return result;
+  }
+
   List<BookingDetails>? getRemainFoodByTime(
       String time, List<BookingDetails> details) {
     List<BookingDetails> result = [];
-    details.forEach((detail) {
-      var booking = widget.bookings
-          .firstWhere((element) => element.id == detail.bookingId);
-      booking.getUndoneActivities().forEach((element) {
-        if ((DateFormat('HH:mm').format(element.activityTimeFrom!) ==
+    details.forEach((booking) {
+      booking.bookingActivities?.forEach((activity) {
+        if ((DateFormat('HH:mm').format(activity.activityTimeFrom!) ==
                 time.substring(0, 5)) &&
-            (element.provideTime == null)) {
-          result.add(detail);
+            (activity.provideTime == null)) {
+          result.add(booking);
         }
       });
     });
@@ -71,6 +80,7 @@ class _TodoListState extends State<TodoList> {
         remainFeedingActivites.addAll(element.getUndoneFeedingAct());
       },
     );
+    print(times);
     remainFeedingActivites = [
       ...{...remainFeedingActivites}
     ];
@@ -125,6 +135,20 @@ class _TodoListState extends State<TodoList> {
                                       )!
                                           .length,
                                       itemBuilder: (context, index) {
+                                        var booking;
+                                        bookings.forEach((element) {
+                                          element.bookingDetails
+                                              ?.forEach((detail) {
+                                            if (detail.id ==
+                                                getRemainFoodByTime(
+                                                            times[timeIdx],
+                                                            remainFeedingActivites)?[
+                                                        index]
+                                                    .id) {
+                                              booking = element;
+                                            }
+                                          });
+                                        });
                                         return InkWell(
                                           onTap: () => Navigator.of(context)
                                               .push(MaterialPageRoute(
@@ -132,7 +156,7 @@ class _TodoListState extends State<TodoList> {
                                                       value: BlocProvider.of<
                                                           BookingBloc>(context),
                                                       child: BookingCageScreen(
-                                                          bookings: bookings,
+                                                          booking: booking,
                                                           bookingDetail:
                                                               getRemainFoodByTime(
                                                                   times[

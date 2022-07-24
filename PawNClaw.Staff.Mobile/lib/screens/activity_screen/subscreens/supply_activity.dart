@@ -42,6 +42,7 @@ class _SupplyActivityState extends State<SupplyActivity> {
     final booking = widget.booking;
     List<SupplyOrders> supplies =
         getPetForSupplies(booking, booking.getUndoneSupplyAct());
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -68,18 +69,24 @@ class _SupplyActivityState extends State<SupplyActivity> {
           shrinkWrap: true,
           itemBuilder: (context, index) => InkWell(
             onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => BlocProvider.value(
-                    value: BlocProvider.of<BookingBloc>(context),
-                    child: ActivityDetail(
+                builder: (context) => ActivityDetail(
                       pet: supplies[index].pet!,
                       supply: supplies[index],
-                    )))),
-            child: ActivityCard(
-              activityName: supplies[index].supply!.name!,
-              note: supplies[index].note ?? "Không có ghi chú",
-              remainCount: booking.getRemainSupplyAct(supplies[index]),
-              booking: booking,
-              pet: supplies[index].pet!,
+                      booking: booking,
+                    ))),
+            child: Container(
+              margin: EdgeInsets.only(
+                right: width * smallPadRate,
+                left: width * smallPadRate,
+                top: width * smallPadRate,
+              ),
+              child: ActivityCard(
+                activityName: supplies[index].supply!.name!,
+                note: supplies[index].note ?? "Không có ghi chú",
+                remainCount: booking.getRemainSupplyAct(supplies[index]),
+                booking: booking,
+                pet: supplies[index].pet!,
+              ),
             ),
           ),
           itemCount: supplies.length,
