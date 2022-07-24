@@ -38,6 +38,13 @@ namespace PawNClaw.Business.Services
             return value;
         }
 
+        //Get Detail By Id after searching
+        public PetCenter GetDetailByCenterId(int id)
+        {
+            var value = _petCenterRepository.GetPetCenterByIdAfterSearchName(id);
+            return value;
+        }
+
         //Get By Id With Cage Service and Supply
         public PetCenter GetDetailById(int id, List<List<PetRequestParameter>> _petRequests, string StartBooking, string EndBooking)
         {
