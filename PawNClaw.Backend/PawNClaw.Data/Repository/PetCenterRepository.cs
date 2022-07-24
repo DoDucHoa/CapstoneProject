@@ -284,7 +284,7 @@ namespace PawNClaw.Data.Repository
                         IsSingle = cagetype.IsSingle,
                         Status = cagetype.Status,
                         CenterId = cagetype.CenterId,
-                        Cages = cagetype.Cages,
+                        Cages = cagetype.Cages.Where(x => x.IsOnline == true && x.Status == true).ToList(),
                         MinPrice = cagetype.Prices.Min(x => x.UnitPrice),
                         MaxPrice = cagetype.Prices.Max(x => x.UnitPrice),
                     }),
@@ -305,14 +305,8 @@ namespace PawNClaw.Data.Repository
                         Id = ser.Id,
                         Description = ser.Description,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(ser.Id, PhotoTypesConst.Service),
-                        ServicePrices = (ICollection<ServicePrice>)ser.ServicePrices
-                        .Select(price => new ServicePrice
-                        {
-                            Id = price.Id,
-                            Price = price.Price,
-                            MinWeight = price.MinWeight,
-                            MaxWeight = price.MaxWeight
-                        })
+                        MinPrice = ser.ServicePrices.Min(x => x.Price),
+                        MaxPrice = ser.ServicePrices.Max(x => x.Price)
                     }),
                     Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
                 }).FirstOrDefault();
