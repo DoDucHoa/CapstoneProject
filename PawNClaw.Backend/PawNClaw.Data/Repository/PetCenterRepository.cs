@@ -248,11 +248,15 @@ namespace PawNClaw.Data.Repository
             return center;
         }
 
+
+
         public PetCenter GetPetCenterByIdAfterSearchName(int id)
         {
             PetCenter query = _dbSet
                 .Include(x => x.Location)
                 .Include(x => x.CageTypes)
+                .Include(x => x.Services)
+                .Include(x => x.Supplies)
                 .Where(x => x.Id == id)
                 .Select(x => new PetCenter
                 {
@@ -280,6 +284,32 @@ namespace PawNClaw.Data.Repository
                         IsSingle = cagetype.IsSingle,
                         Status = cagetype.Status,
                         CenterId = cagetype.CenterId
+                    }),
+                    Supplies = (ICollection<Supply>)x.Supplies.Where(s => s.Quantity > 0 && s.Status == true)
+                    .Select(s => new Supply
+                    {
+                        Id = s.Id,
+                        Name = s.Name,
+                        SellPrice = s.SellPrice,
+                        DiscountPrice = s.DiscountPrice,
+                        Quantity = s.Quantity,
+                        SupplyTypeCode = s.SupplyTypeCode,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(s.Id, PhotoTypesConst.Supply)
+                    }),
+                    Services = (ICollection<Service>)x.Services.Where(ser => ser.Status == true && ser.ServicePrices.Count > 0)
+                    .Select(ser => new Service
+                    {
+                        Id = ser.Id,
+                        Description = ser.Description,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(ser.Id, PhotoTypesConst.Service),
+                        ServicePrices = (ICollection<ServicePrice>)ser.ServicePrices
+                        .Select(price => new ServicePrice
+                        {
+                            Id = price.Id,
+                            Price = price.Price,
+                            MinWeight = price.MinWeight,
+                            MaxWeight = price.MaxWeight
+                        })
                     }),
                     Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
                 }).FirstOrDefault();

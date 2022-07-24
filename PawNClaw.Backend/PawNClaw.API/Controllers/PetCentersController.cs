@@ -117,6 +117,13 @@ namespace PawNClaw.API.Controllers
             return Ok(data);
         }
 
+        [HttpGet("center/{id:int}")]
+        public IActionResult GetCenterById(int id)
+        {
+            var data = _petCenterService.GetDetailByCenterId(id);
+            return Ok(data);
+        }
+
         [HttpGet("brand/{id:int}")]
         public IActionResult GetCentersByBrand(int id)
         {
