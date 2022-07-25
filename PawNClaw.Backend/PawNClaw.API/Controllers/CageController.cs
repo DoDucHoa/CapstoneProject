@@ -61,9 +61,9 @@ namespace PawNClaw.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Owner,Staff")]
-        public IActionResult AddNewCage([FromBody] Cage cage)
+        public IActionResult AddNewCage([FromBody] CreateCageParameter createCageParameter)
         {
-            var result = _cageService.CreateCage(cage);
+            var result = _cageService.CreateCage(createCageParameter);
 
             return Ok(result);
         }

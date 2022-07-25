@@ -20,10 +20,20 @@ namespace PawNClaw.Business.Services
 
         }
 
-        public bool CreateCage(Cage cage)
+        public bool CreateCage(CreateCageParameter createCageParameter)
         {
             try
             {
+                Cage cage = new Cage()
+                {
+                    CenterId = createCageParameter.CenterId,
+                    CageTypeId = createCageParameter.CageTypeId,
+                    Code = createCageParameter.Code,
+                    Color = createCageParameter.Color,
+                    Name = createCageParameter.Name,
+                    CreateUser = createCageParameter.CreateUser,
+                    
+                };
                 _cageRepository.Add(cage);
                 _cageRepository.SaveDbChange();
                 return true;
