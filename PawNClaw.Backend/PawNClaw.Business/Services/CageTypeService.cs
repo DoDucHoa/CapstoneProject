@@ -34,7 +34,10 @@ namespace PawNClaw.Business.Services
                 values = values.Where(x => x.TypeName.ToLower().Contains(cageTypeRequestParameter.TypeName.ToLower()));
             }
 
-
+            if(cageTypeRequestParameter.id != null)
+            {
+                values = values.Where(x => x.Id == cageTypeRequestParameter.id);
+            }
 
             if(cageTypeRequestParameter.IsSingle != null)
             {
