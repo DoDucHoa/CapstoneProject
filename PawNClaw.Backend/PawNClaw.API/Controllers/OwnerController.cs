@@ -20,9 +20,9 @@ namespace PawNClaw.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult GetModerators([FromQuery] string Name, [FromQuery] bool? Status, [FromQuery] string dir, [FromQuery] string sort, [FromQuery] PagingParameter _paging)
+        public IActionResult GetOwners([FromQuery] string Name, [FromQuery] bool? Status, [FromQuery] string dir, [FromQuery] string sort, [FromQuery] PagingParameter _paging)
         {
-            var data = _OwnerService.GetModerators(Name, Status, dir, sort, _paging);
+            var data = _OwnerService.GetOwners(Name, Status, dir, sort, _paging);
             var metadata = new
             {
                 data.TotalCount,

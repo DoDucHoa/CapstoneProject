@@ -90,11 +90,23 @@ namespace PawNClaw.API.Controllers
 
         [HttpPost]
         [Route("check_center")]
-        public IActionResult GetCenterByIdAfterSearch([FromBody] GetCenterByIdAfterSearchnameRequestModel model)
+        public async Task<IActionResult> GetCenterByIdAfterSearch([FromBody] GetCenterByIdAfterSearchnameRequestModel model)
         {
             try
             {
                 var data = _searchService.CheckCenter(model.id, model._petRequests, model.StartBooking, model.Due);
+
+                if (data == null)
+                {
+                    var referenceCenter = await _searchService.SearchCenterNearByCenterId(model.id, model.StartBooking, model.Due, model._petRequests);
+
+                    var addition = new
+                    {
+                        mess = "Reference Center!!!"
+                    };
+                    return Ok(new { referenceCenter,  addition});
+                }
+
                 return Ok(data);
             }
             catch (Exception ex)
