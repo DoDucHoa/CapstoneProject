@@ -562,6 +562,63 @@ namespace PawNClaw.Business.Services
             paging.PageSize);
         }
 
+        public async Task<IEnumerable<Location>> searchNearbyCenter(string userLongtitude, string userLatitude)
+        {
+            
+            //get all locations with center
+            var values = _locationRepository.getAllWithCenter().ToList();
+
+            var client = new HttpClient();
+            string url = "https://rsapi.goong.io/DistanceMatrix?origins=" + userLatitude + "," + userLongtitude + "&destinations=";
+            //get disstance and filter center
+            values.OrderBy(x => x.Id);
+            for(int i = 0; i < values.LongCount();i++)
+            {
+                /*var tempUrl = *//*url + location.Latitude + "," + location.Longtitude + "&vehicle=bike&api_key=r81jNaUAOipzIiuOoPIN1S3m0vaURbdE2LldWk7z";
+                HttpResponseMessage response = await client.GetAsync(tempUrl);
+                response.EnsureSuccessStatusCode();
+
+                var result = await response.Content.ReadAsStringAsync();
+                var cust = JObject.Parse(result);
+                var distance = int.Parse(cust["rows"][0]["elements"][0]["distance"]["value"].ToString());
+                
+                if(distance <= 20000)
+                {
+                    location.Distance = cust["rows"][0]["elements"][0]["distance"]["text"].ToString();
+                    location.Duration = cust["rows"][0]["elements"][0]["duration"]["text"].ToString();
+                } else
+                {
+                    values.ToList().Remove(location);
+                }*/
+                if (i == values.LongCount() - 1)
+                {
+                    url = url + values[i].Latitude + "," + values[i].Longtitude;
+                }
+                else
+                {
+                    url = url + values[i].Latitude + "," + values[i].Longtitude + "%7C";
+                }
+                
+            }
+            url = url + "&api_key=r81jNaUAOipzIiuOoPIN1S3m0vaURbdE2LldWk7z";
+
+            HttpResponseMessage response = await client.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadAsStringAsync();
+            var cust = JObject.Parse(result);
+
+            for (int i = 0; i < values.LongCount(); i++)
+            {
+                if (int.Parse(cust["rows"][0]["elements"][i]["distance"]["value"].ToString()) <= 20000)
+                {
+                    values[i].Distance = cust["rows"][0]["elements"][i]["distance"]["text"].ToString();
+                    values[i].Duration = cust["rows"][0]["elements"][i]["duration"]["text"].ToString();
+                }
+            }
+            return values.Where(x => !string.IsNullOrEmpty(x.Distance)).OrderBy(x => x.Distance);
+        }
+
         public async Task<SearchPetCenterResponse> ReferenceCenter(string City, string District,
             string StartBooking, int Due,
             List<List<PetRequestForSearchCenter>> _petRequests, PagingParameter paging)

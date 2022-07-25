@@ -58,6 +58,22 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
+        [Route("nearby_search")]
+        public async Task<IActionResult> searchNearbyCenter([FromBody] SearchNearbyCenterModel model) 
+        {
+            try
+            {
+                var data = await _searchService.searchNearbyCenter(model.userLongtitude, model.userLatitude);
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
         [Route("center_detail")]
         public IActionResult GetCenterByIdWithInclude([FromBody] GetCenterByIdRequestModel model)
         {

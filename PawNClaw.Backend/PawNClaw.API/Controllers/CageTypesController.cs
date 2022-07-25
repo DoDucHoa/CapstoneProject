@@ -14,7 +14,7 @@ namespace PawNClaw.API.Controllers
 {
     [Route("api/cagetypes")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class CageTypesController : ControllerBase
     {
         CageTypeService _cageTypeService;
@@ -24,10 +24,11 @@ namespace PawNClaw.API.Controllers
             _cageTypeService = cageTypeService;
         }
 
-        [HttpGet("center/{id}")]
-        public IActionResult GetCageTypes(int id, [FromQuery] PagingParameter paging)
+        [HttpGet]
+        //[Authorize(Roles = "Owner,Staff")]
+        public IActionResult GetCageTypes([FromQuery] CageTypeRequestParameter cageTypeRequestParameter, [FromQuery] PagingParameter paging)
         {
-            var data = _cageTypeService.GetCageTypes(id, paging);
+            var data = _cageTypeService.GetCageTypes(cageTypeRequestParameter, paging);
             var metadata = new
             {
                 data.TotalCount,

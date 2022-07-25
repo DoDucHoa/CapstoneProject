@@ -15,6 +15,12 @@ namespace PawNClaw.Data.Helper
         public string EndBooking { get; set; }
     }
 
+    public class SearchNearbyCenterModel
+    {
+        public string userLatitude { get; set; }
+        public string userLongtitude { get; set; }
+    }
+
     public class GetCenterByIdAfterSearchnameRequestModel
     {
         public int id { get; set; }

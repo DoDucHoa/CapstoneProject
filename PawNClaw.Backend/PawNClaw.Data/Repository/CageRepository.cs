@@ -73,7 +73,7 @@ namespace PawNClaw.Data.Repository
 
         public IEnumerable<Cage> GetCages(int CenterId)
         {
-            var values = _dbSet.Include(x => x.BookingDetails).ThenInclude(x => x.Booking).Include(x=> x.CageType).Where(x => x.CenterId == CenterId)
+            var values = _dbSet.Include(x => x.BookingDetails).ThenInclude(x => x.Booking).Include(x => x.CageType).Where(x => x.CenterId == CenterId)
                     .Select(cage => new Cage
                     {
                         CageType = cage.CageType,
