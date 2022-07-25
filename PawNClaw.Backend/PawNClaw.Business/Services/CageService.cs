@@ -76,10 +76,9 @@ namespace PawNClaw.Business.Services
                 _cageRepository.SaveDbChange();
                 return true;
             }
-            catch (Exception e)
+            catch
             {
-                Console.WriteLine(e);
-                throw e;
+                throw new Exception();
             }
         }
 
@@ -135,10 +134,9 @@ namespace PawNClaw.Business.Services
 
                 return PagedList<Cage>.ToPagedList(values.AsQueryable(),pagingParameter.PageNumber,pagingParameter.PageSize);
             }
-            catch (Exception e)
+            catch
             {
-                Console.WriteLine(e);
-                throw e;
+                throw new Exception();
             }
         }
     }

@@ -10,6 +10,18 @@ namespace PawNClaw.Data.Parameter
     {
     }
 
+    public class CageTypeRequestParameter
+    {
+        public string? TypeName { get; set; }
+        public int CenterId { get; set; }
+        public bool? IsSingle { get; set; }
+        public bool? Status { get; set; }
+        public string dir { get; set; } = "asc";
+        public string sort { get; set; } = null;
+        public string fields { get; set; } = null;
+        public string includeProperties { get; set; } = null;
+    }
+
     public class RequestCageTypeForBookingParameter
     {
         public List<PetRequestForSearchCenter> listPets { get; set; }
