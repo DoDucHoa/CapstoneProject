@@ -17,6 +17,7 @@ namespace PawNClaw.Business.Services
         public CageService(ICageRepository cageRepository)
         {
             _cageRepository = cageRepository;
+
         }
 
         public bool CreateCage(Cage cage)
@@ -73,7 +74,7 @@ namespace PawNClaw.Business.Services
         {
             try
             {
-                var values = _cageRepository.GetAll(includeProperties: cageRequestParameter.includeProperties).Where(x=>x.CenterId == cageRequestParameter.CenterId);
+                var values = _cageRepository.GetCages(cageRequestParameter.CenterId);
 
                 if(!string.IsNullOrWhiteSpace(cageRequestParameter.Code))
                 {

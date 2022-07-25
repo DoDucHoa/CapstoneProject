@@ -71,6 +71,23 @@ namespace PawNClaw.Data.Repository
             return query;
         }
 
+        public IEnumerable<Cage> GetCages(int CenterId)
+        {
+            var values = _dbSet.Include(x => x.BookingDetails).ThenInclude(x => x.Booking).Where(x => x.CenterId == CenterId)
+                    .Select(cage => new Cage
+                    {
+                        CageTypeId = cage.CageTypeId,
+                        CenterId = cage.CenterId,
+                        Code = cage.Code,
+                        Color = cage.Color,
+                        IsOnline = cage.IsOnline,
+                        Name = cage.Name,
+                        Status = cage.Status,
+                        CanShift = !cage.BookingDetails.Any(x => x.Booking.StartBooking >= DateTime.Now || x.Booking.EndBooking >= DateTime.Now),
+                    }).AsQueryable();
+            return values;
+        }
+
         public bool UpdateCageStatus(List<string> CageCodes, int centerId)
         {
             foreach (String code in CageCodes)
