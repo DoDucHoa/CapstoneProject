@@ -162,6 +162,20 @@ class BookingDetail {
     return undone;
   }
 
+  List<SupplyOrders> getDoneSupplyAct() {
+    List<SupplyOrders> done = [];
+    this.bookingActivities!.forEach((element) {
+      if (element.supplyId != null && element.provideTime != null) {
+        this.supplyOrders?.forEach((supply) {
+          if (element.petId == supply.petId) {
+            done.add(supply);
+          }
+        });
+      }
+    });
+    return done;
+  }
+
   int getRemainSupplyAct(SupplyOrders supply) {
     int count = 0;
     this.bookingActivities!.forEach((element) {
@@ -206,6 +220,20 @@ class BookingDetail {
       }
     });
     return undone;
+  }
+
+  List<ServiceOrders> getDoneServiceAct() {
+    List<ServiceOrders> done = [];
+    this.bookingActivities!.forEach((element) {
+      if (element.serviceId != null && element.provideTime != null) {
+        this.serviceOrders?.forEach((service) {
+          if (element.petId == service.petId) {
+            done.add(service);
+          }
+        });
+      }
+    });
+    return done;
   }
 
   int getDoneActivites() {

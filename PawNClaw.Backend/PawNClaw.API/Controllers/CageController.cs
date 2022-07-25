@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Parameter;
 using System;
@@ -47,6 +48,24 @@ namespace PawNClaw.API.Controllers
             var data = _cageService.ShiftCage(requestParameter.CageCodes, requestParameter.CenterId);
 
             return Ok(data);
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult UpdateCageDetail([FromBody] UpdateCageParameter updateCageParameter)
+        {
+            var result = _cageService.UpdateCage(updateCageParameter);
+
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult AddNewCage([FromBody] Cage cage)
+        {
+            var result = _cageService.CreateCage(cage);
+
+            return Ok(result);
         }
     }
 }

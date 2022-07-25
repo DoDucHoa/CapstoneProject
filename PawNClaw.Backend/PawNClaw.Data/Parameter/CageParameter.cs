@@ -51,6 +51,10 @@ namespace PawNClaw.Data.Parameter
 
         public int CenterId { get; set; }
 
+        public string Name { get; set; }
+        
+        public string Color { get; set; }
+
         public bool IsOnline { get; set; }
 
         public DateTime? ModifyDate { get; set; }

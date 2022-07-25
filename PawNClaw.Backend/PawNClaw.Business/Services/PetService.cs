@@ -1,4 +1,5 @@
-﻿using PawNClaw.Data.Database;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
@@ -34,23 +35,7 @@ namespace PawNClaw.Business.Services
         {
             try
             {
-                Pet pet = new Pet()
-                {
-                    Weight = createPetRequestParameter.Weight,
-                    Length = createPetRequestParameter.Length,
-                    Height = createPetRequestParameter.Height,
-                    Name = createPetRequestParameter.Name,
-                    Birth = createPetRequestParameter.Birth,
-                    Status = true,
-                    CustomerId = createPetRequestParameter.CustomerId,
-                    PetTypeCode = createPetRequestParameter.PetTypeCode,
-                    BreedName = createPetRequestParameter.BreedName
-                };
-
-
-                _petRepository.Add(pet);
-                _petRepository.SaveDbChange();
-
+                _petRepository.AddNewPet(createPetRequestParameter);
                 return true;
             }
             catch
