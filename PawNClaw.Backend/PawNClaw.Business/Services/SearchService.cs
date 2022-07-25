@@ -932,16 +932,10 @@ namespace PawNClaw.Business.Services
 
             centerdistance = centerdistance.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
-            int countCenter = 0;
-
             List<PetCenter> petcenters = new List<PetCenter>();
             foreach (var item in centerdistance)
             {
-                if (countCenter < 20)
-                {
-                    petcenters.Add(_petCenterRepository.Get(item.Key.Id));
-                }
-                countCenter++;
+                petcenters.Add(_petCenterRepository.Get(item.Key.Id));
             }
 
             if (petcenters.Count < 1)
@@ -1217,7 +1211,7 @@ namespace PawNClaw.Business.Services
                 Photos = center.Photos
             });
 
-            return values;
+            return values.Take(10);
         }
     }
 }
