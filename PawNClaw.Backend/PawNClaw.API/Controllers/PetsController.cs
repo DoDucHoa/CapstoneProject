@@ -58,6 +58,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Cus")]
         public IActionResult CreatePet([FromBody] CreatePetRequestParameter createPetRequestParameter)
         {
             try

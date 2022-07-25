@@ -33,7 +33,8 @@ namespace PawNClaw.Business.Services
                 throw new Exception();
             }
         }
-
+        
+        //update cage detail
         public bool UpdateCage(UpdateCageParameter updateCageParameter)
         {
             try
@@ -43,6 +44,8 @@ namespace PawNClaw.Business.Services
                 cage.ModifyDate = updateCageParameter.ModifyDate;
                 cage.ModifyUser = updateCageParameter.ModifyUser;
                 cage.Status = updateCageParameter.Status;
+                cage.Color = updateCageParameter.Color;
+                cage.Name = updateCageParameter.Name;
 
                 _cageRepository.Update(cage);
                 _cageRepository.SaveDbChange();
@@ -54,6 +57,7 @@ namespace PawNClaw.Business.Services
             }
         }
 
+        //shift cage between onl/off
         public bool ShiftCage(List<String> cageCodes, int centerId)
         {
             try
