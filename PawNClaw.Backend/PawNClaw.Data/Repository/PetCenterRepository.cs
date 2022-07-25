@@ -203,7 +203,7 @@ namespace PawNClaw.Data.Repository
                         CenterId = cagetype.CenterId,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(cagetype.Id, PhotoTypesConst.CageType),
                         TotalPrice = _priceRepository.checkTotalPriceOfCageType(cagetype.Id, StartBooking, EndBooking),
-                        Cages = (ICollection<Cage>)cagetype.Cages.Where(cage => cage.Status == true 
+                        Cages = (ICollection<Cage>)cagetype.Cages.Where(cage => cage.Status == true && cage.IsOnline == true
                                 && !cage.BookingDetails.Any(bookingdetail =>
                                 ((DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
                                 && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
@@ -247,8 +247,6 @@ namespace PawNClaw.Data.Repository
 
             return center;
         }
-
-
 
         public PetCenter GetPetCenterByIdAfterSearchName(int id)
         {

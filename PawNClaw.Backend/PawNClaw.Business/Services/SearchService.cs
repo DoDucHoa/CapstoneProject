@@ -876,7 +876,8 @@ namespace PawNClaw.Business.Services
 
             try
             {
-                var data = _petCenterRepository.GetPetCenterById(id, petSizeCages, StartBooking, value.EndBooking.ToString());
+
+                var data = _petCenterRepository.GetPetCenterById(id, petSizeCages, StartBooking, value.EndBooking.ToString("yyyy-MM-dd HH:mm:ss"));
 
                 return data;
             }
