@@ -16,7 +16,7 @@ import { FIREBASE_API } from '../config';
 
 // utils
 import axios from '../utils/axios';
-import { setSession, setAccountInfoSession, setCenterInfoSession } from '../utils/jwt';
+import { setSession, setAccountInfoSession, setCenterInfoSession, setCenterIdSession } from '../utils/jwt';
 
 // ----------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ const initialState = {
 
 const reducer = (state, action) => {
   if (action.type === 'INITIALIZE') {
-    const { isAuthenticated, user, accountInfo, centerInfo } = action.payload;
+    const { isAuthenticated, user, accountInfo, centerInfo, centerId } = action.payload;
     return {
       ...state,
       isAuthenticated,
@@ -56,17 +56,19 @@ const reducer = (state, action) => {
       user,
       accountInfo,
       centerInfo,
+      centerId,
     };
   }
 
   if (action.type === 'LOGIN') {
-    const { user, accountInfo, centerInfo } = action.payload;
+    const { user, accountInfo, centerInfo, centerId } = action.payload;
     return {
       ...state,
       isAuthenticated: true,
       user,
       accountInfo,
       centerInfo,
+      centerId,
     };
   }
 
@@ -117,6 +119,7 @@ function AuthProvider({ children }) {
   useEffect(() => {
     const accountInfo = JSON.parse(window.localStorage.getItem('accountInfo'));
     const centerInfo = JSON.parse(window.localStorage.getItem('centerInfo'));
+    const centerId = window.localStorage.getItem('centerId');
 
     if (accountInfo) {
       onAuthStateChanged(AUTH, async (user) => {
@@ -131,19 +134,19 @@ function AuthProvider({ children }) {
 
           dispatch({
             type: 'INITIALIZE',
-            payload: { isAuthenticated: true, user, accountInfo, centerInfo },
+            payload: { isAuthenticated: true, user, accountInfo, centerInfo, centerId },
           });
         } else {
           dispatch({
             type: 'INITIALIZE',
-            payload: { isAuthenticated: false, user: null, accountInfo: null, centerInfo: null },
+            payload: { isAuthenticated: false, user: null, accountInfo: null, centerInfo: null, centerId: null },
           });
         }
       });
     } else {
       dispatch({
         type: 'INITIALIZE',
-        payload: { isAuthenticated: false, user: null, accountInfo: null, centerInfo: null },
+        payload: { isAuthenticated: false, user: null, accountInfo: null, centerInfo: null, centerId: null },
       });
     }
   }, [dispatch]);
@@ -163,7 +166,8 @@ function AuthProvider({ children }) {
           payload: {
             user: userCredentials.user,
             accountInfo: userData,
-            centerInfo: petCenter,
+            centerInfo: petCenter || null,
+            centerId: petCenter?.petCenters[0].id || null,
           },
         });
       }
@@ -210,6 +214,7 @@ function AuthProvider({ children }) {
   };
 
   const changeCenter = (centerId) => {
+    setCenterIdSession(centerId);
     dispatch({
       type: 'CHANGE_CENTER',
       payload: { centerId },
