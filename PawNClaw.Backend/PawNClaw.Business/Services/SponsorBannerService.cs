@@ -22,5 +22,28 @@ namespace PawNClaw.Business.Services
             DateTime today = DateTime.Today;
             return _sponsorBannerRepository.GetSponsorBannersWithPhoto();
         }
+
+        public bool Create(SponsorBanner sponsorBanner)
+        {
+            _sponsorBannerRepository.Add(sponsorBanner);
+            _sponsorBannerRepository.SaveDbChange();
+            return true;
+        }
+
+        public bool Update(SponsorBanner sponsorBanner)
+        {
+            _sponsorBannerRepository.Update(sponsorBanner);
+            _sponsorBannerRepository.SaveDbChange();
+            return true;
+        }
+
+        public bool Deactivate(int id)
+        {
+            var sponsor = _sponsorBannerRepository.Get(id);
+            sponsor.Status = false;
+            _sponsorBannerRepository.Update(sponsor);
+            _sponsorBannerRepository.SaveDbChange();
+            return true;
+        }
     }
 }
