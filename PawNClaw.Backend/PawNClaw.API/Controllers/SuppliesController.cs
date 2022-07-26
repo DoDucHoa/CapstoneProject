@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Database;
+using PawNClaw.Data.Helper;
 using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
@@ -24,11 +25,11 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("center/{id}")]
-        public IActionResult GetSupplysOfCenter(int id)
+        public IActionResult GetSupplysOfCenter(int id, [FromQuery] PagingParameter paging)
         {
             try
             {
-                return Ok(_supplyService.GetSupplysOfCenter(id));
+                return Ok(_supplyService.GetSupplysOfCenter(id, paging));
             }
             catch (Exception ex)
             {
