@@ -193,6 +193,20 @@ namespace PawNClaw.Business.Services
             }
         }
 
+        public bool Update(Admin admin)
+        {
+            try
+            {
+                _adminRepository.Update(admin);
+                _adminRepository.SaveDbChange();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         //Delete Admin
         public bool Delete(int id)
         {
