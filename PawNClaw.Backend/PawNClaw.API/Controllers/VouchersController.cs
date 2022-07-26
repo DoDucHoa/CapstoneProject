@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Database;
@@ -9,8 +10,9 @@ using System.Threading.Tasks;
 
 namespace PawNClaw.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/vouchers")]
     [ApiController]
+    [Authorize]
     public class VouchersController : ControllerBase
     {
         VoucherService _voucherService;
