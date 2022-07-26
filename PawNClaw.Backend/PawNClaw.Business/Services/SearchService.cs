@@ -989,19 +989,6 @@ namespace PawNClaw.Business.Services
 
             centerdistance = centerdistance.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
-            List<PetCenter> petcenters = new List<PetCenter>();
-            foreach (var item in centerdistance)
-            {
-                petcenters.Add(_petCenterRepository.Get(item.Key.Id));
-            }
-
-            if (petcenters.Count < 1)
-            {
-                throw new Exception("Dont have center nearby");
-            }
-
-            var values = petcenters.AsEnumerable();
-
             //START Check valid time booking
             //This is 24 Hours format
             if (StartBooking == null || Due <= 0)
@@ -1021,7 +1008,7 @@ namespace PawNClaw.Business.Services
             {
                 foreach (var petId in petIds)
                 {
-                    if (_petBookingDetailRepository.GetAll(x => x.PetId == petId.Id && (x.BookingDetail.Booking.StatusId == 2 || x.BookingDetail.Booking.StatusId == 1) &&
+                    if (_petBookingDetailRepository.GetAll(x => x.PetId == petId.Id &&
                             (DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) >= 0
                             && DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.EndBooking) < 0)).Count() != 0)
                     {
@@ -1030,12 +1017,13 @@ namespace PawNClaw.Business.Services
                 }
             }
 
-            //START Check time booking with open close time from petcenter
-            List<PetCenter> validOCCenter = new List<PetCenter>();
-            foreach (var center in values)
+            List<PetCenter> petcenters = new List<PetCenter>();
+            foreach (var item in centerdistance)
             {
-                string petCenterOpenTime = _petCenterRepository.GetFirstOrDefault(x => x.Id == center.Id).OpenTime;
-                string petCenterCloseTime = _petCenterRepository.GetFirstOrDefault(x => x.Id == center.Id).CloseTime;
+                var value = _petCenterRepository.Get(item.Key.Id);
+
+                string petCenterOpenTime = _petCenterRepository.GetFirstOrDefault(x => x.Id == value.Id).OpenTime;
+                string petCenterCloseTime = _petCenterRepository.GetFirstOrDefault(x => x.Id == value.Id).CloseTime;
 
                 //String format = petCenterOpenTime.Length == 5 ? "H\\:mm\\:ss" : "HH\\:mm\\:ss";
 
@@ -1049,100 +1037,61 @@ namespace PawNClaw.Business.Services
 
                 if (_petCenterOpenTime < _startBooking.TimeOfDay && _petCenterCloseTime > _startBooking.TimeOfDay)
                 {
-                    validOCCenter.Add(center);
+
                 }
-            }
-            values = validOCCenter;
-            validOCCenter = new List<PetCenter>();
-            //END Check time booking with open close time from petcenter
-
-
-            //START Check Size of Pet
-            List<PetSizeCage> PetSizes = new List<PetSizeCage>();
-
-            foreach (var _petRequest in _petRequests)
-            {
-                int Count = 0;
-                decimal Height = 0;
-                decimal Width = 0;
-                foreach (var _pet in _petRequest)
+                else
                 {
-                    if (Height < (decimal)(_pet.Height + SearchConst.HeightAdd))
+                    throw new Exception("StartBooking is INVALID");
+                }
+
+                //START Check Size of Pet
+                List<PetSizeCage> PetSizes = new List<PetSizeCage>();
+
+                foreach (var _petRequest in _petRequests)
+                {
+                    int Count = 0;
+                    decimal Height = 0;
+                    decimal Width = 0;
+                    foreach (var _pet in _petRequest)
                     {
-                        Height = (decimal)(_pet.Height + SearchConst.HeightAdd);
+                        if (Height < (decimal)(_pet.Height + SearchConst.HeightAdd))
+                        {
+                            Height = (decimal)(_pet.Height + SearchConst.HeightAdd);
+                        }
+
+                        Width += (decimal)Math.Round((((double)_pet.Length) + ((double)_pet.Height)) / SearchConst.WidthRatio, 0);
+                        Count += 1;
                     }
 
-                    Width += (decimal)Math.Round((((double)_pet.Length) + ((double)_pet.Height)) / SearchConst.WidthRatio, 0);
-                    Count += 1;
+                    PetSizeCage petSize = new PetSizeCage();
+                    petSize.Height = Height;
+                    petSize.Width = Width;
+                    if (Count > 1) petSize.IsSingle = false;
+                    PetSizes.Add(petSize);
                 }
+                //END Check Size of Pet
 
-                PetSizeCage petSize = new PetSizeCage();
-                petSize.Height = Height;
-                petSize.Width = Width;
-                if (Count > 1) petSize.IsSingle = false;
-                PetSizes.Add(petSize);
-            }
-            //END Check Size of Pet
+                //START Check valid cage for pet
+                //Check free cage in time booking
+                //Check amount of cage with amount of pet
+                //Check size of cage with size of pet (merge with upper line)
+                //Get cage code of center store to Map
+                List<BookingDetail> BookingDetails = new List<BookingDetail>();
+                List<string> CageCodesNotValid = new List<string>();
+                Dictionary<int, List<string>> CenterWithCage = new Dictionary<int, List<string>>();
 
-            //START Check valid cage for pet
-            //Check free cage in time booking
-            //Check amount of cage with amount of pet
-            //Check size of cage with size of pet (merge with upper line)
-            //Get cage code of center store to Map
-            List<BookingDetail> BookingDetails = new List<BookingDetail>();
-            List<string> CageCodesNotValid = new List<string>();
-            Dictionary<int, List<string>> CenterWithCage = new Dictionary<int, List<string>>();
-
-            foreach (var center in values)
-            {
-
-                TimeSpan diffOfDates = DateTime.Parse(center.Checkout.ToString()).TimeOfDay.Subtract(_startBooking.TimeOfDay);
+                TimeSpan diffOfDates = DateTime.Parse(value.Checkout.ToString()).TimeOfDay.Subtract(_startBooking.TimeOfDay);
 
                 DateTime _endBooking = _startBooking.AddDays(Due).AddHours(diffOfDates.Hours);
 
-                center.EndBooking = _endBooking;
-                //bool CheckPetIsBooked = false;
+                value.EndBooking = _endBooking;
 
-                //foreach (var petIds in _petRequests)
-                //{
-                //    foreach (var petId in petIds)
-                //    {
-                //        CheckPetIsBooked = false;
-
-                //        if (_petBookingDetailRepository.GetAll(x => x.PetId == petId.Id &&
-                //                ((DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) <= 0
-                //                && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) >= 0)
-                //                ||
-                //                (DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) >= 0
-                //                && DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.EndBooking) < 0)
-                //                ||
-                //                (DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.StartBooking) > 0
-                //                && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) <= 0))).Count() != 0)
-                //        {
-                //            CheckPetIsBooked = true;
-                //            break;
-                //            //throw new Exception("Pet is Booking Already");
-                //        }
-                //    }
-
-                //    if (CheckPetIsBooked)
-                //    {
-                //        break;
-                //    }
-
-                //}
-
-                //if (CheckPetIsBooked)
-                //{
-                //    break;
-                //}
-
-                var BookingOfCenter = _bookingRepository.GetBookingValidSearch(center.Id, _startBooking, _endBooking);
+                var BookingOfCenter = _bookingRepository.GetBookingValidSearch(value.Id, _startBooking, _endBooking);
 
                 //If BookingOfCenter is null => That center have cage free for pet
                 if (BookingOfCenter.Count() == 0)
                 {
-                    var CageTypes = center.CageTypes;
+                    var CageTypes = value.CageTypes;
 
                     //Check is fields that check center have any cage valid for pet
                     bool Check = false;
@@ -1181,7 +1130,8 @@ namespace PawNClaw.Business.Services
 
                     if (Check)
                     {
-                        validOCCenter.Add(center);
+                        petcenters.Add(value);
+                        if (petcenters.Count > 10) break;
                     }
                 }
                 else
@@ -1199,7 +1149,7 @@ namespace PawNClaw.Business.Services
                     //CenterWithCage.Add(center.Id, CageCodesNotValid);
                     //Check center cagetype is valid size
                     //List<int> CageTypeValidCode = new List<int>();
-                    var CageTypes = center.CageTypes;
+                    var CageTypes = value.CageTypes;
 
                     //Check is fields that check center have any cage valid for pet
                     bool Check = false;
@@ -1243,32 +1193,15 @@ namespace PawNClaw.Business.Services
 
                     if (Check)
                     {
-                        validOCCenter.Add(center);
+                        petcenters.Add(value);
+                        if (petcenters.Count > 10) break;
                     }
                 }
             }
-            //END Check valid cage for pet
 
-            values = validOCCenter;
+            var values = petcenters.ToList();
 
-            values = values.Select(center => new PetCenter
-            {
-                Id = center.Id,
-                Name = center.Name,
-                Address = center.Address,
-                Phone = center.Phone,
-                Rating = center.Rating,
-                CreateDate = center.CreateDate,
-                Status = center.Status,
-                OpenTime = center.OpenTime,
-                CloseTime = center.CloseTime,
-                Description = center.Description,
-                BrandId = center.BrandId,
-                EndBooking = center.EndBooking,
-                Photos = center.Photos
-            });
-
-            return values.Take(10);
+            return values;
         }
     }
 }
