@@ -41,11 +41,11 @@ namespace PawNClaw.API.Controllers
             return Ok(new { data, metadata });
         }
 
-        [HttpPost("shift-cages")]
+        [HttpPut("shift-cage")]
         [Authorize(Roles = "Owner,Staff")]
         public IActionResult ShiftCagesBetweenOnlAndOff([FromBody] ShiftCageParameter requestParameter)
         {
-            var data = _cageService.ShiftCage(requestParameter.CageCodes, requestParameter.CenterId);
+            var data = _cageService.ShiftCage(requestParameter.CageCode, requestParameter.CenterId);
 
             return Ok(data);
         }

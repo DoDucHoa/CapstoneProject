@@ -89,11 +89,9 @@ namespace PawNClaw.Data.Repository
             return values;
         }
 
-        public bool UpdateCageStatus(List<string> CageCodes, int centerId)
+        public bool UpdateCageStatus(string cageCode, int centerId)
         {
-            foreach (String code in CageCodes)
-            {
-                var cage = _dbSet.First(x => x.Code.Equals(code) && x.CenterId == centerId);
+            var cage = _dbSet.First(x => x.Code.Equals(cageCode) && x.CenterId == centerId);
                 if (cage.IsOnline) 
                     {
                         cage.IsOnline = false; 
@@ -101,9 +99,9 @@ namespace PawNClaw.Data.Repository
                     }
                 else 
                     {
-                        cage.IsOnline = true; _dbSet.Update(cage);
+                        cage.IsOnline = true;
+                        _dbSet.Update(cage);
                     }
-            }
             return (_db.SaveChanges() >= 0);    
         }
     }

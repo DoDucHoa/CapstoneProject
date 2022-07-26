@@ -26,7 +26,7 @@ namespace PawNClaw.Data.Parameter
 
     public class ShiftCageParameter
     {
-        public List<String> CageCodes { get; set; }
+        public string CageCode { get; set; }
         public int CenterId { get; set; }
     }
 

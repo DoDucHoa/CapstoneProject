@@ -69,11 +69,11 @@ namespace PawNClaw.Business.Services
         }
 
         //shift cage between onl/off
-        public bool ShiftCage(List<String> cageCodes, int centerId)
+        public bool ShiftCage(string cageCode, int centerId)
         {
             try
             {
-                _cageRepository.UpdateCageStatus(cageCodes, centerId);
+                _cageRepository.UpdateCageStatus(cageCode, centerId);
                 _cageRepository.SaveDbChange();
                 return true;
             }
