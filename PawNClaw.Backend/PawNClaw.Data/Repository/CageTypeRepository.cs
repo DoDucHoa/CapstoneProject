@@ -142,5 +142,12 @@ namespace PawNClaw.Data.Repository
             }
             return cageTypes;
         }
+
+        public CageType GetCageTypeWithCageAndPrice(int id)
+        {
+            CageType query = _dbSet.Include(x => x.Cages).ThenInclude(y => y.BookingDetails).ThenInclude(z => z.Booking).Include(x => x.Prices).Where(x => x.Id == id).FirstOrDefault();
+
+            return query;
+        }
     }
 }
