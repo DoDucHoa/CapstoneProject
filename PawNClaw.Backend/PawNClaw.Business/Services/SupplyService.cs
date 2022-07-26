@@ -1,4 +1,5 @@
 ﻿using PawNClaw.Data.Database;
+using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
 using System;
@@ -18,11 +19,12 @@ namespace PawNClaw.Business.Services
             _supplyRepository = supplyRepository;
         }
 
-        public IEnumerable<Supply> GetSupplysOfCenter(int CenterId)
+        public PagedList<Supply> GetSupplysOfCenter(int CenterId, PagingParameter pagingParameter)
         {
             try
             {
-                return _supplyRepository.GetAll(x => x.CenterId == CenterId);
+                var values =  _supplyRepository.GetAll(x => x.CenterId == CenterId);
+                return PagedList<Supply>.ToPagedList(values.AsQueryable(), pagingParameter.PageNumber, pagingParameter.PageSize);
             }
             catch
             {

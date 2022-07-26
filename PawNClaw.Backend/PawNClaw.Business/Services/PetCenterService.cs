@@ -152,22 +152,22 @@ namespace PawNClaw.Business.Services
                 petCenter.Checkin = petCenterRequestParameter.CheckIn;
                 petCenter.Checkout = petCenterRequestParameter.CheckOut;
 
-                    var client = new HttpClient();
-                    string url = "https://rsapi.goong.io/geocode?address=" + HttpUtility.UrlEncode(petCenter.Address) +SearchConst.GoongAPIKey;
-                    Console.WriteLine(url);
-                    HttpResponseMessage response = await client.GetAsync(url);
-                    response.EnsureSuccessStatusCode();
+                var client = new HttpClient();
+                string url = "https://rsapi.goong.io/geocode?address=" + HttpUtility.UrlEncode(petCenter.Address) +SearchConst.GoongAPIKey;
+                Console.WriteLine(url);
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
 
-                    var result = await response.Content.ReadAsStringAsync();
-                    var cust = JObject.Parse(result);
+                var result = await response.Content.ReadAsStringAsync();
+                var cust = JObject.Parse(result);
 
-                    petCenter.Location.Latitude = cust["results"][0]["geometry"]["location"]["lat"].ToString();
-                    petCenter.Location.Longtitude = cust["results"][0]["geometry"]["location"]["lng"].ToString();
+                petCenter.Location.Latitude = cust["results"][0]["geometry"]["location"]["lat"].ToString();
+                petCenter.Location.Longtitude = cust["results"][0]["geometry"]["location"]["lng"].ToString();
 
-                    _petCenterRepository.Update(petCenter);
-                    _petCenterRepository.SaveDbChange();
+                _petCenterRepository.Update(petCenter);
+                _petCenterRepository.SaveDbChange();
 
-                    return true;
+                return true;
             }
             catch
             {
