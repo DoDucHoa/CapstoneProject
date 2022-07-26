@@ -58,5 +58,8 @@ namespace PawNClaw.Data.Database
         public virtual VoucherType VoucherTypeCodeNavigation { get; set; }
         [InverseProperty(nameof(Booking.VoucherCodeNavigation))]
         public virtual ICollection<Booking> Bookings { get; set; }
+
+        [NotMapped]
+        public string VoucherTypeName { get; internal set; }
     }
 }
