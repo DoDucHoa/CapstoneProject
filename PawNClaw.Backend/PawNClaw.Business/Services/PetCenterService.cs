@@ -38,6 +38,13 @@ namespace PawNClaw.Business.Services
             return value;
         }
 
+        //Get Detail By Id after searching
+        public PetCenter GetDetailByCenterId(int id)
+        {
+            var value = _petCenterRepository.GetPetCenterByIdAfterSearchName(id);
+            return value;
+        }
+
         //Get By Id With Cage Service and Supply
         public PetCenter GetDetailById(int id, List<List<PetRequestParameter>> _petRequests, string StartBooking, string EndBooking)
         {
@@ -82,13 +89,11 @@ namespace PawNClaw.Business.Services
         }
 
         //Get By Brand Id
-        public PagedList<PetCenter> GetByBrand(int id, PagingParameter paging)
+        public IEnumerable<PetCenter> GetByBrand(int id)
         {
             var values = _petCenterRepository.GetAll(x => x.BrandId == id);
 
-            return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
-            paging.PageNumber,
-            paging.PageSize);
+            return values;
         }
 
         //Get By Staff Id

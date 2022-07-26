@@ -22,6 +22,7 @@ namespace PawNClaw.Business.Services
         IPetRepository _petRepository;
         ICageRepository _cageRepository;
         IStaffRepository _staffRepository;
+        IVoucherRepository _voucherRepository;
 
         private readonly ApplicationDbContext _db;
 
@@ -30,6 +31,7 @@ namespace PawNClaw.Business.Services
             ISupplyOrderRepository supplyOrderRepository, ISupplyRepository supplyRepository,
             IServicePriceRepository servicePriceRepository, IPetRepository petRepository,
             ICageRepository cageRepository, IStaffRepository staffRepository,
+            IVoucherRepository voucherRepository,
             ApplicationDbContext db)
         {
             _bookingRepository = bookingRepository;
@@ -42,6 +44,7 @@ namespace PawNClaw.Business.Services
             _petRepository = petRepository;
             _cageRepository = cageRepository;
             _staffRepository = staffRepository;
+            _voucherRepository = voucherRepository;
             _db = db;
         }
 
@@ -98,21 +101,22 @@ namespace PawNClaw.Business.Services
             int Id = 0;
 
             //Check cage is booking and pet is booking in time
-            foreach (var bookingDetailCreateParameter in bookingDetailCreateParameters)
-            {
-                if (_cageRepository.GetAll(cage => cage.Code.Trim().Equals(bookingDetailCreateParameter.CageCode) && cage.BookingDetails.Any(bookingdetail =>
-                                ((DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
-                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
-                                ||
-                                (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) >= 0
-                                && DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
-                                ||
-                                (DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
-                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0)))).Count() != 0)
-                {
-                    throw new Exception("This Cage Has Been Used With Booking Time");
-                }
-            }
+            //foreach (var bookingDetailCreateParameter in bookingDetailCreateParameters)
+            //{
+            //    if (_cageRepository.GetAll(cage => cage.Code.Trim().Equals(bookingDetailCreateParameter.CageCode) && cage.BookingDetails.Any(bookingdetail =>
+            //                    ((DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
+            //                    && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
+            //                    ||
+            //                    (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) >= 0
+            //                    && DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
+            //                    ||
+            //                    (DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
+            //                    && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))
+            //                    && (bookingdetail.Booking.StatusId == 1 || bookingdetail.Booking.StatusId == 2))).Count() != 0)
+            //    {
+            //        throw new Exception("This Cage Has Been Used With Booking Time");
+            //    }
+            //}
 
 
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
@@ -142,8 +146,6 @@ namespace PawNClaw.Business.Services
                     transaction.Rollback();
                     throw new Exception();
                 }
-
-
 
                 //Create Booking Detail
                 foreach (var bookingDetail in bookingDetailCreateParameters)
@@ -332,8 +334,32 @@ namespace PawNClaw.Business.Services
                         Price = (decimal)(Price + bookingDetail.Price);
                     }
 
+                    decimal Discount = 0;
+                    //Here Check Voucher
+                    if (bookingCreateParameter.VoucherCode != null)
+                    {
+                        var voucher = _voucherRepository.Get(bookingCreateParameter.VoucherCode);
+
+                        if (voucher.VoucherTypeCode.Equals("1"))
+                        {
+                            if (Price > voucher.MinCondition)
+                            {
+                                Discount = (decimal)(Price * (voucher.Value / 100));
+                            }
+                        }
+
+                        if (voucher.VoucherTypeCode.Equals("2"))
+                        {
+                            if (Price > voucher.MinCondition)
+                            {
+                                Discount = (decimal)(Price - voucher.Value);
+                            }
+                        }
+                    }
+
                     bookingToDb.SubTotal = Price;
-                    bookingToDb.Total = Price;
+                    bookingToDb.Discount = Discount;
+                    bookingToDb.Total = Price - Discount;
 
                     _bookingRepository.Update(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();

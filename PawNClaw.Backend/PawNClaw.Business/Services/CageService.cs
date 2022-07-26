@@ -1,4 +1,5 @@
 ﻿using PawNClaw.Data.Database;
+using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
 using System;
@@ -16,12 +17,24 @@ namespace PawNClaw.Business.Services
         public CageService(ICageRepository cageRepository)
         {
             _cageRepository = cageRepository;
+
         }
 
-        public bool CreateCage(Cage cage)
+        public bool CreateCage(CreateCageParameter createCageParameter)
         {
             try
             {
+                Cage cage = new Cage()
+                {
+                    CenterId = createCageParameter.CenterId,
+                    CageTypeId = createCageParameter.CageTypeId,
+                    Code = createCageParameter.Code,
+                    Color = createCageParameter.Color,
+                    Name = createCageParameter.Name,
+                    CreateUser = createCageParameter.CreateUser,
+                    ModifyUser = createCageParameter.ModifyUser,
+                    IsOnline = createCageParameter.IsOnline
+                };
                 _cageRepository.Add(cage);
                 _cageRepository.SaveDbChange();
                 return true;
@@ -31,7 +44,8 @@ namespace PawNClaw.Business.Services
                 throw new Exception();
             }
         }
-
+        
+        //update cage detail
         public bool UpdateCage(UpdateCageParameter updateCageParameter)
         {
             try
@@ -41,10 +55,85 @@ namespace PawNClaw.Business.Services
                 cage.ModifyDate = updateCageParameter.ModifyDate;
                 cage.ModifyUser = updateCageParameter.ModifyUser;
                 cage.Status = updateCageParameter.Status;
+                cage.Color = updateCageParameter.Color;
+                cage.Name = updateCageParameter.Name;
 
                 _cageRepository.Update(cage);
                 _cageRepository.SaveDbChange();
                 return true;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+
+        //shift cage between onl/off
+        public bool ShiftCage(string cageCode, int centerId)
+        {
+            try
+            {
+                _cageRepository.UpdateCageStatus(cageCode, centerId);
+                _cageRepository.SaveDbChange();
+                return true;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+
+        //Get Cages
+        public PagedList<Cage> getCages(CageRequestParameter cageRequestParameter, PagingParameter pagingParameter)
+        {
+            try
+            {
+                var values = _cageRepository.GetCages(cageRequestParameter.CenterId);
+
+                if(!string.IsNullOrWhiteSpace(cageRequestParameter.Code))
+                {
+                    values = values.Where(x => cageRequestParameter.Code.Equals(x.Code.Trim()));
+                }
+
+                if(cageRequestParameter.CageTypeId != null)
+                {
+                    values = values.Where(x => x.CageTypeId == cageRequestParameter.CageTypeId);
+                }
+
+                if(cageRequestParameter.IsOnline != null)
+                {
+                    values = cageRequestParameter.IsOnline switch
+                    {
+                        true => values.Where(x => x.IsOnline == true),
+                        false => values.Where(x => x.IsOnline == false),
+                        _ => values
+                    };
+                }
+
+                if (cageRequestParameter.Status != null)
+                {
+                    values = cageRequestParameter.Status switch
+                    {
+                        true => values.Where(x => x.Status == true),
+                        false => values.Where(x => x.Status == false),
+                        _ => values
+                    };
+                }
+
+                if (!string.IsNullOrWhiteSpace(cageRequestParameter.sort))
+                {
+                    switch (cageRequestParameter.sort)
+                    {
+                        case "code":
+                            if (cageRequestParameter.dir == "asc")
+                                values = values.OrderBy(d => d.Code);
+                            else if (cageRequestParameter.dir == "desc")
+                                values = values.OrderByDescending(d => d.Code);
+                            break;
+                    }
+                }
+
+                return PagedList<Cage>.ToPagedList(values.AsQueryable(),pagingParameter.PageNumber,pagingParameter.PageSize);
             }
             catch
             {

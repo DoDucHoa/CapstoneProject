@@ -80,6 +80,7 @@ namespace PawNClaw.API
             services.AddTransient<PetService, PetService>();
 
             services.AddTransient<ILocationRepository, LocationRepository>();
+            
 
             services.AddTransient<IBookingRepository, BookingRepository>();
             services.AddTransient<BookingService, BookingService>();
@@ -105,6 +106,7 @@ namespace PawNClaw.API
             services.AddTransient<ISupplyRepository, SupplyRepository>();
 
             services.AddTransient<ICageRepository, CageRepository>();
+            services.AddTransient<CageService, CageService>();
 
             services.AddTransient<ICageTypeRepository, CageTypeRepository>();
             services.AddTransient<CageTypeService, CageTypeService>();
@@ -124,6 +126,9 @@ namespace PawNClaw.API
 
             services.AddScoped<ISponsorBannerRepository, SponsorBannerRepository>();
             services.AddScoped<SponsorBannerService, SponsorBannerService>();
+
+            services.AddScoped<IVoucherRepository, VoucherRepository>();
+            services.AddScoped<VoucherService, VoucherService>();
 
             services.AddControllers();
             services.AddControllersWithViews()

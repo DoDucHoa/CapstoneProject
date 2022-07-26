@@ -203,7 +203,7 @@ namespace PawNClaw.Data.Repository
                         CenterId = cagetype.CenterId,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(cagetype.Id, PhotoTypesConst.CageType),
                         TotalPrice = _priceRepository.checkTotalPriceOfCageType(cagetype.Id, StartBooking, EndBooking),
-                        Cages = (ICollection<Cage>)cagetype.Cages.Where(cage => cage.Status == true 
+                        Cages = (ICollection<Cage>)cagetype.Cages.Where(cage => cage.Status == true && cage.IsOnline == true
                                 && !cage.BookingDetails.Any(bookingdetail =>
                                 ((DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
                                 && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
@@ -212,7 +212,8 @@ namespace PawNClaw.Data.Repository
                                 && DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
                                 ||
                                 (DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
-                                && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))))
+                                && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0)) 
+                                && (bookingdetail.Booking.StatusId == 1 || bookingdetail.Booking.StatusId == 2)))
                     }),
                     Supplies = (ICollection<Supply>)x.Supplies.Where(s => s.Quantity > 0 && s.Status == true)
                     .Select(s => new Supply
@@ -225,7 +226,7 @@ namespace PawNClaw.Data.Repository
                         SupplyTypeCode = s.SupplyTypeCode,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(s.Id, PhotoTypesConst.Supply)
                     }),
-                    Services = (ICollection<Service>)x.Services.Where(ser => ser.Status == true && ser.ServiceOrders.Count > 0)
+                    Services = (ICollection<Service>)x.Services.Where(ser => ser.Status == true && ser.ServicePrices.Count > 0)
                     .Select(ser => new Service
                     {
                         Id = ser.Id,
@@ -239,7 +240,8 @@ namespace PawNClaw.Data.Repository
                             MinWeight = price.MinWeight,
                             MaxWeight = price.MaxWeight
                         })
-                    })
+                    }),
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
                 })
                 .SingleOrDefault(x => x.Id == id);
 
@@ -251,6 +253,8 @@ namespace PawNClaw.Data.Repository
             PetCenter query = _dbSet
                 .Include(x => x.Location)
                 .Include(x => x.CageTypes)
+                .Include(x => x.Services)
+                .Include(x => x.Supplies)
                 .Where(x => x.Id == id)
                 .Select(x => new PetCenter
                 {
@@ -277,7 +281,30 @@ namespace PawNClaw.Data.Repository
                         Length = cagetype.Length,
                         IsSingle = cagetype.IsSingle,
                         Status = cagetype.Status,
-                        CenterId = cagetype.CenterId
+                        CenterId = cagetype.CenterId,
+                        Cages = cagetype.Cages.Where(x => x.IsOnline == true && x.Status == true).ToList(),
+                        MinPrice = cagetype.Prices.Min(x => x.UnitPrice),
+                        MaxPrice = cagetype.Prices.Max(x => x.UnitPrice),
+                    }),
+                    Supplies = (ICollection<Supply>)x.Supplies.Where(s => s.Quantity > 0 && s.Status == true)
+                    .Select(s => new Supply
+                    {
+                        Id = s.Id,
+                        Name = s.Name,
+                        SellPrice = s.SellPrice,
+                        DiscountPrice = s.DiscountPrice,
+                        Quantity = s.Quantity,
+                        SupplyTypeCode = s.SupplyTypeCode,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(s.Id, PhotoTypesConst.Supply)
+                    }),
+                    Services = (ICollection<Service>)x.Services.Where(ser => ser.Status == true && ser.ServicePrices.Count > 0)
+                    .Select(ser => new Service
+                    {
+                        Id = ser.Id,
+                        Description = ser.Description,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(ser.Id, PhotoTypesConst.Service),
+                        MinPrice = ser.ServicePrices.Min(x => x.Price),
+                        MaxPrice = ser.ServicePrices.Max(x => x.Price)
                     }),
                     Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
                 }).FirstOrDefault();

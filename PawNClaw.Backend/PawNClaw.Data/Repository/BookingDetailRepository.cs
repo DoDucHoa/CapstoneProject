@@ -22,16 +22,9 @@ namespace PawNClaw.Data.Repository
         {
             IQueryable<BookingDetail> query = _dbSet;
 
-            query = query.Where(x => x.BookingId == Id);
+            query = query.Where(x => x.BookingId == Id && (x.Booking.StatusId == 1 || x.Booking.StatusId == 2));
 
             return query.ToList();
-        }
-
-        public BookingDetail GetBookingDetail(int BookingId, int Line)
-        {
-            BookingDetail query = _dbSet.Find(BookingId, Line);
-
-            return query;
         }
     }
 }

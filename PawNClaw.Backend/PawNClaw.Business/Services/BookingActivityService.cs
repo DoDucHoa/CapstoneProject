@@ -103,43 +103,49 @@ namespace PawNClaw.Business.Services
 
                 foreach (var supplyOrder in booking.SupplyOrders)
                 {
-                    bookingActivity = new BookingActivity();
-                    bookingActivity.BookingId = booking.Id;
-                    bookingActivity.PetId = supplyOrder.PetId;
-                    bookingActivity.SupplyId = supplyOrder.SupplyId;
-                    bookingActivity.ActivityTimeFrom = booking.StartBooking;
-                    bookingActivity.ActivityTimeTo = booking.EndBooking;
+                    for (int i = 0; i < supplyOrder.Quantity; i++)
+                    {
+                        bookingActivity = new BookingActivity();
+                        bookingActivity.BookingId = booking.Id;
+                        bookingActivity.PetId = supplyOrder.PetId;
+                        bookingActivity.SupplyId = supplyOrder.SupplyId;
+                        bookingActivity.ActivityTimeFrom = booking.StartBooking;
+                        bookingActivity.ActivityTimeTo = booking.EndBooking;
 
-                    try
-                    {
-                        _bookingActivityRepository.Add(bookingActivity);
-                        await _bookingActivityRepository.SaveDbChangeAsync();
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-                        throw new Exception();
+                        try
+                        {
+                            _bookingActivityRepository.Add(bookingActivity);
+                            await _bookingActivityRepository.SaveDbChangeAsync();
+                        }
+                        catch
+                        {
+                            transaction.Rollback();
+                            throw new Exception();
+                        }
                     }
                 }
 
                 foreach (var serviceOrder in booking.ServiceOrders)
                 {
-                    bookingActivity = new BookingActivity();
-                    bookingActivity.BookingId = booking.Id;
-                    bookingActivity.PetId = serviceOrder.PetId;
-                    bookingActivity.ServiceId = serviceOrder.ServiceId;
-                    bookingActivity.ActivityTimeFrom = booking.StartBooking;
-                    bookingActivity.ActivityTimeTo = booking.EndBooking;
+                    for (int i = 0; i < serviceOrder.Quantity; i++)
+                    {
+                        bookingActivity = new BookingActivity();
+                        bookingActivity.BookingId = booking.Id;
+                        bookingActivity.PetId = serviceOrder.PetId;
+                        bookingActivity.ServiceId = serviceOrder.ServiceId;
+                        bookingActivity.ActivityTimeFrom = booking.StartBooking;
+                        bookingActivity.ActivityTimeTo = booking.EndBooking;
 
-                    try
-                    {
-                        _bookingActivityRepository.Add(bookingActivity);
-                        await _bookingActivityRepository.SaveDbChangeAsync();
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-                        throw new Exception();
+                        try
+                        {
+                            _bookingActivityRepository.Add(bookingActivity);
+                            await _bookingActivityRepository.SaveDbChangeAsync();
+                        }
+                        catch
+                        {
+                            transaction.Rollback();
+                            throw new Exception();
+                        }
                     }
                 }
 

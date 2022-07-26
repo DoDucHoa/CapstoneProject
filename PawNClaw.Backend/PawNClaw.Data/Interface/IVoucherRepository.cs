@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace PawNClaw.Data.Interface
 {
-    public interface IBookingDetailRepository : IRepository<BookingDetail>
+    public interface IVoucherRepository : IRepository<Voucher>
     {
-        public IEnumerable<BookingDetail> GetBookingDetailForSearch(int Id);
+
     }
 }

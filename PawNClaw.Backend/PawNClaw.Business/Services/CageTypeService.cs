@@ -25,9 +25,53 @@ namespace PawNClaw.Business.Services
             _db = db;
         }
 
-        public PagedList<CageType> GetCageTypes(int centerId, PagingParameter paging)
+        public PagedList<CageType> GetCageTypes(CageTypeRequestParameter cageTypeRequestParameter, PagingParameter paging)
         {
-            var values = _cageTypeRepository.GetAllCageWithCageType(centerId);
+            var values = _cageTypeRepository.GetAllCageWithCageType(cageTypeRequestParameter.CenterId);
+
+            if (!string.IsNullOrWhiteSpace(cageTypeRequestParameter.TypeName))
+            {
+                values = values.Where(x => x.TypeName.ToLower().Contains(cageTypeRequestParameter.TypeName.ToLower()));
+            }
+
+            if(cageTypeRequestParameter.id != null)
+            {
+                values = values.Where(x => x.Id == cageTypeRequestParameter.id);
+            }
+
+            if(cageTypeRequestParameter.IsSingle != null)
+            {
+                values = cageTypeRequestParameter.IsSingle switch
+                {
+                    true => values.Where(x => x.IsSingle == true),
+                    false => values.Where(x => x.IsSingle == false),
+                    _ => values
+                };
+            }
+
+            if (cageTypeRequestParameter.Status != null)
+            {
+                values = cageTypeRequestParameter.Status switch
+                {
+                    true => values.Where(x => x.Status == true),
+                    false => values.Where(x => x.Status == false),
+                    _ => values
+                };
+            }
+
+            if (!string.IsNullOrWhiteSpace(cageTypeRequestParameter.sort))
+            {
+                switch (cageTypeRequestParameter.sort)
+                {
+                    case "typename":
+                        if (cageTypeRequestParameter.dir == "asc")
+                            values = values.OrderBy(d => d.TypeName);
+                        else if (cageTypeRequestParameter.dir == "desc")
+                            values = values.OrderByDescending(d => d.TypeName);
+                        break;
+                }
+            }
+
             return PagedList<CageType>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
             paging.PageSize);
