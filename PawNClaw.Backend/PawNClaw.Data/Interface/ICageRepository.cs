@@ -17,7 +17,7 @@ namespace PawNClaw.Data.Interface
 
         public Cage GetCage(string Code, int CenterId);
 
-        public bool UpdateCageStatus(List<String> CageCodes, int centerId);
+        public bool UpdateCageStatus(string CageCode, int centerId);
 
         public IEnumerable<Cage> GetCages(int CenterId);
     }
