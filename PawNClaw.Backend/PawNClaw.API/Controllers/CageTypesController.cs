@@ -58,7 +58,7 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                return Ok(_cageTypeService.CreateCageType(createCageTypeFlowParameter.createCageTypeParameter, createCageTypeFlowParameter.createPriceParameters));
+                return Ok(_cageTypeService.CreateCageType(createCageTypeFlowParameter.createCageTypeParameter, createCageTypeFlowParameter.createPriceParameters, createCageTypeFlowParameter.foodSchedules));
             }
             catch (Exception ex)
             {

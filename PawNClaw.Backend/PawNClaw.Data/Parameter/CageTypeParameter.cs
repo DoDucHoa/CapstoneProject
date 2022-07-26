@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PawNClaw.Data.Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,5 +37,7 @@ namespace PawNClaw.Data.Parameter
         public CreateCageTypeParameter createCageTypeParameter { get; set; }
 
         public List<CreatePriceParameter> createPriceParameters { get; set; }
+
+        public List<FoodSchedule> foodSchedules { get; set; }
     }
 }

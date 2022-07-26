@@ -68,7 +68,7 @@ namespace PawNClaw.Business.Services
         //Get Account by Id  
         public Account GetAccountById(int id)
         {
-            return _accountRepository.GetAll().FirstOrDefault(x => x.Id == id);
+            return _accountRepository.GetAccountWithInFor(id);
         }
 
         //Add Account
