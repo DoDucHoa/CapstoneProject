@@ -101,27 +101,37 @@ namespace PawNClaw.API.Controllers
         {
             if (_accountService.Update(param.account))
             {
-                if (param.account.RoleCode.Equals("AD"))
+                try
                 {
-                    _adminService.Update(param.admin);
+                    if (param.account.RoleCode.Equals("AD"))
+                    {
+                        _adminService.Update(param.admin);
+                    }
+                    if (param.account.RoleCode.Equals("CUS"))
+                    {
+                        _customerService.Update(param.customer);
+                    }
+                    if (param.account.RoleCode.Equals("MOD"))
+                    {
+                        _adminService.Update(param.admin);
+                    }
+                    if (param.account.RoleCode.Equals("OWN"))
+                    {
+                        _ownerService.Update(param.owner);
+                    }
+                    if (param.account.RoleCode.Equals("STF"))
+                    {
+                        _staffServicecs.Update(param.staff);
+                    }
+
+                    return Ok();
+
                 }
-                if (param.account.RoleCode.Equals("CUS"))
+                catch (Exception ex)
                 {
-                    _customerService.Update(param.customer);
+                    return BadRequest(ex);
                 }
-                if (param.account.RoleCode.Equals("MOD"))
-                {
-                    _adminService.Update(param.admin);
-                }
-                if (param.account.RoleCode.Equals("OWN"))
-                {
-                    _ownerService.Update(param.owner);
-                }
-                if (param.account.RoleCode.Equals("STF"))
-                {
-                    _staffServicecs.Update(param.staff);
-                }
-                return Ok();
+                
             }
             return BadRequest();
         }
@@ -130,8 +140,8 @@ namespace PawNClaw.API.Controllers
         [Authorize(Roles = "Admin,Mod")]
         public IActionResult DeleteForMod(int id)
         {
-            if (_accountService.GetAccountById(id).RoleCode.Trim().Equals("01") ||
-                _accountService.GetAccountById(id).RoleCode.Trim().Equals("02"))
+            if (_accountService.GetAccountById(id).RoleCode.Trim().Equals("AD") ||
+                _accountService.GetAccountById(id).RoleCode.Trim().Equals("MOD"))
             {
                 ModelState.AddModelError("Id", "ID is Mod or Admin account");
                 return BadRequest(ModelState);
@@ -147,7 +157,7 @@ namespace PawNClaw.API.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
-            if (_accountService.GetAccountById(id).RoleCode.Trim().Equals("01"))
+            if (_accountService.GetAccountById(id).RoleCode.Trim().Equals("AD"))
             {
                 ModelState.AddModelError("Id", "ID is Admin account");
                 return BadRequest(ModelState);
