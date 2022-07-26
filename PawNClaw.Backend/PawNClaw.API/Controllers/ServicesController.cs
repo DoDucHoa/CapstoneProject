@@ -24,10 +24,10 @@ namespace PawNClaw.API.Controllers
             _serviceServices = serviceServices;
         }
 
-        [HttpGet("center/{id}")]
-        public IActionResult GetServicesOfCenter(int id, PagingParameter paging)
+        [HttpGet("center")]
+        public IActionResult GetServicesOfCenter([FromQuery] int CenterId, [FromQuery] PagingParameter paging)
         {
-            var data = _serviceServices.GetServices(id, paging);
+            var data = _serviceServices.GetServices(CenterId, paging);
             var metadata = new
             {
                 data.TotalCount,

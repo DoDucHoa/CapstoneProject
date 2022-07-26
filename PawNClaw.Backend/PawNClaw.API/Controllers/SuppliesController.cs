@@ -24,12 +24,22 @@ namespace PawNClaw.API.Controllers
             _supplyService = supplyService;
         }
 
-        [HttpGet("center/{id}")]
-        public IActionResult GetSupplysOfCenter(int id, [FromQuery] PagingParameter paging)
+        [HttpGet("center")]
+        public IActionResult GetSupplysOfCenter([FromQuery]int CenterId, [FromQuery] PagingParameter paging)
         {
             try
             {
-                return Ok(_supplyService.GetSupplysOfCenter(id, paging));
+                var data = _supplyService.GetSupplysOfCenter(CenterId, paging);
+                var metadata = new
+                {
+                    data.TotalCount,
+                    data.PageSize,
+                    data.CurrentPage,
+                    data.TotalPages,
+                    data.HasNext,
+                    data.HasPrevious
+                };
+                return Ok(new { data, metadata });
             }
             catch (Exception ex)
             {

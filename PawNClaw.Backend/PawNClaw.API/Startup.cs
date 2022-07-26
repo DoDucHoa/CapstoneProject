@@ -104,6 +104,7 @@ namespace PawNClaw.API
             services.AddTransient<SupplyOrderService, SupplyOrderService>();
 
             services.AddTransient<ISupplyRepository, SupplyRepository>();
+            services.AddTransient<SupplyService, SupplyService>();
 
             services.AddTransient<ICageRepository, CageRepository>();
             services.AddTransient<CageService, CageService>();
