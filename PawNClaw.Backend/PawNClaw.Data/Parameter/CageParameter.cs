@@ -14,7 +14,7 @@ namespace PawNClaw.Data.Parameter
     {
         public string? Code { get; set; }
         public int CenterId { get; set; }
-        public bool? IsOnline { get; set; } = true;
+        public bool? IsOnline { get; set; }
         public bool? Status { get; set; } = true;
         public int? CageTypeId { get; set; }
 
