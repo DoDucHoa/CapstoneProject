@@ -62,7 +62,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateVouchers(Voucher voucher)
+        public IActionResult CreateVouchers( [FromBody] Voucher voucher)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateVoucher(Voucher voucher)
+        public IActionResult UpdateVoucher([FromBody] Voucher voucher)
         {
             try
             {

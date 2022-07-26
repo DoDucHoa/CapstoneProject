@@ -18,7 +18,7 @@ namespace PawNClaw.Business.Services
             _supplyRepository = supplyRepository;
         }
 
-        public IEnumerable<Supply> GetSupplyOfCenter(int CenterId)
+        public IEnumerable<Supply> GetSupplysOfCenter(int CenterId)
         {
             try
             {
@@ -28,6 +28,11 @@ namespace PawNClaw.Business.Services
             {
                 throw new Exception();
             }
+        }
+
+        public Supply GetSupply(int id)
+        {
+            return _supplyRepository.Get(id);
         }
         
         public bool CreateSupply(Supply supply)
