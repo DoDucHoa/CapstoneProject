@@ -93,7 +93,7 @@ export const PATH_DASHBOARD = {
     root: path(ROOTS_DASHBOARD, '/cage'),
     list: path(ROOTS_DASHBOARD, '/cage/list'),
     new: path(ROOTS_DASHBOARD, '/cage/new'),
-    edit: (id) => path(ROOTS_DASHBOARD, `/cage/${id}/edit`),
+    edit: (code) => path(ROOTS_DASHBOARD, `/cage/${code}/edit`),
   },
   price: {
     root: path(ROOTS_DASHBOARD, '/price'),

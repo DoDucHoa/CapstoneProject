@@ -23,6 +23,7 @@ const ICONS = {
   staff: getIcon('ic_staff'),
 };
 
+// nav config for owner
 const navConfig = [
   // GENERAL
   // ----------------------------------------------------------------------
@@ -104,44 +105,6 @@ export const navConfigForStaff = [
     ],
   },
 
-  // MANAGEMENT
-  // ----------------------------------------------------------------------
-  {
-    subheader: 'Quản Lý',
-    items: [
-      // MODERATOR
-      {
-        title: 'Người điều hành',
-        path: PATH_DASHBOARD.admin.list,
-        icon: ICONS.admin,
-      },
-      {
-        title: 'Chủ trung tâm',
-        path: PATH_DASHBOARD.owner.list,
-        icon: ICONS.owner,
-      },
-    ],
-  },
-
-  // CENTER
-  // ----------------------------------------------------------------------
-  {
-    subheader: 'Trung Tâm',
-    items: [
-      // MODERATOR
-      {
-        title: 'Thương hiệu',
-        path: PATH_DASHBOARD.brand.list,
-        icon: ICONS.brand,
-      },
-      {
-        title: 'Trung tâm',
-        path: PATH_DASHBOARD.center.list,
-        icon: ICONS.center,
-      },
-    ],
-  },
-
   // CENTER MANAGEMENT
   // ----------------------------------------------------------------------
   {
@@ -191,6 +154,47 @@ export const navConfigForAdmin = [
         path: PATH_DASHBOARD.admin.list,
         icon: ICONS.admin,
       },
+      {
+        title: 'Chủ trung tâm',
+        path: PATH_DASHBOARD.owner.list,
+        icon: ICONS.owner,
+      },
+    ],
+  },
+
+  // CENTER
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Trung Tâm',
+    items: [
+      // MODERATOR
+      {
+        title: 'Thương hiệu',
+        path: PATH_DASHBOARD.brand.list,
+        icon: ICONS.brand,
+      },
+      {
+        title: 'Trung tâm',
+        path: PATH_DASHBOARD.center.list,
+        icon: ICONS.center,
+      },
+    ],
+  },
+];
+
+export const navConfigForModerator = [
+  // GENERAL
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'general',
+    items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
+  },
+
+  // MANAGEMENT
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Quản Lý',
+    items: [
       {
         title: 'Chủ trung tâm',
         path: PATH_DASHBOARD.owner.list,

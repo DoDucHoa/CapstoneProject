@@ -84,26 +84,53 @@ export default function CageDialogForm({ open, onClose, cageSearchParam, booking
 
   const onSubmit = async (data) => {
     try {
-      await axios.put('/api/bookingdetails', { ...data, price });
-      cageSearchParam.listPets.map(async (pet) => {
-        axios.post('/api/pethealthhistories', {
-          isUpdatePet: true,
-          createPetHealthHistoryParameter: {
-            checkedDate: new Date(),
-            description: '',
-            centerName: 'Dogily',
-            petId: pet.id,
-            length: pet.length,
-            height: pet.height,
-            weight: pet.weight,
-            bookingId,
-          },
-        });
+      // handle change cage
+      await axios.put('/api/bookingdetails', {
+        id: data.line,
+        cageCode: data.cageCode,
+        note: data.note,
+        price,
       });
-      onClose();
-      enqueueSnackbar('Cập nhật thành công!');
-      dispatch(closeModal());
-      dispatch(getBookingDetails(bookingId));
+
+      await Promise.all(
+        cageSearchParam.listPets.map(async (pet) => {
+          await axios.post('/api/pethealthhistories', {
+            isUpdatePet: true,
+            createPetHealthHistoryParameter: {
+              checkedDate: new Date(),
+              description: '',
+              centerName: 'Dogily',
+              petId: pet.id,
+              length: pet.length,
+              height: pet.height,
+              weight: pet.weight,
+              bookingId,
+            },
+          });
+        })
+      ).then(() => {
+        onClose();
+        enqueueSnackbar('Cập nhật thành công!');
+        dispatch(closeModal());
+        dispatch(getBookingDetails(bookingId));
+      });
+
+      // // handle update pet health history
+      // cageSearchParam.listPets.map((pet) =>
+      //   axios.post('/api/pethealthhistories', {
+      //     isUpdatePet: true,
+      //     createPetHealthHistoryParameter: {
+      //       checkedDate: new Date(),
+      //       description: '',
+      //       centerName: 'Dogily',
+      //       petId: pet.id,
+      //       length: pet.length,
+      //       height: pet.height,
+      //       weight: pet.weight,
+      //       bookingId,
+      //     },
+      //   })
+      // );
     } catch (error) {
       console.log(error);
     }

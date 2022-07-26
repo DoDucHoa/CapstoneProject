@@ -117,6 +117,8 @@ export function getEvents(CenterId) {
         start: booking.startBooking,
         color: booking.color,
         textColor: BOOKING_STATUS_COLOR[booking.statusId],
+
+        end: booking.endBooking,
       }));
 
       dispatch(slice.actions.getEventsSuccess(bookingData));
@@ -154,7 +156,7 @@ export function getBookingDetails(bookingId) {
 
       const petData = bookingDetails.bookingDetails.map((data) => ({
         cageCode: data.cageCode,
-        line: data.line,
+        line: data.id,
         price: data.price,
         duration: data.duration,
         petBookingDetails: data.petBookingDetails.map((row) => ({

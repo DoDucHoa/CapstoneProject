@@ -190,6 +190,36 @@ export default function Router() {
           ],
         },
         {
+          path: 'cage',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/cage/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':code/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
           path: 'booking',
           children: [
             { path: '', element: <Navigate to="/dashboard/booking/calendar" replace />, index: true },
@@ -274,6 +304,10 @@ const OwnerCreate = Loadable(lazy(() => import('../pages/dashboard/Owner/OwnerCr
 // BRAND
 const BrandList = Loadable(lazy(() => import('../pages/dashboard/Brand/BrandList')));
 const BrandCreate = Loadable(lazy(() => import('../pages/dashboard/Brand/BrandCreate')));
+
+// CAGE
+const CageList = Loadable(lazy(() => import('../pages/dashboard/Cage/CageList')));
+const CageCreate = Loadable(lazy(() => import('../pages/dashboard/Cage/CageCreate')));
 
 // BOOKING CALENDAR
 const BookingCalendar = Loadable(lazy(() => import('../pages/dashboard/Calendar')));
