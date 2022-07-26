@@ -14,14 +14,17 @@ namespace PawNClaw.Business.Services
     {
         ICageTypeRepository _cageTypeRepository;
         IPriceRepository _priceRepository;
+        IFoodScheduleRepository _foodScheduleRepository;
 
         private readonly ApplicationDbContext _db;
 
-        public CageTypeService(ICageTypeRepository cageTypeRepository, IPriceRepository priceRepository, 
+        public CageTypeService(ICageTypeRepository cageTypeRepository, IPriceRepository priceRepository,
+            IFoodScheduleRepository foodScheduleRepository,
             ApplicationDbContext db)
         {
             _cageTypeRepository = cageTypeRepository;
             _priceRepository = priceRepository;
+            _foodScheduleRepository = foodScheduleRepository;
             _db = db;
         }
 
@@ -84,7 +87,7 @@ namespace PawNClaw.Business.Services
             return values;
         }
 
-        public async Task<bool> CreateCageType(CreateCageTypeParameter createCageTypeParameter, List<CreatePriceParameter> createPriceParameters)
+        public async Task<bool> CreateCageType(CreateCageTypeParameter createCageTypeParameter, List<CreatePriceParameter> createPriceParameters, List<FoodSchedule> foodSchedules)
         {
             CageType cageType = new CageType();
 
@@ -139,6 +142,18 @@ namespace PawNClaw.Business.Services
                     {
                         transaction.Rollback();
                         throw new Exception("Need Price Is - 'Giá Mặc Định' ");
+                    }
+
+                    if (foodSchedules.Count < 1)
+                    {
+                        throw new Exception("Need Food Schedule");
+                    }
+
+                    foreach (var foodSchedule in foodSchedules)
+                    {
+                        foodSchedule.CageTypeId = cageType.Id;
+                        _foodScheduleRepository.Add(foodSchedule);
+                        await _foodScheduleRepository.SaveDbChangeAsync();
                     }
 
                     transaction.Commit();

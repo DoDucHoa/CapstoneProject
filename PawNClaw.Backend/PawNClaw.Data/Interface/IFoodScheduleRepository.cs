@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace PawNClaw.Data.Interface
 {
-    public interface IAccountRepository : IRepository<Account>
+    public interface IFoodScheduleRepository : IRepository<FoodSchedule>
     {
-        public Account GetAccountWithInFor(int id);
     }
 }
