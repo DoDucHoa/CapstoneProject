@@ -600,7 +600,7 @@ namespace PawNClaw.Business.Services
                 }
                 
             }
-            url = url + "&api_key=r81jNaUAOipzIiuOoPIN1S3m0vaURbdE2LldWk7z";
+            url = url + SearchConst.GoongAPIKey;
 
             HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
@@ -618,7 +618,6 @@ namespace PawNClaw.Business.Services
             }
             return values.Where(x => !string.IsNullOrEmpty(x.Distance)).OrderBy(x => x.Distance);
         }
-
 
         //Reference Center
         public async Task<SearchPetCenterResponse> ReferenceCenter(string City, string District,
@@ -653,7 +652,7 @@ namespace PawNClaw.Business.Services
                         url = url + district.Latitude + "," + district.Longtitude + "%7C";
                     }
                 }
-                url = url + "&api_key=r81jNaUAOipzIiuOoPIN1S3m0vaURbdE2LldWk7z";
+                url = url + SearchConst.GoongAPIKey;
 
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -974,7 +973,7 @@ namespace PawNClaw.Business.Services
                     url = url + lo.Latitude + "," + lo.Longtitude + "%7C";
                 }
             }
-            url = url + "&api_key=r81jNaUAOipzIiuOoPIN1S3m0vaURbdE2LldWk7z";
+            url = url + SearchConst.GoongAPIKey;
 
             HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
