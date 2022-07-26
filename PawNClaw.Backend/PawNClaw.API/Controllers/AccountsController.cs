@@ -18,10 +18,20 @@ namespace PawNClaw.API.Controllers
     public class AccountsController : ControllerBase
     {
         private readonly AccountService _accountService;
+        private readonly OwnerService _ownerService;
+        private readonly AdminService _adminService;
+        private readonly StaffServicecs _staffServicecs;
+        private readonly CustomerService _customerService;
 
-        public AccountsController(AccountService accountService)
+        public AccountsController(AccountService accountService, OwnerService ownerService,
+            AdminService adminService, StaffServicecs staffServicecs,
+            CustomerService customerService)
         {
             _accountService = accountService;
+            _ownerService = ownerService;
+            _adminService = adminService;
+            _staffServicecs = staffServicecs;
+            _customerService = customerService;
         }
 
         [HttpGet("{id:int}")]
@@ -81,6 +91,36 @@ namespace PawNClaw.API.Controllers
             accountDb.RoleCode = account.RoleCode;
             if (_accountService.Update(accountDb))
             {
+                return Ok();
+            }
+            return BadRequest();
+        }
+
+        [HttpPut]
+        public IActionResult Update([FromBody] UpdateAccountParam param)
+        {
+            if (_accountService.Update(param.account))
+            {
+                if (param.account.RoleCode.Equals("AD"))
+                {
+                    _adminService.Update(param.admin);
+                }
+                if (param.account.RoleCode.Equals("CUS"))
+                {
+                    _customerService.Update(param.customer);
+                }
+                if (param.account.RoleCode.Equals("MOD"))
+                {
+                    _adminService.Update(param.admin);
+                }
+                if (param.account.RoleCode.Equals("OWN"))
+                {
+                    _ownerService.Update(param.owner);
+                }
+                if (param.account.RoleCode.Equals("STF"))
+                {
+                    _staffServicecs.Update(param.staff);
+                }
                 return Ok();
             }
             return BadRequest();
