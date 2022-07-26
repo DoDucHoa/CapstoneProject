@@ -37,12 +37,12 @@ namespace PawNClaw.Business.Services
                 values = values.Where(x => x.TypeName.ToLower().Contains(cageTypeRequestParameter.TypeName.ToLower()));
             }
 
-            if(cageTypeRequestParameter.id != null)
+            if (cageTypeRequestParameter.id != null)
             {
                 values = values.Where(x => x.Id == cageTypeRequestParameter.id);
             }
 
-            if(cageTypeRequestParameter.IsSingle != null)
+            if (cageTypeRequestParameter.IsSingle != null)
             {
                 values = cageTypeRequestParameter.IsSingle switch
                 {
@@ -166,6 +166,35 @@ namespace PawNClaw.Business.Services
             }
 
             return true;
+        }
+
+        public bool Update(CageType cageType)
+        {
+            _cageTypeRepository.Update(cageType);
+            _cageTypeRepository.SaveDbChange();
+            return true;
+        }
+
+        public bool Delete(int id)
+        {
+            var cagetype = _cageTypeRepository.GetCageTypeWithCageAndPrice(id);
+            if (cagetype.Cages.Any(x => x.BookingDetails.Any(bookingdetail => bookingdetail.Booking.StatusId == 1 || bookingdetail.Booking.StatusId == 2)))
+            {
+                throw new Exception("Cant delete this cage type");
+            }
+            else
+            {
+                cagetype = _cageTypeRepository.Get(id);
+                cagetype.Status = false;
+                _cageTypeRepository.Update(cagetype);
+                _cageTypeRepository.SaveDbChange();
+                return true;
+            }
+        }
+
+        public CageType GetCageTypeWithCageAndPrice(int id)
+        {
+            return _cageTypeRepository.GetCageTypeWithCageAndPrice(id);
         }
     }
 }
