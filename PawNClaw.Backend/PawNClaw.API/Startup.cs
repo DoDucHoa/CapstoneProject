@@ -133,6 +133,8 @@ namespace PawNClaw.API
             services.AddScoped<IVoucherRepository, VoucherRepository>();
             services.AddScoped<VoucherService, VoucherService>();
 
+            services.AddScoped<IFoodScheduleRepository, FoodScheduleRepository>();
+
             services.AddControllers();
             services.AddControllersWithViews()
                     .AddNewtonsoftJson(options =>

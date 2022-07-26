@@ -67,4 +67,15 @@ const setCenterInfoSession = (centerInfo) => {
   }
 };
 
-export { isValidToken, setSession, setAccountInfoSession, setCenterInfoSession };
+const setCenterIdSession = (centerId) => {
+  if (centerId) {
+    localStorage.setItem('centerId', centerId);
+    // This function below will handle when token is expired
+    // const { exp } = jwtDecode(accessToken);
+    // handleTokenExpired(exp);
+  } else {
+    localStorage.removeItem('centerId');
+  }
+};
+
+export { isValidToken, setSession, setAccountInfoSession, setCenterInfoSession, setCenterIdSession };

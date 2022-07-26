@@ -89,7 +89,7 @@ export default function CalendarForm({
     }
 
     if (statusId === 2) {
-      return status.id === 2 || status.id === 3;
+      return status.id === 2 || status.id === 3 || status.id === 4;
     }
 
     if (statusId === 3) {
@@ -186,6 +186,17 @@ export default function CalendarForm({
     setOpenServiceDialogForm(false);
   };
 
+  const diableStaffNote = (statusId) => {
+    if (statusId === 1) {
+      return false;
+    }
+    if (statusId === 4) {
+      return false;
+    }
+
+    return true;
+  };
+
   const handleOpenCageDialogForm = (cageIndex, bookingDetailLine) => {
     const searchParam = {
       listPets: values.petData[cageIndex].petBookingDetails,
@@ -205,14 +216,21 @@ export default function CalendarForm({
 
   const onSubmit = async (data) => {
     try {
-      if (!isDirty && isSizeValid) {
-        dispatch(createPetHealthStatus(data, id));
-        dispatch(updateBookingStatus(data));
-        updateStatusColor(data.id, data.statusId);
-        enqueueSnackbar('Cập nhật thành công!');
-        onCancel();
+      // get current date
+      const currentDate = new Date();
+
+      if (startBooking >= currentDate.toISOString()) {
+        if (statusId !== 1 || (!isDirty && isSizeValid)) {
+          dispatch(createPetHealthStatus(data, id));
+          dispatch(updateBookingStatus(data));
+          updateStatusColor(data.id, data.statusId);
+          enqueueSnackbar('Cập nhật thành công!');
+          onCancel();
+        } else {
+          enqueueSnackbar('Vui lòng kiểm tra lại kích thước của thú cưng!', { variant: 'error' });
+        }
       } else {
-        enqueueSnackbar('Vui lòng kiểm tra lại kích thước của thú cưng!', { variant: 'error' });
+        enqueueSnackbar('Chưa đến thời gian xác nhận đơn hàng!', { variant: 'error' });
       }
     } catch (error) {
       console.error(error);
@@ -313,6 +331,7 @@ export default function CalendarForm({
         {fields.map((cage, index) => {
           const cageIndex = index;
           const pet = cage.petBookingDetails;
+
           return (
             <Grid container spacing={3} sx={{ px: 3, pb: 3 }} key={cageIndex}>
               <Grid item xs={4} sm={2}>
@@ -321,7 +340,7 @@ export default function CalendarForm({
               </Grid>
               <Grid item xs={4} sm={2}>
                 <Typography variant="caption">Thời lượng</Typography>
-                <Typography variant="h6">{fNumber(cage.duration)} tiếng</Typography>
+                <Typography variant="h6">{fNumber(cage.duration)} ngày</Typography>
               </Grid>
               <Grid item xs={4} sm={2}>
                 <Typography variant="caption">Giá tiền</Typography>
@@ -551,7 +570,13 @@ export default function CalendarForm({
             </Box>
           </Grid>
           <Grid item xs={12}>
-            <RHFTextField disabled={statusId !== 1} name="staffNote" label="Ghi chú của nhân viên" multiline rows={3} />
+            <RHFTextField
+              disabled={diableStaffNote(values.statusId)}
+              name="staffNote"
+              label="Ghi chú của nhân viên"
+              multiline
+              rows={3}
+            />
           </Grid>
         </Grid>
 
