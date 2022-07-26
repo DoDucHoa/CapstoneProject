@@ -27,6 +27,12 @@ namespace PawNClaw.Business.Services
             return _voucherRepository.GetAll(x => x.CenterId == centerId);
         }
 
+        public Voucher GetVoucher(string code)
+        {
+            return _voucherRepository.Get(code);
+        }
+
+
         public bool CreateVouchers(Voucher voucher)
         {
             _voucherRepository.Add(voucher);
