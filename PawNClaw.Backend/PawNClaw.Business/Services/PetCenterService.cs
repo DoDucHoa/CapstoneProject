@@ -133,7 +133,7 @@ namespace PawNClaw.Business.Services
             }
         }
 
-        //Update
+        //Update full for admin
         public bool Update(PetCenter petCenter)
         {
             try
@@ -147,6 +147,30 @@ namespace PawNClaw.Business.Services
                 return false;
             }
         }
+
+        //Update for center owner
+        public bool UpdateForOwner(UpdatePetCenterForOwnerParam petCenter)
+        {
+            try
+            {
+                PetCenter center = _petCenterRepository.GetFirstOrDefault(x => x.Id == petCenter.Id);
+                center.OpenTime = petCenter.OpenTime;
+                center.CloseTime = petCenter.CloseTime;
+                center.Checkin = petCenter.CheckIn;
+                center.Checkout = petCenter.CheckOut;
+                center.Description = petCenter.Description;
+                center.Phone = petCenter.Phone;
+
+                _petCenterRepository.Update(center);
+                _petCenterRepository.SaveDbChange();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
 
         //Delete
         public bool Delete(int id)
