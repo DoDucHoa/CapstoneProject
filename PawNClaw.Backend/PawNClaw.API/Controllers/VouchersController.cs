@@ -48,6 +48,19 @@ namespace PawNClaw.API.Controllers
             }
         }
 
+        [HttpGet("{code}")]
+        public IActionResult GetVoucher(string code)
+        {
+            try
+            {
+                return Ok(_voucherService.GetVoucher(code));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         [HttpPost]
         public IActionResult CreateVouchers(Voucher voucher)
         {
