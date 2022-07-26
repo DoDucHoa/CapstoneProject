@@ -68,5 +68,47 @@ namespace PawNClaw.API.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpPut]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult Update([FromBody] CageType cageType)
+        {
+            try
+            {
+                return Ok(_cageTypeService.Update(cageType));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut("delete/{id}")]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult Delete(int id)
+        {
+            try
+            {
+                return Ok(_cageTypeService.Delete(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult GetCageTypeWithCageAndPrice(int id)
+        {
+            try
+            {
+                return Ok(_cageTypeService.GetCageTypeWithCageAndPrice(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

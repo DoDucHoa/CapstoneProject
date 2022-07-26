@@ -13,5 +13,7 @@ namespace PawNClaw.Data.Interface
         public IEnumerable<CageType> GetAllCageWithCageType(int centerId);
 
         public IEnumerable<CageType> GetCageTypeValidPetSizeAndBookingTime(int CenterId, List<PetRequestForSearchCenter> listPets, string StartBooking, string EndBooking);
+
+        public CageType GetCageTypeWithCageAndPrice(int id)
     }
 }
