@@ -32,7 +32,8 @@ namespace PawNClaw.Business.Services
                     Color = createCageParameter.Color,
                     Name = createCageParameter.Name,
                     CreateUser = createCageParameter.CreateUser,
-                    
+                    ModifyUser = createCageParameter.ModifyUser,
+                    IsOnline = createCageParameter.IsOnline
                 };
                 _cageRepository.Add(cage);
                 _cageRepository.SaveDbChange();
