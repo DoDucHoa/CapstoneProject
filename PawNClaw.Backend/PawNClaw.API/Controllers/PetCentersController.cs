@@ -12,7 +12,7 @@ namespace PawNClaw.API.Controllers
 {
     [Route("api/petcenters")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class PetCentersController : ControllerBase
     {
         private readonly PetCenterService _petCenterService;
