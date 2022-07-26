@@ -352,5 +352,12 @@ namespace PawNClaw.Data.Repository
 
             return null;
         }
+
+        public PetCenter GetPetCenterWithLocation(int id)
+        {
+            PetCenter petCenter = _dbSet.Include(x => x.Location).FirstOrDefault(x => x.Id == id);
+
+            return petCenter;
+        }
     }
 }

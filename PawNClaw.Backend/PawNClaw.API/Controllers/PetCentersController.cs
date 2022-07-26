@@ -12,7 +12,7 @@ namespace PawNClaw.API.Controllers
 {
     [Route("api/petcenters")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class PetCentersController : ControllerBase
     {
         private readonly PetCenterService _petCenterService;
@@ -185,32 +185,28 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("for-admin")]
-        public IActionResult Update([FromBody] UpdatePetCenterForAdminParam petCenterRequestParameter)
-        {
-            var petCenter = _petCenterService.GetById((int)petCenterRequestParameter.Id);
-
-            petCenter.Address = petCenterRequestParameter.Address;
-            petCenter.Phone = petCenterRequestParameter.Phone;
-            petCenter.ModifyDate = DateTime.Now;
-            petCenter.ModifyUser = petCenterRequestParameter.ModifyUser;
-            petCenter.OpenTime = petCenterRequestParameter.OpenTime;
-            petCenter.CloseTime = petCenterRequestParameter.CloseTime;
-            petCenter.Checkin = petCenterRequestParameter.CheckIn;
-            petCenter.Checkout = petCenterRequestParameter.CheckOut;
-            
-
-            if (_petCenterService.Update(petCenter))
-                return Ok();
-            return BadRequest();
-        }
-
-        [HttpPut("for-owner")]
-        public IActionResult Update([FromBody] UpdatePetCenterForOwnerParam petCenterRequestParameter)
+        public async Task<IActionResult> UpdateByAdmin([FromBody] UpdatePetCenterForAdminParam petCenterRequestParameter)
         {
             try
             {
 
-                var petCenter = _petCenterService.UpdateForOwner(petCenterRequestParameter);
+                await _petCenterService.UpdateForAdminAsync(petCenterRequestParameter);
+
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpPut("for-owner")]
+        public IActionResult UpdateByOwner([FromBody] UpdatePetCenterForOwnerParam petCenterRequestParameter)
+        {
+            try
+            {
+
+                _petCenterService.UpdateForOwner(petCenterRequestParameter);
 
                 return Ok();
             }
