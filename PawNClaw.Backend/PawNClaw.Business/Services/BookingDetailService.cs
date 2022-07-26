@@ -16,12 +16,14 @@ namespace PawNClaw.Business.Services
         IPetRepository _petRepository;
         ICageRepository _cageRepository;
         IBookingRepository _bookingRepository;
+        IVoucherRepository _voucherRepository;
 
         private readonly ApplicationDbContext _db;
 
         public BookingDetailService(IBookingDetailRepository bookingDetailRepository,
             IPetBookingDetailRepository petBookingDetailRepository, IPetRepository petRepository,
             ICageRepository cageRepository, IBookingRepository bookingRepository,
+            IVoucherRepository voucherRepository,
             ApplicationDbContext db)
         {
             _bookingDetailRepository = bookingDetailRepository;
@@ -29,6 +31,7 @@ namespace PawNClaw.Business.Services
             _petRepository = petRepository;
             _cageRepository = cageRepository;
             _bookingRepository = bookingRepository;
+            _voucherRepository = voucherRepository;
             _db = db;
         }
 
@@ -120,8 +123,32 @@ namespace PawNClaw.Business.Services
 
                     var bookingToDb = _bookingRepository.Get(booking.Id);
 
+                    decimal Discount = 0;
+                    //Here Check Voucher
+                    if (bookingToDb.VoucherCode != null)
+                    {
+                        var voucher = _voucherRepository.Get(bookingToDb.VoucherCode);
+
+                        if (voucher.VoucherTypeCode.Equals("1"))
+                        {
+                            if (Price > voucher.MinCondition)
+                            {
+                                Discount = (decimal)(Price * (voucher.Value / 100));
+                            }
+                        }
+
+                        if (voucher.VoucherTypeCode.Equals("2"))
+                        {
+                            if (Price > voucher.MinCondition)
+                            {
+                                Discount = (decimal)(Price - voucher.Value);
+                            }
+                        }
+                    }
+
                     bookingToDb.SubTotal = Price;
-                    bookingToDb.Total = Price;
+                    bookingToDb.Discount = Discount;
+                    bookingToDb.Total = Price - Discount;
 
                     _bookingRepository.Update(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();
