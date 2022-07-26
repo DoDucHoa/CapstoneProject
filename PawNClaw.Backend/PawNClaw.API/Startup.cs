@@ -127,6 +127,9 @@ namespace PawNClaw.API
             services.AddScoped<ISponsorBannerRepository, SponsorBannerRepository>();
             services.AddScoped<SponsorBannerService, SponsorBannerService>();
 
+            services.AddScoped<IVoucherRepository, VoucherRepository>();
+            services.AddScoped<VoucherService, VoucherService>();
+
             services.AddControllers();
             services.AddControllersWithViews()
                     .AddNewtonsoftJson(options =>

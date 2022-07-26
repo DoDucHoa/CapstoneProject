@@ -22,6 +22,7 @@ namespace PawNClaw.Business.Services
         IPetRepository _petRepository;
         ICageRepository _cageRepository;
         IStaffRepository _staffRepository;
+        IVoucherRepository _voucherRepository;
 
         private readonly ApplicationDbContext _db;
 
@@ -30,6 +31,7 @@ namespace PawNClaw.Business.Services
             ISupplyOrderRepository supplyOrderRepository, ISupplyRepository supplyRepository,
             IServicePriceRepository servicePriceRepository, IPetRepository petRepository,
             ICageRepository cageRepository, IStaffRepository staffRepository,
+            IVoucherRepository voucherRepository,
             ApplicationDbContext db)
         {
             _bookingRepository = bookingRepository;
@@ -42,6 +44,7 @@ namespace PawNClaw.Business.Services
             _petRepository = petRepository;
             _cageRepository = cageRepository;
             _staffRepository = staffRepository;
+            _voucherRepository = voucherRepository;
             _db = db;
         }
 
@@ -143,8 +146,6 @@ namespace PawNClaw.Business.Services
                     transaction.Rollback();
                     throw new Exception();
                 }
-
-
 
                 //Create Booking Detail
                 foreach (var bookingDetail in bookingDetailCreateParameters)
@@ -333,8 +334,32 @@ namespace PawNClaw.Business.Services
                         Price = (decimal)(Price + bookingDetail.Price);
                     }
 
+                    decimal Discount = 0;
+                    //Here Check Voucher
+                    if (bookingCreateParameter.VoucherCode != null)
+                    {
+                        var voucher = _voucherRepository.Get(bookingCreateParameter.VoucherCode);
+
+                        if (voucher.VoucherTypeCode.Equals("1"))
+                        {
+                            if (Price > voucher.MinCondition)
+                            {
+                                Discount = (decimal)(Price * (voucher.Value / 100));
+                            }
+                        }
+
+                        if (voucher.VoucherTypeCode.Equals("2"))
+                        {
+                            if (Price > voucher.MinCondition)
+                            {
+                                Discount = (decimal)(Price - voucher.Value);
+                            }
+                        }
+                    }
+
                     bookingToDb.SubTotal = Price;
-                    bookingToDb.Total = Price;
+                    bookingToDb.Discount = Discount;
+                    bookingToDb.Total = Price - Discount;
 
                     _bookingRepository.Update(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();
