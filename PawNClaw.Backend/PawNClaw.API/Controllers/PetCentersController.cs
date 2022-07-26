@@ -184,23 +184,37 @@ namespace PawNClaw.API.Controllers
             return BadRequest();
         }
 
-        [HttpPut]
-        public IActionResult Update([FromBody] PetCenterRequestParameter petCenterRequestParameter)
+        [HttpPut("for-admin")]
+        public async Task<IActionResult> UpdateByAdmin([FromBody] UpdatePetCenterForAdminParam petCenterRequestParameter)
         {
-            var petCenter = _petCenterService.GetById((int)petCenterRequestParameter.Id);
+            try
+            {
 
-            petCenter.Name = petCenterRequestParameter.Name;
-            petCenter.Address = petCenterRequestParameter.Address;
-            petCenter.Phone = petCenterRequestParameter.Phone;
-            petCenter.ModifyDate = DateTime.Now;
-            petCenter.ModifyUser = petCenterRequestParameter.ModifyUser;
-            petCenter.BrandId = (int)petCenterRequestParameter.BrandId;
-            petCenter.OpenTime = petCenterRequestParameter.OpenTime;
-            petCenter.CloseTime = petCenterRequestParameter.CloseTime;
+                await _petCenterService.UpdateForAdminAsync(petCenterRequestParameter);
 
-            if (_petCenterService.Update(petCenter))
                 return Ok();
-            return BadRequest();
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpPut("for-owner")]
+        public IActionResult UpdateByOwner([FromBody] UpdatePetCenterForOwnerParam petCenterRequestParameter)
+        {
+            try
+            {
+
+                _petCenterService.UpdateForOwner(petCenterRequestParameter);
+
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e);
+            }
+
         }
 
         [HttpDelete("{id}")]
