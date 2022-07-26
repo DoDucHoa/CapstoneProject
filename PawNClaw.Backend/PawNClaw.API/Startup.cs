@@ -114,6 +114,9 @@ namespace PawNClaw.API
             services.AddTransient<IPriceRepository, PriceRepository>();
             services.AddTransient<PriceRepository, PriceRepository>();
 
+            services.AddTransient<IPriceTypeRepository, PriceTypeRepository>();
+            services.AddTransient<PriceTypeService, PriceTypeService>();
+
             services.AddTransient<IPhotoRepository, PhotoRepository>();
             services.AddTransient<PhotoRepository, PhotoRepository>();
             services.AddTransient<PhotoService, PhotoService>();

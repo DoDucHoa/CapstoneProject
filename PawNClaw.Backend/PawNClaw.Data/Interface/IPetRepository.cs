@@ -13,5 +13,6 @@ namespace PawNClaw.Data.Interface
         public IEnumerable<Pet> GetPetByCustomer(int CusId);
         public bool UpdatePetForStaff(int id, decimal Weight, decimal Lenght, decimal Height);
         public Task<bool> AddNewPet(CreatePetRequestParameter createPetRequestParameter);
+        public bool DeletePet(int petId);
     }
 }
