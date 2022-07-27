@@ -31,9 +31,10 @@ namespace PawNClaw.API.Controllers
         [HttpGet]
         [Route("TestTokenAdmin")]
         //[Authorize(Roles = "Admin")]
-        public IActionResult TestAuthTokenAsync(string newPolicy)
+        public async Task<IActionResult> TestAuthTokenAsync(string newPolicy)
         {
-            return Ok();
+            var data = await PolicyService.GetAllPolicy("pawnclaw-4b6ba");
+            return Ok(data);
         }
 
         [HttpPost]
