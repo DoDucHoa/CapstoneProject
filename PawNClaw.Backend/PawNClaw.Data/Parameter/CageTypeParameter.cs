@@ -51,6 +51,6 @@ namespace PawNClaw.Data.Parameter
 
         public List<CreatePriceParameter> createPriceParameters { get; set; }
 
-        public List<FoodSchedule> foodSchedules { get; set; }
+        public List<CreateFoodSchedule> foodSchedules { get; set; }
     }
 }
