@@ -34,6 +34,7 @@ namespace PawNClaw.API
         {
             services.ConfigFirebaseAuth();
             services.AddTransient<AuthService, AuthService>();
+            services.AddTransient<PolicyService, PolicyService>();
 
 
 
