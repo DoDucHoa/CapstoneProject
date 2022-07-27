@@ -1,4 +1,5 @@
-﻿using PawNClaw.Data.Database;
+﻿using Microsoft.EntityFrameworkCore;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Interface;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace PawNClaw.Data.Repository
         {
             IQueryable<Service> query = _dbSet;
 
-            query = query.Where(x => x.CenterId == centerId);
+            query = query.Include(x => x.ServicePrices).Where(x => x.CenterId == centerId);
 
             return query.ToList();
         }

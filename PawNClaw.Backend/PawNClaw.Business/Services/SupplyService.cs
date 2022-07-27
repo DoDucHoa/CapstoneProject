@@ -19,11 +19,45 @@ namespace PawNClaw.Business.Services
             _supplyRepository = supplyRepository;
         }
 
-        public PagedList<Supply> GetSupplysOfCenter(int CenterId, PagingParameter pagingParameter)
+        public PagedList<Supply> GetSupplysOfCenter(SupplyRequestParameter supplyRequestParameter, PagingParameter pagingParameter)
         {
             try
             {
-                var values =  _supplyRepository.GetAll(x => x.CenterId == CenterId);
+                var values = _supplyRepository.GetSuppliesWithType(supplyRequestParameter.CenterId);
+
+                if(!string.IsNullOrWhiteSpace(supplyRequestParameter.TypeCode))
+                {
+                    values = values.Where(x => x.SupplyTypeCode.ToLower().Equals(supplyRequestParameter.TypeCode.ToLower().Trim()));
+                }
+
+                if (!string.IsNullOrWhiteSpace(supplyRequestParameter.Name))
+                {
+                    values = values.Where(x => x.Name.ToLower().Equals(supplyRequestParameter.Name.ToLower().Trim()));
+                }
+
+                if (supplyRequestParameter.Status != null)
+                {
+                    values = supplyRequestParameter.Status switch
+                    {
+                        true => values.Where(x => x.Status == true),
+                        false => values.Where(x => x.Status == false),
+                        _ => values
+                    };
+                }
+
+                if (!string.IsNullOrWhiteSpace(supplyRequestParameter.sort))
+                {
+                    switch (supplyRequestParameter.sort)
+                    {
+                        case "name":
+                            if (supplyRequestParameter.dir == "asc")
+                                values = values.OrderBy(d => d.Name);
+                            else if (supplyRequestParameter.dir == "desc")
+                                values = values.OrderByDescending(d => d.Name);
+                            break;
+                    }
+                }
+
                 return PagedList<Supply>.ToPagedList(values.AsQueryable(), pagingParameter.PageNumber, pagingParameter.PageSize);
             }
             catch

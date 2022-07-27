@@ -25,11 +25,11 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("center")]
-        public IActionResult GetSupplysOfCenter([FromQuery]int CenterId, [FromQuery] PagingParameter paging)
+        public IActionResult GetSupplysOfCenter([FromQuery]SupplyRequestParameter supply, [FromQuery] PagingParameter paging)
         {
             try
             {
-                var data = _supplyService.GetSupplysOfCenter(CenterId, paging);
+                var data = _supplyService.GetSupplysOfCenter(supply, paging);
                 var metadata = new
                 {
                     data.TotalCount,
