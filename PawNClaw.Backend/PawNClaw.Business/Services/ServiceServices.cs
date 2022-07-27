@@ -4,6 +4,7 @@ using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -71,19 +72,49 @@ namespace PawNClaw.Business.Services
             return _serviceRepository.Get(id);
         }
 
-        public async Task<bool> CreateService(Service service, ServicePrice servicePrice)
+        public async Task<bool> CreateService(CreateService serviceP, List<CreateServicePrice> servicePricePs)
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
                 try
                 {
+                    Service service = new Service()
+                    {
+                        Description = serviceP.Description,
+                        DiscountPrice = serviceP.DiscountPrice,
+                        CreateDate = serviceP.CreateDate,
+                        ModifyDate = serviceP.ModifyDate,
+                        CreateUser = serviceP.CreateUser,
+                        ModifyUser = serviceP.ModifyUser,
+                        Status = true,
+                        CenterId = serviceP.CenterId,
+                        Name = serviceP.Name
+                    };
+
                     _serviceRepository.Add(service);
                     await _serviceRepository.SaveDbChangeAsync();
 
-                    servicePrice.ServiceId = service.Id;
+                    if (servicePricePs.Count < 1)
+                    {
+                        throw new Exception("Must have price");
+                    }
 
-                    _servicePriceRepository.Add(servicePrice);
-                    await _servicePriceRepository.SaveDbChangeAsync();
+                    foreach (var servicePriceP in servicePricePs)
+                    {
+                        ServicePrice servicePrice = new ServicePrice()
+                        {
+                            Price = servicePriceP.Price,
+                            MinWeight = servicePriceP.MinWeight,
+                            MaxWeight = servicePriceP.MaxWeight,
+                            CreateUser = servicePriceP.CreateUser,
+                            ModifyUser = servicePriceP.ModifyUser,
+                            Status = true,
+                            ServiceId = service.Id
+                        };
+
+                        _servicePriceRepository.Add(servicePrice);
+                        await _servicePriceRepository.SaveDbChangeAsync();
+                    }
 
                     transaction.Commit();
                     return true;

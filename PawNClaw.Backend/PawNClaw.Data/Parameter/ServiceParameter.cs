@@ -26,7 +26,7 @@ namespace PawNClaw.Data.Parameter
 
     public class CreateServiceParameter
     {
-        public Service service { get; set; }
-        public ServicePrice servicePrice { get; set; }
+        public CreateService service { get; set; }
+        public List<CreateServicePrice> servicePrice { get; set; }
     }
 }
