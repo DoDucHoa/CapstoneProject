@@ -20,4 +20,12 @@ namespace PawNClaw.Data.Parameter
         public string Phone { get; set; }
         public string RoleCode = "STF";
     }
+
+    public class UpdateStaffParameter
+    {
+        public int Id { get; set; }
+        public int ModifyUser { get; set; }
+        public string Name { get; set; }
+        public string Phone { get; set; }
+    }
 }

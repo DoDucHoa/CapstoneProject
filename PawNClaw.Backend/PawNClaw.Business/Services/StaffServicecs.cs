@@ -22,7 +22,7 @@ namespace PawNClaw.Business.Services
         //Get All
         public PagedList<Staff> GetAll(int id, string includeProperties, PagingParameter paging)
         {
-            var values = _staffRepository.GetAll(includeProperties: includeProperties);
+            var values = _staffRepository.GetAll(includeProperties: "IdIdNavigation");
 
             if (id > 0)
             {
@@ -37,15 +37,22 @@ namespace PawNClaw.Business.Services
         //Get Id
         public Staff GetById(int id)
         {
-            var value = _staffRepository.GetFirstOrDefault(x => x.Id == id);
+            try
+            {
+                var value = _staffRepository.GetStaffWithAccount(id);
 
-            return value;
+                return value;
+            }
+            catch
+            {
+                throw new Exception();
+            }
         }
 
         //Get Staff By Center Id
         public PagedList<Staff> GetByCenterId(int id, PagingParameter paging)
         {
-            var values = _staffRepository.GetAll(x => x.CenterId == id);
+            var values = _staffRepository.GetAll(x => x.CenterId == id,includeProperties: "IdNavigation");
             return PagedList<Staff>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
             paging.PageSize);
@@ -99,6 +106,39 @@ namespace PawNClaw.Business.Services
             catch
             {
                 return false;
+            }
+        }
+
+        //Update Staff by Id
+        public bool UpdateById(UpdateStaffParameter staff)
+        {
+            try
+            {
+                _staffRepository.UpdateStaffById(staff);
+                _staffRepository.SaveDbChange();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        //Ban staff
+        public bool banStaff(int id)
+        {
+            try
+            {
+                var staff = _accountRepository.GetFirstOrDefault(x => x.Id == id);
+                staff.Status = false;
+
+                _accountRepository.Update(staff);
+                _accountRepository.SaveDbChange();
+                return true;
+            }
+            catch
+            {
+                throw new Exception();
             }
         }
 
