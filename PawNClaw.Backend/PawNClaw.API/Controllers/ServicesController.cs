@@ -25,9 +25,9 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("center")]
-        public IActionResult GetServicesOfCenter([FromQuery] int CenterId, [FromQuery] PagingParameter paging)
+        public IActionResult GetServicesOfCenter([FromQuery] ServiceRequestParameter serviceRequestParameter, [FromQuery] PagingParameter paging)
         {
-            var data = _serviceServices.GetServices(CenterId, paging);
+            var data = _serviceServices.GetServices(serviceRequestParameter, paging);
             var metadata = new
             {
                 data.TotalCount,
