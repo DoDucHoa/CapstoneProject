@@ -1,17 +1,22 @@
 ﻿using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
+using PawNClaw.Data.Parameter;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PawNClaw.Business.Services
 {
     public class StaffServicecs
     {
         IStaffRepository _staffRepository;
-
-        public StaffServicecs(IStaffRepository staffRepository)
+        IAccountRepository _accountRepository;
+        
+        public StaffServicecs(IStaffRepository staffRepository, IAccountRepository accountRepository)
         {
             _staffRepository = staffRepository;
+            _accountRepository = accountRepository;
         }
 
         //Get All
@@ -47,17 +52,38 @@ namespace PawNClaw.Business.Services
         }
 
         //Add
-        public int Add(Staff staff)
+        public async Task<int> AddAsync(CreateStaffParameter staff)
         {
             try
             {
-                _staffRepository.Add(staff);
-                _staffRepository.SaveDbChange();
+                var account = new Account
+                {
+                    UserName = staff.UserName,
+                    CreatedUser = staff.CreateUser,
+                    Phone = staff.Phone,
+                    RoleCode = staff.RoleCode
+                };
+
+                _accountRepository.Add(account);
+                await _accountRepository.SaveDbChangeAsync();
+                account = _accountRepository.GetFirstOrDefault(x => x.UserName == staff.UserName);
+
+                var staffToDb = new Staff
+                {
+                    Id = account.Id,
+                    CenterId = staff.CenterId,
+                    CreateUser = staff.CreateUser,
+                    ModifyUser = staff.CreateUser,
+                    Name = staff.Name
+                };
+
+                _staffRepository.Add(staffToDb);
+                await _staffRepository.SaveDbChangeAsync();
                 return 1;
             }
             catch
             {
-                return -1;
+                throw new Exception();
             }
         }
 
