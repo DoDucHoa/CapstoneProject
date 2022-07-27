@@ -114,6 +114,7 @@ namespace PawNClaw.API
 
             services.AddTransient<IPriceRepository, PriceRepository>();
             services.AddTransient<PriceRepository, PriceRepository>();
+            services.AddTransient<PriceService, PriceService>();
 
             services.AddTransient<IPriceTypeRepository, PriceTypeRepository>();
             services.AddTransient<PriceTypeService, PriceTypeService>();
