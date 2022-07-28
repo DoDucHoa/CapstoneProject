@@ -100,6 +100,8 @@ namespace PawNClaw.Business.Services
             cageType.CreateDate = createCageTypeParameter.CreateDate;
             cageType.CreateUser = createCageTypeParameter.CreateUser;
             cageType.CenterId = createCageTypeParameter.CenterId;
+            cageType.ModifyUser = createCageTypeParameter.ModifyUser;
+            cageType.ModifyDate = createCageTypeParameter.ModifyDate;
             cageType.Status = true;
 
 
@@ -131,6 +133,8 @@ namespace PawNClaw.Business.Services
                         price.CreateDate = createPriceParameter.CreateDate;
                         price.CreateUser = createPriceParameter.CreateUser;
                         price.PriceTypeCode = createPriceParameter.PriceTypeCode;
+                        price.ModifyDate = createPriceParameter.ModifyDate;
+                        price.ModifyUser = createPriceParameter.ModifyUser;
                         price.Status = true;
                         price.CageTypeId = cageType.Id;
 
