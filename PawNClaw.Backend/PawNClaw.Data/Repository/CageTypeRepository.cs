@@ -145,7 +145,7 @@ namespace PawNClaw.Data.Repository
 
         public CageType GetCageTypeWithCageAndPrice(int id)
         {
-            CageType query = _dbSet.Include(x => x.Cages).ThenInclude(y => y.BookingDetails).ThenInclude(z => z.Booking).Include(x => x.Prices).Where(x => x.Id == id).FirstOrDefault();
+            CageType query = _dbSet.Include(x => x.Cages).ThenInclude(y => y.BookingDetails).ThenInclude(z => z.Booking).Include(x => x.Prices).Include(x => x.FoodSchedules).Where(x => x.Id == id).FirstOrDefault();
 
             return query;
         }

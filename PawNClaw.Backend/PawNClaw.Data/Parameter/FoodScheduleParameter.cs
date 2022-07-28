@@ -13,8 +13,8 @@ namespace PawNClaw.Data.Parameter
 
     public class CreateFoodSchedule
     {
-        public TimeSpan FromTime { get; set; }
-        public TimeSpan ToTime { get; set; }
+        public DateTime FromTime { get; set; }
+        public DateTime ToTime { get; set; }
         public string Name { get; set; }
         public int CageTypeId { get; set; }
     }
