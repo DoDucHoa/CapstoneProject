@@ -87,7 +87,7 @@ namespace PawNClaw.Business.Services
             return values;
         }
 
-        public async Task<bool> CreateCageType(CreateCageTypeParameter createCageTypeParameter, List<CreatePriceParameter> createPriceParameters, List<FoodSchedule> foodSchedules)
+        public async Task<bool> CreateCageType(CreateCageTypeParameter createCageTypeParameter, List<CreatePriceParameter> createPriceParameters, List<CreateFoodSchedule> foodSchedules)
         {
             CageType cageType = new CageType();
 
@@ -151,8 +151,15 @@ namespace PawNClaw.Business.Services
 
                     foreach (var foodSchedule in foodSchedules)
                     {
-                        foodSchedule.CageTypeId = cageType.Id;
-                        _foodScheduleRepository.Add(foodSchedule);
+                        FoodSchedule food = new FoodSchedule()
+                        {
+                            FromTime = foodSchedule.FromTime,
+                            ToTime = foodSchedule.ToTime,
+                            Name = foodSchedule.Name,
+                        };
+
+                        food.CageTypeId = cageType.Id;
+                        _foodScheduleRepository.Add(food);
                         await _foodScheduleRepository.SaveDbChangeAsync();
                     }
 
