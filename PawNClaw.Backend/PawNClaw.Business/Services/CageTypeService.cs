@@ -153,8 +153,8 @@ namespace PawNClaw.Business.Services
                     {
                         FoodSchedule food = new FoodSchedule()
                         {
-                            FromTime = foodSchedule.FromTime,
-                            ToTime = foodSchedule.ToTime,
+                            FromTime = foodSchedule.FromTime.TimeOfDay,
+                            ToTime = foodSchedule.ToTime.TimeOfDay,
                             Name = foodSchedule.Name,
                         };
 
