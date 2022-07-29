@@ -2,27 +2,31 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 
 // @mui
-import { Avatar, TableRow, TableCell, Typography, MenuItem, Checkbox, Switch } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import { Avatar, TableRow, TableCell, Typography, MenuItem } from '@mui/material';
 
 // components
+import Label from '../../../../components/Label';
 import Iconify from '../../../../components/Iconify';
 import { TableMoreMenu } from '../../../../components/table';
-import { shiftCage } from '../../../../pages/dashboard/Cage/useCageAPI';
+
+// utils
+import { fCurrency, fNumber } from '../../../../utils/formatNumber';
 
 // ----------------------------------------------------------------------
 
-BrandTableRow.propTypes = {
+SupplyTableRow.propTypes = {
   row: PropTypes.object,
   onEditRow: PropTypes.func,
   onDeleteRow: PropTypes.func,
-  centerId: PropTypes.number,
 };
 
-export default function BrandTableRow({ row, onEditRow, onDeleteRow, centerId }) {
-  const { isSingle, avatarUrl, code, isOnline, typeName, status, canShift } = row;
+export default function SupplyTableRow({ row, onEditRow, onDeleteRow }) {
+  const theme = useTheme();
+
+  const { name, avatarUrl, sellPrice, quantity, status } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
-  const [isCageOnline, setIsCageOnline] = useState(isOnline);
 
   const handleOpenMenu = (event) => {
     setOpenMenuActions(event.currentTarget);
@@ -32,28 +36,27 @@ export default function BrandTableRow({ row, onEditRow, onDeleteRow, centerId })
     setOpenMenuActions(null);
   };
 
-  const handleChangeOnlineStatus = async (cageCode) => {
-    setIsCageOnline(!isCageOnline);
-    shiftCage(cageCode, centerId);
-  };
-
   return (
     <TableRow hover>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={typeName} src={avatarUrl} sx={{ mr: 2 }} />
+        <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
         <Typography variant="subtitle2" noWrap>
-          {code}
+          {name}
         </Typography>
       </TableCell>
 
-      <TableCell align="left">{typeName}</TableCell>
+      <TableCell align="right">{fCurrency(sellPrice)}</TableCell>
 
-      <TableCell align="center">
-        <Checkbox checked={isSingle} disabled />
-      </TableCell>
+      <TableCell align="right">{fNumber(quantity)}</TableCell>
 
       <TableCell align="left">
-        <Switch checked={isCageOnline} onChange={() => handleChangeOnlineStatus(code)} disabled={!canShift} />
+        <Label
+          variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
+          color={(status === false && 'error') || 'success'}
+          sx={{ textTransform: 'capitalize' }}
+        >
+          {status ? 'Hoạt động' : 'Đã khóa'}
+        </Label>
       </TableCell>
 
       <TableCell align="right">

@@ -89,6 +89,12 @@ export const PATH_DASHBOARD = {
     new: path(ROOTS_DASHBOARD, '/staff/new'),
     edit: (id) => path(ROOTS_DASHBOARD, `/staff/${id}/edit`),
   },
+  cageType: {
+    root: path(ROOTS_DASHBOARD, '/cage-type'),
+    list: path(ROOTS_DASHBOARD, '/cage-type/list'),
+    new: path(ROOTS_DASHBOARD, '/cage-type/new'),
+    edit: (code) => path(ROOTS_DASHBOARD, `/cage-type/${code}/edit`),
+  },
   cage: {
     root: path(ROOTS_DASHBOARD, '/cage'),
     list: path(ROOTS_DASHBOARD, '/cage/list'),
