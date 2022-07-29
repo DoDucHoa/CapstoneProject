@@ -54,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             phoneController.text = user.phone ?? "";
             return SafeArea(
               child: Scaffold(
-                resizeToAvoidBottomInset: true,
+                resizeToAvoidBottomInset: false,
                 backgroundColor: frameColor,
                 body: SingleChildScrollView(
                   child: Column(

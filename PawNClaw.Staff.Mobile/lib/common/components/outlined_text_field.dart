@@ -69,6 +69,7 @@ class _OutlinedTextState extends State<OutlinedText> {
           errorText: errorText,
         ),
         obscureText: widget.obsecure ?? false,
+        onFieldSubmitted: (value) {},
       ),
     );
   }
