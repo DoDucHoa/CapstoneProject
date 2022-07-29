@@ -60,6 +60,11 @@ const navConfig = [
 
       // STAFF
       {
+        title: 'Loại chuồng',
+        path: PATH_DASHBOARD.cageType.list,
+        icon: ICONS.cage,
+      },
+      {
         title: 'Chuồng',
         path: PATH_DASHBOARD.cage.list,
         icon: ICONS.cage,
@@ -111,6 +116,11 @@ export const navConfigForStaff = [
     subheader: 'Quản Lý Trung Tâm',
     items: [
       // STAFF
+      {
+        title: 'Loại chuồng',
+        path: PATH_DASHBOARD.cageType.list,
+        icon: ICONS.cage,
+      },
       {
         title: 'Chuồng',
         path: PATH_DASHBOARD.cage.list,

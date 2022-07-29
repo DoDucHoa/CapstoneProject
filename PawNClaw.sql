@@ -672,3 +672,18 @@ CREATE TABLE FoodSchedule
 )
 ALTER TABLE dbo.FoodSchedule ADD FOREIGN KEY (cage_type_id) REFERENCES [dbo].CageTypes(id)
 GO
+
+CREATE TABLE CustomerVoucherLog
+(
+    id INT PRIMARY KEY IDENTITY,
+	customer_id INT NOT NULL,
+	center_id INT NOT NULL,
+	voucher_code VARCHAR(32) NOT NULL,
+)
+GO
+ALTER TABLE dbo.CustomerVoucherLog ADD FOREIGN KEY (customer_id) REFERENCES [dbo].Customers(id)
+GO
+ALTER TABLE dbo.CustomerVoucherLog ADD FOREIGN KEY (center_id) REFERENCES [dbo].PetCenters(id)
+GO
+ALTER TABLE dbo.CustomerVoucherLog ADD FOREIGN KEY (voucher_code) REFERENCES [dbo].Vouchers(code)
+GO

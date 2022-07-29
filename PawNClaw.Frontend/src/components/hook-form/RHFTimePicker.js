@@ -20,6 +20,7 @@ export default function RHFTimePicker({ name, ...other }) {
       control={control}
       render={({ field, fieldState: { error } }) => (
         <TimePicker
+          ampm={false}
           {...field}
           {...other}
           renderInput={(param) => <TextField {...param} fullWidth error={!!error} helperText={error?.message} />}
