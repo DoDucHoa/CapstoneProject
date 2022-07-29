@@ -69,7 +69,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "Admin,Mod,Owner")]
+        [Authorize(Roles = "Admin,Mod,Owner,Staff")]
         public IActionResult updateStaff([FromBody] UpdateStaffParameter staff)
         {
             try
