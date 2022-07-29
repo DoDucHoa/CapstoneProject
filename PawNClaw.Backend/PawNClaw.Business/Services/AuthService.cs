@@ -276,6 +276,8 @@ namespace PawNClaw.Business.Services
                         break;
 
                     case "STF":
+                        Name = _staffRepository.Get(account.Id).Name;
+                        Email = "";
                         break;
 
                     case "CUS":

@@ -352,7 +352,7 @@ namespace PawNClaw.Business.Services
                         {
                             if (Price > voucher.MinCondition)
                             {
-                                Discount = (decimal)(Price - voucher.Value);
+                                Discount = (decimal)(voucher.Value);
                             }
                         }
                     }

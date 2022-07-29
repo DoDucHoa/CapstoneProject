@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PawNClaw.Data.Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,7 +41,10 @@ namespace PawNClaw.Data.Parameter
         public decimal Length { get; set; }
         public bool IsSingle { get; set; }
         public DateTime? CreateDate { get; set; }
+        public DateTime? ModifyDate { get; set; }
         public int? CreateUser { get; set; }
+        public int? ModifyUser { get; set; }
+        public bool? Status { get; set; }
         public int CenterId { get; set; }
     }
 
@@ -49,5 +53,7 @@ namespace PawNClaw.Data.Parameter
         public CreateCageTypeParameter createCageTypeParameter { get; set; }
 
         public List<CreatePriceParameter> createPriceParameters { get; set; }
+
+        public List<CreateFoodSchedule> foodSchedules { get; set; }
     }
 }

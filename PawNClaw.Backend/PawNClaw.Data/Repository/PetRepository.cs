@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
@@ -14,11 +15,13 @@ namespace PawNClaw.Data.Repository
     {
         private readonly ApplicationDbContext _db;
         private PhotoRepository _photoRepository;
+        IPetBookingDetailRepository _petBookingDetailRepository;
 
-        public PetRepository(ApplicationDbContext db, PhotoRepository photoRepository) : base(db)
+        public PetRepository(ApplicationDbContext db, PhotoRepository photoRepository, IPetBookingDetailRepository petBookingDetailRepository) : base(db)
         {
             _db = db;
             _photoRepository = photoRepository;
+            _petBookingDetailRepository = petBookingDetailRepository;
         }
 
         public async Task<bool> AddNewPet(CreatePetRequestParameter createPetRequestParameter)
@@ -72,11 +75,32 @@ namespace PawNClaw.Data.Repository
             }
         }
 
+        public bool DeletePet(int petId)
+        {
+            if(_petBookingDetailRepository.GetFirstOrDefault(x => x.PetId == petId && (x.BookingDetail.Booking.StatusId == 2 || x.BookingDetail.Booking.StatusId == 1)) == null){
+                Pet pet = _dbSet.Find(petId);
+                pet.Status = false;
+                try
+                {
+                    _dbSet.Update(pet);
+                    return (_db.SaveChanges() >= 0);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+
         public IEnumerable<Pet> GetPetByCustomer(int CusId)
         {
             IQueryable<Pet> query = _dbSet;
 
-            query = query.Where(x => x.CustomerId == CusId && x.Status == true);
+            query = query.Where(x => x.CustomerId == CusId && x.Status == true).Include(x => x.PetHealthHistories);
 
             return query.ToList();
         }
@@ -99,6 +123,5 @@ namespace PawNClaw.Data.Repository
                 return false;
             }
         }
-
     }
 }

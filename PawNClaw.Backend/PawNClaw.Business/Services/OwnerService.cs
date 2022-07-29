@@ -108,6 +108,20 @@ namespace PawNClaw.Business.Services
             }
         }
 
+        public bool Update(Owner owner)
+        {
+            try
+            {
+                _ownerRepository.Update(owner);
+                _ownerRepository.SaveDbChange();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         //Delete
         public bool Delete(int id)
         {

@@ -13,6 +13,7 @@ namespace PawNClaw.Data.Database
         public Voucher()
         {
             Bookings = new HashSet<Booking>();
+            CustomerVoucherLogs = new HashSet<CustomerVoucherLog>();
         }
 
         [Key]
@@ -58,5 +59,10 @@ namespace PawNClaw.Data.Database
         public virtual VoucherType VoucherTypeCodeNavigation { get; set; }
         [InverseProperty(nameof(Booking.VoucherCodeNavigation))]
         public virtual ICollection<Booking> Bookings { get; set; }
+        [InverseProperty(nameof(CustomerVoucherLog.VoucherCodeNavigation))]
+        public virtual ICollection<CustomerVoucherLog> CustomerVoucherLogs { get; set; }
+
+        [NotMapped]
+        public string VoucherTypeName { get; internal set; }
     }
 }

@@ -71,19 +71,12 @@ namespace PawNClaw.Business.Services
         {
             try
             {
-
-                Pet pet = _petRepository.Get(id);
-
-                pet.Status = false;
-
-                _petRepository.Update(pet);
-                _petRepository.SaveDbChange();
-
+                _petRepository.DeletePet(id);
                 return true;
             }
             catch
             {
-                throw new Exception();
+                throw new Exception("Pet is booking already");
             }
         }
     }

@@ -14,7 +14,6 @@ namespace PawNClaw.API.Controllers
 {
     [Route("api/cagetypes")]
     [ApiController]
-    //[Authorize]
     [Authorize]
     public class CageTypesController : ControllerBase
     {
@@ -26,7 +25,6 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Owner,Staff")]
         [Authorize(Roles = "Owner,Staff")]
         public IActionResult GetCageTypes([FromQuery] CageTypeRequestParameter cageTypeRequestParameter, [FromQuery] PagingParameter paging)
         {
@@ -61,7 +59,49 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                return Ok(_cageTypeService.CreateCageType(createCageTypeFlowParameter.createCageTypeParameter, createCageTypeFlowParameter.createPriceParameters));
+                return Ok(_cageTypeService.CreateCageType(createCageTypeFlowParameter.createCageTypeParameter, createCageTypeFlowParameter.createPriceParameters, createCageTypeFlowParameter.foodSchedules));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult Update([FromBody] CageType cageType)
+        {
+            try
+            {
+                return Ok(_cageTypeService.Update(cageType));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut("delete/{id}")]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult Delete(int id)
+        {
+            try
+            {
+                return Ok(_cageTypeService.Delete(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult GetCageTypeWithCageAndPrice(int id)
+        {
+            try
+            {
+                return Ok(_cageTypeService.GetCageTypeWithCageAndPrice(id));
             }
             catch (Exception ex)
             {

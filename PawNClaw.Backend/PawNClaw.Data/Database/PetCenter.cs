@@ -16,6 +16,7 @@ namespace PawNClaw.Data.Database
             Bookings = new HashSet<Booking>();
             CageTypes = new HashSet<CageType>();
             Cages = new HashSet<Cage>();
+            CustomerVoucherLogs = new HashSet<CustomerVoucherLog>();
             GeneralLedgers = new HashSet<GeneralLedger>();
             Services = new HashSet<Service>();
             Supplies = new HashSet<Supply>();
@@ -89,6 +90,8 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<CageType> CageTypes { get; set; }
         [InverseProperty(nameof(Cage.Center))]
         public virtual ICollection<Cage> Cages { get; set; }
+        [InverseProperty(nameof(CustomerVoucherLog.Center))]
+        public virtual ICollection<CustomerVoucherLog> CustomerVoucherLogs { get; set; }
         [InverseProperty(nameof(GeneralLedger.Center))]
         public virtual ICollection<GeneralLedger> GeneralLedgers { get; set; }
         [InverseProperty(nameof(Service.Center))]

@@ -21,5 +21,7 @@ namespace PawNClaw.Data.Interface
         public PetCenter GetPetCenterById(int id, PetSizeCage PetSizes, string StartBooking, string EndBooking);
 
         public PetCenter GetPetCenterByIdAfterSearchName(int id);
+
+        public PetCenter GetPetCenterWithLocation(int id);
     }
 }

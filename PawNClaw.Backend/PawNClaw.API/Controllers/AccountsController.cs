@@ -18,10 +18,20 @@ namespace PawNClaw.API.Controllers
     public class AccountsController : ControllerBase
     {
         private readonly AccountService _accountService;
+        private readonly OwnerService _ownerService;
+        private readonly AdminService _adminService;
+        private readonly StaffServicecs _staffServicecs;
+        private readonly CustomerService _customerService;
 
-        public AccountsController(AccountService accountService)
+        public AccountsController(AccountService accountService, OwnerService ownerService,
+            AdminService adminService, StaffServicecs staffServicecs,
+            CustomerService customerService)
         {
             _accountService = accountService;
+            _ownerService = ownerService;
+            _adminService = adminService;
+            _staffServicecs = staffServicecs;
+            _customerService = customerService;
         }
 
         [HttpGet("{id:int}")]
@@ -86,12 +96,52 @@ namespace PawNClaw.API.Controllers
             return BadRequest();
         }
 
+        [HttpPut]
+        public IActionResult Update([FromBody] UpdateAccountParam param)
+        {
+            if (_accountService.Update(param.account))
+            {
+                try
+                {
+                    if (param.account.RoleCode.Equals("AD"))
+                    {
+                        _adminService.Update(param.admin);
+                    }
+                    if (param.account.RoleCode.Equals("CUS"))
+                    {
+                        _customerService.Update(param.customer);
+                    }
+                    if (param.account.RoleCode.Equals("MOD"))
+                    {
+                        _adminService.Update(param.admin);
+                    }
+                    if (param.account.RoleCode.Equals("OWN"))
+                    {
+                        _ownerService.Update(param.owner);
+                    }
+                    if (param.account.RoleCode.Equals("STF"))
+                    {
+                        _staffServicecs.Update(param.staff);
+                    }
+
+                    return Ok();
+
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex);
+                }
+                
+            }
+            return BadRequest();
+        }
+
         [HttpDelete("{id:int}")]
         [Authorize(Roles = "Admin,Mod")]
         public IActionResult DeleteForMod(int id)
         {
-            if (_accountService.GetAccountById(id).RoleCode.Trim().Equals("01") ||
-                _accountService.GetAccountById(id).RoleCode.Trim().Equals("02"))
+            if (_accountService.GetAccountById(id).RoleCode.Trim().Equals("AD") ||
+                _accountService.GetAccountById(id).RoleCode.Trim().Equals("MOD"))
             {
                 ModelState.AddModelError("Id", "ID is Mod or Admin account");
                 return BadRequest(ModelState);
@@ -107,7 +157,7 @@ namespace PawNClaw.API.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
-            if (_accountService.GetAccountById(id).RoleCode.Trim().Equals("01"))
+            if (_accountService.GetAccountById(id).RoleCode.Trim().Equals("AD"))
             {
                 ModelState.AddModelError("Id", "ID is Admin account");
                 return BadRequest(ModelState);

@@ -1,4 +1,5 @@
-﻿using PawNClaw.Data.Const;
+﻿using Newtonsoft.Json.Linq;
+using PawNClaw.Data.Const;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
@@ -6,6 +7,9 @@ using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web;
 using static PawNClaw.Data.Repository.PetCenterRepository;
 
 namespace PawNClaw.Business.Services
@@ -133,12 +137,61 @@ namespace PawNClaw.Business.Services
             }
         }
 
-        //Update
-        public bool Update(PetCenter petCenter)
+        //Update full for admin
+        public async Task<bool> UpdateForAdminAsync(UpdatePetCenterForAdminParam petCenterRequestParameter)
         {
             try
             {
+                PetCenter petCenter = _petCenterRepository.GetPetCenterWithLocation(petCenterRequestParameter.Id);
+                petCenter.Address = petCenterRequestParameter.Address;
+                petCenter.Phone = petCenterRequestParameter.Phone;
+                petCenter.ModifyDate = DateTime.Now;
+                petCenter.ModifyUser = petCenterRequestParameter.ModifyUser;
+                petCenter.OpenTime = petCenterRequestParameter.OpenTime;
+                petCenter.CloseTime = petCenterRequestParameter.CloseTime;
+                petCenter.Checkin = petCenterRequestParameter.CheckIn;
+                petCenter.Checkout = petCenterRequestParameter.CheckOut;
+
+                var client = new HttpClient();
+                string url = "https://rsapi.goong.io/geocode?address=" + HttpUtility.UrlEncode(petCenter.Address) +SearchConst.GoongAPIKey;
+                Console.WriteLine(url);
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                var result = await response.Content.ReadAsStringAsync();
+                var cust = JObject.Parse(result);
+
+                petCenter.Location.Latitude = cust["results"][0]["geometry"]["location"]["lat"].ToString();
+                petCenter.Location.Longtitude = cust["results"][0]["geometry"]["location"]["lng"].ToString();
+
                 _petCenterRepository.Update(petCenter);
+                _petCenterRepository.SaveDbChange();
+
+                return true;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+
+        //Update for center owner
+        public bool UpdateForOwner(UpdatePetCenterForOwnerParam petCenter)
+        {
+            try
+            {
+                PetCenter center = _petCenterRepository.GetFirstOrDefault(x => x.Id == petCenter.Id);
+                center.OpenTime = petCenter.OpenTime;
+                center.CloseTime = petCenter.CloseTime;
+                center.Checkin = petCenter.CheckIn;
+                center.Checkout = petCenter.CheckOut;
+                center.Description = petCenter.Description;
+                center.Phone = petCenter.Phone;
+                center.ModifyDate = DateTime.Now;
+                center.ModifyUser = petCenter.ModifyUser;
+
+
+                _petCenterRepository.Update(center);
                 _petCenterRepository.SaveDbChange();
                 return true;
             }
@@ -147,6 +200,7 @@ namespace PawNClaw.Business.Services
                 return false;
             }
         }
+
 
         //Delete
         public bool Delete(int id)

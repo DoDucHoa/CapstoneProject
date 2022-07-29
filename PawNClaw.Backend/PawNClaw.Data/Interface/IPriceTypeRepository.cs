@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace PawNClaw.Data.Interface
 {
-    public interface ISupplyRepository : IRepository<Supply>
+    public interface IPriceTypeRepository : IRepository<PriceType>
     {
-        IEnumerable<Supply> GetSuppliesWithType(int centerId);
     }
 }

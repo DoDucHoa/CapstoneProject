@@ -89,9 +89,9 @@ namespace PawNClaw.API.Controllers
             }
         }
 
-
-        [HttpDelete("{id}")]
-        public IActionResult DeletePet(int id)
+        [HttpPut("delete")]
+        [Authorize(Roles = "Cus")]
+        public IActionResult DeletePet([FromQuery] int id)
         {
             try
             {

@@ -176,6 +176,7 @@ namespace PawNClaw.Data.Repository
                 .Include(x => x.CageTypes)
                 .ThenInclude(cagetype => cagetype.Prices)
                 .Include(x => x.Supplies)
+                .Include(x => x.Vouchers)
                 .Select(x => new PetCenter
                 {
                     Id = x.Id,
@@ -212,7 +213,7 @@ namespace PawNClaw.Data.Repository
                                 && DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
                                 ||
                                 (DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
-                                && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0)) 
+                                && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))
                                 && (bookingdetail.Booking.StatusId == 1 || bookingdetail.Booking.StatusId == 2)))
                     }),
                     Supplies = (ICollection<Supply>)x.Supplies.Where(s => s.Quantity > 0 && s.Status == true)
@@ -240,6 +241,13 @@ namespace PawNClaw.Data.Repository
                             MinWeight = price.MinWeight,
                             MaxWeight = price.MaxWeight
                         })
+                    }),
+                    Vouchers = (ICollection<Voucher>)x.Vouchers.Where(x => x.Status == true).Select(x => new Voucher()
+                    {
+                        Value = x.Value,
+                        MinCondition = x.MinCondition,
+                        Code = x.Code,
+                        VoucherTypeName = x.VoucherTypeCodeNavigation.Name
                     }),
                     Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
                 })
@@ -343,6 +351,13 @@ namespace PawNClaw.Data.Repository
             }
 
             return null;
+        }
+
+        public PetCenter GetPetCenterWithLocation(int id)
+        {
+            PetCenter petCenter = _dbSet.Include(x => x.Location).FirstOrDefault(x => x.Id == id);
+
+            return petCenter;
         }
     }
 }
