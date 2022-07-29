@@ -17,10 +17,12 @@ import 'package:pncstaff_mobile_application/screens/activity_screen/components/a
 import 'package:pncstaff_mobile_application/screens/home_screen/components/home_body.dart';
 import 'package:intl/intl.dart';
 import 'package:pncstaff_mobile_application/screens/home_screen/components/todo_list.dart';
+import 'package:pncstaff_mobile_application/screens/profile_screen/profile_screen.dart';
 
 import 'components/checkout_today.dart';
 import 'components/nextup_tasks.dart';
 import 'components/welcome_panel.dart';
+import 'subscreens/tracking_activities.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -40,6 +42,14 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
+  static List<Widget> _widgetOptions = <Widget>[
+    Container(
+      color: frameColor,
+      child: TrackingActivities(),
+    ),
+    ProfileScreen(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -55,61 +65,57 @@ class _HomeScreenState extends State<HomeScreen> {
             return Scaffold(
               backgroundColor: backgroundColor,
               resizeToAvoidBottomInset: true,
-              body: DefaultTabController(
-                length: 3,
-                child: NestedScrollView(
-                  headerSliverBuilder: ((context, value) {
-                    var authState = BlocProvider.of<AuthBloc>(context).state;
-                    var user = (authState as Authenticated).user;
-                    return [
-                      SliverAppBar(
-                        centerTitle: true,
-                        backgroundColor: frameColor,
-                        expandedHeight: height * 0.15,
-                        floating: true,
-                        pinned: true,
-                        flexibleSpace: FlexibleSpaceBar(
-                          collapseMode: CollapseMode.pin,
-                          background: WelcomePanel(
-                            username: user.name ?? "Staff",
-                          ),
-                        ),
-                        shadowColor: Colors.transparent,
-                        bottom: TabBar(
-                          tabs: [
-                            Tab(
-                              text: 'To-do list',
-                            ),
-                            Tab(
-                              text: 'Check-out today',
-                            ),
-                            Tab(
-                              text: 'Next up tasks',
-                            ),
-                          ],
-                          labelColor: primaryColor,
-                          unselectedLabelColor: lightFontColor,
-                          labelStyle: TextStyle(fontWeight: FontWeight.w700),
-                          indicator: LineIndicator(
-                              color: primaryColor, radius: width / 4),
-                          splashBorderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(10),
-                              bottomRight: Radius.circular(10)),
-                        ),
-                      )
-                    ];
-                  }),
-                  body: Container(
-                    color: frameColor,
-                    width: width,
-                    child: TabBarView(children: [
-                      TodoList(bookings: state.bookings),
-                      CheckoutToday(bookings: state.bookings),
-                      NextUpTasks(bookings: state.bookings),
-                    ]),
-                  ),
-                ),
-              ),
+              body: _selectedItemPosition == 0
+                  ? DefaultTabController(
+                      length: 3,
+                      child: NestedScrollView(
+                        headerSliverBuilder: ((context, value) {
+                          var authState =
+                              BlocProvider.of<AuthBloc>(context).state;
+                          var user = (authState as Authenticated).user;
+                          return [
+                            SliverAppBar(
+                              centerTitle: true,
+                              backgroundColor: frameColor,
+                              expandedHeight: height * 0.15,
+                              floating: true,
+                              pinned: true,
+                              flexibleSpace: FlexibleSpaceBar(
+                                collapseMode: CollapseMode.pin,
+                                background: WelcomePanel(
+                                  username: user.name ?? "Staff",
+                                ),
+                              ),
+                              shadowColor: Colors.transparent,
+                              bottom: TabBar(
+                                tabs: [
+                                  Tab(
+                                    text: 'To-do list',
+                                  ),
+                                  Tab(
+                                    text: 'Check-out today',
+                                  ),
+                                  Tab(
+                                    text: 'Next up tasks',
+                                  ),
+                                ],
+                                labelColor: primaryColor,
+                                unselectedLabelColor: lightFontColor,
+                                labelStyle:
+                                    TextStyle(fontWeight: FontWeight.w700),
+                                indicator: LineIndicator(
+                                    color: primaryColor, radius: width / 4),
+                                splashBorderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10)),
+                              ),
+                            )
+                          ];
+                        }),
+                        body: _widgetOptions.elementAt(_selectedItemPosition),
+                      ),
+                    )
+                  : _widgetOptions.elementAt(_selectedItemPosition),
               bottomNavigationBar: SnakeNavigationBar.color(
                 behaviour: SnakeBarBehaviour.floating,
                 selectedItemColor: Colors.white,
@@ -136,11 +142,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   BottomNavigationBarItem(
                       icon: Icon(
                         Icons.home,
-                      ),
-                      label: ""),
-                  BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.message,
                       ),
                       label: ""),
                   BottomNavigationBarItem(
