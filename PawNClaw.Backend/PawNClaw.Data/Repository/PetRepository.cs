@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
@@ -99,7 +100,7 @@ namespace PawNClaw.Data.Repository
         {
             IQueryable<Pet> query = _dbSet;
 
-            query = query.Where(x => x.CustomerId == CusId && x.Status == true);
+            query = query.Where(x => x.CustomerId == CusId && x.Status == true).Include(x => x.PetHealthHistories);
 
             return query.ToList();
         }
