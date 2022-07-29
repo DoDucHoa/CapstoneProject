@@ -12,9 +12,12 @@ namespace PawNClaw.Data.Parameter
 
     public class CreatePriceParameter
     {
+
         public decimal UnitPrice { get; set; }
         public DateTime? CreateDate { get; set; }
         public int? CreateUser { get; set; }
+        public DateTime? ModifyDate { get; set; }
+        public int? ModifyUser { get; set; }
         public string PriceTypeCode { get; set; }
     }
 }

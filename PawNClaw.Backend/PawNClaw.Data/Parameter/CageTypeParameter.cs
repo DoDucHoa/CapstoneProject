@@ -41,7 +41,10 @@ namespace PawNClaw.Data.Parameter
         public decimal Length { get; set; }
         public bool IsSingle { get; set; }
         public DateTime? CreateDate { get; set; }
+        public DateTime? ModifyDate { get; set; }
         public int? CreateUser { get; set; }
+        public int? ModifyUser { get; set; }
+        public bool? Status { get; set; }
         public int CenterId { get; set; }
     }
 
