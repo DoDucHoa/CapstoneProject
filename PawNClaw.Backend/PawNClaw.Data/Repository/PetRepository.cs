@@ -26,24 +26,24 @@ namespace PawNClaw.Data.Repository
 
         public async Task<bool> AddNewPet(CreatePetRequestParameter createPetRequestParameter)
         {
-            int petId = 0; 
+            int petId = 0;
+            Pet pet = new Pet()
+            {
+                Birth = createPetRequestParameter.Birth,
+                BreedName = createPetRequestParameter.BreedName,
+                CustomerId = createPetRequestParameter.CustomerId,
+                Height = createPetRequestParameter.Height,
+                Length = createPetRequestParameter.Length,
+                Name = createPetRequestParameter.Name,
+                PetTypeCode = createPetRequestParameter.PetTypeCode,
+                Weight = createPetRequestParameter.Weight,
+                Status = createPetRequestParameter.Status
+            };
 
             //create pet
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                Pet pet = new Pet()
-                {
-                    Birth = createPetRequestParameter.Birth,
-                    BreedName = createPetRequestParameter.BreedName,
-                    CustomerId = createPetRequestParameter.CustomerId,
-                    Height = createPetRequestParameter.Height,
-                    Length = createPetRequestParameter.Length,
-                    Name = createPetRequestParameter.Name,
-                    PetTypeCode = createPetRequestParameter.PetTypeCode,
-                    Weight = createPetRequestParameter.Weight,
-                    Status = createPetRequestParameter.Status
-                };
-
+                
                 try
                 {
                     _db.Add(pet);
@@ -67,8 +67,9 @@ namespace PawNClaw.Data.Repository
                     transaction.Commit();
                     return true;
                 }
-                catch
+                catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     transaction.Rollback();
                     throw new Exception();
                 }

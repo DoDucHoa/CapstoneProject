@@ -58,13 +58,13 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreatePet([FromBody] CreatePetRequestParameter createPetRequestParameter)
+        public async Task<IActionResult> CreatePet([FromBody] CreatePetRequestParameter createPetRequestParameter)
         {
             try
             {
-                _petService.CreatePet(createPetRequestParameter);
+                var data = await _petService.CreatePet(createPetRequestParameter);
 
-                return Ok();
+                return Ok(data);
             }
             catch (Exception ex)
             {
