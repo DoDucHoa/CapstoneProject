@@ -59,6 +59,7 @@ namespace PawNClaw.API
             services.AddTransient<StaffServicecs, StaffServicecs>();
 
             services.AddTransient<ICustomerRepository, CustomerRepository>();
+            services.AddTransient<CustomerService, CustomerService>();
 
             services.AddTransient<IBrandRepository, BrandRepository>();
             services.AddTransient<BrandService, BrandService>();

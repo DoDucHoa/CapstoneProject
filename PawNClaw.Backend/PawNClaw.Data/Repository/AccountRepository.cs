@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PawNClaw.Data.Const;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Interface;
 using System;
@@ -13,9 +14,12 @@ namespace PawNClaw.Data.Repository
     {
         private readonly ApplicationDbContext _db;
 
-        public AccountRepository(ApplicationDbContext db) : base(db)
+        private readonly IPhotoRepository _photoRepository;
+
+        public AccountRepository(ApplicationDbContext db, IPhotoRepository photoRepository) : base(db)
         {
             _db = db;
+            _photoRepository = photoRepository;
         }
 
         public Account GetAccountWithInFor(int id)
@@ -24,7 +28,21 @@ namespace PawNClaw.Data.Repository
                 .Include(x => x.Admin)
                 .Include(x => x.Owner)
                 .Include(x => x.Customer)
-                .Include(x => x.StaffIdNavigation).First(x => x.Id == id);
+                .Include(x => x.StaffIdNavigation)
+                .Select(x => new Account { 
+                    Id = x.Id,
+                    UserName = x.UserName,
+                    CreatedUser = x.CreatedUser,
+                    DeviceId = x.DeviceId,
+                    Phone = x.Phone,
+                    Status = x.Status,
+                    RoleCode = x.RoleCode,
+                    Admin = x.Admin,
+                    Owner = x.Owner,
+                    Customer = x.Customer,
+                    StaffIdNavigation = x.StaffIdNavigation,
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.Account)
+                }).First(x => x.Id == id);
 
             return query;
         }
