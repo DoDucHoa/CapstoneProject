@@ -65,4 +65,12 @@ const getCageTypes = async (centerId) => {
   return response.data;
 };
 
-export { getCage, getCages, createCage, banCage, unbanCage, updateCage, getCageTypes };
+const shiftCage = async (cageCode, centerId) => {
+  const response = await axios.put(`${URL}/shift-cage`, {
+    cageCode,
+    centerId,
+  });
+  return response.data;
+};
+
+export { getCage, getCages, createCage, banCage, unbanCage, updateCage, getCageTypes, shiftCage };
