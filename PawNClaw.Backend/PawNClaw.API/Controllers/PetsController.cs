@@ -58,7 +58,6 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Cus")]
         public IActionResult CreatePet([FromBody] CreatePetRequestParameter createPetRequestParameter)
         {
             try
@@ -74,7 +73,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("customer")]
-        [Authorize(Roles = "Cus")]
+        //[Authorize(Roles = "Cus")]
         public IActionResult UpdatePet([FromBody] UpdatePetRequestForCusParameter updatePetRequestForCusParameter)
         {
             try
@@ -90,7 +89,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("delete")]
-        [Authorize(Roles = "Cus")]
+        //[Authorize(Roles = "Cus")]
         public IActionResult DeletePet([FromQuery] int id)
         {
             try

@@ -53,7 +53,7 @@ namespace PawNClaw.Data.Parameter
         public int CustomerId { get; set; }
         public string PetTypeCode { get; set; }
         public string BreedName { get; set; }
-        public String photoUrl { get; set; }
+        public string photoUrl { get; set; }
     }
 
     public class PetRequestForSearchCenter
