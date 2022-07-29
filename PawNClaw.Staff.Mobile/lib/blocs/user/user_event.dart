@@ -28,3 +28,10 @@ class UpdateUserProfile extends UserEvent {
   // TODO: implement props
   List<Object> get props => [id, name, phone];
 }
+
+// class ChangePassword extends UserEvent {
+//   final String oldPassword;
+//   final String newPassword;
+
+//   const 
+// }

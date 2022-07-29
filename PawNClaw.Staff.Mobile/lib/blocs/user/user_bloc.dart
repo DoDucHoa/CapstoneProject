@@ -13,6 +13,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         super(UserInitial()) {
     on<GetUserProfile>(
       (event, emit) async {
+        emit(UserInitial());
         // TODO: implement event handler
         final profile = await _userRepository.getProfileById(event.id);
         emit(ProfileLoaded(profile));
@@ -23,14 +24,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         emit(UserInitial());
         final result = await _userRepository.updateUserProfile(
             event.id, event.name, event.phone);
-        result
-            ? () async {
-                final profile = await _userRepository.getProfileById(event.id);
-                emit(ProfileLoaded(profile));
-              }
-            : () {
-                print("Fail");
-              };
+        final profile = await _userRepository.getProfileById(event.id);
+        emit(ProfileLoaded(profile));
       },
     );
   }

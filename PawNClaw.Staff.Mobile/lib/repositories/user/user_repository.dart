@@ -50,8 +50,35 @@ class UserRepository implements BaseUserRepository {
         "phone": phone
       };
       print(query);
-      var response = await _dio.put(_url, queryParameters: query);
+      var response = await _dio.put(_url, data: query);
       if (response.statusCode == 200) {
+        print("Update Successful");
+        return true;
+      } else {
+        return false;
+      }
+    } on DioError catch (e) {
+      print(e.response?.data);
+      throw Exception(e);
+    }
+  }
+
+  @override
+  Future<bool> updateUserAvatar(int id, String url) async {
+    // TODO: implement updateUserAvatar
+    final pref = await SharedPreferences.getInstance();
+    try {
+      _dio.options.headers = {
+        'Authorization': 'Bearer ' + pref.get("jwtToken").toString()
+      };
+      final String _url =
+          "https://pawnclawdevelopmentapi.azurewebsites.net/api/photos";
+      // "https://192.168.31.133/api/bookings/center/$staffId?statusId=2";
+      Map<String, dynamic> query = {"id": id, "url": url};
+      print(query);
+      var response = await _dio.put(_url, data: query);
+      if (response.statusCode == 200) {
+        print("Update Successful");
         return true;
       } else {
         return false;
