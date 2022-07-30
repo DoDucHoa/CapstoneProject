@@ -5,13 +5,10 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // @mui
 import {
   Box,
-  Tab,
-  Tabs,
   Card,
   Dialog,
   Table,
   Button,
-  Divider,
   TableBody,
   Container,
   TableContainer,
@@ -26,7 +23,6 @@ import {
 import { PATH_DASHBOARD } from '../../../routes/paths';
 
 // hooks
-import useTabs from '../../../hooks/useTabs';
 import useSettings from '../../../hooks/useSettings';
 import useTable, { emptyRows } from '../../../hooks/useTable';
 import useAuth from '../../../hooks/useAuth';
@@ -42,15 +38,9 @@ import { TableEmptyRows, TableHeadCustom, TableNoData } from '../../../component
 import { CageTypeTableRow, CageTypeTableToolbar } from '../../../sections/@dashboard/cageType/list';
 
 // API
-import { getCageTypes, banCageType, unbanCageType } from './useCageTypeAPI';
+import { getCageTypes, deleteCageType } from './useCageTypeAPI';
 
 // ----------------------------------------------------------------------
-
-const STATUS_OPTIONS = [
-  { key: 0, value: '', label: 'Tất cả' },
-  { key: 1, value: 'true', label: 'Hoạt động' },
-  { key: 2, value: 'false', label: 'Đã khóa' },
-];
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Tên loại chuồng', align: 'left' },
@@ -58,7 +48,6 @@ const TABLE_HEAD = [
   { id: 'width', label: 'Chiều rộng (cm)', align: 'right' },
   { id: 'length', label: 'Chiều dài (cm)', align: 'right' },
   { id: 'isSingle', label: 'Chuồng riêng', align: 'center' },
-  { id: 'status', label: 'Trạng thái', align: 'left' },
   { id: '' },
 ];
 
@@ -70,7 +59,7 @@ export default function CageTypeList() {
   const [filterName, setFilterName] = useState('');
   const [searchRequest, setSearchRequest] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectIdAdmin, setSelectIdAdmin] = useState();
+  const [selectIdCageType, setSelectIdCageType] = useState();
 
   const {
     page,
@@ -85,14 +74,9 @@ export default function CageTypeList() {
   } = useTable();
 
   const { centerId } = useAuth();
-  const { currentTab: filterStatus, onChangeTab } = useTabs('');
-  const onChangeFilterStatus = (event, newValue) => {
-    onChangeTab(event, newValue);
-    setPage(0);
-  };
 
   const getCageTypeData = async () => {
-    const response = await getCageTypes(centerId, page, rowsPerPage, filterStatus, searchRequest);
+    const response = await getCageTypes(centerId, page, rowsPerPage, searchRequest);
 
     const { data, metadata } = response;
 
@@ -112,7 +96,7 @@ export default function CageTypeList() {
   useEffect(() => {
     getCageTypeData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, rowsPerPage, filterStatus, searchRequest]);
+  }, [page, rowsPerPage, searchRequest]);
 
   const { themeStretch } = useSettings();
 
@@ -131,29 +115,23 @@ export default function CageTypeList() {
     navigate(PATH_DASHBOARD.cageType.edit(id));
   };
 
-  const handleBanAdmin = async (id) => {
-    await banCageType(id);
+  const handleDeleteCageType = async (id) => {
+    await deleteCageType(id);
     await getCageTypeData();
   };
 
-  const handleUnbanAdmin = async (id) => {
-    await unbanCageType(id);
-    await getCageTypeData();
-  };
-  const handleOpenBanDialog = (idAdmin) => {
-    setSelectIdAdmin(idAdmin);
+  const handleOpenDeleteCageTypeDialog = (idCageType) => {
+    setSelectIdCageType(idCageType);
     setOpenDialog(true);
   };
 
-  const handleCloseBanDialog = () => {
+  const handleCloseDeleteCageTypeDialog = () => {
     setOpenDialog(false);
   };
 
   const denseHeight = 72;
 
-  const isNotFound =
-    (!(metadata.totalCount ? metadata.totalCount : 0) && !!filterName) ||
-    (!(metadata.totalCount ? metadata.totalCount : 0) && !!filterStatus);
+  const isNotFound = !(metadata.totalCount ? metadata.totalCount : 0) && !!filterName;
 
   return (
     <>
@@ -175,21 +153,6 @@ export default function CageTypeList() {
           />
 
           <Card>
-            <Tabs
-              allowScrollButtonsMobile
-              variant="scrollable"
-              scrollButtons="auto"
-              value={filterStatus}
-              onChange={onChangeFilterStatus}
-              sx={{ px: 2, bgcolor: 'background.neutral' }}
-            >
-              {STATUS_OPTIONS.map((tab) => (
-                <Tab disableRipple key={tab.key} label={tab.label} value={tab.value} />
-              ))}
-            </Tabs>
-
-            <Divider />
-
             {/* Filter dữ liệu */}
             <CageTypeTableToolbar
               filterName={filterName}
@@ -209,7 +172,7 @@ export default function CageTypeList() {
                         key={row.id}
                         row={row}
                         onEditRow={() => handleEditRow(row.id)}
-                        onDeleteRow={() => (row.status ? handleOpenBanDialog(row.id) : handleUnbanAdmin(row.id))}
+                        onDeleteRow={() => handleOpenDeleteCageTypeDialog(row.id)}
                       />
                     ))}
 
@@ -240,36 +203,36 @@ export default function CageTypeList() {
           </Card>
         </Container>
       </Page>
-      <BanAdminDialog
+      <DeleteCageTypeDialog
         open={openDialog}
-        onClose={handleCloseBanDialog}
-        idAdmin={selectIdAdmin}
-        handleBanAdmin={handleBanAdmin}
+        onClose={handleCloseDeleteCageTypeDialog}
+        idCageType={selectIdCageType}
+        handleDeleteCageType={handleDeleteCageType}
       />
     </>
   );
 }
 
 // ----------------------------------------------------------------------
-BanAdminDialog.propTypes = {
+DeleteCageTypeDialog.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
-  idAdmin: PropTypes.number,
-  handleBanAdmin: PropTypes.func,
+  idCageType: PropTypes.number,
+  handleDeleteCageType: PropTypes.func,
 };
 
-function BanAdminDialog({ open, onClose, idAdmin, handleBanAdmin }) {
+function DeleteCageTypeDialog({ open, onClose, idCageType, handleDeleteCageType }) {
   const onConfirm = () => {
-    handleBanAdmin(idAdmin);
+    handleDeleteCageType(idCageType);
     onClose();
   };
 
   return (
     <Dialog open={open} maxWidth="xs" onClose={onClose}>
-      <DialogTitle>Bạn có chắc chắn muốn khóa loại chuồng?</DialogTitle>
+      <DialogTitle>Bạn có chắc chắn muốn xóa?</DialogTitle>
       <DialogContent>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Bạn vẫn có thể mở khóa loại chuồng này sau khi xác nhận!
+          Bạn không thể khôi phục lại nếu đã xóa!
         </Typography>
       </DialogContent>
       <DialogActions>

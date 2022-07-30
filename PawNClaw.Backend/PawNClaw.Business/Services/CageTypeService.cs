@@ -87,7 +87,7 @@ namespace PawNClaw.Business.Services
             return values;
         }
 
-        public async Task<bool> CreateCageType(CreateCageTypeParameter createCageTypeParameter, List<CreatePriceParameter> createPriceParameters, List<CreateFoodSchedule> foodSchedules)
+        public async Task<int> CreateCageType(CreateCageTypeParameter createCageTypeParameter, List<CreatePriceParameter> createPriceParameters, List<CreateFoodSchedule> foodSchedules)
         {
             CageType cageType = new CageType();
 
@@ -176,10 +176,10 @@ namespace PawNClaw.Business.Services
                 }
             }
 
-            return true;
+            return cageType.Id;
         }
 
-        public bool Update(UpdateCageTypeParameter cageTypeP)
+        public bool Update(UpdateCageTypeParameter cageTypeP, List<UpdatePriceParameter> updatePriceParameters, List<UpdateFoodSchedule> updateFoodSchedules)
         {
             CageType cageType = _cageTypeRepository.Get(cageTypeP.Id);
             cageType.TypeName = cageTypeP.TypeName;
@@ -190,6 +190,32 @@ namespace PawNClaw.Business.Services
 
             _cageTypeRepository.Update(cageType);
             _cageTypeRepository.SaveDbChange();
+
+            foreach (var item in updatePriceParameters)
+            {
+                Price price = _priceRepository.Get(item.Id);
+                price.UnitPrice = item.UnitPrice;
+                price.CreateDate = item.CreateDate;
+                price.CreateUser = item.CreateUser;
+                price.PriceTypeCode = item.PriceTypeCode;
+                price.ModifyDate = item.ModifyDate;
+                price.ModifyUser = item.ModifyUser;
+                price.Status = item.Status;
+                price.CageTypeId = item.CageTypeId;
+                _priceRepository.Update(price);
+                _priceRepository.SaveDbChange();
+            }
+
+            foreach (var item in updateFoodSchedules)
+            {
+                FoodSchedule food = _foodScheduleRepository.Get(item.Id);
+                food.FromTime = item.FromTime.TimeOfDay;
+                food.ToTime = item.ToTime.TimeOfDay;
+                food.Name = item.Name;
+                food.CageTypeId = item.Id;
+                _foodScheduleRepository.Update(food);
+                _foodScheduleRepository.SaveDbChange();
+            }
             return true;
         }
 

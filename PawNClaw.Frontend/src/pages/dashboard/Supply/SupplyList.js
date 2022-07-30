@@ -46,17 +46,18 @@ import { getSupplies, banSupply, unbanSupply } from './useSupplyAPI';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [
+const SUPPLY_TYPES = [
   { key: 0, value: '', label: 'Tất cả' },
-  { key: 1, value: 'true', label: 'Hoạt động' },
-  { key: 2, value: 'false', label: 'Đã khóa' },
+  { key: 1, value: 'FOOD', label: 'Đồ ăn' },
+  { key: 2, value: 'DRINK', label: 'Thức uống' },
+  { key: 3, value: 'MED', label: 'Thuốc men' },
+  { key: 4, value: 'OTHER', label: 'Khác' },
 ];
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Tên đồ dùng', align: 'left' },
   { id: 'sellPrice', label: 'Giá bán (VND)', align: 'right' },
   { id: 'quantity', label: 'Số lượng', align: 'right' },
-  { id: 'status', label: 'Trạng thái', align: 'left' },
   { id: '' },
 ];
 
@@ -181,7 +182,7 @@ export default function SupplyList() {
               onChange={onChangeFilterStatus}
               sx={{ px: 2, bgcolor: 'background.neutral' }}
             >
-              {STATUS_OPTIONS.map((tab) => (
+              {SUPPLY_TYPES.map((tab) => (
                 <Tab disableRipple key={tab.key} label={tab.label} value={tab.value} />
               ))}
             </Tabs>

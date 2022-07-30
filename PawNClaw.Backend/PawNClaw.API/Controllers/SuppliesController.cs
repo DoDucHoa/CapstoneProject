@@ -61,11 +61,12 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateSupply([FromBody] Supply supply)
+        public IActionResult CreateSupply([FromBody] CreateSupplyParameter supply)
         {
             try
             {
-                return Ok(_supplyService.CreateSupply(supply));
+                var data = _supplyService.CreateSupply(supply);
+                return Ok(data);
             }
             catch (Exception ex)
             {

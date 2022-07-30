@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { LoadingButton } from '@mui/lab';
-import { Box, Card, Grid, Stack, Typography, Button } from '@mui/material';
+import { Box, Card, Grid, Stack, Typography, Button, MenuItem } from '@mui/material';
 // utils
 import { fData } from '../../../utils/formatNumber';
 // routes
@@ -16,8 +16,7 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
 import useAuth from '../../../hooks/useAuth';
 // components
-import Label from '../../../components/Label';
-import { FormProvider, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
+import { FormProvider, RHFSelect, RHFTextField, RHFUploadPhoto } from '../../../components/hook-form';
 import { createSupply, updateSupply } from '../../../pages/dashboard/Supply/useSupplyAPI';
 
 // ----------------------------------------------------------------------
@@ -27,6 +26,13 @@ SupplyNewEditForm.propTypes = {
   supplyData: PropTypes.object,
 };
 
+const SUPPLY_TYPES = [
+  { key: 1, value: 'FOOD', label: 'Đồ ăn' },
+  { key: 2, value: 'DRINK', label: 'Thức uống' },
+  { key: 3, value: 'MED', label: 'Thuốc men' },
+  { key: 4, value: 'OTHER', label: 'Khác' },
+];
+
 export default function SupplyNewEditForm({ isEdit, supplyData }) {
   // STATE
   const navigate = useNavigate();
@@ -35,8 +41,8 @@ export default function SupplyNewEditForm({ isEdit, supplyData }) {
 
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Bắt buộc nhập'),
-    sellPrice: Yup.number().required('Bắt buộc nhập'),
-    quantity: Yup.number().required('Bắt buộc nhập'),
+    sellPrice: Yup.number().required('Bắt buộc nhập').typeError('Bắt buộc nhập'),
+    quantity: Yup.number().required('Bắt buộc nhập').typeError('Bắt buộc nhập'),
     createUser: Yup.number().required(),
     modifyUser: Yup.number().required(),
     avatarUrl: Yup.mixed().test('required', 'Ảnh thương hiệu bắt buộc nhập', (value) => value !== ''),
@@ -51,7 +57,7 @@ export default function SupplyNewEditForm({ isEdit, supplyData }) {
       createUser: supplyData?.createUser || accountInfo.id,
       modifyUser: accountInfo.id,
       avatarUrl: supplyData?.avatarUrl || '',
-      supplyTypeCode: supplyData?.supplyTypeCode || '',
+      supplyTypeCode: supplyData?.supplyTypeCode || 'FOOD',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [supplyData]
@@ -120,19 +126,61 @@ export default function SupplyNewEditForm({ isEdit, supplyData }) {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
-          <Card sx={{ py: 10, px: 3 }}>
-            {isEdit && (
-              <Label
-                color={supplyData.status !== 'true' ? 'error' : 'success'}
-                sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
-              >
-                {supplyData.status !== 'true' ? 'Đã khóa' : 'Hoạt động'}
-              </Label>
-            )}
+        <Grid item xs={12} md={7}>
+          <Card sx={{ p: 3 }}>
+            <Box
+              sx={{
+                display: 'grid',
+                columnGap: 2,
+                rowGap: 3,
+                gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(1, 1fr)' },
+              }}
+            >
+              <RHFTextField name="name" label="Tên đồ dùng" />
 
-            <Box sx={{ mb: 5 }}>
-              <RHFUploadAvatar
+              <RHFTextField label="Giá bán" name="sellPrice" type="number" />
+
+              <RHFTextField label="Số lượng" name="quantity" type="number" />
+
+              <RHFSelect
+                name="supplyTypeCode"
+                label="Loại đồ dùng"
+                InputLabelProps={{ shrink: true }}
+                SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
+              >
+                {SUPPLY_TYPES.map((item) => (
+                  <MenuItem
+                    key={item.key}
+                    value={item.value}
+                    sx={{
+                      mx: 1,
+                      my: 0.5,
+                      borderRadius: 0.75,
+                      typography: 'body2',
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+            </Box>
+
+            <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
+              <Button to={PATH_DASHBOARD.supply.list} color="error" variant="contained" component={RouterLink}>
+                Hủy
+              </Button>
+              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                {!isEdit ? 'Tạo' : 'Cập nhật'}
+              </LoadingButton>
+            </Stack>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} md={4}>
+          <Card sx={{ py: 7, px: 3 }}>
+            <Box>
+              <RHFUploadPhoto
                 name="avatarUrl"
                 accept="image/*"
                 maxSize={3145728}
@@ -154,34 +202,6 @@ export default function SupplyNewEditForm({ isEdit, supplyData }) {
                 }
               />
             </Box>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} md={8}>
-          <Card sx={{ p: 3 }}>
-            <Box
-              sx={{
-                display: 'grid',
-                columnGap: 2,
-                rowGap: 3,
-                gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(1, 1fr)' },
-              }}
-            >
-              <RHFTextField name="name" label="Tên đồ dùng" />
-
-              <RHFTextField label="Giá bán" name="sellPrice" type="number" />
-
-              <RHFTextField label="Số lượng" name="quantity" type="number" />
-            </Box>
-
-            <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
-              <Button to={PATH_DASHBOARD.supply.list} color="error" variant="contained" component={RouterLink}>
-                Hủy
-              </Button>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!isEdit ? 'Tạo' : 'Cập nhật'}
-              </LoadingButton>
-            </Stack>
           </Card>
         </Grid>
       </Grid>
