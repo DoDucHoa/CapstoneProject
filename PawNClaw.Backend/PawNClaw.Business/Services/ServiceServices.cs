@@ -72,7 +72,7 @@ namespace PawNClaw.Business.Services
             return _serviceRepository.Get(id);
         }
 
-        public async Task<bool> CreateService(CreateService serviceP, List<CreateServicePrice> servicePricePs)
+        public async Task<int> CreateService(CreateService serviceP, List<CreateServicePrice> servicePricePs)
         {
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
@@ -117,7 +117,7 @@ namespace PawNClaw.Business.Services
                     }
 
                     transaction.Commit();
-                    return true;
+                    return service.Id;
                 } 
                 catch
                 {

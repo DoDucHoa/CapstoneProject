@@ -65,7 +65,8 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                return Ok(_supplyService.CreateSupply(supply));
+                var data = _supplyService.CreateSupply(supply);
+                return Ok(data);
             }
             catch (Exception ex)
             {
