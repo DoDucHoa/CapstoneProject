@@ -7,10 +7,9 @@ abstract class SearchEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class InitSearch extends SearchEvent {
-}
+class InitSearch extends SearchEvent {}
 
-class InitCheck extends SearchEvent{
+class InitCheck extends SearchEvent {
   final int centerId;
   const InitCheck(this.centerId);
   @override
@@ -67,17 +66,15 @@ class SearchCenter extends SearchEvent {
       [requests, timeFrom, due, cityCode, districtCode, pageNumber];
 }
 
-<<<<<<< HEAD
 class CheckCenter extends SearchEvent {
   final int centerId;
   final List<List<Pet>> requests;
   final DateTime timeFrom;
   final int due;
-  const CheckCenter(this.centerId,this.requests, this.timeFrom, this.due);
+  const CheckCenter(this.centerId, this.requests, this.timeFrom, this.due);
   @override
   // TODO: implement props
-  List<Object> get props =>
-      [centerId,requests, timeFrom, due];
+  List<Object> get props => [centerId, requests, timeFrom, due];
 }
 
 class CheckSponsorCenter extends SearchEvent {
@@ -85,13 +82,13 @@ class CheckSponsorCenter extends SearchEvent {
   final List<List<Pet>> requests;
   final DateTime timeFrom;
   final int due;
-  const CheckSponsorCenter(this.centerId,this.requests, this.timeFrom, this.due);
+  const CheckSponsorCenter(
+      this.centerId, this.requests, this.timeFrom, this.due);
   @override
   // TODO: implement props
-  List<Object> get props =>
-      [centerId,requests, timeFrom, due];
+  List<Object> get props => [centerId, requests, timeFrom, due];
 }
-=======
+
 class BackToPetSelection extends SearchEvent {
   final List<List<Pet>> requests;
 
@@ -101,4 +98,3 @@ class BackToPetSelection extends SearchEvent {
   // TODO: implement props
   List<Object> get props => [requests];
 }
->>>>>>> 2b95dde15b52104731b7d20d1adb7a38a16fddb8

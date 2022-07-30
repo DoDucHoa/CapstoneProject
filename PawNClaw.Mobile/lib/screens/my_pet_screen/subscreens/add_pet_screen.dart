@@ -15,8 +15,12 @@ import '../../../common/date_picker.dart';
 import '../../../common/services/upload_service.dart';
 
 class AddPetScreen extends StatefulWidget {
-  const AddPetScreen({required this.customerId, Key? key}) : super(key: key);
+  const AddPetScreen(
+      {required this.customerId, this.pet, this.isEdit, Key? key})
+      : super(key: key);
   final int customerId;
+  final Pet? pet;
+  final bool? isEdit;
   @override
   State<AddPetScreen> createState() => _AddPetScreenState();
 }
@@ -44,7 +48,20 @@ class _AddPetScreenState extends State<AddPetScreen> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-
+    var petToUpdate = widget.pet;
+    var isEdit = widget.isEdit != null ? widget.isEdit : false;
+    if (petToUpdate != null) {
+      _nameController.text = petToUpdate.name!;
+      _dateController.text =
+          DateFormat('dd/MM/yyyy').format(petToUpdate.birth!);
+      _heightController.text = petToUpdate.height!.toStringAsFixed(0);
+      _weightController.text = petToUpdate.weight!.toStringAsFixed(0);
+      _lengthController.text = petToUpdate.length!.toStringAsFixed(0);
+      _breedController.text = petToUpdate.breedName!;
+      birthDay = petToUpdate.birth;
+      breedType = petToUpdate.petTypeCode!;
+      imgURL = petToUpdate.photos?.first.url ?? null;
+    }
     return Scaffold(
       backgroundColor: frameColor,
       appBar: AppBar(
@@ -71,7 +88,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
                 onTap: () async {
                   var resultUrl = await FirebaseUpload()
                       .pickFile("customers/pet/${widget.customerId}", false);
-                      print(resultUrl);
+                  print(resultUrl);
                   setState(() {
                     imgURL = resultUrl;
                   });
@@ -244,7 +261,9 @@ class _AddPetScreenState extends State<AddPetScreen> {
                         fontSize: width * regularFontRate),
                     decoration: InputDecoration(
                       hintText: "Tên loài " +
-                          ((breedType != null && breedType!.contains('DOG')) ? 'chó' : 'mèo'),
+                          ((breedType != null && breedType!.contains('DOG'))
+                              ? 'chó'
+                              : 'mèo'),
                       hintStyle: const TextStyle(
                         color: lightFontColor,
                         fontWeight: FontWeight.w500,
@@ -405,7 +424,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
             ]),
       ),
       floatingActionButton: Opacity(
-        opacity: (imgURL != null) ? 1 : 0.3,
+        opacity: (isEdit == true || imgURL != null) ? 1 : 0.3,
         child: ElevatedButton(
             onPressed: () async {
               Pet pet = Pet(
@@ -422,16 +441,31 @@ class _AddPetScreenState extends State<AddPetScreen> {
                   // photoUrl:
                   //     "https://l.messenger.com/l.php?u=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fpawnclaw-4b6ba.appspot.com%2Fo%2Fcustomers%252Fpet%252F11%252Fimage_picker8213551932780256987.png%3Falt%3Dmedia%26token%3D47defa75-e9c3-49d2-b146-8d32fe6b7347%2522%252C%2522customerId%2522%253A11&h=AT3b_QVqMDqliuVR38NtkE90KqB-QZLAePI77YZyRlmrK7H_esyrjHOZwLw3XsOhdvA8jka-XcFVWLxQ0nQDGCN_bgq0FtM8ok6btM593G1LLHfR367JehWZ6XHpM830-sGiLA"
                   );
-              bool createPet = await PetRepository().createPet(pet);
-              if (createPet) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Thêm thú cưng thành công!')));
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => MyPetScreen()));
+              if (isEdit == false) {
+                bool createPet = await PetRepository().createPet(pet);
+                if (createPet) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Thêm thú cưng thành công!')));
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => MyPetScreen()));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                          'Thêm thú cưng không thành công! Vui lòng thử lại sau.')));
+                }
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(
-                        'Thêm thú cưng không thành công! Vui lòng thử lại sau.')));
+                pet.id = petToUpdate!.id;
+                bool updatePet = await PetRepository().update(pet);
+                if (updatePet) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Thêm thú cưng thành công!')));
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => MyPetScreen()));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                          'Cập nhật thú cưng không thành công! Vui lòng thử lại sau.')));
+                }
               }
             },
             style: ElevatedButton.styleFrom(

@@ -34,8 +34,11 @@ class PetCard extends StatelessWidget {
                 height: width * 0.15,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
-                    image: DecorationImage(
-                        image: AssetImage('lib/assets/pet-0.png'))),
+                    image: pet.photos!.isNotEmpty
+                        ? DecorationImage(
+                            image: NetworkImage(pet.photos!.first.url!))
+                        : DecorationImage(
+                            image: AssetImage('lib/assets/pet-0.png'))),
               ),
               Container(
                 width: width * (0.35),

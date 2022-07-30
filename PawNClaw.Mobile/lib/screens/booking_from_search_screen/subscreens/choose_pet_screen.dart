@@ -11,8 +11,6 @@ import 'package:pawnclaw_mobile_application/screens/search_screen.dart/component
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/pet_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/pet_requests_dialog.dart';
 
-
-
 class ChoosePetScreen extends StatefulWidget {
   const ChoosePetScreen({
     required this.centerId,
@@ -31,6 +29,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
     double width = MediaQuery.of(context).size.width;
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
+        var request = (state as UpdatePetSelected).requests;
         return Scaffold(
           backgroundColor: frameColor,
           appBar: AppBar(
@@ -85,7 +84,8 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
               ),
             ],
             leading: IconButton(
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen())),
+              onPressed: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => HomeScreen())),
               icon: Icon(
                 Icons.arrow_back_ios_new,
                 color: primaryFontColor,
@@ -207,15 +207,21 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                         return PetCard(
                                           pet: state.pets[index],
                                           onPressed: () {
-                                            BlocProvider.of<SearchBloc>(context)
-                                                .add(SelectPet(
-                                                    state.pets[index]));
+                                            (request.any((element) =>
+                                                    element.contains(
+                                                        state.pets[index])))
+                                                ? () {}
+                                                : BlocProvider.of<SearchBloc>(
+                                                        context)
+                                                    .add(SelectPet(
+                                                        state.pets[index]));
                                             setState(() {});
                                           },
                                         );
                                       },
                                     )
-                                  : const LoadingIndicator(loadingText: 'Vui lòng đợi');
+                                  : const LoadingIndicator(
+                                      loadingText: 'Vui lòng đợi');
                             },
                           ),
                         ),

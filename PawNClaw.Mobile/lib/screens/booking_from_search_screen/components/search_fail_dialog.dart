@@ -20,6 +20,11 @@ class SearchFailDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    bool isPetBooked = false;
+    if (errorMessage.contains("Already")) {
+      isPetBooked = true;
+    }
+    print(isPetBooked);
     return BlocBuilder<SearchBloc, SearchState>(builder: (context, state) {
       return Scaffold(
         backgroundColor: frameColor,
@@ -66,20 +71,24 @@ class SearchFailDialog extends StatelessWidget {
                     height: width * mediumPadRate,
                   ),
                   ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => SearchScreen(),
-                        )
-                            // builder: (_) => BlocProvider.value(
-                            //       value: BlocProvider.of<SearchBloc>(context),
-                            //       child: ChoosePetScreen(),
-                            //     ))
-                            );
-                        // .then((value) => context
-                        //     .findRootAncestorStateOfType()!
-                        //     .setState(() {}))
-                        ;
-                      },
+                      onPressed: (!isPetBooked)
+                          ? () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => SearchScreen(),
+                              )
+                                  // builder: (_) => BlocProvider.value(
+                                  //       value: BlocProvider.of<SearchBloc>(context),
+                                  //       child: ChoosePetScreen(),
+                                  //     ))
+                                  );
+                              // .then((value) => context
+                              //     .findRootAncestorStateOfType()!
+                              //     .setState(() {}))
+                            }
+                          : () {
+                              BlocProvider.of<SearchBloc>(context)
+                                  .add(BackToPetSelection([]));
+                            },
                       style: ElevatedButton.styleFrom(
                           // primary: Cprim,
 
@@ -92,7 +101,9 @@ class SearchFailDialog extends StatelessWidget {
                             vertical: width * smallPadRate),
                         child: Center(
                           child: Text(
-                            'Tìm trung tâm khác',
+                            (!isPetBooked)
+                                ? 'Tìm trung tâm khác'
+                                : 'Chọn thú cưng khác',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,
