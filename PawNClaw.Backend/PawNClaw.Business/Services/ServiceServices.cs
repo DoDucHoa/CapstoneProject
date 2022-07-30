@@ -156,5 +156,25 @@ namespace PawNClaw.Business.Services
             }
             return true;
         }
+
+        public bool DeleteService(int id)
+        {
+            Service service = _serviceRepository.Get(id);
+            service.Status = false;
+
+            _serviceRepository.Update(service);
+            _serviceRepository.SaveDbChange();
+
+            List<ServicePrice> servicePrices = (List<ServicePrice>)_servicePriceRepository.GetAll(x => x.ServiceId == id);
+
+            foreach (var item in servicePrices)
+            {
+                item.Status = false;
+                _servicePriceRepository.Update(item);
+                _servicePriceRepository.SaveDbChange();
+            }
+
+            return true;
+        }
     }
 }

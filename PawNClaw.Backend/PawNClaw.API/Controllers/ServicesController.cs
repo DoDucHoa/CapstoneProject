@@ -79,5 +79,18 @@ namespace PawNClaw.API.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpPut("delete/{id}")]
+        public IActionResult UpdateService(int id)
+        {
+            try
+            {
+                return Ok(_serviceServices.DeleteService(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }
