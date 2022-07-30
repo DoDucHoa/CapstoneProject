@@ -121,6 +121,29 @@ namespace PawNClaw.Data.Repository
             return query.ToList();
         }
 
+        public Pet GetPetById(int id)
+        {
+            Pet query = _dbSet
+                .Select(x => new Pet
+                {
+                    Id = x.Id,
+                    Weight = x.Weight,
+                    Length = x.Length,
+                    Height = x.Height,
+                    Name = x.Name,
+                    Birth = x.Birth,
+                    Status = x.Status,
+                    CustomerId = x.CustomerId,
+                    PetTypeCode = x.PetTypeCode,
+                    BreedName = x.BreedName,
+                    PetHealthHistories = x.PetHealthHistories,
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetProfile)
+                })
+                .First(x => x.Id == id);
+
+            return query;
+        }
+
         public bool UpdatePetForStaff(int id, decimal Weight, decimal Lenght, decimal Height)
         {
             Pet query = _dbSet.Find(id);

@@ -79,5 +79,10 @@ namespace PawNClaw.Business.Services
                 throw new Exception("Pet is booking already");
             }
         }
+
+        public Pet GetPetById(int id)
+        {
+            return _petRepository.GetPetById(id);
+        }
     }
 }
