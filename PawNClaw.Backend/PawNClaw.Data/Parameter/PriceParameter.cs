@@ -29,5 +29,7 @@ namespace PawNClaw.Data.Parameter
         public DateTime? ModifyDate { get; set; }
         public int? ModifyUser { get; set; }
         public string PriceTypeCode { get; set; }
+        public int CageTypeId { get; set; }
+        public bool? Status { get; set; }
     }
 }

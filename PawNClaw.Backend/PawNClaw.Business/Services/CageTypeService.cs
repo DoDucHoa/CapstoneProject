@@ -200,8 +200,8 @@ namespace PawNClaw.Business.Services
                 price.PriceTypeCode = item.PriceTypeCode;
                 price.ModifyDate = item.ModifyDate;
                 price.ModifyUser = item.ModifyUser;
-                price.Status = true;
-                price.CageTypeId = cageType.Id;
+                price.Status = item.Status;
+                price.CageTypeId = item.CageTypeId;
                 _priceRepository.Update(price);
                 _priceRepository.SaveDbChange();
             }
