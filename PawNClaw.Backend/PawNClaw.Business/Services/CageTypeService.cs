@@ -179,8 +179,15 @@ namespace PawNClaw.Business.Services
             return true;
         }
 
-        public bool Update(CageType cageType)
+        public bool Update(UpdateCageTypeParameter cageTypeP)
         {
+            CageType cageType = _cageTypeRepository.Get(cageTypeP.Id);
+            cageType.TypeName = cageTypeP.TypeName;
+            cageType.Description = cageTypeP.Description;
+            cageType.IsSingle = cageTypeP.IsSingle;
+            cageType.ModifyDate = cageTypeP.ModifyDate;
+            cageType.Status = cageTypeP.Status;
+
             _cageTypeRepository.Update(cageType);
             _cageTypeRepository.SaveDbChange();
             return true;
