@@ -2,11 +2,9 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 
 // @mui
-import { useTheme } from '@mui/material/styles';
 import { TableRow, TableCell, Typography, MenuItem, Checkbox } from '@mui/material';
 
 // components
-import Label from '../../../../components/Label';
 import Iconify from '../../../../components/Iconify';
 import { TableMoreMenu } from '../../../../components/table';
 
@@ -22,9 +20,7 @@ SupplyTableRow.propTypes = {
 };
 
 export default function SupplyTableRow({ row, onEditRow, onDeleteRow }) {
-  const theme = useTheme();
-
-  const { name, height, length, width, isSingle, status } = row;
+  const { name, height, length, width, isSingle } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -54,16 +50,6 @@ export default function SupplyTableRow({ row, onEditRow, onDeleteRow }) {
         <Checkbox checked={isSingle} disabled />
       </TableCell>
 
-      <TableCell align="left">
-        <Label
-          variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-          color={(status === false && 'error') || 'success'}
-          sx={{ textTransform: 'capitalize' }}
-        >
-          {status ? 'Hoạt động' : 'Đã khóa'}
-        </Label>
-      </TableCell>
-
       <TableCell align="right">
         <TableMoreMenu
           open={openMenu}
@@ -85,10 +71,10 @@ export default function SupplyTableRow({ row, onEditRow, onDeleteRow }) {
                   onDeleteRow();
                   handleCloseMenu();
                 }}
-                sx={{ color: status ? 'error.main' : 'success.main' }}
+                sx={{ color: 'error.main' }}
               >
-                <Iconify icon={status ? 'eva:slash-outline' : 'eva:checkmark-square-outline'} />
-                {status ? 'Khóa' : 'Mở khóa'}
+                <Iconify icon={'eva:trash-2-outline'} />
+                Xóa
               </MenuItem>
             </>
           }

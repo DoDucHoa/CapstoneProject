@@ -2,14 +2,13 @@ import axios from '../../../utils/axios';
 
 const URL = '/api/cagetypes';
 
-const getCageTypes = async (centerId, page, rowsPerPage, filterStatus, searchName) => {
+const getCageTypes = async (centerId, page, rowsPerPage, searchName) => {
   const response = await axios.get(URL, {
     params: {
       CenterId: centerId,
       TypeName: searchName,
       PageSize: rowsPerPage,
       PageNumber: page,
-      Status: filterStatus,
     },
   });
   return response.data;
@@ -34,13 +33,8 @@ const updateCageType = async (idCageType, name, description, ownerId) => {
   return response.status;
 };
 
-const banCageType = async (idCageType) => {
-  const response = await axios.delete(`${URL}/${idCageType}`);
-  return response.data;
-};
-
-const unbanCageType = async (idCageType) => {
-  const response = await axios.put(`${URL}/restore/${idCageType}`);
+const deleteCageType = async (idCageType) => {
+  const response = await axios.put(`${URL}/delete/${idCageType}`);
   return response.data;
 };
 
@@ -49,4 +43,22 @@ const getPriceTypes = async () => {
   return response.data;
 };
 
-export { getCageType, getCageTypes, createCageType, banCageType, unbanCageType, updateCageType, getPriceTypes };
+const uploadPhotoToBackend = async (idCageType, photoUrl) => {
+  const response = await axios.post('/api/photos/cagetype', {
+    photoTypeId: 5,
+    idActor: idCageType,
+    url: photoUrl,
+    isThumbnail: false,
+  });
+  return response.data;
+};
+
+export {
+  getCageType,
+  getCageTypes,
+  createCageType,
+  deleteCageType,
+  updateCageType,
+  getPriceTypes,
+  uploadPhotoToBackend,
+};
