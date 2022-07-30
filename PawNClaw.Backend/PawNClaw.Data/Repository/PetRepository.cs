@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using PawNClaw.Data.Const;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
@@ -101,7 +102,22 @@ namespace PawNClaw.Data.Repository
         {
             IQueryable<Pet> query = _dbSet;
 
-            query = query.Where(x => x.CustomerId == CusId && x.Status == true).Include(x => x.PetHealthHistories);
+            query = query.Include(x => x.PetHealthHistories)
+                .Select(x => new Pet { 
+                    Id = x.Id,
+                    Weight = x.Weight,
+                    Length = x.Length,
+                    Height = x.Height,
+                    Name = x.Name,
+                    Birth = x.Birth,
+                    Status = x.Status,
+                    CustomerId = x.CustomerId,
+                    PetTypeCode = x.PetTypeCode,
+                    BreedName = x.BreedName,
+                    PetHealthHistories = x.PetHealthHistories,
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetProfile)
+                })
+                .Where(x => x.CustomerId == CusId && x.Status == true);
 
             return query.ToList();
         }
