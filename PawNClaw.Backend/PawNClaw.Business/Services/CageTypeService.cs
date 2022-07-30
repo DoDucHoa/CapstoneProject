@@ -87,7 +87,7 @@ namespace PawNClaw.Business.Services
             return values;
         }
 
-        public async Task<bool> CreateCageType(CreateCageTypeParameter createCageTypeParameter, List<CreatePriceParameter> createPriceParameters, List<CreateFoodSchedule> foodSchedules)
+        public async Task<int> CreateCageType(CreateCageTypeParameter createCageTypeParameter, List<CreatePriceParameter> createPriceParameters, List<CreateFoodSchedule> foodSchedules)
         {
             CageType cageType = new CageType();
 
@@ -176,11 +176,18 @@ namespace PawNClaw.Business.Services
                 }
             }
 
-            return true;
+            return cageType.Id;
         }
 
-        public bool Update(CageType cageType)
+        public bool Update(UpdateCageTypeParameter cageTypeP)
         {
+            CageType cageType = _cageTypeRepository.Get(cageTypeP.Id);
+            cageType.TypeName = cageTypeP.TypeName;
+            cageType.Description = cageTypeP.Description;
+            cageType.IsSingle = cageTypeP.IsSingle;
+            cageType.ModifyDate = cageTypeP.ModifyDate;
+            cageType.Status = cageTypeP.Status;
+
             _cageTypeRepository.Update(cageType);
             _cageTypeRepository.SaveDbChange();
             return true;
@@ -205,7 +212,17 @@ namespace PawNClaw.Business.Services
 
         public CageType GetCageTypeWithCageAndPrice(int id)
         {
-            return _cageTypeRepository.GetCageTypeWithCageAndPrice(id);
+            var value = _cageTypeRepository.GetCageTypeWithCageAndPrice(id);
+
+            DateTime dateTime = DateTime.Today;
+
+            foreach (var item in value.FoodSchedules)
+            {
+                item.FromTimeDate = dateTime.SetTime(item.FromTime.Hours, item.FromTime.Minutes, item.FromTime.Seconds);
+                item.ToTimeDate = dateTime.SetTime(item.ToTime.Hours, item.ToTime.Minutes, item.ToTime.Seconds);
+            }
+
+            return value;
         }
     }
 }

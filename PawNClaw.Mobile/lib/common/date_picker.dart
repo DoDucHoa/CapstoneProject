@@ -23,7 +23,7 @@ Future<DateTime?> selectSingleTime(
     maxTime: DateTime.now().add(Duration(days: 60)),
     currentTime: DateTime.now(),
     locale: LocaleType.vi,
-    onConfirm: (date) => onConfirmed(date.roundMin),
+    onConfirm: (date) => onConfirmed(date),
     onCancel: () {},
   );
   return result;
@@ -36,6 +36,16 @@ Future<DateTime?> selectSingleDateFrom(BuildContext context, DateTime startDate)
     initialDate: startDate,
     firstDate: startDate,
     lastDate: DateTime(2050),// halt: cần thêm ràng buộc
+    locale: const Locale('vi','VI'),
+  );
+}
+Future<DateTime?> selectSingleDateTo(BuildContext context, DateTime endDate) async {
+  return await showDatePicker(
+    context: context,
+    initialDatePickerMode: DatePickerMode.year,
+    initialDate: endDate,
+    firstDate: DateTime(1990),
+    lastDate:  endDate,// halt: cần thêm ràng buộc
     locale: const Locale('vi','VI'),
   );
 }

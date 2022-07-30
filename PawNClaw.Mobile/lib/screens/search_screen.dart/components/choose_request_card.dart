@@ -49,7 +49,7 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
       if (isSuitable(widget.requests[i], widget.cageType)) {
         haveAvailableRequests = true;
         pets = widget.requests[i];
-        pets!.forEach((e) {print(e.id); });
+        //pets!.forEach((e) {print(e.id); });
         selectedIndex = i;
         
         // setState(() {
@@ -99,9 +99,9 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                                 });
                                 print('selectedindex ' + selectedIndex.toString());
                                 print(index);
-                                print(result);
+                               print(result);
                                 widget.callback(result);
-                                print(context.read<BookingBloc>().state);
+                                //print(context.read<BookingBloc>().state);
                               },
                               child: Stack(children: [
                                 selectedIndex == index

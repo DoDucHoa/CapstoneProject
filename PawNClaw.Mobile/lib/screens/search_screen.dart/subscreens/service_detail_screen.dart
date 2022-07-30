@@ -149,7 +149,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                               .format((service.servicePrices![0].price ?? 0)) +
                           " ~ " +
                           NumberFormat.currency(
-                                  decimalDigits: 0, symbol: '', locale: 'vi_vn')
+                                  decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
                               .format((service
                                       .servicePrices![
                                           service.servicePrices!.length - 1]

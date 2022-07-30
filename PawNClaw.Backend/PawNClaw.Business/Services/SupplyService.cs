@@ -71,13 +71,13 @@ namespace PawNClaw.Business.Services
             return _supplyRepository.Get(id);
         }
         
-        public bool CreateSupply(Supply supply)
+        public int CreateSupply(Supply supply)
         {
             try
             {
                 _supplyRepository.Add(supply);
                 _supplyRepository.SaveDbChange();
-                return true;
+                return supply.Id;
             }
             catch
             {

@@ -54,11 +54,12 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateService([FromBody] CreateServiceParameter createServiceParameter)
+        public async Task<IActionResult> CreateService([FromBody] CreateServiceParameter createServiceParameter)
         {
             try
             {
-                return Ok(_serviceServices.CreateService(createServiceParameter.service, createServiceParameter.servicePrice));
+                var data = await _serviceServices.CreateService(createServiceParameter.service, createServiceParameter.servicePrice);
+                return Ok(data);
             }
             catch (Exception ex)
             {
@@ -67,7 +68,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateService([FromBody] Service service)
+        public IActionResult UpdateService([FromBody] UpdateService service)
         {
             try
             {

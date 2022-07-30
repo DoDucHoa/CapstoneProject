@@ -29,8 +29,8 @@ class ActivityCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(activity.product!.name, style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w700),),
-              Text(activity.product!.note, style: TextStyle(color: lightFontColor, fontSize: 13, fontWeight: FontWeight.w600)),
+              Container(width: width*0.6,child: Text(activity.product!.name, style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w700,), maxLines: 1, overflow: TextOverflow.ellipsis,)),
+              Container(width: width*0.6,child: Text(activity.product!.note, style: TextStyle(color: lightFontColor, fontSize: 13, fontWeight: FontWeight.w600),maxLines: 1, overflow: TextOverflow.ellipsis,)),
               Text('   ●  ' + DateFormat('HH:mm a, dd/MM/yyyy').format(
                                       DateTime.parse(activity.time.toString())),style: TextStyle(color: lightFontColor, fontSize: 13, fontWeight: FontWeight.w600)) ,
             ],
