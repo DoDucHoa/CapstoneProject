@@ -35,7 +35,7 @@ namespace PawNClaw.Business.Services
                 values = values.Where(x => x.Name.ToLower().Equals(serviceRequestParameter.Name.ToLower().Trim()));
             }
 
-            if (serviceRequestParameter.Id == null)
+            if (serviceRequestParameter.Id != null)
             {
                 values = values.Where(x => x.Id == serviceRequestParameter.Id);
             }
@@ -154,6 +154,26 @@ namespace PawNClaw.Business.Services
                 _servicePriceRepository.Update(servicePrice);
                 _servicePriceRepository.SaveDbChange();
             }
+            return true;
+        }
+
+        public bool DeleteService(int id)
+        {
+            Service service = _serviceRepository.Get(id);
+            service.Status = false;
+
+            _serviceRepository.Update(service);
+            _serviceRepository.SaveDbChange();
+
+            List<ServicePrice> servicePrices = (List<ServicePrice>)_servicePriceRepository.GetAll(x => x.ServiceId == id);
+
+            foreach (var item in servicePrices)
+            {
+                item.Status = false;
+                _servicePriceRepository.Update(item);
+                _servicePriceRepository.SaveDbChange();
+            }
+
             return true;
         }
     }

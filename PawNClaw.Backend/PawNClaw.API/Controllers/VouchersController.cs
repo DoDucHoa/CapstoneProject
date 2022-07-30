@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Database;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,7 +63,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateVouchers( [FromBody] Voucher voucher)
+        public IActionResult CreateVouchers( [FromBody] CreateVoucherParameter voucher)
         {
             try
             {
@@ -75,7 +76,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateVoucher([FromBody] Voucher voucher)
+        public IActionResult UpdateVoucher([FromBody] UpdateVoucherParameter voucher)
         {
             try
             {
