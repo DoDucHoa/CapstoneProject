@@ -12,7 +12,7 @@ namespace PawNClaw.Business.Services
     {
         IStaffRepository _staffRepository;
         IAccountRepository _accountRepository;
-        
+
         public StaffServicecs(IStaffRepository staffRepository, IAccountRepository accountRepository)
         {
             _staffRepository = staffRepository;
@@ -50,23 +50,21 @@ namespace PawNClaw.Business.Services
         }
 
         //Get Staff By Center Id
-        public PagedList<Staff> GetByCenterId(int id, string? name, bool status,PagingParameter paging)
+        public PagedList<Staff> GetByCenterId(int id, string? name, bool? status, PagingParameter paging)
         {
-            var values = _staffRepository.GetAll(x => x.CenterId == id,includeProperties: "IdNavigation");
-            
+            var values = _staffRepository.GetAll(x => x.CenterId == id, includeProperties: "IdNavigation");
+
             if (!string.IsNullOrWhiteSpace(name))
             {
                 values = values.Where(x => name.Equals(x.Name.Trim()));
             }
-
-            if (status != null)
+            values = status switch
             {
-                values = status switch
-                {
-                    true => values.Where(x => x.IdNavigation.Status == true),
-                    false => values.Where(x => x.IdNavigation.Status == false),
-                };
-            }
+                true => values.Where(x => x.IdNavigation.Status == true),
+                false => values.Where(x => x.IdNavigation.Status == false),
+                _ => values
+            };
+
             return PagedList<Staff>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
             paging.PageSize);
