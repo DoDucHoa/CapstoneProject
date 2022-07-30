@@ -35,7 +35,7 @@ namespace PawNClaw.Business.Services
                 values = values.Where(x => x.Name.ToLower().Equals(serviceRequestParameter.Name.ToLower().Trim()));
             }
 
-            if (serviceRequestParameter.Id == null)
+            if (serviceRequestParameter.Id != null)
             {
                 values = values.Where(x => x.Id == serviceRequestParameter.Id);
             }
