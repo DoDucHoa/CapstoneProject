@@ -132,9 +132,9 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     on<AddVoucher>((event, emit) {
       BookingRequestModel booking = (state as BookingUpdated).booking;
       print('voucherCode : ' + event.voucherCode);
-      booking.voucherCode = event.voucherCode;
+      booking.bookingCreateParameter!.voucherCode = event.voucherCode;
       emit(BookingUpdated(booking: booking));
-      //print('voucherCode add: ' + (state as BookingUpdated).booking.voucherCode!);
+      // print('voucherCode add: ' + (state as BookingUpdated).booking.bookingCreateParameter!.voucherCode!);
     });
   }
 }

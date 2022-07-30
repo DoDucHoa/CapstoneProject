@@ -3,10 +3,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
+import 'package:pawnclaw_mobile_application/blocs/sponsor/sponsor_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/transaction/transaction_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/repositories/auth/auth_repository.dart';
 import 'package:pawnclaw_mobile_application/repositories/pet/pet_repository.dart';
+import 'package:pawnclaw_mobile_application/repositories/sponsor_banner/sponsor_repository.dart';
 import 'package:pawnclaw_mobile_application/repositories/transaction/transaction_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/home_screen/HomeScreen.dart';
 import 'package:pawnclaw_mobile_application/screens/signin_screen/SignInScreen.dart';
@@ -27,8 +29,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    // print(user);
-    print(user);
+    print(user); 
+     
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -37,6 +39,8 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
             create: (context) => PetBloc(petRepository: PetRepository())),
+         BlocProvider(
+            create: (context) => SponsorBloc()..add(InitSponsorBanner())),
       ], 
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -51,7 +55,7 @@ class MyApp extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: [
+        supportedLocales:   [
           const Locale('en'), 
           const Locale('vi')
           ],

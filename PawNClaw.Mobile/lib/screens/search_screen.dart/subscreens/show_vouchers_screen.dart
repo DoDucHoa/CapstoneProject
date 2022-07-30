@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '../../../common/constants.dart';
-import '../../../models/fake_data.dart';
 import '../../../models/voucher.dart';
 
 class ShowVouchers extends StatelessWidget {
@@ -33,7 +32,7 @@ class ShowVouchers extends StatelessWidget {
               itemBuilder: ((context, index) {
                 return VoucherCard(vouchers[index], 180, size);
               }),
-              itemCount: FAKE_VOUCHERS.length,
+              itemCount: vouchers.length,
               separatorBuilder: (context, index) => const SizedBox(
                 height: 15,
               ),
@@ -65,7 +64,8 @@ class ShowVouchers extends StatelessWidget {
                       'Giảm ' +
                           NumberFormat.currency(
                                   decimalDigits: 0,
-                                  symbol: 'đ',
+                                  symbol:
+                                      (voucher.voucherTypeCode!.contains('2')) ? 'đ' : '%',
                                   locale: 'vi_vn')
                               .format((voucher.value)) +
                           ' đơn hàng',
@@ -151,9 +151,9 @@ class ShowVouchers extends StatelessWidget {
                     width: 10,
                   ),
                   Text('Hiệu lực từ: ' +
-                      voucher.startDate +
+                      voucher.formatStartDate() +
                       ' - ' +
-                      voucher.expireDate),
+                      voucher.formatExpiredDate()),
                 ])))
       ],
     );

@@ -101,12 +101,17 @@ class BookingCageCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    cageType!.typeName!,
-                    style: TextStyle(
-                      color: primaryFontColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: width * regularFontRate,
+                  Container(
+                    width: width*0.3,
+                    child: Text(
+                      cageType!.typeName!,
+                      style: TextStyle(
+                        color: primaryFontColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: width * regularFontRate,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Text(

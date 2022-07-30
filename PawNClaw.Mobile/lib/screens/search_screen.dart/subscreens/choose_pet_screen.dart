@@ -32,7 +32,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
           backgroundColor: frameColor,
           appBar: AppBar(
             title: const Text(
-              "Chọn pet",
+              "Chọn thú cưng",
               style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
@@ -272,7 +272,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
               onPressed: state is UpdatePetSelected && state.requests.isNotEmpty
                   ? () {
                       BlocProvider.of<SearchBloc>(context)
-                          .add(ConfirmRequest(state.requests));
+                          .add(ConfirmRequest(state.requests,-1));
                     }
                   : () {},
               child: const Icon(
