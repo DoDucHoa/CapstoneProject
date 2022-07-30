@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:pawnclaw_mobile_application/models/voucher.dart';
+
 class BookingRequestModel {
   BookingCreateParameter? bookingCreateParameter;
   List<BookingDetailCreateParameters>? bookingDetailCreateParameters;
@@ -83,14 +85,14 @@ class BookingRequestModel {
     return count;
   }
 
-  int isCageSelected(BookingDetailCreateParameters bookingDetails){
-    if (this.bookingDetailCreateParameters == null || this.bookingDetailCreateParameters!.isEmpty)
-    return -1;
+  int isCageSelected(BookingDetailCreateParameters bookingDetails) {
+    if (this.bookingDetailCreateParameters == null ||
+        this.bookingDetailCreateParameters!.isEmpty) return -1;
     for (int i = 0; i < this.bookingDetailCreateParameters!.length; i++) {
       for (var petId in this.bookingDetailCreateParameters![i].petId!) {
-        if (bookingDetails.petId!.first == petId)
-        { 
-          return i;}
+        if (bookingDetails.petId!.first == petId) {
+          return i;
+        }
       }
     }
     return -1;
@@ -123,20 +125,26 @@ class BookingRequestModel {
     }
     return 0;
   }
-  bool hasAdditionalItems(int petId){
-    if (this.supplyOrderCreateParameters == null && this.serviceOrderCreateParameters == null)
-      return false;
+
+  bool hasAdditionalItems(int petId) {
+    if (this.supplyOrderCreateParameters == null &&
+        this.serviceOrderCreateParameters == null) return false;
     for (var supply in this.supplyOrderCreateParameters!) {
-      if (supply.petId == petId)
-        return true;
+      if (supply.petId == petId) return true;
     }
     for (var service in this.serviceOrderCreateParameters!) {
-      if (service.petId == petId)
-        return true;
+      if (service.petId == petId) return true;
     }
     return false;
   }
 
+  double getTotalDiscount(List<Voucher> vouchers) {
+    var voucher = vouchers.firstWhere((element) => element.code == bookingCreateParameter!.voucherCode);
+    if (voucher.voucherTypeCode!.contains('1')) {
+      return getTotal() * voucher.value! / 100;
+    }
+    return voucher.value!;
+  }
 }
 
 class BookingCreateParameter {

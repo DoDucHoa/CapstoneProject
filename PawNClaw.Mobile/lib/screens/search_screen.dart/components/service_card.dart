@@ -41,9 +41,15 @@ class _ServiceCardState extends State<ServiceCard> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  service.description ?? "",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                Container(
+                  width: width*0.6,
+                  child: Text(
+                    service.description ?? "",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  
                 ),
                 SizedBox(
                   height: 10,
@@ -56,7 +62,7 @@ class _ServiceCardState extends State<ServiceCard> {
                               .format((service.servicePrices![0].price ?? 0)) +
                           " ~ " +
                           NumberFormat.currency(
-                                  decimalDigits: 0, symbol: '', locale: 'vi_vn')
+                                  decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
                               .format((service
                                       .servicePrices![
                                           service.servicePrices!.length - 1]
@@ -72,7 +78,7 @@ class _ServiceCardState extends State<ServiceCard> {
                       Text(
                         NumberFormat.currency(
                                 decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
-                            .format(service.sellPrice ?? 0),
+                            .format(service.discountPrice ?? 0),
                         style: TextStyle(
                             fontSize: 13,
                             color: lightFontColor,

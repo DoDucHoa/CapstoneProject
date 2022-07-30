@@ -57,10 +57,16 @@ class ItemCard extends StatelessWidget {
                 //     style: TextStyle(
                 //         fontSize: 15, fontWeight: FontWeight.w600),
                 //   ):
-                Text(
-                  name,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                ),
+                Container(
+                  width: width*0.6,
+                  child: Text(
+                    name,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                )
+                ,
                 SizedBox(
                   height: 10,
                 ),

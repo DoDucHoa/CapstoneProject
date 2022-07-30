@@ -92,9 +92,12 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
                               isValid = false;
                             });
                     },
-                    // onCompleted: ((value) {
-                    //   print(value)
-                    // }),
+                    onCompleted: ((value) {
+                      BlocProvider.of<AuthBloc>(context).add(VerifyOTP(
+                          verificationId,
+                          otpController.text,
+                          widget.phoneNumber));
+                    }),
                   ),
                   Text(
                     widget.error ?? "",
@@ -104,31 +107,35 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
               ),
             ),
             const Spacer(flex: 30),
-            Center(
-              child: Opacity(
-                opacity: isValid ? 1 : 0.3,
-                child: ElevatedButton(
-                  onPressed: () {
-                    BlocProvider.of<AuthBloc>(context).add(VerifyOTP(
-                        verificationId,
-                        otpController.text,
-                        widget.phoneNumber));
-                  },
-                  child: Text(
-                    "Xác nhận",
-                    style: TextStyle(
-                        color: Colors.white, fontSize: width * regularFontRate),
-                  ),
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // Center(
+            //   child: Opacity(
+            //     opacity: isValid ? 1 : 0.3,
+            //     child: ElevatedButton(
+            //         onPressed: () {
+            //           BlocProvider.of<AuthBloc>(context).add(VerifyOTP(
+            //               verificationId,
+            //               otpController.text,
+            //               widget.phoneNumber));
+            //         },
+            //         style: ElevatedButton.styleFrom(
+            //             shape: RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.circular(15),
+            //         )),
+            //         child: Container(
+            //           padding:
+            //               EdgeInsets.symmetric(vertical: width * smallPadRate),
+            //           child: const Center(
+            //             child: Text(
+            //               'Xác nhận',
+            //               style: TextStyle(
+            //                   color: Colors.white,
+            //                   fontSize: 15,
+            //                   fontWeight: FontWeight.w700),
+            //             ),
+            //           ),
+            //         )),
+            //   ),
+            // ),
           ],
         ),
       ),

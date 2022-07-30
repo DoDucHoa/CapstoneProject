@@ -10,6 +10,8 @@ class CageTypes {
   bool? isSingle;
   List<Cages>? cages;
   double? totalPrice;
+  double? minPrice;
+  double? maxPrice;
 
   CageTypes(
       {this.id,
@@ -20,7 +22,9 @@ class CageTypes {
       this.length,
       this.isSingle,
       this.cages,
-      this.totalPrice});
+      this.totalPrice,
+      this.minPrice,
+      this.maxPrice});
 
   CageTypes.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -36,7 +40,11 @@ class CageTypes {
         cages!.add(new Cages.fromJson(v));
       });
     }
-    totalPrice = double.parse(json['totalPrice']);
+    totalPrice =
+        json['totalPrice'] == null ? null : double.parse(json['totalPrice']);
+    minPrice = json['minPrice'] == null ? null : json['minPrice'].toDouble();
+    maxPrice = json['maxPrice'] == null ? null : json['maxPrice'].toDouble();
+
     // if (json['prices'] != null) {
     //   prices = <Null>[];
     //   json['prices'].forEach((v) {
@@ -56,7 +64,9 @@ class CageTypes {
     if (this.cages != null) {
       data['cages'] = this.cages!.map((v) => v.toJson()).toList();
     }
-    data['totalPrice'] = this.totalPrice.toString();
+    if (this.totalPrice != null) data['totalPrice'] = this.totalPrice.toString();
+    if (this.maxPrice != null) data['maxPrice'] = this.maxPrice.toString();
+    if (this.minPrice != null) data['minPrice'] = this.minPrice.toString();
     return data;
   }
 }
