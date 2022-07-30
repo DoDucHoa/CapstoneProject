@@ -212,7 +212,7 @@ namespace PawNClaw.Business.Services
                 food.FromTime = item.FromTime.TimeOfDay;
                 food.ToTime = item.ToTime.TimeOfDay;
                 food.Name = item.Name;
-                food.CageTypeId = item.Id;
+                food.CageTypeId = item.CageTypeId;
                 _foodScheduleRepository.Update(food);
                 _foodScheduleRepository.SaveDbChange();
             }
