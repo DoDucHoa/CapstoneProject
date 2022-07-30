@@ -38,6 +38,17 @@ namespace PawNClaw.Data.Parameter
         public string Name { get; set; }
     }
 
+    public class UpdateService
+    {
+        public int Id { get; set; }
+        public string Description { get; set; }
+        public decimal? DiscountPrice { get; set; }
+        public DateTime? ModifyDate { get; set; }
+        public int? ModifyUser { get; set; }
+        public bool Status { get; set; }
+        public string Name { get; set; }
+    }
+
     public class CreateServiceParameter
     {
         public CreateService service { get; set; }
