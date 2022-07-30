@@ -19,7 +19,9 @@ namespace PawNClaw.Data.Repository
         {
             IQueryable<Service> query = _dbSet;
 
-            query = query.Include(x => x.ServicePrices).Where(x => x.CenterId == centerId);
+            query = query
+                .Include(x => x.ServicePrices)
+                .Where(x => x.CenterId == centerId);
 
             return query.ToList();
         }

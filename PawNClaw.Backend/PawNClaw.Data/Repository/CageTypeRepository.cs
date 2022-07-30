@@ -45,7 +45,8 @@ namespace PawNClaw.Data.Repository
                     ModifyUser = x.ModifyUser,
                     Status = x.Status,
                     CenterId = x.CenterId,
-                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.CageType)
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.CageType),
+                    Prices = x.Prices
                 })
                 .Where(x => x.CenterId == centerId);
 
@@ -184,7 +185,32 @@ namespace PawNClaw.Data.Repository
                     ModifyUser = x.ModifyUser,
                     Status = x.Status,
                     CenterId = x.CenterId,
-                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.CageType)
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.CageType),
+                    Prices = x.Prices,
+                    Cages = (ICollection<Cage>)x.Cages.Select(cage => new Cage { 
+                        Code = cage.Code,
+                        CenterId = cage.CenterId,
+                        Name = cage.Name,
+                        Color = cage.Color,
+                        IsOnline = cage.IsOnline,
+                        CreateDate = cage.CreateDate,
+                        ModifyDate = cage.ModifyDate,
+                        CreateUser = cage.CreateUser,
+                        ModifyUser = cage.ModifyUser,
+                        Status = cage.Status,
+                        CageTypeId = cage.CageTypeId,
+                        BookingDetails = (ICollection<BookingDetail>)cage.BookingDetails.Select(bookdetail => new BookingDetail { 
+                            Id = bookdetail.Id,
+                            BookingId = bookdetail.BookingId,
+                            Price = bookdetail.Price,
+                            CageCode = bookdetail.CageCode,
+                            CenterId = bookdetail.CenterId,
+                            Duration = bookdetail.Duration,
+                            Note = bookdetail.Note,
+                            Booking = bookdetail.Booking
+                        })
+                    }),
+                    FoodSchedules = x.FoodSchedules
                 })
                 .Where(x => x.Id == id).FirstOrDefault();
 
