@@ -1,5 +1,6 @@
 ﻿using PawNClaw.Data.Database;
 using PawNClaw.Data.Interface;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,15 +34,39 @@ namespace PawNClaw.Business.Services
         }
 
 
-        public bool CreateVouchers(Voucher voucher)
+        public bool CreateVouchers(CreateVoucherParameter voucherP)
         {
+            Voucher voucher = new Voucher()
+            {
+                MinCondition = voucherP.MinCondition,
+                Value = voucherP.Value,
+                StartDate = voucherP.StartDate,
+                ExpireDate = voucherP.ExpireDate,
+                CreateDate = voucherP.CreateDate,
+                ModifyDate = voucherP.ModifyDate,
+                CreateUser = voucherP.CreateUser,
+                ModifyUser = voucherP.ModifyUser,
+                Status = true,
+                CenterId = voucherP.CenterId,
+                VoucherTypeCode = voucherP.VoucherTypeCode,
+            };
+
             _voucherRepository.Add(voucher);
             _voucherRepository.SaveDbChange();
             return true;
         }
 
-        public bool UpdateVoucher(Voucher voucher)
+        public bool UpdateVoucher(UpdateVoucherParameter voucherP)
         {
+            Voucher voucher = _voucherRepository.Get(voucherP.Code);
+            voucher.MinCondition = voucherP.MinCondition;
+            voucher.Value = voucherP.Value;
+            voucher.StartDate = voucherP.StartDate;
+            voucher.ExpireDate = voucherP.ExpireDate;
+            voucher.ModifyDate = voucherP.ModifyDate;
+            voucher.ModifyUser = voucherP.ModifyUser;
+            voucher.Status = voucherP.Status;
+
             _voucherRepository.Update(voucher);
             _voucherRepository.SaveDbChange();
             return true;
