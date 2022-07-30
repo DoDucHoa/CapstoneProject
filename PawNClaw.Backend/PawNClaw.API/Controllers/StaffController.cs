@@ -92,8 +92,8 @@ namespace PawNClaw.API.Controllers
             }
         }
 
-        [HttpPut("ban/{id}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [HttpPut("update-status/{id}")]
+        [Authorize(Roles = "Admin,Mod,Owner")]
         public IActionResult BanStaff(int id)
         {
             try
