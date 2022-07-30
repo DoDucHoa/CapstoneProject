@@ -90,3 +90,10 @@ export const BOOKING_STATUS = [
     name: 'Hủy',
   },
 ];
+
+export const BOOKING_STATUS_COLOR = {
+  1: 'orange',
+  2: 'blue',
+  3: 'green',
+  4: 'red',
+};

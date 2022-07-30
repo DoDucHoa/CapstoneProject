@@ -19,14 +19,14 @@ namespace PawNClaw.Business.Services
         }
 
         //Get All
-        public PagedList<Owner> GetModerators(string Name, bool? Status, string dir, string sort, PagingParameter paging)
+        public PagedList<Owner> GetOwners(string Name, bool? Status, string dir, string sort, PagingParameter paging)
         {
             var values = _ownerRepository.GetAll(includeProperties: "IdNavigation");
 
             values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("OWN"));
 
             // lọc theo name
-            if (!string.IsNullOrWhiteSpace(Name)) values = values.Where(x => x.Name.Trim().Equals(Name));
+            if (!string.IsNullOrWhiteSpace(Name)) values = values.Where(x => x.Name.Trim().Contains(Name));
 
             // lọc theo status
             if (Status != null)
@@ -98,6 +98,20 @@ namespace PawNClaw.Business.Services
                 account.Phone = Phone;
                 _accountRepository.Update(account);
                 _accountRepository.SaveDbChange();
+                _ownerRepository.Update(owner);
+                _ownerRepository.SaveDbChange();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool Update(Owner owner)
+        {
+            try
+            {
                 _ownerRepository.Update(owner);
                 _ownerRepository.SaveDbChange();
                 return true;

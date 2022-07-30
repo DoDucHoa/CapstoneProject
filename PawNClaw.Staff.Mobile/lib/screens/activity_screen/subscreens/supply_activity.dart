@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pncstaff_mobile_application/blocs/booking/booking_bloc.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/models/booking_detail.dart';
 import 'package:pncstaff_mobile_application/models/pet.dart';
@@ -13,24 +15,34 @@ class SupplyActivity extends StatefulWidget {
 }
 
 class _SupplyActivityState extends State<SupplyActivity> {
-  @override
-  Widget build(BuildContext context) {
-    final booking = widget.booking;
+  List<SupplyOrders> getPetForSupplies(
+      BookingDetail booking, List<SupplyOrders> supplies) {
     List<Pet> pets = [];
     booking.bookingDetails!.forEach(
       (cage) => cage.petBookingDetails!.forEach(
-        (element) {
-          pets.add(element.pet!);
+        (pet) {
+          pets.add(pet.pet!);
         },
       ),
     );
-    booking.supplyOrders!.forEach((supply) {
-      pets.forEach((pet) {
-        if (supply.petId == pet.id) {
-          supply.pet = pet;
-        }
-      });
-    });
+    supplies.forEach(
+      (supply) {
+        pets.forEach((pet) {
+          if (pet.id == supply.petId) {
+            supply.pet = pet;
+          }
+        });
+      },
+    );
+    return supplies;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final booking = widget.booking;
+    List<SupplyOrders> supplies =
+        getPetForSupplies(booking, booking.getUndoneSupplyAct());
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -58,19 +70,26 @@ class _SupplyActivityState extends State<SupplyActivity> {
           itemBuilder: (context, index) => InkWell(
             onTap: () => Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => ActivityDetail(
-                      pet: booking.supplyOrders![index].pet!,
-                      supply: booking.supplyOrders![index],
+                      pet: supplies[index].pet!,
+                      supply: supplies[index],
+                      booking: booking,
                     ))),
-            child: ActivityCard(
-              activityName: booking.supplyOrders![index].supply!.name!,
-              note: booking.supplyOrders![index].note ?? "Không có ghi chú",
-              remainCount:
-                  booking.getRemainSupplyAct(booking.supplyOrders![index]),
-              booking: booking,
-              pet: booking.supplyOrders![index].pet!,
+            child: Container(
+              margin: EdgeInsets.only(
+                right: width * smallPadRate,
+                left: width * smallPadRate,
+                top: width * smallPadRate,
+              ),
+              child: ActivityCard(
+                activityName: supplies[index].supply!.name!,
+                note: supplies[index].note ?? "Không có ghi chú",
+                remainCount: booking.getRemainSupplyAct(supplies[index]),
+                booking: booking,
+                pet: supplies[index].pet!,
+              ),
             ),
           ),
-          itemCount: booking.supplyOrders!.length,
+          itemCount: supplies.length,
         ),
       ),
     );

@@ -51,8 +51,8 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
     () => ({
       name: brandData?.name || '',
       description: brandData?.description || '',
-      createUser: brandData?.createUser || 0,
-      modifyUser: brandData?.modifyUser || 0,
+      createUser: brandData?.createUser || accountInfo.id,
+      modifyUser: accountInfo.id,
       ownerId: brandData?.ownerId || 0,
       avatarUrl: brandData?.avatarUrl || '',
       ownerInfo: brandData?.owner || null,

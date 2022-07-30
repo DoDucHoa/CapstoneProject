@@ -67,6 +67,7 @@ class SearchCenter extends SearchEvent {
       [requests, timeFrom, due, cityCode, districtCode, pageNumber];
 }
 
+<<<<<<< HEAD
 class CheckCenter extends SearchEvent {
   final int centerId;
   final List<List<Pet>> requests;
@@ -90,3 +91,14 @@ class CheckSponsorCenter extends SearchEvent {
   List<Object> get props =>
       [centerId,requests, timeFrom, due];
 }
+=======
+class BackToPetSelection extends SearchEvent {
+  final List<List<Pet>> requests;
+
+  const BackToPetSelection(this.requests);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [requests];
+}
+>>>>>>> 2b95dde15b52104731b7d20d1adb7a38a16fddb8

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pncstaff_mobile_application/blocs/auth/auth_bloc.dart';
+import 'package:pncstaff_mobile_application/blocs/booking/booking_bloc.dart';
 import 'package:pncstaff_mobile_application/common/components/loading_indicator.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/common/vn_locale.dart';
@@ -21,26 +22,25 @@ class CheckoutToday extends StatefulWidget {
 }
 
 class _CheckoutTodayState extends State<CheckoutToday> {
-  PetCenter? center;
   @override
   void initState() {
     // TODO: implement initState
-
-    var user = (BlocProvider.of<AuthBloc>(context).state as Authenticated).user;
-    CenterRepository().getCenterByStaff(user.id!).then((value) {
-      setState(() {
-        center = value;
-      });
-    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    var center = (BlocProvider.of<AuthBloc>(context).state as Authenticated)
+        .user
+        .petCenter;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    List<BookingDetail> bookings = widget.bookings
+        .where((element) => element.endBooking!.day == DateTime.now().day)
+        .toList();
     return center != null
         ? SingleChildScrollView(
+            padding: EdgeInsets.all(width * smallPadRate),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -52,48 +52,59 @@ class _CheckoutTodayState extends State<CheckoutToday> {
                     color: primaryFontColor,
                   ),
                 ),
-                ListView.builder(
-                  physics: ClampingScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: 1,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: width * smallPadRate),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
+                (bookings.isNotEmpty)
+                    ? ListView.builder(
+                        physics: ClampingScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: 1,
+                        itemBuilder: (context, index) {
+                          return Padding(
                             padding:
-                                EdgeInsets.only(right: width * smallPadRate),
-                            child: Text(
-                              "${center!.openTime}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: lightFontColor,
-                                fontSize: 18,
-                              ),
+                                EdgeInsets.only(bottom: width * smallPadRate),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      right: width * smallPadRate),
+                                  child: Text(
+                                    "${center.openTime}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: lightFontColor,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                                Flexible(
+                                  child: ListView.builder(
+                                      physics: ClampingScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: bookings.length,
+                                      itemBuilder: (context, index) => InkWell(
+                                          onTap: () => Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                                  builder: (_) => BlocProvider.value(
+                                                      value: BlocProvider.of<
+                                                          BookingBloc>(context),
+                                                      child: BookingActivityScreen(
+                                                          booking: bookings[index])))),
+                                          child: BookingCard(booking: bookings[index]))),
+                                ),
+                              ],
                             ),
+                          );
+                        },
+                      )
+                    : Padding(
+                        padding: EdgeInsets.only(top: width * smallPadRate),
+                        child: Center(
+                          child: Text(
+                            "Không có booking nào check-out hôm nay.",
+                            style: TextStyle(fontStyle: FontStyle.italic),
                           ),
-                          Flexible(
-                            child: ListView.builder(
-                                physics: ClampingScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: widget.bookings.length,
-                                itemBuilder: (context, index) => InkWell(
-                                    onTap: () => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                BookingActivityScreen(
-                                                    bookingId: widget
-                                                        .bookings[index].id))),
-                                    child: BookingCard(
-                                        booking: widget.bookings[index]))),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                )
+                        ),
+                      )
               ],
             ),
           )

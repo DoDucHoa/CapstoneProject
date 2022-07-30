@@ -7,11 +7,12 @@ import LogoOnlyLayout from '../layouts/LogoOnlyLayout';
 // guards
 import GuestGuard from '../guards/GuestGuard';
 import AuthGuard from '../guards/AuthGuard';
-// import RoleBasedGuard from '../guards/RoleBasedGuard';
+import RoleBasedGuard from '../guards/RoleBasedGuard';
 // config
 import { PATH_AFTER_LOGIN } from '../config';
 // components
 import LoadingScreen from '../components/LoadingScreen';
+import useAuth from '../hooks/useAuth';
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +28,9 @@ const Loadable = (Component) => (props) => {
 };
 
 export default function Router() {
+  const { accountInfo } = useAuth();
+  const currentRole = accountInfo?.role;
+
   return useRoutes([
     {
       path: 'auth',
@@ -69,43 +73,224 @@ export default function Router() {
           path: 'admin',
           children: [
             { path: '', element: <Navigate to="/dashboard/admin/list" replace />, index: true },
-            { path: 'list', element: <AdminList /> },
-            { path: 'new', element: <AdminCreate /> },
-            { path: ':id/edit', element: <AdminCreate /> },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin']} currentRole={currentRole}>
+                  <AdminList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin']} currentRole={currentRole}>
+                  <AdminCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin']} currentRole={currentRole}>
+                  <AdminCreate />
+                </RoleBasedGuard>
+              ),
+            },
           ],
         },
         {
           path: 'brand',
           children: [
             { path: '', element: <Navigate to="/dashboard/brand/list" replace />, index: true },
-            { path: 'list', element: <BrandList /> },
-            { path: 'new', element: <BrandCreate /> },
-            { path: ':id/edit', element: <BrandCreate /> },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin', 'moderator']} currentRole={currentRole}>
+                  <BrandList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin', 'moderator']} currentRole={currentRole}>
+                  <BrandCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin', 'moderator']} currentRole={currentRole}>
+                  <BrandCreate />
+                </RoleBasedGuard>
+              ),
+            },
           ],
         },
         {
           path: 'center',
           children: [
             { path: '', element: <Navigate to="/dashboard/center/list" replace />, index: true },
-            { path: 'list', element: <CenterList /> },
-            { path: 'new', element: <CenterCreate /> },
-            { path: ':id/edit', element: <CenterCreate /> },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin', 'moderator']} currentRole={currentRole}>
+                  <CenterList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin', 'moderator']} currentRole={currentRole}>
+                  <CenterCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin', 'moderator']} currentRole={currentRole}>
+                  <CenterCreate />
+                </RoleBasedGuard>
+              ),
+            },
           ],
         },
         {
           path: 'owner',
           children: [
             { path: '', element: <Navigate to="/dashboard/owner/list" replace />, index: true },
-            { path: 'list', element: <OwnerList /> },
-            { path: 'new', element: <OwnerCreate /> },
-            { path: ':id/edit', element: <OwnerCreate /> },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin', 'moderator']} currentRole={currentRole}>
+                  <OwnerList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin', 'moderator']} currentRole={currentRole}>
+                  <OwnerCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin', 'moderator']} currentRole={currentRole}>
+                  <OwnerCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'cage-type',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/cage-type/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageTypeList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageTypeCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageTypeCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'cage',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/cage/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':code/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'supply',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/supply/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <SupplyList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <SupplyCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <SupplyCreate />
+                </RoleBasedGuard>
+              ),
+            },
           ],
         },
         {
           path: 'booking',
           children: [
             { path: '', element: <Navigate to="/dashboard/booking/calendar" replace />, index: true },
-            { path: 'calendar', element: <BookingCalendar /> },
+            {
+              path: 'calendar',
+              element: (
+                <RoleBasedGuard accessibleRoles={['owner', 'staff']} currentRole={currentRole}>
+                  <BookingCalendar />
+                </RoleBasedGuard>
+              ),
+            },
           ],
         },
         {
@@ -179,6 +364,18 @@ const OwnerCreate = Loadable(lazy(() => import('../pages/dashboard/Owner/OwnerCr
 // BRAND
 const BrandList = Loadable(lazy(() => import('../pages/dashboard/Brand/BrandList')));
 const BrandCreate = Loadable(lazy(() => import('../pages/dashboard/Brand/BrandCreate')));
+
+// SUPPLY
+const SupplyList = Loadable(lazy(() => import('../pages/dashboard/Supply/SupplyList')));
+const SupplyCreate = Loadable(lazy(() => import('../pages/dashboard/Supply/SupplyCreate')));
+
+// CAGE TYPE
+const CageTypeList = Loadable(lazy(() => import('../pages/dashboard/CageType/CageTypeList')));
+const CageTypeCreate = Loadable(lazy(() => import('../pages/dashboard/CageType/CageTypeCreate')));
+
+// CAGE
+const CageList = Loadable(lazy(() => import('../pages/dashboard/Cage/CageList')));
+const CageCreate = Loadable(lazy(() => import('../pages/dashboard/Cage/CageCreate')));
 
 // BOOKING CALENDAR
 const BookingCalendar = Loadable(lazy(() => import('../pages/dashboard/Calendar')));

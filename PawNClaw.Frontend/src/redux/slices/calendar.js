@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import axios from '../../utils/axios';
 //
 import { dispatch } from '../store';
+import { BOOKING_STATUS_COLOR } from '../../config';
 
 // ----------------------------------------------------------------------
 
@@ -104,25 +105,20 @@ export const { openModal, closeModal, selectEvent, getBookingStatusesSuccess, ge
 
 // ----------------------------------------------------------------------
 
-const statusColor = {
-  1: 'orange',
-  2: 'blue',
-  3: 'green',
-  4: 'red',
-};
-
-export function getEvents() {
+export function getEvents(CenterId) {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('/api/bookings');
+      const response = await axios.get(`/api/bookings?CenterId=${CenterId}`);
 
       const bookingData = response.data.map((booking) => ({
         id: booking.id,
         title: booking.customer.name,
         start: booking.startBooking,
         color: booking.color,
-        textColor: statusColor[booking.statusId],
+        textColor: BOOKING_STATUS_COLOR[booking.statusId],
+
+        end: booking.endBooking,
       }));
 
       dispatch(slice.actions.getEventsSuccess(bookingData));
@@ -160,7 +156,7 @@ export function getBookingDetails(bookingId) {
 
       const petData = bookingDetails.bookingDetails.map((data) => ({
         cageCode: data.cageCode,
-        line: data.line,
+        line: data.id,
         price: data.price,
         duration: data.duration,
         petBookingDetails: data.petBookingDetails.map((row) => ({

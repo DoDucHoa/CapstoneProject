@@ -59,6 +59,7 @@ namespace PawNClaw.API
             services.AddTransient<StaffServicecs, StaffServicecs>();
 
             services.AddTransient<ICustomerRepository, CustomerRepository>();
+            services.AddTransient<CustomerService, CustomerService>();
 
             services.AddTransient<IBrandRepository, BrandRepository>();
             services.AddTransient<BrandService, BrandService>();
@@ -80,6 +81,7 @@ namespace PawNClaw.API
             services.AddTransient<PetService, PetService>();
 
             services.AddTransient<ILocationRepository, LocationRepository>();
+            
 
             services.AddTransient<IBookingRepository, BookingRepository>();
             services.AddTransient<BookingService, BookingService>();
@@ -103,14 +105,20 @@ namespace PawNClaw.API
             services.AddTransient<SupplyOrderService, SupplyOrderService>();
 
             services.AddTransient<ISupplyRepository, SupplyRepository>();
+            services.AddTransient<SupplyService, SupplyService>();
 
             services.AddTransient<ICageRepository, CageRepository>();
+            services.AddTransient<CageService, CageService>();
 
             services.AddTransient<ICageTypeRepository, CageTypeRepository>();
             services.AddTransient<CageTypeService, CageTypeService>();
 
             services.AddTransient<IPriceRepository, PriceRepository>();
             services.AddTransient<PriceRepository, PriceRepository>();
+            services.AddTransient<PriceService, PriceService>();
+
+            services.AddTransient<IPriceTypeRepository, PriceTypeRepository>();
+            services.AddTransient<PriceTypeService, PriceTypeService>();
 
             services.AddTransient<IPhotoRepository, PhotoRepository>();
             services.AddTransient<PhotoRepository, PhotoRepository>();
@@ -121,6 +129,14 @@ namespace PawNClaw.API
 
             services.AddTransient<IDistrictRepository, DistrictRepository>();
             services.AddTransient<DistrictService, DistrictService>();
+
+            services.AddScoped<ISponsorBannerRepository, SponsorBannerRepository>();
+            services.AddScoped<SponsorBannerService, SponsorBannerService>();
+
+            services.AddScoped<IVoucherRepository, VoucherRepository>();
+            services.AddScoped<VoucherService, VoucherService>();
+
+            services.AddScoped<IFoodScheduleRepository, FoodScheduleRepository>();
 
             services.AddControllers();
             services.AddControllersWithViews()

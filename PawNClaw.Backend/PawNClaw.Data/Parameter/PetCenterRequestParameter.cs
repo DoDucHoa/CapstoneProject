@@ -8,6 +8,32 @@ using System.Threading.Tasks;
 
 namespace PawNClaw.Data.Parameter
 {
+    public class UpdatePetCenterForOwnerParam
+    {
+        public int Id { get; set; }
+        public int? ModifyUser { get; set; }
+        public string OpenTime { get; set; } = null;
+        public string CloseTime { get; set; } = null;
+        public string CheckIn { get; set; } = null;
+        public string CheckOut { get; set; } = null;
+        public string Description { get; set; } = null;
+        public string Phone { get; set; } = null;
+    }
+
+    public class UpdatePetCenterForAdminParam
+    {
+        public int Id { get; set; }
+        public int ModifyUser { get; set; }
+        public string OpenTime { get; set; } = null;
+        public string CloseTime { get; set; } = null;
+        public string CheckIn { get; set; } = null;
+        public string CheckOut { get; set; } = null;
+        public string Description { get; set; } = null;
+        public string Phone { get; set; } = null;
+        public string Address { get; set; } = null;
+        public bool Status { get; set; }
+    }
+
     public class PetCenterRequestParameter
     {
         public int? Id { get; set; } = null;

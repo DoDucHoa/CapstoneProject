@@ -18,5 +18,17 @@ namespace PawNClaw.Data.Repository
         {
             _dbSet.Remove(_dbSet.Find(SupplyId,BookingId));
         }
+
+        public IEnumerable<SupplyOrder> GetSupplyOrdersByPetIdAndBookingId(int BookingId, int PetId)
+        {
+            return _dbSet.Where(x => x.BookingId == BookingId && x.PetId == PetId).Select(x => new SupplyOrder { 
+                BookingId = x.BookingId,
+                Note = x.Note,
+                Supply = x.Supply,
+                PetId = x.PetId,
+                SupplyId = x.SupplyId,
+                Quantity = x.Quantity
+            });
+        }
     }
 }

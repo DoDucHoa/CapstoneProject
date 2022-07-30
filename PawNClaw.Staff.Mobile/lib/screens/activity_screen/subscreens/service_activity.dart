@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pncstaff_mobile_application/blocs/booking/booking_bloc.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/models/booking_detail.dart';
 import 'package:pncstaff_mobile_application/models/pet.dart';
@@ -13,24 +15,34 @@ class ServiceActivity extends StatefulWidget {
 }
 
 class _ServiceActivityState extends State<ServiceActivity> {
-  @override
-  Widget build(BuildContext context) {
-    final booking = widget.booking;
+  List<ServiceOrders> getPetForServices(
+      BookingDetail booking, List<ServiceOrders> services) {
     List<Pet> pets = [];
     booking.bookingDetails!.forEach(
       (cage) => cage.petBookingDetails!.forEach(
-        (element) {
-          pets.add(element.pet!);
+        (pet) {
+          pets.add(pet.pet!);
         },
       ),
     );
-    booking.serviceOrders!.forEach((service) {
-      pets.forEach((pet) {
-        if (service.petId == pet.id) {
-          service.pet = pet;
-        }
-      });
-    });
+    services.forEach(
+      (service) {
+        pets.forEach((pet) {
+          if (pet.id == service.petId) {
+            service.pet = pet;
+          }
+        });
+      },
+    );
+    return services;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    final booking = widget.booking;
+    List<ServiceOrders> services =
+        getPetForServices(booking, booking.getUndoneServiceAct());
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -58,19 +70,26 @@ class _ServiceActivityState extends State<ServiceActivity> {
           itemBuilder: (context, index) => InkWell(
             onTap: () => Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => ActivityDetail(
-                      pet: booking.serviceOrders![index].pet!,
-                      service: booking.serviceOrders![index],
+                      pet: services[index].pet!,
+                      service: services[index],
+                      booking: booking,
                     ))),
-            child: ActivityCard(
-              activityName: booking.serviceOrders![index].service!.description!,
-              note: booking.serviceOrders![index].note ?? "Không có ghi chú",
-              remainCount:
-                  booking.getRemainServiceAct(booking.serviceOrders![index]),
-              booking: booking,
-              pet: booking.serviceOrders![index].pet!,
+            child: Container(
+              margin: EdgeInsets.only(
+                right: width * smallPadRate,
+                left: width * smallPadRate,
+                top: width * smallPadRate,
+              ),
+              child: ActivityCard(
+                activityName: services[index].service!.description!,
+                note: services[index].note ?? "Không có ghi chú",
+                remainCount: booking.getRemainServiceAct(services[index]),
+                booking: booking,
+                pet: services[index].pet!,
+              ),
             ),
           ),
-          itemCount: booking.serviceOrders!.length,
+          itemCount: services.length,
         ),
       ),
     );

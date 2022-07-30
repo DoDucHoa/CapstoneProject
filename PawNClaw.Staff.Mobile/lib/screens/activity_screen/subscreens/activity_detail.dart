@@ -14,13 +14,19 @@ import 'package:pncstaff_mobile_application/screens/home_screen/home_screen.dart
 
 class ActivityDetail extends StatefulWidget {
   const ActivityDetail(
-      {required this.pet, this.service, this.supply, this.cage, Key? key})
+      {required this.booking,
+      required this.pet,
+      this.service,
+      this.supply,
+      this.cage,
+      Key? key})
       : super(key: key);
 
   final SupplyOrders? supply;
   final ServiceOrders? service;
   final BookingDetails? cage;
   final Pet pet;
+  final BookingDetail booking;
 
   @override
   State<ActivityDetail> createState() => _ActivityDetailState();
@@ -29,34 +35,22 @@ class ActivityDetail extends StatefulWidget {
 class _ActivityDetailState extends State<ActivityDetail> {
   String? imageUrl;
 
-  int getActivityId(
-      SupplyOrders? supply, ServiceOrders? service, BookingDetails? cage) {
+  int getActivityId(SupplyOrders? supply, ServiceOrders? service,
+      BookingDetails? cage, BookingDetail booking) {
     int result;
     if (supply != null) {
-      BookingDetail booking =
-          (BlocProvider.of<BookingBloc>(context).state as BookingLoaded)
-              .bookings
-              .firstWhere((element) => element.id == supply.bookingId);
       result = booking.bookingActivities!
           .firstWhere((element) =>
               element.supplyId == supply.supply!.id &&
               element.provideTime == null)
           .id!;
     } else if (service != null) {
-      BookingDetail booking =
-          (BlocProvider.of<BookingBloc>(context).state as BookingLoaded)
-              .bookings
-              .firstWhere((element) => element.id == service.bookingId);
       result = booking.bookingActivities!
           .firstWhere((element) =>
               element.serviceId == service.service!.id &&
               element.provideTime == null)
           .id!;
     } else {
-      BookingDetail booking =
-          (BlocProvider.of<BookingBloc>(context).state as BookingLoaded)
-              .bookings
-              .firstWhere((element) => element.id == cage!.bookingId);
       result = booking.bookingActivities!
           .firstWhere((element) =>
               element.bookingDetailId == cage!.id &&
@@ -72,6 +66,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
     var service = widget.service;
     var cage = widget.cage;
     var pet = widget.pet;
+    var booking = widget.booking;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -182,7 +177,7 @@ class _ActivityDetailState extends State<ActivityDetail> {
                 InkWell(
                   onTap: () async {
                     var resultUrl = await FirebaseUpload().pickFile(
-                        "booking/${supply != null ? supply.bookingId : service!.bookingId}",
+                        "booking/${supply != null ? supply.bookingId : service != null ? service.bookingId : cage!.bookingId}",
                         true);
                     setState(() {
                       imageUrl = resultUrl;
@@ -280,7 +275,8 @@ class _ActivityDetailState extends State<ActivityDetail> {
                           ? () async {
                               ActivityRequestModel activity =
                                   ActivityRequestModel(
-                                id: getActivityId(supply, service, cage),
+                                id: getActivityId(
+                                    supply, service, cage, booking),
                                 description: widget.cage == null
                                     ? "Cung cấp ${supply?.supply?.name ?? service?.service?.description}"
                                     : "Cho ăn",

@@ -36,7 +36,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetByBookingIdAndLine(int id)
+        public IActionResult GetById(int id)
         {
             var data = _bookingDetailService.GetBookingDetailsById(id);
             if (data == null)

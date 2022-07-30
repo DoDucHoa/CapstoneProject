@@ -14,20 +14,67 @@ namespace PawNClaw.Business.Services
     {
         ICageTypeRepository _cageTypeRepository;
         IPriceRepository _priceRepository;
+        IFoodScheduleRepository _foodScheduleRepository;
 
         private readonly ApplicationDbContext _db;
 
-        public CageTypeService(ICageTypeRepository cageTypeRepository, IPriceRepository priceRepository, 
+        public CageTypeService(ICageTypeRepository cageTypeRepository, IPriceRepository priceRepository,
+            IFoodScheduleRepository foodScheduleRepository,
             ApplicationDbContext db)
         {
             _cageTypeRepository = cageTypeRepository;
             _priceRepository = priceRepository;
+            _foodScheduleRepository = foodScheduleRepository;
             _db = db;
         }
 
-        public PagedList<CageType> GetCageTypes(int centerId, PagingParameter paging)
+        public PagedList<CageType> GetCageTypes(CageTypeRequestParameter cageTypeRequestParameter, PagingParameter paging)
         {
-            var values = _cageTypeRepository.GetAllCageWithCageType(centerId);
+            var values = _cageTypeRepository.GetAllCageWithCageType(cageTypeRequestParameter.CenterId);
+
+            if (!string.IsNullOrWhiteSpace(cageTypeRequestParameter.TypeName))
+            {
+                values = values.Where(x => x.TypeName.ToLower().Contains(cageTypeRequestParameter.TypeName.ToLower()));
+            }
+
+            if (cageTypeRequestParameter.id != null)
+            {
+                values = values.Where(x => x.Id == cageTypeRequestParameter.id);
+            }
+
+            if (cageTypeRequestParameter.IsSingle != null)
+            {
+                values = cageTypeRequestParameter.IsSingle switch
+                {
+                    true => values.Where(x => x.IsSingle == true),
+                    false => values.Where(x => x.IsSingle == false),
+                    _ => values
+                };
+            }
+
+            if (cageTypeRequestParameter.Status != null)
+            {
+                values = cageTypeRequestParameter.Status switch
+                {
+                    true => values.Where(x => x.Status == true),
+                    false => values.Where(x => x.Status == false),
+                    _ => values
+                };
+            }
+
+            if (!string.IsNullOrWhiteSpace(cageTypeRequestParameter.sort))
+            {
+                switch (cageTypeRequestParameter.sort)
+                {
+                    case "typename":
+                        if (cageTypeRequestParameter.dir == "asc")
+                            values = values.OrderBy(d => d.TypeName);
+                        else if (cageTypeRequestParameter.dir == "desc")
+                            values = values.OrderByDescending(d => d.TypeName);
+                        break;
+                }
+            }
+
             return PagedList<CageType>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
             paging.PageSize);
@@ -40,7 +87,7 @@ namespace PawNClaw.Business.Services
             return values;
         }
 
-        public async Task<bool> CreateCageType(CreateCageTypeParameter createCageTypeParameter, List<CreatePriceParameter> createPriceParameters)
+        public async Task<bool> CreateCageType(CreateCageTypeParameter createCageTypeParameter, List<CreatePriceParameter> createPriceParameters, List<CreateFoodSchedule> foodSchedules)
         {
             CageType cageType = new CageType();
 
@@ -53,6 +100,8 @@ namespace PawNClaw.Business.Services
             cageType.CreateDate = createCageTypeParameter.CreateDate;
             cageType.CreateUser = createCageTypeParameter.CreateUser;
             cageType.CenterId = createCageTypeParameter.CenterId;
+            cageType.ModifyUser = createCageTypeParameter.ModifyUser;
+            cageType.ModifyDate = createCageTypeParameter.ModifyDate;
             cageType.Status = true;
 
 
@@ -84,6 +133,8 @@ namespace PawNClaw.Business.Services
                         price.CreateDate = createPriceParameter.CreateDate;
                         price.CreateUser = createPriceParameter.CreateUser;
                         price.PriceTypeCode = createPriceParameter.PriceTypeCode;
+                        price.ModifyDate = createPriceParameter.ModifyDate;
+                        price.ModifyUser = createPriceParameter.ModifyUser;
                         price.Status = true;
                         price.CageTypeId = cageType.Id;
 
@@ -97,6 +148,25 @@ namespace PawNClaw.Business.Services
                         throw new Exception("Need Price Is - 'Giá Mặc Định' ");
                     }
 
+                    if (foodSchedules.Count < 1)
+                    {
+                        throw new Exception("Need Food Schedule");
+                    }
+
+                    foreach (var foodSchedule in foodSchedules)
+                    {
+                        FoodSchedule food = new FoodSchedule()
+                        {
+                            FromTime = foodSchedule.FromTime.TimeOfDay,
+                            ToTime = foodSchedule.ToTime.TimeOfDay,
+                            Name = foodSchedule.Name,
+                        };
+
+                        food.CageTypeId = cageType.Id;
+                        _foodScheduleRepository.Add(food);
+                        await _foodScheduleRepository.SaveDbChangeAsync();
+                    }
+
                     transaction.Commit();
                 }
                 catch
@@ -107,6 +177,42 @@ namespace PawNClaw.Business.Services
             }
 
             return true;
+        }
+
+        public bool Update(UpdateCageTypeParameter cageTypeP)
+        {
+            CageType cageType = _cageTypeRepository.Get(cageTypeP.Id);
+            cageType.TypeName = cageTypeP.TypeName;
+            cageType.Description = cageTypeP.Description;
+            cageType.IsSingle = cageTypeP.IsSingle;
+            cageType.ModifyDate = cageTypeP.ModifyDate;
+            cageType.Status = cageTypeP.Status;
+
+            _cageTypeRepository.Update(cageType);
+            _cageTypeRepository.SaveDbChange();
+            return true;
+        }
+
+        public bool Delete(int id)
+        {
+            var cagetype = _cageTypeRepository.GetCageTypeWithCageAndPrice(id);
+            if (cagetype.Cages.Any(x => x.BookingDetails.Any(bookingdetail => bookingdetail.Booking.StatusId == 1 || bookingdetail.Booking.StatusId == 2)))
+            {
+                throw new Exception("Cant delete this cage type");
+            }
+            else
+            {
+                cagetype = _cageTypeRepository.Get(id);
+                cagetype.Status = false;
+                _cageTypeRepository.Update(cagetype);
+                _cageTypeRepository.SaveDbChange();
+                return true;
+            }
+        }
+
+        public CageType GetCageTypeWithCageAndPrice(int id)
+        {
+            return _cageTypeRepository.GetCageTypeWithCageAndPrice(id);
         }
     }
 }

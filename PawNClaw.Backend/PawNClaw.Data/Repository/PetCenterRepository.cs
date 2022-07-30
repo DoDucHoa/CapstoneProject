@@ -37,7 +37,7 @@ namespace PawNClaw.Data.Repository
                 .Include(x => x.Location)
                 .Include(x => x.CageTypes)
                 .Where(x => x.Location.CityCode.Trim().Equals(City)
-                                            && x.Location.DistrictCode.Trim().Equals(District))
+                                            && x.Location.DistrictCode.Trim().Equals(District) && x.Status == true)
                 .Select(x => new PetCenter
                 {
                     Id = x.Id,
@@ -176,6 +176,7 @@ namespace PawNClaw.Data.Repository
                 .Include(x => x.CageTypes)
                 .ThenInclude(cagetype => cagetype.Prices)
                 .Include(x => x.Supplies)
+                .Include(x => x.Vouchers)
                 .Select(x => new PetCenter
                 {
                     Id = x.Id,
@@ -203,7 +204,7 @@ namespace PawNClaw.Data.Repository
                         CenterId = cagetype.CenterId,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(cagetype.Id, PhotoTypesConst.CageType),
                         TotalPrice = _priceRepository.checkTotalPriceOfCageType(cagetype.Id, StartBooking, EndBooking),
-                        Cages = (ICollection<Cage>)cagetype.Cages.Where(cage => cage.Status == true 
+                        Cages = (ICollection<Cage>)cagetype.Cages.Where(cage => cage.Status == true && cage.IsOnline == true
                                 && !cage.BookingDetails.Any(bookingdetail =>
                                 ((DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
                                 && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
@@ -212,7 +213,8 @@ namespace PawNClaw.Data.Repository
                                 && DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
                                 ||
                                 (DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
-                                && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))))
+                                && DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))
+                                && (bookingdetail.Booking.StatusId == 1 || bookingdetail.Booking.StatusId == 2)))
                     }),
                     Supplies = (ICollection<Supply>)x.Supplies.Where(s => s.Quantity > 0 && s.Status == true)
                     .Select(s => new Supply
@@ -225,7 +227,7 @@ namespace PawNClaw.Data.Repository
                         SupplyTypeCode = s.SupplyTypeCode,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(s.Id, PhotoTypesConst.Supply)
                     }),
-                    Services = (ICollection<Service>)x.Services.Where(ser => ser.Status == true && ser.ServiceOrders.Count > 0)
+                    Services = (ICollection<Service>)x.Services.Where(ser => ser.Status == true && ser.ServicePrices.Count > 0)
                     .Select(ser => new Service
                     {
                         Id = ser.Id,
@@ -239,11 +241,83 @@ namespace PawNClaw.Data.Repository
                             MinWeight = price.MinWeight,
                             MaxWeight = price.MaxWeight
                         })
-                    })
+                    }),
+                    Vouchers = (ICollection<Voucher>)x.Vouchers.Where(x => x.Status == true).Select(x => new Voucher()
+                    {
+                        Value = x.Value,
+                        MinCondition = x.MinCondition,
+                        Code = x.Code,
+                        VoucherTypeName = x.VoucherTypeCodeNavigation.Name
+                    }),
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
                 })
                 .SingleOrDefault(x => x.Id == id);
 
             return center;
+        }
+
+        public PetCenter GetPetCenterByIdAfterSearchName(int id)
+        {
+            PetCenter query = _dbSet
+                .Include(x => x.Location)
+                .Include(x => x.CageTypes)
+                .Include(x => x.Services)
+                .Include(x => x.Supplies)
+                .Where(x => x.Id == id)
+                .Select(x => new PetCenter
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Address = x.Address,
+                    Phone = x.Phone,
+                    Rating = x.Rating,
+                    CreateDate = x.CreateDate,
+                    Status = x.Status,
+                    OpenTime = x.OpenTime,
+                    CloseTime = x.CloseTime,
+                    Description = x.Description,
+                    BrandId = x.BrandId,
+                    Checkin = x.Checkin,
+                    Checkout = x.Checkout,
+                    CageTypes = (ICollection<CageType>)x.CageTypes.Select(cagetype => new CageType
+                    {
+                        Id = cagetype.Id,
+                        TypeName = cagetype.TypeName,
+                        Description = cagetype.Description,
+                        Height = cagetype.Height,
+                        Width = cagetype.Width,
+                        Length = cagetype.Length,
+                        IsSingle = cagetype.IsSingle,
+                        Status = cagetype.Status,
+                        CenterId = cagetype.CenterId,
+                        Cages = cagetype.Cages.Where(x => x.IsOnline == true && x.Status == true).ToList(),
+                        MinPrice = cagetype.Prices.Min(x => x.UnitPrice),
+                        MaxPrice = cagetype.Prices.Max(x => x.UnitPrice),
+                    }),
+                    Supplies = (ICollection<Supply>)x.Supplies.Where(s => s.Quantity > 0 && s.Status == true)
+                    .Select(s => new Supply
+                    {
+                        Id = s.Id,
+                        Name = s.Name,
+                        SellPrice = s.SellPrice,
+                        DiscountPrice = s.DiscountPrice,
+                        Quantity = s.Quantity,
+                        SupplyTypeCode = s.SupplyTypeCode,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(s.Id, PhotoTypesConst.Supply)
+                    }),
+                    Services = (ICollection<Service>)x.Services.Where(ser => ser.Status == true && ser.ServicePrices.Count > 0)
+                    .Select(ser => new Service
+                    {
+                        Id = ser.Id,
+                        Description = ser.Description,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(ser.Id, PhotoTypesConst.Service),
+                        MinPrice = ser.ServicePrices.Min(x => x.Price),
+                        MaxPrice = ser.ServicePrices.Max(x => x.Price)
+                    }),
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
+                }).FirstOrDefault();
+
+            return query;
         }
 
         public string checkTotalPriceOfCageType(string StartBooking, string EndBooking)
@@ -277,6 +351,13 @@ namespace PawNClaw.Data.Repository
             }
 
             return null;
+        }
+
+        public PetCenter GetPetCenterWithLocation(int id)
+        {
+            PetCenter petCenter = _dbSet.Include(x => x.Location).FirstOrDefault(x => x.Id == id);
+
+            return petCenter;
         }
     }
 }

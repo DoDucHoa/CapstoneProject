@@ -23,6 +23,7 @@ const ICONS = {
   staff: getIcon('ic_staff'),
 };
 
+// nav config for owner
 const navConfig = [
   // GENERAL
   // ----------------------------------------------------------------------
@@ -43,6 +44,113 @@ const navConfig = [
         icon: ICONS.booking,
       },
     ],
+  },
+
+  // CENTER MANAGEMENT
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Quản Lý Trung Tâm',
+    items: [
+      // OWNER
+      {
+        title: 'Nhân viên',
+        path: PATH_DASHBOARD.staff.list,
+        icon: ICONS.staff,
+      },
+
+      // STAFF
+      {
+        title: 'Loại chuồng',
+        path: PATH_DASHBOARD.cageType.list,
+        icon: ICONS.cage,
+      },
+      {
+        title: 'Chuồng',
+        path: PATH_DASHBOARD.cage.list,
+        icon: ICONS.cage,
+      },
+      {
+        title: 'Giá chuồng',
+        path: PATH_DASHBOARD.price.list,
+        icon: ICONS.price,
+      },
+      {
+        title: 'Đồ dùng',
+        path: PATH_DASHBOARD.supply.list,
+        icon: ICONS.food,
+      },
+      {
+        title: 'Dịch vụ',
+        path: PATH_DASHBOARD.service.list,
+        icon: ICONS.service,
+      },
+    ],
+  },
+];
+
+export const navConfigForStaff = [
+  // GENERAL
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'general',
+    items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
+  },
+
+  // BOOKING
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'booking',
+    items: [
+      { title: 'Booking', path: PATH_DASHBOARD.bookingList.list, icon: ICONS.list },
+      {
+        title: 'Lịch Đặt',
+        path: PATH_DASHBOARD.booking.calendar,
+        icon: ICONS.booking,
+      },
+    ],
+  },
+
+  // CENTER MANAGEMENT
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Quản Lý Trung Tâm',
+    items: [
+      // STAFF
+      {
+        title: 'Loại chuồng',
+        path: PATH_DASHBOARD.cageType.list,
+        icon: ICONS.cage,
+      },
+      {
+        title: 'Chuồng',
+        path: PATH_DASHBOARD.cage.list,
+        icon: ICONS.cage,
+      },
+      {
+        title: 'Giá chuồng',
+        path: PATH_DASHBOARD.price.list,
+        icon: ICONS.price,
+      },
+      {
+        title: 'Đồ dùng',
+        path: PATH_DASHBOARD.supply.list,
+        icon: ICONS.food,
+      },
+      {
+        title: 'Dịch vụ',
+        path: PATH_DASHBOARD.service.list,
+        icon: ICONS.service,
+      },
+    ],
+  },
+];
+
+export const navConfigForAdmin = [
+  // GENERAL
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'general',
+    items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
   },
 
   // MANAGEMENT
@@ -80,30 +188,46 @@ const navConfig = [
         path: PATH_DASHBOARD.center.list,
         icon: ICONS.center,
       },
+    ],
+  },
+];
+
+export const navConfigForModerator = [
+  // GENERAL
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'general',
+    items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
+  },
+
+  // MANAGEMENT
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Quản Lý',
+    items: [
       {
-        title: 'Nhân viên',
-        path: PATH_DASHBOARD.center.list,
-        icon: ICONS.staff,
+        title: 'Chủ trung tâm',
+        path: PATH_DASHBOARD.owner.list,
+        icon: ICONS.owner,
+      },
+    ],
+  },
+
+  // CENTER
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Trung Tâm',
+    items: [
+      // MODERATOR
+      {
+        title: 'Thương hiệu',
+        path: PATH_DASHBOARD.brand.list,
+        icon: ICONS.brand,
       },
       {
-        title: 'Chuồng',
+        title: 'Trung tâm',
         path: PATH_DASHBOARD.center.list,
-        icon: ICONS.cage,
-      },
-      {
-        title: 'Giá chuồng',
-        path: PATH_DASHBOARD.center.list,
-        icon: ICONS.price,
-      },
-      {
-        title: 'Đồ dùng',
-        path: PATH_DASHBOARD.center.list,
-        icon: ICONS.food,
-      },
-      {
-        title: 'Dịch vụ',
-        path: PATH_DASHBOARD.center.list,
-        icon: ICONS.service,
+        icon: ICONS.center,
       },
     ],
   },

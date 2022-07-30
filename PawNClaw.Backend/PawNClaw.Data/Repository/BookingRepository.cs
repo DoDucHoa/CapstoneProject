@@ -17,10 +17,19 @@ namespace PawNClaw.Data.Repository
 
         PhotoRepository _photoRepository;
 
-        public BookingRepository(ApplicationDbContext db, PhotoRepository photoRepository) : base(db)
+        ISupplyOrderRepository _supplyOrderRepository;
+        IServiceOrderRepository _serviceOrderRepository;
+        IBookingActivityRepository _bookingActivityRepository;
+
+        public BookingRepository(ApplicationDbContext db, PhotoRepository photoRepository, 
+            ISupplyOrderRepository supplyOrderRepository, IServiceOrderRepository serviceOrderRepository,
+            IBookingActivityRepository bookingActivityRepository) : base(db)
         {
             _db = db;
             _photoRepository = photoRepository;
+            _supplyOrderRepository = supplyOrderRepository;
+            _serviceOrderRepository = serviceOrderRepository;
+            _bookingActivityRepository = bookingActivityRepository;
         }
 
         public IEnumerable<Booking> GetBookingValidSearch(int Id, DateTime _startBooking, DateTime _endBooking)
@@ -83,7 +92,7 @@ namespace PawNClaw.Data.Repository
                             ||
                             (DateTime.Compare((DateTime)bookingRequestParameter.EndBooking, (DateTime)x.StartBooking) > 0
                             && DateTime.Compare((DateTime)bookingRequestParameter.EndBooking, (DateTime)x.EndBooking) <= 0)));
-            } 
+            }
 
 
             if (bookingRequestParameter.dir == "asc")
@@ -455,7 +464,7 @@ namespace PawNClaw.Data.Repository
                         }
                     }),
                     BookingActivities = (ICollection<BookingActivity>)x.BookingActivities
-                    .Where(x => now.Date >= ((DateTime) x.ActivityTimeFrom).Date && now <= ((DateTime)x.ActivityTimeTo).Date)
+                    .Where(x => now.Date >= ((DateTime)x.ActivityTimeFrom).Date && now <= ((DateTime)x.ActivityTimeTo).Date)
                     .Select(bookingact => new BookingActivity
                     {
                         Id = bookingact.Id,
@@ -553,6 +562,7 @@ namespace PawNClaw.Data.Repository
                         SupplyId = supplyorder.SupplyId,
                         BookingId = supplyorder.BookingId,
                         PetId = supplyorder.PetId,
+                        Quantity = supplyorder.Quantity,
                         Pet = new Pet
                         {
                             Name = supplyorder.Pet.Name,
@@ -564,6 +574,7 @@ namespace PawNClaw.Data.Repository
                         ServiceId = serviceorder.ServiceId,
                         BookingId = serviceorder.BookingId,
                         PetId = serviceorder.PetId,
+                        Quantity = serviceorder.Quantity,
                         Pet = new Pet
                         {
                             Name = serviceorder.Pet.Name,
@@ -571,6 +582,69 @@ namespace PawNClaw.Data.Repository
                     })
                 })
                 .SingleOrDefault(x => x.Id == BookingId);
+
+            return query;
+        }
+
+        public Booking GetBookingByCageCodeForStaff(int CenterId, int? StatusId, string CageCode)
+        {
+            Booking query = _dbSet
+                .Where(x => x.CenterId == CenterId && x.StatusId == StatusId).Where(x => x.BookingDetails.Any(bookingdetail => bookingdetail.CageCode.Equals(CageCode)))
+                .Select(x => new Booking
+                {
+                    Id = x.Id,
+                    CreateTime = x.CreateTime,
+                    StartBooking = x.StartBooking,
+                    EndBooking = x.EndBooking,
+                    CheckIn = x.CheckIn,
+                    CheckOut = x.CheckOut,
+                    SubTotal = x.SubTotal,
+                    Discount = x.Discount,
+                    Total = x.Total,
+                    StatusId = x.StatusId,
+                    VoucherCode = x.VoucherCode,
+                    CustomerId = x.CustomerId,
+                    CenterId = x.CenterId,
+                    Rating = x.Rating,
+                    CustomerNote = x.CustomerNote,
+                    StaffNote = x.StaffNote,
+                    BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
+                    .Select(bookingdetail => new BookingDetail
+                    {
+                        Id = bookingdetail.Id,
+                        BookingId = bookingdetail.BookingId,
+                        Price = bookingdetail.Price,
+                        CageCode = bookingdetail.CageCode,
+                        CageType = bookingdetail.C.CageType.TypeName,
+                        CenterId = bookingdetail.CenterId,
+                        Duration = bookingdetail.Duration,
+                        Note = bookingdetail.Note,
+                        PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
+                        .Select(pet => new PetBookingDetail
+                        {
+                            BookingDetailId = pet.BookingDetailId,
+                            PetId = pet.PetId,
+                            Pet = pet.Pet
+                        })
+                    })
+                    .Where(bookingdetail => bookingdetail.CageCode.Equals(CageCode))
+                }).FirstOrDefault();
+
+
+            foreach (var bookingDetail in query.BookingDetails)
+            {
+                foreach (var petBooking in bookingDetail.PetBookingDetails)
+                {
+                    var supplyOrders = _supplyOrderRepository.GetSupplyOrdersByPetIdAndBookingId(query.Id, petBooking.PetId).ToList();
+
+                    supplyOrders.ForEach(o => query.SupplyOrders.Add(o));
+                    var serviceOrder = _serviceOrderRepository.GetServiceOrdersByPetIdAndBookingId(query.Id, petBooking.PetId).ToList();
+                    serviceOrder.ForEach(o => query.ServiceOrders.Add(o));
+                    var bookingActivity = _bookingActivityRepository.GetBookingActivitiesByBookingAndPetId(query.Id, bookingDetail.Id, petBooking.PetId).ToList();
+                    bookingActivity.ForEach(o => query.BookingActivities.Add(o));
+                }
+            }
+
 
             return query;
         }

@@ -106,14 +106,12 @@ class BookingDetail {
 
   List<BookingDetails> getUndoneFeedingAct() {
     List<BookingDetails> undone = [];
-    this.bookingActivities!.forEach((element) {
-      if (element.provideTime == null && element.bookingDetailId != null) {
-        this.bookingDetails!.forEach((booking) {
-          if (booking.id == element.bookingDetailId) {
-            undone.add(booking);
-          }
-        });
-      }
+    this.bookingDetails!.forEach((booking) {
+      booking.bookingActivities?.forEach((element) {
+        if (element.provideTime == null) {
+          undone.add(booking);
+        }
+      });
     });
     return undone;
   }
@@ -155,7 +153,7 @@ class BookingDetail {
     this.bookingActivities!.forEach((element) {
       if (element.supplyId != null && element.provideTime == null) {
         this.supplyOrders?.forEach((supply) {
-          if (element.supplyId == supply.supply?.id) {
+          if (element.petId == supply.petId) {
             undone.add(supply);
           }
         });
@@ -164,21 +162,47 @@ class BookingDetail {
     return undone;
   }
 
-  int getRemainSupplyAct(SupplyOrders supply) {
-    int count = supply.quantity!;
+  List<SupplyOrders> getDoneSupplyAct() {
+    List<SupplyOrders> done = [];
     this.bookingActivities!.forEach((element) {
-      if (element.supplyId == supply.supply!.id) {
-        count--;
+      if (element.supplyId != null && element.provideTime != null) {
+        this.supplyOrders?.forEach((supply) {
+          if (element.petId == supply.petId) {
+            done.add(supply);
+          }
+        });
+      }
+    });
+    return done;
+  }
+
+  int getRemainSupplyAct(SupplyOrders supply) {
+    int count = 0;
+    this.bookingActivities!.forEach((element) {
+      if (element.supplyId == supply.supply!.id &&
+          element.provideTime == null) {
+        count++;
       }
     });
     return count;
   }
 
   int getRemainServiceAct(ServiceOrders service) {
-    int count = service.quantity!;
+    int count = 0;
     this.bookingActivities!.forEach((element) {
-      if (element.serviceId == service.service!.id) {
-        count--;
+      if (element.serviceId == service.service!.id &&
+          element.provideTime == null) {
+        count++;
+      }
+    });
+    return count;
+  }
+
+  int getRemainFeedingAct() {
+    int count = 0;
+    this.bookingActivities!.forEach((element) {
+      if (element.bookingDetailId != null && element.provideTime == null) {
+        count++;
       }
     });
     return count;
@@ -189,7 +213,7 @@ class BookingDetail {
     this.bookingActivities!.forEach((element) {
       if (element.serviceId != null && element.provideTime == null) {
         this.serviceOrders?.forEach((service) {
-          if (element.serviceId == service.service?.id) {
+          if (element.petId == service.petId) {
             undone.add(service);
           }
         });
@@ -198,21 +222,26 @@ class BookingDetail {
     return undone;
   }
 
+  List<ServiceOrders> getDoneServiceAct() {
+    List<ServiceOrders> done = [];
+    this.bookingActivities!.forEach((element) {
+      if (element.serviceId != null && element.provideTime != null) {
+        this.serviceOrders?.forEach((service) {
+          if (element.petId == service.petId) {
+            done.add(service);
+          }
+        });
+      }
+    });
+    return done;
+  }
+
   int getDoneActivites() {
     int count = 0;
     this.bookingActivities!.forEach((element) {
-      this.supplyOrders?.forEach((order) {
-        if (order.petId == element.petId &&
-            order.supply?.id == element.supplyId) {
-          count++;
-        }
-      });
-      this.serviceOrders?.forEach((order) {
-        if (order.petId == element.petId &&
-            order.service?.id == element.serviceId) {
-          count++;
-        }
-      });
+      if (element.provideTime != null) {
+        count++;
+      }
     });
     return count;
   }

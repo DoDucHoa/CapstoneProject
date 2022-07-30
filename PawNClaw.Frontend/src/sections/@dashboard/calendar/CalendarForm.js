@@ -35,30 +35,73 @@ import { ServiceDialogForm } from './ServiceDialogForm';
 // hooks
 import useResponsive from '../../../hooks/useResponsive';
 import CageDialogForm from './CageDialogForm';
+import { checkSize } from './useCalendarAPI';
 
 // ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
 
 CalendarForm.propTypes = {
+  centerId: PropTypes.number,
   selectedEvent: PropTypes.object,
   onCancel: PropTypes.func,
   bookingStatuses: PropTypes.array,
   petData: PropTypes.array,
+  updateStatusColor: PropTypes.func,
 };
 
-export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses, petData }) {
+export default function CalendarForm({
+  centerId,
+  selectedEvent,
+  onCancel,
+  bookingStatuses,
+  petData,
+  updateStatusColor,
+}) {
   // STATE
   // ----------------------------------------------------------------------
   const [openSupplyDialogForm, setOpenSupplyDialogForm] = useState(false);
   const [openServiceDialogForm, setOpenServiceDialogForm] = useState(false);
   const [openCageDialogForm, setOpenCageDialogForm] = useState(false);
+  const [isSizeValid, setIsSizeValid] = useState(false);
 
   const [cageSearchParam, setCageSearchParam] = useState({});
 
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
-  const { id, statusId, startBooking, endBooking, total, customerNote, serviceOrders, supplyOrders } = selectedEvent;
+  const { id, statusId, startBooking, endBooking, total, customerNote, serviceOrders, supplyOrders, bookingDetails } =
+    selectedEvent;
+
+  const petOldInfo = bookingDetails
+    .map((detail) =>
+      detail.petBookingDetails.map((petData) => ({
+        name: petData.pet.name,
+        weight: petData.pet.weight,
+        height: petData.pet.height,
+        length: petData.pet.length,
+      }))
+    )
+    .reduce((acc, cur) => acc.concat(cur), []);
+
+  bookingStatuses = bookingStatuses.filter((status) => {
+    if (statusId === 1) {
+      return status.id !== 3;
+    }
+
+    if (statusId === 2) {
+      return status.id === 2 || status.id === 3 || status.id === 4;
+    }
+
+    if (statusId === 3) {
+      return status.id === 3;
+    }
+
+    if (statusId === 4) {
+      return status.id === 4;
+    }
+
+    return status;
+  });
 
   const isDesktop = useResponsive('up', 'sm');
 
@@ -110,9 +153,11 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
 
   const {
     control,
+    reset,
     watch,
     handleSubmit,
-    formState: { isSubmitting },
+    trigger,
+    formState: { isSubmitting, isDirty },
   } = methods;
 
   const { fields } = useFieldArray({
@@ -141,12 +186,23 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
     setOpenServiceDialogForm(false);
   };
 
+  const diableStaffNote = (statusId) => {
+    if (statusId === 1) {
+      return false;
+    }
+    if (statusId === 4) {
+      return false;
+    }
+
+    return true;
+  };
+
   const handleOpenCageDialogForm = (cageIndex, bookingDetailLine) => {
     const searchParam = {
       listPets: values.petData[cageIndex].petBookingDetails,
       startBooking: fDateTime(startBooking),
       endBooking: fDateTime(endBooking),
-      centerId: 1,
+      centerId,
       line: bookingDetailLine,
     };
 
@@ -160,10 +216,39 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
 
   const onSubmit = async (data) => {
     try {
-      dispatch(createPetHealthStatus(data, id));
-      dispatch(updateBookingStatus(data));
-      enqueueSnackbar('Cập nhật thành công!');
-      onCancel();
+      // get current date
+      const currentDate = new Date();
+
+      if (startBooking >= currentDate.toISOString()) {
+        if (statusId !== 1 || (!isDirty && isSizeValid)) {
+          dispatch(createPetHealthStatus(data, id));
+          dispatch(updateBookingStatus(data));
+          updateStatusColor(data.id, data.statusId);
+          enqueueSnackbar('Cập nhật thành công!');
+          onCancel();
+        } else {
+          enqueueSnackbar('Vui lòng kiểm tra lại kích thước của thú cưng!', { variant: 'error' });
+        }
+      } else {
+        enqueueSnackbar('Chưa đến thời gian xác nhận đơn hàng!', { variant: 'error' });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCheckSize = async (cageIndex, centerId) => {
+    const { cageCode, petBookingDetails } = values.petData[cageIndex];
+    try {
+      const response = await checkSize(petBookingDetails, cageCode, centerId);
+      if (response === true) {
+        enqueueSnackbar('Kích thước thú cưng hợp lệ!');
+        reset({ petData }, { keepValues: true });
+        setIsSizeValid(true);
+      } else {
+        enqueueSnackbar('Kích thước thú cưng không hợp lệ!', { variant: 'error' });
+        setIsSizeValid(false);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -171,7 +256,6 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
 
   // RETURN
   // ----------------------------------------------------------------------
-
   return (
     <>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -194,8 +278,49 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
             <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
               Ghi chú khách hàng
             </Typography>
-            <Typography variant="body2">{customerNote || ''}</Typography>
+            <Typography variant="body2">{customerNote || 'Không có ghi chú'}</Typography>
           </Grid>
+
+          {statusId === 1 && (
+            <Grid item xs={12} sm={6}>
+              <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
+                Thông tin cũ của thú cưng
+              </Typography>
+              <Grid container>
+                <Grid item xs={3}>
+                  <Typography variant="caption">Tên</Typography>
+                </Grid>
+                <Grid item xs={3}>
+                  <Typography variant="caption">Cao (cm)</Typography>
+                </Grid>
+                <Grid item xs={3}>
+                  <Typography variant="caption">Dài (cm)</Typography>
+                </Grid>
+                <Grid item xs={3}>
+                  <Typography variant="caption">Nặng (kg)</Typography>
+                </Grid>
+
+                {petOldInfo.map((pet, index) => (
+                  <Grid container key={index}>
+                    <Grid item xs={3}>
+                      <Typography variant="body2">
+                        <b>{pet.name}</b>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Typography variant="body2">{pet.height}</Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Typography variant="body2">{pet.length}</Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Typography variant="body2">{pet.weight}</Typography>
+                    </Grid>
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+          )}
         </Grid>
 
         <Typography paragraph variant="overline" sx={{ color: 'green', pl: 3 }}>
@@ -206,6 +331,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
         {fields.map((cage, index) => {
           const cageIndex = index;
           const pet = cage.petBookingDetails;
+
           return (
             <Grid container spacing={3} sx={{ px: 3, pb: 3 }} key={cageIndex}>
               <Grid item xs={4} sm={2}>
@@ -214,15 +340,29 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
               </Grid>
               <Grid item xs={4} sm={2}>
                 <Typography variant="caption">Thời lượng</Typography>
-                <Typography variant="h6">{fNumber(cage.duration)} tiếng</Typography>
+                <Typography variant="h6">{fNumber(cage.duration)} ngày</Typography>
               </Grid>
               <Grid item xs={4} sm={2}>
                 <Typography variant="caption">Giá tiền</Typography>
                 <Typography variant="h6">{fCurrency(cage.price)} ₫</Typography>
               </Grid>
-              {isDesktop && (
+              {statusId === 1 && isDesktop && (
                 <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                   <Box>
+                    <Button
+                      sx={{ mr: 3 }}
+                      variant="contained"
+                      color="primary"
+                      onClick={() => {
+                        trigger('petData').then((isValid) => {
+                          if (isValid) {
+                            handleCheckSize(cageIndex, centerId);
+                          }
+                        });
+                      }}
+                    >
+                      Kiểm tra kích thước
+                    </Button>
                     <Button
                       variant="contained"
                       color="warning"
@@ -233,7 +373,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                   </Box>
                 </Grid>
               )}
-              {!isDesktop && (
+              {statusId === 1 && !isDesktop && (
                 <Grid item xs={12}>
                   <Button
                     variant="contained"
@@ -256,6 +396,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                     </Grid>
                     <Grid item xs={6} sm={2}>
                       <RHFTextField
+                        disabled={statusId !== 1}
                         name={`petData[${cageIndex}].petBookingDetails[${petIndex}].height`}
                         type="number"
                         label="Chiều cao (cm)"
@@ -263,6 +404,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                     </Grid>
                     <Grid item xs={6} sm={2}>
                       <RHFTextField
+                        disabled={statusId !== 1}
                         name={`petData[${cageIndex}].petBookingDetails[${petIndex}].length`}
                         type="number"
                         label="Chiều dài (cm)"
@@ -270,6 +412,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                     </Grid>
                     <Grid item xs={6} sm={2}>
                       <RHFTextField
+                        disabled={statusId !== 1}
                         name={`petData[${cageIndex}].petBookingDetails[${petIndex}].weight`}
                         type="number"
                         label="Cân nặng (kg)"
@@ -277,6 +420,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                     </Grid>
                     <Grid item xs={6} sm={4}>
                       <RHFTextField
+                        disabled={statusId !== 1}
                         name={`petData[${cageIndex}].petBookingDetails[${petIndex}].description`}
                         label="Tình trạng sức khỏe"
                       />
@@ -289,17 +433,19 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
         })}
 
         {/* Supplies management */}
-        {supplyOrders.length > 0 && (
-          <Box sx={{ px: 3, pt: 5 }}>
-            <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-              <Typography paragraph variant="overline" sx={{ color: 'red' }}>
-                Đồ dùng
-              </Typography>
+        <Box sx={{ px: 3, pt: 5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+            <Typography paragraph variant="overline" sx={{ color: 'red' }}>
+              Đồ dùng
+            </Typography>
+            {statusId === 1 && (
               <Button variant="contained" color="warning" onClick={handleOpenSupplyDialogForm}>
                 Chỉnh sửa
               </Button>
-            </Box>
+            )}
+          </Box>
 
+          {supplyOrders.length > 0 ? (
             <Scrollbar>
               <TableContainer sx={{ minWidth: 300 }}>
                 <Table>
@@ -345,20 +491,24 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                 </Table>
               </TableContainer>
             </Scrollbar>
-          </Box>
-        )}
+          ) : (
+            <Typography>Không có đồ dùng nào được đặt hàng</Typography>
+          )}
+        </Box>
 
         {/* Service management */}
-        {serviceOrders.length > 0 && (
-          <Box sx={{ px: 3, mt: 6 }}>
-            <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-              <Typography paragraph variant="overline" sx={{ color: 'blue' }}>
-                Dịch vụ
-              </Typography>
+        <Box sx={{ px: 3, mt: 6 }}>
+          <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+            <Typography paragraph variant="overline" sx={{ color: 'blue' }}>
+              Dịch vụ
+            </Typography>
+            {statusId === 1 && (
               <Button variant="contained" color="warning" onClick={handleOpenServiceDialogForm}>
                 Chỉnh sửa
               </Button>
-            </Box>
+            )}
+          </Box>
+          {serviceOrders.length > 0 ? (
             <Scrollbar>
               <TableContainer sx={{ minWidth: 300 }}>
                 <Table>
@@ -404,8 +554,10 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
                 </Table>
               </TableContainer>
             </Scrollbar>
-          </Box>
-        )}
+          ) : (
+            <Typography>Không có dịch vụ nào được đặt hàng</Typography>
+          )}
+        </Box>
 
         {/* Total */}
         <Grid container spacing={3} sx={{ p: 3, pt: 6 }}>
@@ -418,7 +570,13 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
             </Box>
           </Grid>
           <Grid item xs={12}>
-            <RHFTextField name="staffNote" label="Ghi chú của nhân viên" multiline rows={3} />
+            <RHFTextField
+              disabled={diableStaffNote(values.statusId)}
+              name="staffNote"
+              label="Ghi chú của nhân viên"
+              multiline
+              rows={3}
+            />
           </Grid>
         </Grid>
 
@@ -427,6 +585,7 @@ export default function CalendarForm({ selectedEvent, onCancel, bookingStatuses,
           {bookingStatuses.length > 0 && (
             <Grid item xs={8} md={4}>
               <RHFSelect
+                disabled={statusId === 3 || statusId === 4}
                 fullWidth
                 name="statusId"
                 label="Trạng thái Booking"

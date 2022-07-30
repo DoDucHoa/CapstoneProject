@@ -56,4 +56,26 @@ const setAccountInfoSession = (accountInfo) => {
   }
 };
 
-export { isValidToken, setSession, setAccountInfoSession };
+const setCenterInfoSession = (centerInfo) => {
+  if (centerInfo) {
+    localStorage.setItem('centerInfo', centerInfo);
+    // This function below will handle when token is expired
+    // const { exp } = jwtDecode(accessToken);
+    // handleTokenExpired(exp);
+  } else {
+    localStorage.removeItem('centerInfo');
+  }
+};
+
+const setCenterIdSession = (centerId) => {
+  if (centerId) {
+    localStorage.setItem('centerId', centerId);
+    // This function below will handle when token is expired
+    // const { exp } = jwtDecode(accessToken);
+    // handleTokenExpired(exp);
+  } else {
+    localStorage.removeItem('centerId');
+  }
+};
+
+export { isValidToken, setSession, setAccountInfoSession, setCenterInfoSession, setCenterIdSession };

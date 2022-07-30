@@ -18,10 +18,10 @@ import 'package:pncstaff_mobile_application/screens/activity_screen/subscreens/s
 
 class BookingCageScreen extends StatefulWidget {
   const BookingCageScreen(
-      {required this.bookings, required this.bookingDetail, Key? key})
+      {required this.booking, required this.bookingDetail, Key? key})
       : super(key: key);
 
-  final List<BookingDetail?> bookings;
+  final BookingDetail booking;
   final BookingDetails bookingDetail;
 
   @override
@@ -40,13 +40,9 @@ class _BookingCageScreenState extends State<BookingCageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var bookings = widget.bookings;
+    var booking = widget.booking;
     var bookingDetail = widget.bookingDetail;
     List<Pet> pets = [];
-    BookingDetail booking = BookingDetail();
-    bookings.forEach((element) {
-      if (element!.id == bookingDetail.bookingId) booking = element;
-    });
     bookingDetail.petBookingDetails!.forEach((element) {
       pets.add(element.pet!);
     });
@@ -76,75 +72,80 @@ class _BookingCageScreenState extends State<BookingCageScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: width * mediumPadRate),
-              height: height * 0.12,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(25),
-                  bottomRight: Radius.circular(25),
-                ),
-                color: Colors.white,
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: height * 0.04,
-                    backgroundColor: lightPrimaryColor,
-                    backgroundImage: AssetImage('lib/assets/cus0.png'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(width * smallPadRate),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+            (booking.customer != null)
+                ? Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: width * mediumPadRate),
+                    height: height * 0.12,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(25),
+                        bottomRight: Radius.circular(25),
+                      ),
+                      color: Colors.white,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          booking.customer!.name ?? "",
-                          style: TextStyle(
-                            fontSize: width * largeFontRate,
-                            fontWeight: FontWeight.w500,
-                            color: primaryFontColor,
-                          ),
+                        CircleAvatar(
+                          radius: height * 0.04,
+                          backgroundColor: lightPrimaryColor,
+                          backgroundImage: AssetImage('lib/assets/cus0.png'),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Clipboard.setData(ClipboardData(
-                                text: booking.customer!.idNavigation!.phone!));
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text(
-                                    "Số điện thoại khách hàng đã được sao chép vào bộ nhớ tạm.")));
-                          },
-                          child: RichText(
-                            text: TextSpan(
-                              children: [
-                                WidgetSpan(
-                                  child: Icon(
-                                    Icons.phone,
-                                    size: width * regularFontRate,
-                                    color: primaryColor,
+                        Padding(
+                          padding: EdgeInsets.all(width * smallPadRate),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                booking.customer?.name ?? "",
+                                style: TextStyle(
+                                  fontSize: width * largeFontRate,
+                                  fontWeight: FontWeight.w500,
+                                  color: primaryFontColor,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Clipboard.setData(ClipboardData(
+                                      text: booking
+                                          .customer!.idNavigation!.phone!));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              "Số điện thoại khách hàng đã được sao chép vào bộ nhớ tạm.")));
+                                },
+                                child: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      WidgetSpan(
+                                        child: Icon(
+                                          Icons.phone,
+                                          size: width * regularFontRate,
+                                          color: primaryColor,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            " ${booking.customer!.idNavigation!.phone!.replaceFirst("+84", "0")}",
+                                        style: TextStyle(
+                                          color: lightFontColor,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: width * smallFontRate,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                TextSpan(
-                                  text:
-                                      " ${booking.customer!.idNavigation!.phone!.replaceFirst("+84", "0")}",
-                                  style: TextStyle(
-                                    color: lightFontColor,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: width * smallFontRate,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ),
+                        )
                       ],
                     ),
                   )
-                ],
-              ),
-            ),
+                : Container(),
             Container(
               margin: EdgeInsets.all(width * smallPadRate),
               decoration: BoxDecoration(
@@ -258,12 +259,11 @@ class _BookingCageScreenState extends State<BookingCageScreen> {
       // ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: BlocProvider.of<BookingBloc>(context),
-                child: ActivityDetail(
+            builder: (context) => ActivityDetail(
+                  booking: booking,
                   pet: pets[selectedIndex],
                   cage: bookingDetail,
-                )))),
+                ))),
         label: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

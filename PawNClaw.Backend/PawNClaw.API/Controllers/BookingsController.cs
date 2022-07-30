@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Parameter;
 using System;
@@ -31,7 +32,12 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                var create = await _bookingActivityService.CreateBookingActivityAfterConfirm(updateStatusParameter.id);
+                bool create = true;
+
+                if (updateStatusParameter.statusId == 2)
+                {
+                    create = await _bookingActivityService.CreateBookingActivityAfterConfirm(updateStatusParameter.id);
+                }
 
                 if (create)
                 {
@@ -59,6 +65,25 @@ namespace PawNClaw.API.Controllers
             var data = _bookingService.GetBookings(bookingRequestParameter);
             return Ok(data);
         }
+
+        [HttpGet("list")]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult GetBookingForStaff([FromQuery] BookingRequestParameter bookingRequestParameter, [FromQuery] PagingParameter pagingParameter)
+        {
+            var values = _bookingService.GetBookings(bookingRequestParameter);
+            var data = PagedList<Booking>.ToPagedList(values.AsQueryable(), pagingParameter.PageNumber, pagingParameter.PageSize);
+            var metadata = new
+            {
+                data.TotalCount,
+                data.PageSize,
+                data.CurrentPage,
+                data.TotalPages,
+                data.HasNext,
+                data.HasPrevious
+            };
+            return Ok(new { data,metadata}) ;
+        }
+
 
         [HttpGet("customer/{id}")]
         [Authorize(Roles = "Owner,Staff,Customer")]
@@ -107,6 +132,33 @@ namespace PawNClaw.API.Controllers
                 }
                 else
                     return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost("check-size")]
+        public IActionResult CheckCage([FromBody] CheckSizePet checkSizePet)
+        {
+            try
+            {
+                var data = _bookingService.CheckSizePet(checkSizePet.petRequestForSearchCenters, checkSizePet.CageCode, checkSizePet.CenterId);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("get-booking-cagecode")]
+        public IActionResult TestGet(int CenterId, int? StatusId, string CageCode)
+        {
+            try
+            {
+                return Ok(_bookingService.GetBookingByCageCode(CenterId, StatusId, CageCode));
             }
             catch (Exception ex)
             {

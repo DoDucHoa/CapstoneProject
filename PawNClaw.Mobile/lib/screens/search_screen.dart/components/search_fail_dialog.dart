@@ -68,18 +68,20 @@ class SearchFailDialog extends StatelessWidget {
                   ),
                   ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => SearchScreen(),
-                        )
-                            // builder: (_) => BlocProvider.value(
-                            //       value: BlocProvider.of<SearchBloc>(context),
-                            //       child: ChoosePetScreen(),
-                            //     ))
-                            );
+                        BlocProvider.of<SearchBloc>(context)
+                          ..add(BackToPetSelection(
+                              (state as SearchFail).requests));
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //   builder: (context) => SearchScreen(),
+                        // )
+                        //     // builder: (_) => BlocProvider.value(
+                        //     //       value: BlocProvider.of<SearchBloc>(context),
+                        //     //       child: ChoosePetScreen(),
+                        //     //     ))
+                        //     );
                         // .then((value) => context
                         //     .findRootAncestorStateOfType()!
                         //     .setState(() {}))
-                        ;
                       },
                       style: ElevatedButton.styleFrom(
                           // primary: Cprim,

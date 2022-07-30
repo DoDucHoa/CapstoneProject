@@ -65,6 +65,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
                   event.timeFrom, event.due, searchResponse))
               : emit(SearchFail(searchResponse.result!, event.requests));
     });
+<<<<<<< HEAD
     on<CheckCenter>((event, emit) async {
       var searchResponse = await _centerRepository.checkCenterToBooking(
           event.centerId, event.timeFrom, event.due, event.requests);
@@ -103,5 +104,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         emit(SearchFail(searchResponse.result!, event.requests));
       }
     });
+=======
+    on<BackToPetSelection>(
+      (event, emit) {
+        emit(UpdatePetSelected([], event.requests));
+      },
+    );
+>>>>>>> 2b95dde15b52104731b7d20d1adb7a38a16fddb8
   }
 }

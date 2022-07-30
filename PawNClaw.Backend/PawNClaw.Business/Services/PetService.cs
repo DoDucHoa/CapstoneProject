@@ -1,10 +1,12 @@
-﻿using PawNClaw.Data.Database;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PawNClaw.Business.Services
 {
@@ -30,28 +32,11 @@ namespace PawNClaw.Business.Services
             return _petRepository.UpdatePetForStaff(id, Weight, Lenght, Height);
         }
 
-        public bool CreatePet(CreatePetRequestParameter createPetRequestParameter)
+        public async Task<bool> CreatePet(CreatePetRequestParameter createPetRequestParameter)
         {
             try
             {
-                Pet pet = new Pet()
-                {
-                    Weight = createPetRequestParameter.Weight,
-                    Length = createPetRequestParameter.Length,
-                    Height = createPetRequestParameter.Height,
-                    Name = createPetRequestParameter.Name,
-                    Birth = createPetRequestParameter.Birth,
-                    Status = true,
-                    CustomerId = createPetRequestParameter.CustomerId,
-                    PetTypeCode = createPetRequestParameter.PetTypeCode,
-                    BreedName = createPetRequestParameter.BreedName
-                };
-
-
-                _petRepository.Add(pet);
-                _petRepository.SaveDbChange();
-
-                return true;
+                return await _petRepository.AddNewPet(createPetRequestParameter);
             }
             catch
             {
@@ -86,20 +71,18 @@ namespace PawNClaw.Business.Services
         {
             try
             {
-
-                Pet pet = _petRepository.Get(id);
-
-                pet.Status = false;
-
-                _petRepository.Update(pet);
-                _petRepository.SaveDbChange();
-
+                _petRepository.DeletePet(id);
                 return true;
             }
             catch
             {
-                throw new Exception();
+                throw new Exception("Pet is booking already");
             }
+        }
+
+        public Pet GetPetById(int id)
+        {
+            return _petRepository.GetPetById(id);
         }
     }
 }
