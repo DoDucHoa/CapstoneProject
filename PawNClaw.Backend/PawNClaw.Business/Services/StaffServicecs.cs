@@ -98,7 +98,7 @@ namespace PawNClaw.Business.Services
 
                 _staffRepository.Add(staffToDb);
                 await _staffRepository.SaveDbChangeAsync();
-                return 1;
+                return staffToDb.Id;
             }
             catch
             {

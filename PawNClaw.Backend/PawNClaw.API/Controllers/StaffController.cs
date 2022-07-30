@@ -30,8 +30,8 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                await _staffServicecs.AddAsync(staff);
-                return Ok();
+                var data = await _staffServicecs.AddAsync(staff);
+                return Ok(data);
             }
             catch (Exception e)
             {
