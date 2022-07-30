@@ -55,6 +55,7 @@ namespace PawNClaw.Business.Services
                 pet.Height = updatePetRequestForCusParameter.Height;
                 pet.Name = updatePetRequestForCusParameter.Name;
                 pet.Birth = updatePetRequestForCusParameter.Birth;
+                pet.BreedName = updatePetRequestForCusParameter.BreedName;
 
                 _petRepository.Update(pet);
                 _petRepository.SaveDbChange();
