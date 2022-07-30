@@ -27,5 +27,6 @@ namespace PawNClaw.Data.Parameter
         public int ModifyUser { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
+        public bool? Status { get; set; }
     }
 }
