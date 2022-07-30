@@ -15,12 +15,15 @@ import { PATH_DASHBOARD } from '../../../../routes/paths';
 import useAuth from '../../../../hooks/useAuth';
 // components
 import { FormProvider } from '../../../../components/hook-form';
-import { createCageType, updateCageType } from '../../../../pages/dashboard/CageType/useCageTypeAPI';
+import {
+  createCageType,
+  updateCageType,
+  uploadPhotoToBackend,
+} from '../../../../pages/dashboard/CageType/useCageTypeAPI';
 import CageTypeDetail from './CageTypeDetail';
 import CageTypePrice from './CageTypePrice';
 import CageTypeFoodSchedule from './CageTypeFoodSchedule';
-// utils
-import { getRandomDateWithTime } from '../../../../utils/formatTime';
+import CageTypePhoto from './CageTypePhoto';
 
 // ----------------------------------------------------------------------
 
@@ -32,7 +35,7 @@ CageTypeNewEditForm.propTypes = {
 export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
   // STATE
   const navigate = useNavigate();
-  const { accountInfo, centerId } = useAuth();
+  const { accountInfo, centerId, uploadPhotoToFirebase } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({
@@ -46,6 +49,7 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
       createUser: Yup.number().required(),
       modifyUser: Yup.number().required(),
       centerId: Yup.number().required('Bắt buộc nhập'),
+      avatarUrl: Yup.mixed().test('required', 'Ảnh loại chuồng bắt buộc nhập', (value) => value !== ''),
     }),
     createPriceParameters: Yup.array().of(
       Yup.object().shape({
@@ -77,6 +81,7 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
         createUser: cageTypeData?.createUser || accountInfo.id,
         modifyUser: accountInfo.id,
         centerId,
+        avatarUrl: cageTypeData?.photos || '',
       },
       createPriceParameters: cageTypeData?.prices || [
         {
@@ -85,11 +90,7 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
           priceTypeCode: 'PRICE-001',
         },
       ],
-      foodSchedules: cageTypeData?.foodSchedules?.map((schedule) => ({
-        ...schedule,
-        fromTime: getRandomDateWithTime(schedule.fromTime),
-        toTime: getRandomDateWithTime(schedule.toTime),
-      })) || [
+      foodSchedules: cageTypeData?.foodSchedules || [
         {
           fromTime: '',
           toTime: '',
@@ -136,6 +137,13 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
     try {
       if (!isEdit) {
         await createCageType(values);
+        // uploadPhotoToFirebase('cageTypes', values.createCageTypeParameter.avatarUrl)
+        //   .then((url) => {
+        //     uploadPhotoToBackend(values.createCageTypeParameter.id, url);
+        //   })
+        //   .catch((error) => {
+        //     console.log(error);
+        //   });
       } else {
         await updateCageType(values);
       }
@@ -150,7 +158,7 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={10}>
+        <Grid item xs={12} sm={8}>
           <Card sx={{ p: 3 }}>
             <CageTypeDetail />
 
@@ -171,6 +179,10 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
               </LoadingButton>
             </Stack>
           </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={4}>
+          <CageTypePhoto />
         </Grid>
       </Grid>
     </FormProvider>

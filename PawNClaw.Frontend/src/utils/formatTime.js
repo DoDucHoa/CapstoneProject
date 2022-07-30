@@ -28,6 +28,9 @@ export function addTime(date) {
   return add(new Date(date), { hours: 7 });
 }
 
-export function getRandomDateWithTime(time) {
-  return new Date(Date.now() + time);
+export function changeTime(time) {
+  const currentDate = new Date();
+  const result = currentDate.setHours(time.split(':')[0], time.split(':')[1], 0);
+
+  return new Date(result);
 }
