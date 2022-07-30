@@ -40,6 +40,7 @@ namespace PawNClaw.Data.Parameter
         public decimal Height { get; set; }
         public string Name { get; set; }
         public DateTime? Birth { get; set; }
+        public string BreedName { get; set; }
     }
 
     public class CreatePetRequestParameter
