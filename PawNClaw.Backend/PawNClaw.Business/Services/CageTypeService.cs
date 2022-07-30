@@ -212,7 +212,17 @@ namespace PawNClaw.Business.Services
 
         public CageType GetCageTypeWithCageAndPrice(int id)
         {
-            return _cageTypeRepository.GetCageTypeWithCageAndPrice(id);
+            var value = _cageTypeRepository.GetCageTypeWithCageAndPrice(id);
+
+            DateTime dateTime = DateTime.Today;
+
+            foreach (var item in value.FoodSchedules)
+            {
+                item.FromTimeDate = dateTime.SetTime(item.FromTime.Hours, item.FromTime.Minutes, item.FromTime.Seconds);
+                item.ToTimeDate = dateTime.SetTime(item.ToTime.Hours, item.ToTime.Minutes, item.ToTime.Seconds);
+            }
+
+            return value;
         }
     }
 }

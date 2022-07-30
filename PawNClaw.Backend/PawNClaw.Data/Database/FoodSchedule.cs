@@ -24,6 +24,12 @@ namespace PawNClaw.Data.Database
         [Column("cage_type_id")]
         public int CageTypeId { get; set; }
 
+        [NotMapped]
+        public DateTime FromTimeDate { get; set; }
+
+        [NotMapped]
+        public DateTime ToTimeDate { get; set; }
+
         [ForeignKey(nameof(CageTypeId))]
         [InverseProperty("FoodSchedules")]
         public virtual CageType CageType { get; set; }
