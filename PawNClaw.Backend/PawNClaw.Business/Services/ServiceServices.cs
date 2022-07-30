@@ -127,7 +127,7 @@ namespace PawNClaw.Business.Services
             }
         }
 
-        public bool UpdateService(UpdateService serviceP)
+        public bool UpdateService(UpdateService serviceP, List<UpdateServicePrice> updateServicePrices)
         {
             Service service = _serviceRepository.Get(serviceP.Id);
             service.Description = serviceP.Description;
@@ -139,6 +139,21 @@ namespace PawNClaw.Business.Services
 
             _serviceRepository.Update(service);
             _serviceRepository.SaveDbChange();
+
+            foreach (var item in updateServicePrices)
+            {
+                ServicePrice servicePrice = _servicePriceRepository.Get(item.Id);
+
+                servicePrice.Price = item.Price;
+                servicePrice.MinWeight = item.MinWeight;
+                servicePrice.MaxWeight = item.MaxWeight;
+                servicePrice.ModifyUser = item.ModifyUser;
+                servicePrice.Status = item.Status;
+                servicePrice.ServiceId = item.ServiceId;
+
+                _servicePriceRepository.Update(servicePrice);
+                _servicePriceRepository.SaveDbChange();
+            }
             return true;
         }
     }

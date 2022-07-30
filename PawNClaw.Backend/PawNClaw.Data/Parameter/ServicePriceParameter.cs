@@ -21,4 +21,16 @@ namespace PawNClaw.Data.Parameter
         public bool? Status { get; set; }
         public int ServiceId { get; set; }
     }
+
+    public class UpdateServicePrice
+    {
+        public int Id { get; set; }
+        public decimal Price { get; set; }
+        public decimal? MinWeight { get; set; }
+        public decimal? MaxWeight { get; set; }
+        public int? CreateUser { get; set; }
+        public int? ModifyUser { get; set; }
+        public bool? Status { get; set; }
+        public int ServiceId { get; set; }
+    }
 }
