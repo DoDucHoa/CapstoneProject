@@ -49,32 +49,32 @@ List<Review> FAKE_REVIEWS = [
       rating: 5),
 ];
 
-List<Voucher> FAKE_VOUCHERS = [
-  Voucher(
-    code: 'LOVEPET10',
-      value: 10000,
-      minCondition: 50000,
-      startDate: '1/5/2022',
-      expireDate: '30/5/2022'),
-  Voucher(
-    code: 'LOVEPET20',
-      value: 20000,
-      minCondition: 70000,
-      startDate: '1/5/2022',
-      expireDate: '30/5/2022'),
-  Voucher(
-    code: 'LOVEPET30',
-      value: 30000,
-      minCondition: 100000,
-      startDate: '1/5/2022',
-      expireDate: '30/5/2022'),
-  Voucher(
-    code: 'LOVEPET50',
-      value: 50000,
-      minCondition: 200000000,
-      startDate: '1/5/2022',
-      expireDate: '30/5/2022'),
-];
+// List<Voucher> FAKE_VOUCHERS = [
+//   Voucher(
+//     code: 'LOVEPET10',
+//       value: 10000,
+//       minCondition: 50000,
+//       startDate: '1/5/2022',
+//       expireDate: '30/5/2022'),
+//   Voucher(
+//     code: 'LOVEPET20',
+//       value: 20000,
+//       minCondition: 70000,
+//       startDate: '1/5/2022',
+//       expireDate: '30/5/2022'),
+//   Voucher(
+//     code: 'LOVEPET30',
+//       value: 30000,
+//       minCondition: 100000,
+//       startDate: '1/5/2022',
+//       expireDate: '30/5/2022'),
+//   Voucher(
+//     code: 'LOVEPET50',
+//       value: 50000,
+//       minCondition: 200000000,
+//       startDate: '1/5/2022',
+//       expireDate: '30/5/2022'),
+// ];
 
 List<List<Pet>> FAKE_REQUESTS = [
   [

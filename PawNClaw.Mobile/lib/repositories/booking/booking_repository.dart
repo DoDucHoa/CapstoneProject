@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
 import 'package:pawnclaw_mobile_application/repositories/booking/base_booking_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class BookingRepository implements BaseBookingRepository {
   final Dio _dio = Dio();
@@ -15,12 +16,13 @@ class BookingRepository implements BaseBookingRepository {
       };
       var requestBody = booking.toJson();
       print('requestbody here:');
-      print(requestBody);
+      print(json.encode(requestBody));
       const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/bookings";
       var response = await _dio.post(_url, data: requestBody);
       final result = response.statusCode;
       return result.toString();
+      // return '';
     } on DioError catch (e) {
       throw Exception(e.response!.data['Message']);
     }

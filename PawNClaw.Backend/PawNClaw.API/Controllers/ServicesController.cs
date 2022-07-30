@@ -67,7 +67,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateService([FromBody] Service service)
+        public IActionResult UpdateService([FromBody] UpdateService service)
         {
             try
             {

@@ -4,12 +4,14 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/fake_data.dart';
+import 'package:pawnclaw_mobile_application/models/voucher.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/voucher_card.dart';
 
 import '../../../blocs/booking/booking_bloc.dart';
 
 class Vouchers extends StatefulWidget {
-  const Vouchers({Key? key}) : super(key: key);
+  final List<Voucher> vouchers;
+  const Vouchers({required this.vouchers,Key? key}) : super(key: key);
 
   @override
   State<Vouchers> createState() => _VouchersState();
@@ -37,10 +39,10 @@ class _VouchersState extends State<Vouchers> {
                 var state = BlocProvider.of<BookingBloc>(context).state;
                 var total = (state as BookingUpdated).booking.getTotal();
                 bool avaiable = false;
-                if (total >= FAKE_VOUCHERS[index].minCondition) avaiable = true;
+                if (total >= widget.vouchers[index].minCondition!) avaiable = true;
                 //prin'voucher screen' + total.toString());
                 return VoucherCard(
-                    voucher: FAKE_VOUCHERS[index],
+                    voucher: widget.vouchers[index],
                     size: 180,
                     avaiable: avaiable,
                     callback: (val) {
@@ -49,7 +51,7 @@ class _VouchersState extends State<Vouchers> {
                           .add(AddVoucher(voucherCode: val));
                     });
               }),
-              itemCount: FAKE_VOUCHERS.length,
+              itemCount: widget.vouchers.length,
               separatorBuilder: (context, index) => const SizedBox(
                 height: 15,
               ),

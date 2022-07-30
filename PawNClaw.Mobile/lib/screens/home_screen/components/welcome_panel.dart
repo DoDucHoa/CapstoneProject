@@ -12,20 +12,20 @@ class WelcomePanel extends StatelessWidget {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Stack(
-      fit: StackFit.passthrough,
+      //f it: StackFit.passthrough,
       children: [
         Container(
           height: height * 0.35,
         ),
         Container(
-          padding: EdgeInsets.all(width * regularPadRate),
+          padding: EdgeInsets.all(width * mediumPadRate),
           height: height * 0.3,
           width: width,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
                 primaryColor,
-                lightPrimaryColor,
+                lightPrimaryColor.withOpacity(0.05),
               ],
               begin: Alignment.bottomRight,
               end: Alignment.topLeft,
@@ -70,7 +70,7 @@ class WelcomePanel extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        "Bạn có   ",
+                        "Bạn có  ",
                         style: TextStyle(
                           fontSize: width * regularFontRate,
                           color: Colors.white,
@@ -133,34 +133,44 @@ class WelcomePanel extends StatelessWidget {
               CircleAvatar(
                 radius: width * 0.12,
                 backgroundColor: Colors.white,
-                backgroundImage: null,
+               child: Image.asset('lib/assets/cus2.png', fit: BoxFit.cover,),
               )
             ],
           ),
         ),
         Positioned(
-          child: ElevatedContainer(
-            height: height * 0.06,
-            width: width * 0.7,
-            child: TextField(
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: primaryColor,
-                ),
-                hintText: "Tìm kiếm trung tâm thú cưng",
-                hintStyle: TextStyle(
-                    color: lightFontColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15),
-                border: InputBorder.none,
-              ),
-            ),
-            elevation: width * 0.015,
-          ),
-          top: height * 0.27,
-          left: width * 0.1,
-          right: width * 0.1,
+          child: Container(color: frameColor, height: height * 0.045),
+        //     width: width * 0.7,),
+        //   child: ElevatedContainer(
+        //     height: height * 0.06,
+        //     width: width * 0.7,
+        //     child: TextField(
+        //       enabled: false,
+        //       decoration: InputDecoration(
+        //         prefixIcon: Icon(
+        //           Icons.search,
+        //           color: primaryColor,
+        //         ),
+        //         hintText: "Tìm kiếm trung tâm thú cưng",
+        //         hintStyle: TextStyle(
+        //             color: lightFontColor,
+        //             fontWeight: FontWeight.w600,
+        //             fontSize: 15,
+        //             height: 1.4,
+        //             ),
+        //         border: InputBorder.none,
+                
+        //       ),
+              
+        //     ),
+        //     elevation: width * 0.015,
+        //   ),
+          // top: height * 0.27,
+          // left: width * 0.1,
+          // right: width * 0.1,
+          bottom: 0,
+          left: 0,
+          right: 0,
         ),
       ],
     );

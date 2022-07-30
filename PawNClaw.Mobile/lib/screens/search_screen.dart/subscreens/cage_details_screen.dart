@@ -127,8 +127,8 @@ class _CageDetailsState extends State<CageDetails> {
             child: ElevatedButton(
               onPressed: (selectedPetIds != null)
                   ? () {
-                      print(context.read<BookingBloc>().state);
-                      // print('selected petid');
+                      // print(context.read<BookingBloc>().state);
+                      // print(state.booking.selectedPetsIds);
                       // print(selectedPetIds);
                       BlocProvider.of<BookingBloc>(context).add(SelectCage(
                         price: cageType.totalPrice!,
@@ -139,8 +139,8 @@ class _CageDetailsState extends State<CageDetails> {
                       ));
                       ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("Thêm chuồng thành công.")));
-                      print('cart count' +
-                          state.booking.getCartCount().toString());
+                      // print('cart count' +
+                      //     state.booking.getCartCount().toString());
                       Navigator.of(context).pop();
                     }
                   : null,
@@ -169,8 +169,7 @@ class _CageDetailsState extends State<CageDetails> {
                   'Thêm vào giỏ hàng - ' +
                       NumberFormat.currency(
                               decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
-                          .format(cageType.totalPrice! *
-                              state.booking.bookingCreateParameter!.due!),
+                          .format(cageType.totalPrice!),
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
                 Expanded(child: SizedBox(height: 45)),
@@ -292,8 +291,10 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
             callback: (val) {
               print('value: ');
               print(val);
+
               BlocProvider.of<BookingBloc>(context)
                   .add(SelectRequest(petId: val));
+              context.findRootAncestorStateOfType()!.setState(() {});
             }),
         SizedBox(
           height: 15,

@@ -1,4 +1,5 @@
 import 'cage_type.dart';
+import  'dart:convert';
 
 class Center {
   int? _id;
@@ -11,7 +12,7 @@ class Center {
   int? _brandId;
   String? _openTime;
   String? _closeTime;
-  String? _brand;
+  dynamic _brand;
   List<CageTypes>? _cageTypes;
   List<Services>? _services;
   List<Supplies>? _supplies;
@@ -169,7 +170,7 @@ class Center {
     return data;
   }
 
-  String shortAddress(){
+  String shortAddress() {
     var splited = this.address!.split(",");
     return splited[0] + ', ' + splited[1];
   }
@@ -178,27 +179,33 @@ class Center {
 class Services {
   int? id;
   String? description;
-  double? sellPrice;
   double? discountPrice;
   List<ServicePrices>? servicePrices;
+  double? minPrice;
+  double? maxPrice;
 
   Services(
       {this.id,
       this.description,
-      this.sellPrice,
       this.discountPrice,
-      this.servicePrices});
+      this.servicePrices,
+      this.minPrice,
+      this.maxPrice});
 
   Services.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     description = json['description'];
-    sellPrice = json['sellPrice'];
     discountPrice = json['discountPrice'];
     if (json['servicePrices'] != null) {
       servicePrices = <ServicePrices>[];
       json['servicePrices'].forEach((v) {
         servicePrices!.add(new ServicePrices.fromJson(v));
       });
+      if (servicePrices!.isEmpty) {
+        servicePrices = null;
+        minPrice = json['minPrice'].toDouble();
+        maxPrice = json['maxPrice'].toDouble();
+      }
     }
   }
 
@@ -206,11 +213,13 @@ class Services {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['description'] = this.description;
-    data['sellPrice'] = this.sellPrice;
     data['discountPrice'] = this.discountPrice;
     if (this.servicePrices != null) {
       data['servicePrices'] =
           this.servicePrices!.map((v) => v.toJson()).toList();
+    } else {
+      data['minPrice'] = this.minPrice;
+      data['maxPrice'] = this.maxPrice;
     }
     return data;
   }
@@ -303,4 +312,56 @@ class SearchResponseModel {
     // TODO: implement toString
     return super.toString();
   }
+}
+
+class LocationResponseModel {
+    LocationResponseModel({
+        this.id,
+        this.longtitude,
+        this.latitude,
+        this.cityCode,
+        this.districtCode,
+        this.wardCode,
+        this.center,
+        this.distance,
+        this.duration,
+    });
+
+    int? id;
+    String? longtitude;
+    String? latitude;
+    int? cityCode;
+    int? districtCode;
+    int? wardCode;
+    Center? center;
+    String? distance;
+    String? duration;
+
+    factory LocationResponseModel.fromRawJson(String str) => LocationResponseModel.fromJson(json.decode(str));
+
+    String toRawJson() => json.encode(toJson());
+
+    factory LocationResponseModel.fromJson(Map<String, dynamic> json) => LocationResponseModel(
+        id: json["id"],
+        longtitude: json["longtitude"],
+        latitude: json["latitude"],
+        cityCode: json["cityCode"],
+        districtCode: json["districtCode"],
+        wardCode: json["wardCode"],
+        center: Center.fromJson(json["idNavigation"]),
+        distance: json["distance"],
+        duration: json["duration"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "longtitude": longtitude,
+        "latitude": latitude,
+        "cityCode": cityCode,
+        "districtCode": districtCode,
+        "wardCode": wardCode,
+        "idNavigation": center!.toJson(),
+        "distance": distance,
+        "duration": duration,
+    };
 }

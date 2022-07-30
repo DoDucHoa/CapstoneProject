@@ -7,9 +7,10 @@ import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/fake_data.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
+import 'package:pawnclaw_mobile_application/models/voucher.dart';
 import 'package:pawnclaw_mobile_application/repositories/center/center_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/booking_screen/confirm_booking.dart';
-import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/center_slider.dart';
+import 'package:pawnclaw_mobile_application/common/components/center_slider.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/item_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/service_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/supplytype_card.dart';
@@ -42,6 +43,7 @@ class CenterDetails extends StatefulWidget {
 
 class _CenterDetailsState extends State<CenterDetails> {
   petCenter.Center? center;
+  List<Voucher>? vouchers;
   List<String> supplyType = ["DRINK", "FOOD", "MED", "OTHER"];
   @override
   void initState() {
@@ -51,9 +53,10 @@ class _CenterDetailsState extends State<CenterDetails> {
             widget.bookingDate, widget.endDate)
         .then((value) {
       setState(() {
-        this.center = value;
+        center = value;
       });
     });
+
     super.initState();
   }
 
@@ -66,6 +69,13 @@ class _CenterDetailsState extends State<CenterDetails> {
 
     var auth = BlocProvider.of<AuthBloc>(context).state;
     int customerId = (auth as Authenticated).user.id!;
+    CenterRepository()
+        .getCenterVouchers(widget.petCenterId, customerId)
+        .then((value) {
+      vouchers = value;
+      //loadedDetail = true;
+    });
+
     return BlocProvider(
         create: (context) => BookingBloc()
           ..add(
@@ -270,41 +280,44 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                   SizedBox(
                                                     height: 10,
                                                   ),
-                                                  OutlinedButton.icon(
-                                                      style: OutlinedButton.styleFrom(
-                                                          shape: RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                      10))),
-                                                      onPressed: () => Navigator.of(
-                                                              context)
-                                                          .push(MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  ShowVouchers(
-                                                                      vouchers:
-                                                                          FAKE_VOUCHERS))),
-                                                      icon: Image.asset(
-                                                        'lib/assets/coupon.png',
-                                                        width: 30,
-                                                      ),
-                                                      label: Container(
-                                                          padding: EdgeInsets.fromLTRB(
-                                                              10, 15, 5, 15),
-                                                          child: Row(
-                                                            children: [
-                                                              Text(
-                                                                'Bạn có ${FAKE_VOUCHERS.length} ưu đãi',
-                                                                style: TextStyle(
-                                                                    color:
-                                                                        primaryFontColor),
-                                                              ),
-                                                              Expanded(
-                                                                  child:
-                                                                      SizedBox()),
-                                                              Icon(Icons
-                                                                  .keyboard_double_arrow_right),
-                                                            ],
-                                                          )))
+                                                  (vouchers!.isNotEmpty)
+                                                      ? OutlinedButton.icon(
+                                                          style: OutlinedButton.styleFrom(
+                                                              shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                          10))),
+                                                          onPressed: () => Navigator.of(
+                                                                  context)
+                                                              .push(MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      ShowVouchers(
+                                                                          vouchers:
+                                                                              vouchers!))),
+                                                          icon: Image.asset(
+                                                            'lib/assets/coupon.png',
+                                                            width: 30,
+                                                          ),
+                                                          label: Container(
+                                                              padding:
+                                                                  EdgeInsets.fromLTRB(
+                                                                      10, 15, 5, 15),
+                                                              child: Row(
+                                                                children: [
+                                                                  Text(
+                                                                    'Bạn có ${vouchers!.length} ưu đãi',
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                            primaryFontColor),
+                                                                  ),
+                                                                  Expanded(
+                                                                      child:
+                                                                          SizedBox()),
+                                                                  Icon(Icons
+                                                                      .keyboard_double_arrow_right),
+                                                                ],
+                                                              )))
+                                                      : Container()
                                                 ],
                                               ))),
 
@@ -337,6 +350,10 @@ class _CenterDetailsState extends State<CenterDetails> {
                                     onPressed: () {},
                                     icon: Icon(Icons.info_outline)),
                               ],
+                              leading: IconButton(
+                                icon: Icon(Icons.arrow_back_ios_new_rounded),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
                               bottom: TabBar(
                                 tabs: [
                                   Tab(
@@ -417,7 +434,9 @@ class _CenterDetailsState extends State<CenterDetails> {
                                               fontWeight: FontWeight.w700),
                                         ),
                                       ),
-                                      CenterSlider(size: size),
+                                      //CenterSlider(size: size, photoUrls: CAGE_PHOTOS, callback: ((index) {
+
+                                      // }),),
                                       SizedBox(height: 80)
                                     ],
                                   )),
@@ -537,6 +556,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                 context),
                                             child: ConfirmBooking(
                                               center: center!,
+                                              vouchers: vouchers!,
                                             ),
                                           )))
                                   : ScaffoldMessenger.of(context).showSnackBar(

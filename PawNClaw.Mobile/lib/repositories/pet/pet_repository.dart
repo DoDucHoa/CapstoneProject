@@ -23,11 +23,32 @@ class PetRepository implements BasePetRepository {
       );
       final pets =
           response.data['data'].map<Pet>((e) => Pet.fromJson(e)).toList();
-      print(pets);
+      // pets.forEach((e) => print(e.toJson()));
       return pets;
     } catch (e) {
       print(e);
       return null;
+    }
+  }
+
+  @override
+  Future<bool> createPet(Pet pet) async {
+    final pref = await SharedPreferences.getInstance();
+    try {
+      _dio.options.headers = {
+        'Authorization': 'Bearer ' + pref.get("jwtToken").toString()
+      };
+      
+      print(json.encode(pet.toJson()));
+      const String _url =
+          "https://pawnclawdevelopmentapi.azurewebsites.net/api/pets";
+      var response = await _dio.post(_url, data: pet.toJson());
+
+      // pets.forEach((e) => print(e.toJson()));
+      return response.statusCode == 200;
+    } on DioError catch (e) {
+      print(e);
+      return false;
     }
   }
 }
