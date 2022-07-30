@@ -70,11 +70,11 @@ namespace PawNClaw.API.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Owner,Staff")]
-        public IActionResult Update([FromBody] UpdateCageTypeParameter cageType)
+        public IActionResult Update([FromBody] UpdateCageTypeFlowParameter cageType)
         {
             try
             {
-                return Ok(_cageTypeService.Update(cageType));
+                return Ok(_cageTypeService.Update(cageType.updateCageTypeParameter, cageType.updatePriceParameters, cageType.updateFoodSchedules));
             }
             catch (Exception ex)
             {
