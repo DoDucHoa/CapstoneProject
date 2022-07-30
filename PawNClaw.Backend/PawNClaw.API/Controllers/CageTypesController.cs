@@ -55,11 +55,12 @@ namespace PawNClaw.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Owner,Staff")]
-        public IActionResult Create([FromBody] CreateCageTypeFlowParameter createCageTypeFlowParameter)
+        public async Task<IActionResult> Create([FromBody] CreateCageTypeFlowParameter createCageTypeFlowParameter)
         {
             try
             {
-                return Ok(_cageTypeService.CreateCageType(createCageTypeFlowParameter.createCageTypeParameter, createCageTypeFlowParameter.createPriceParameters, createCageTypeFlowParameter.foodSchedules));
+                var data = await _cageTypeService.CreateCageType(createCageTypeFlowParameter.createCageTypeParameter, createCageTypeFlowParameter.createPriceParameters, createCageTypeFlowParameter.foodSchedules);
+                return Ok(data);
             }
             catch (Exception ex)
             {

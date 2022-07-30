@@ -87,7 +87,7 @@ namespace PawNClaw.Business.Services
             return values;
         }
 
-        public async Task<bool> CreateCageType(CreateCageTypeParameter createCageTypeParameter, List<CreatePriceParameter> createPriceParameters, List<CreateFoodSchedule> foodSchedules)
+        public async Task<int> CreateCageType(CreateCageTypeParameter createCageTypeParameter, List<CreatePriceParameter> createPriceParameters, List<CreateFoodSchedule> foodSchedules)
         {
             CageType cageType = new CageType();
 
@@ -176,7 +176,7 @@ namespace PawNClaw.Business.Services
                 }
             }
 
-            return true;
+            return cageType.Id;
         }
 
         public bool Update(UpdateCageTypeParameter cageTypeP)
