@@ -38,6 +38,14 @@ namespace PawNClaw.API.Controllers
             return Ok(new { data, metadata });
         }
 
+        [HttpGet("pet/{id}")]
+        public IActionResult GetPetsById(int id)
+        {
+            var data = _petService.GetPetById(id);
+            
+            return Ok(data);
+        }
+
         [HttpPut]
         [Authorize("Staff")]
         public IActionResult UpdatePetForStaff([FromBody] UpdatePetRequestParameter updatePetRequestParameter)
@@ -103,5 +111,7 @@ namespace PawNClaw.API.Controllers
                 return BadRequest(ex);
             }
         }
+
+
     }
 }

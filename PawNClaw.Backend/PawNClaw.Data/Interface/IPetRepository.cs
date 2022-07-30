@@ -14,5 +14,6 @@ namespace PawNClaw.Data.Interface
         public bool UpdatePetForStaff(int id, decimal Weight, decimal Lenght, decimal Height);
         public Task<bool> AddNewPet(CreatePetRequestParameter createPetRequestParameter);
         public bool DeletePet(int petId);
+        public Pet GetPetById(int id);
     }
 }
