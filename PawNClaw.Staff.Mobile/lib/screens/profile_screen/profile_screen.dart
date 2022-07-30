@@ -226,7 +226,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   children: [
                                     WidgetSpan(
                                       child: Icon(
-                                        Icons.edit,
+                                        (!isEdit) ? Icons.edit : Icons.cancel,
                                         size: 15,
                                         // color: primaryColor,
                                       ),
