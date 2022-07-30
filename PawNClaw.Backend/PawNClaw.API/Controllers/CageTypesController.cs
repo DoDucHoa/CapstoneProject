@@ -69,7 +69,7 @@ namespace PawNClaw.API.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Owner,Staff")]
-        public IActionResult Update([FromBody] CageType cageType)
+        public IActionResult Update([FromBody] UpdateCageTypeParameter cageType)
         {
             try
             {
