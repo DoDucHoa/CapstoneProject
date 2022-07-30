@@ -55,12 +55,21 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("center")]
-        public IActionResult getStaffByCenter([FromQuery] int centerId, [FromQuery] PagingParameter paging)
+        public IActionResult getStaffByCenter([FromQuery] int centerId, [FromQuery] string? name, [FromQuery] bool? status, [FromQuery] PagingParameter paging)
         {
             try
             {
-                var data = _staffServicecs.GetByCenterId(centerId, paging);
-                return Ok(data);
+                var data = _staffServicecs.GetByCenterId(centerId,name, status, paging);
+                var metadata = new
+                {
+                    data.TotalCount,
+                    data.PageSize,
+                    data.CurrentPage,
+                    data.TotalPages,
+                    data.HasNext,
+                    data.HasPrevious
+                };
+                return Ok(new { data, metadata });
             }
             catch (Exception e)
             {

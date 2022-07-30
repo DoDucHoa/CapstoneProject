@@ -46,15 +46,11 @@ class CenterRepository implements BaseCenterRepository {
       response = await _dio.post(_url, data: requestBody);
 
       if (response.statusCode == 200) {
-<<<<<<< HEAD
         if (response.data.toString().toLowerCase().contains("no response")) {
           searchResponseModel =
               SearchResponseModel(result: response.data.toString());
           return searchResponseModel;
         }
-=======
-        print(response.data);
->>>>>>> 2b95dde15b52104731b7d20d1adb7a38a16fddb8
         var data = response.data['data'];
 
         print(data["petCenters"]);
@@ -238,7 +234,9 @@ class CenterRepository implements BaseCenterRepository {
     } on DioError catch (e) {
       //print(response!.statusMessage);
       // print((e as DioError).message);
-      throw Exception(e.response!.data['Message']);
+      searchResponseModel =
+          SearchResponseModel(result: e.response!.data['Message']);
+      return searchResponseModel;
       // searchResponseModel = SearchResponseModel(
       //     result: e.response != null ? e.response!.data["mess"] : "error");
       // return searchResponseModel;
@@ -327,22 +325,19 @@ class CenterRepository implements BaseCenterRepository {
       _dio.options.headers = {
         "authorization": "Bearer " + pref.get("jwtToken").toString()
       };
-      var requestBody = {
-        "userLatitude": latitude,
-        "userLongtitude": longitude
-      };
+      var requestBody = {"userLatitude": latitude, "userLongtitude": longitude};
       // print(json.encode(requestBody));
       const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/petcenters/nearby_search";
       var response = await _dio.post(_url, data: requestBody);
-      
-      final locations =  List<LocationResponseModel>.from(response.data.map((e) => LocationResponseModel.fromJson(e)));
+
+      final locations = List<LocationResponseModel>.from(
+          response.data.map((e) => LocationResponseModel.fromJson(e)));
       print('[repo]Center nearby');
       // locations.forEach((element) {print(element.toJson());});
       return locations;
     } on DioError catch (e) {
       print(e);
-
     }
   }
 }

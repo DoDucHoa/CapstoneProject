@@ -5,5 +5,5 @@ abstract class BasePetRepository {
     required int customerId,
   });
   Future<bool> createPet(Pet pet);
-
+  Future<bool> update(Pet pet);
 }

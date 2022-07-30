@@ -13,11 +13,12 @@ import 'package:pawnclaw_mobile_application/screens/booking_from_search_screen/s
 import 'package:pawnclaw_mobile_application/screens/home_screen/HomeScreen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/center_details_screen.dart';
 
-
 class SearchScreen extends StatefulWidget {
   final int centerId;
   final bool isSponsor;
-  const SearchScreen({required this.centerId, required this.isSponsor,Key? key}) : super(key: key);
+  const SearchScreen(
+      {required this.centerId, required this.isSponsor, Key? key})
+      : super(key: key);
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -41,13 +42,12 @@ class _SearchScreenState extends State<SearchScreen> {
       child: BlocBuilder<SearchBloc, SearchState>(
         builder: (context, state) {
           if (state is FillingInformation) {
-            return FillInformationScreen(isSponsor:widget.isSponsor);
+            return FillInformationScreen(isSponsor: widget.isSponsor);
           }
           if (state is CheckCenterInitial || state is UpdatePetSelected) {
-            return  ChoosePetScreen(centerId:widget.centerId);
+            return ChoosePetScreen(centerId: widget.centerId);
           }
           if (state is SearchCompleted) {
-            
             return const AvailableCenterScreen();
           }
           if (state is SearchFail) {
@@ -56,16 +56,28 @@ class _SearchScreenState extends State<SearchScreen> {
             // }
             var statusMessage = state.errorMessage;
             return SearchFailDialog(
-                errorMessage: statusMessage,
-                );
+              errorMessage: statusMessage,
+            );
           }
-          if (state is CheckedCenter){
-            return CenterDetails(petCenterId: widget.centerId, requests: state.requests, bookingDate: state.bookingDate, endDate: DateTime.parse(state.center.endBooking!), due: state.due);
+          if (state is CheckedCenter) {
+            return CenterDetails(
+                petCenterId: widget.centerId,
+                requests: state.requests,
+                bookingDate: state.bookingDate,
+                endDate: DateTime.parse(state.center.endBooking!),
+                due: state.due);
+          }
+          if (state is CheckedSponsorCenter) {
+            return CenterDetails(
+                petCenterId: widget.centerId,
+                requests: state.requests,
+                bookingDate: state.bookingDate,
+                endDate: DateTime.parse(state.center.endBooking!),
+                due: state.due);
           }
           return const Scaffold(
               backgroundColor: Colors.white,
-              body: LoadingIndicator(
-                  loadingText: "Vui lòng đợi"));
+              body: LoadingIndicator(loadingText: "Vui lòng đợi"));
         },
       ),
     );

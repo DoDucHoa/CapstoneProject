@@ -35,9 +35,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           pets.add(inputPet);
         }
 
-        emit(UpdatePetSelected(
-            pets,
-            (state as UpdatePetSelected).requests));
+        emit(UpdatePetSelected(pets, (state as UpdatePetSelected).requests));
       },
     );
     on<AddPetRequest>((event, emit) {
@@ -63,9 +61,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           : (searchResponse.petCenters != null)
               ? emit(SearchCompleted(searchResponse.petCenters!, event.requests,
                   event.timeFrom, event.due, searchResponse))
-              : emit(SearchFail(searchResponse.result!, event.requests));
+              : emit(SearchFail(searchResponse.result!, event.requests, null));
     });
-<<<<<<< HEAD
     on<CheckCenter>((event, emit) async {
       var searchResponse = await _centerRepository.checkCenterToBooking(
           event.centerId, event.timeFrom, event.due, event.requests);
@@ -83,33 +80,34 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       } else {
         searchResponse.result =
             searchResponse.result ?? "" + event.centerId.toString();
-        emit(SearchFail(searchResponse.result!, event.requests));
+        emit(
+            SearchFail(searchResponse.result!, event.requests, event.centerId));
       }
     });
     on<CheckSponsorCenter>((event, emit) async {
+      emit(Loading());
       var searchResponse = await _centerRepository.checkCenterToBooking(
           event.centerId, event.timeFrom, event.due, event.requests);
-      if (searchResponse == null)
-        emit(Loading());
-      else if (searchResponse.petCenters != null) {
+      if (searchResponse!.petCenters != null) {
         emit(CheckedSponsorCenter(searchResponse.petCenters!.first,
             event.requests, event.timeFrom, event.due));
       } else if (searchResponse.result!.contains('reference')) {
         var centers = await _centerRepository.getAllCenter();
         centers!.removeWhere((element) => element.id == event.centerId);
         searchResponse.result = "sponsors";
-        emit(SearchCompleted(centers, event.requests,
-            event.timeFrom, event.due, searchResponse));
+        emit(SearchCompleted(centers, event.requests, event.timeFrom, event.due,
+            searchResponse));
       } else {
-        emit(SearchFail(searchResponse.result!, event.requests));
+        searchResponse.result =
+            searchResponse.result ?? "" + event.centerId.toString();
+        emit(
+            SearchFail(searchResponse.result!, event.requests, event.centerId));
       }
     });
-=======
     on<BackToPetSelection>(
       (event, emit) {
         emit(UpdatePetSelected([], event.requests));
       },
     );
->>>>>>> 2b95dde15b52104731b7d20d1adb7a38a16fddb8
   }
 }

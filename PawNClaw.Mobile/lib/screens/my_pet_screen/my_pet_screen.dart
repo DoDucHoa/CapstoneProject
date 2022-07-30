@@ -47,7 +47,8 @@ class _MyPetScreenState extends State<MyPetScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_outlined,
               color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () =>
+              Navigator.of(context).popUntil((route) => route.isFirst),
         ),
         title: Text(
           'My Pet',
@@ -77,33 +78,35 @@ class _MyPetScreenState extends State<MyPetScreen> {
                                       AddPetScreen(customerId: account!.id!)))),
                           child: Container(
                             width: width * 0.15,
-                            decoration: BoxDecoration(color: primaryBackgroundColor, borderRadius: BorderRadius.circular(15)),
-                            
+                            decoration: BoxDecoration(
+                                color: primaryBackgroundColor,
+                                borderRadius: BorderRadius.circular(15)),
                             child: DottedBorder(
-                              radius: Radius.circular(15),
-                              color: primaryColor,
-                              strokeWidth: 2,
-                              strokeCap: StrokeCap.round,
-                              borderType: BorderType.RRect,  
-                              dashPattern: const <double>[5,5],
+                                radius: Radius.circular(15),
+                                color: primaryColor,
+                                strokeWidth: 2,
+                                strokeCap: StrokeCap.round,
+                                borderType: BorderType.RRect,
+                                dashPattern: const <double>[5, 5],
                                 child: Center(
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                  const Icon(
-                                    Icons.add_circle_rounded,
-                                    color: primaryColor,
-                                    size: 18,
-                                  ),
-                                  Text(
-                                    'Thêm thú cưng',
-                                    style: TextStyle(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      const Icon(
+                                        Icons.add_circle_rounded,
                                         color: primaryColor,
-                                        fontSize: width * smallFontRate,
-                                        fontWeight: FontWeight.w700),
-                                  )
-                              ],
-                            ),
+                                        size: 18,
+                                      ),
+                                      Text(
+                                        'Thêm thú cưng',
+                                        style: TextStyle(
+                                            color: primaryColor,
+                                            fontSize: width * smallFontRate,
+                                            fontWeight: FontWeight.w700),
+                                      )
+                                    ],
+                                  ),
                                 )),
                           ),
                         )

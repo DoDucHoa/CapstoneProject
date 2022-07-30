@@ -54,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             phoneController.text = user.phone ?? "";
             return SafeArea(
               child: Scaffold(
-                resizeToAvoidBottomInset: true,
+                resizeToAvoidBottomInset: false,
                 backgroundColor: frameColor,
                 body: SingleChildScrollView(
                   child: Column(
@@ -226,7 +226,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   children: [
                                     WidgetSpan(
                                       child: Icon(
-                                        Icons.edit,
+                                        (!isEdit) ? Icons.edit : Icons.cancel,
                                         size: 15,
                                         // color: primaryColor,
                                       ),
