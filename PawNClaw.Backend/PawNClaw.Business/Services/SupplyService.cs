@@ -71,10 +71,25 @@ namespace PawNClaw.Business.Services
             return _supplyRepository.Get(id);
         }
         
-        public int CreateSupply(Supply supply)
+        public int CreateSupply(CreateSupplyParameter supplyP)
         {
             try
             {
+                Supply supply = new Supply()
+                {
+                    Name = supplyP.Name,
+                    SellPrice = supplyP.SellPrice,
+                    DiscountPrice = supplyP.DiscountPrice,
+                    Quantity = supplyP.Quantity,
+                    CreateDate = supplyP.CreateDate,
+                    ModifyDate = supplyP.ModifyDate,
+                    CreateUser = supplyP.CreateUser,
+                    ModifyUser = supplyP.ModifyUser,
+                    Status = true,
+                    SupplyTypeCode = supplyP.SupplyTypeCode,
+                    CenterId = supplyP.CenterId
+                };
+
                 _supplyRepository.Add(supply);
                 _supplyRepository.SaveDbChange();
                 return supply.Id;
