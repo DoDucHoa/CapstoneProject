@@ -26,7 +26,8 @@ namespace PawNClaw.Data.Repository
             IQueryable<Supply> query = _dbSet;
 
             var values = query.Include(x => x.SupplyTypeCodeNavigation)
-                .Select(x => new Supply {
+                .Select(x => new Supply
+                {
                     Id = x.Id,
                     Name = x.Name,
                     SellPrice = x.SellPrice,
@@ -45,6 +46,31 @@ namespace PawNClaw.Data.Repository
                 .Where(x => x.CenterId == centerId);
 
             return values;
+        }
+
+        public Supply GetSupplyById(int id)
+        {
+            Supply query = _dbSet
+                .Select(x => new Supply
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    SellPrice = x.SellPrice,
+                    DiscountPrice = x.DiscountPrice,
+                    Quantity = x.Quantity,
+                    CreateDate = x.CreateDate,
+                    ModifyDate = x.ModifyDate,
+                    CreateUser = x.CreateUser,
+                    ModifyUser = x.ModifyUser,
+                    Status = x.Status,
+                    CenterId = x.CenterId,
+                    SupplyTypeCode = x.SupplyTypeCode,
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.Supply),
+                    SupplyTypeCodeNavigation = x.SupplyTypeCodeNavigation
+                })
+                .First(x => x.Id == id);
+
+            return query;
         }
     }
 }

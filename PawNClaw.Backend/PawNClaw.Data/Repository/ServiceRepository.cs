@@ -25,7 +25,8 @@ namespace PawNClaw.Data.Repository
 
             query = query
                 .Include(x => x.ServicePrices)
-                .Select(x => new Service {
+                .Select(x => new Service
+                {
                     Id = x.Id,
                     Description = x.Description,
                     DiscountPrice = x.DiscountPrice,
@@ -42,6 +43,29 @@ namespace PawNClaw.Data.Repository
                 .Where(x => x.CenterId == centerId);
 
             return query.ToList();
+        }
+
+        public Service GetServiceById(int id)
+        {
+            Service query = _dbSet
+                .Select(x => new Service
+                {
+                    Id = x.Id,
+                    Description = x.Description,
+                    DiscountPrice = x.DiscountPrice,
+                    CreateDate = x.CreateDate,
+                    CreateUser = x.CreateUser,
+                    ModifyDate = x.ModifyDate,
+                    ModifyUser = x.ModifyUser,
+                    Status = x.Status,
+                    CenterId = x.CenterId,
+                    Name = x.Name,
+                    ServicePrices = x.ServicePrices,
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.Service),
+                })
+                .FirstOrDefault(x => x.Id == id);
+
+            return query;
         }
     }
 }
