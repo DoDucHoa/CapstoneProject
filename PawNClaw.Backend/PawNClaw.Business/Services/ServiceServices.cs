@@ -127,8 +127,16 @@ namespace PawNClaw.Business.Services
             }
         }
 
-        public bool UpdateService(Service service)
+        public bool UpdateService(UpdateService serviceP)
         {
+            Service service = _serviceRepository.Get(serviceP.Id);
+            service.Description = serviceP.Description;
+            service.DiscountPrice = serviceP.DiscountPrice;
+            service.ModifyDate = serviceP.ModifyDate;
+            service.ModifyUser = serviceP.ModifyUser;
+            service.Status = serviceP.Status;
+            service.Name = serviceP.Name;
+
             _serviceRepository.Update(service);
             _serviceRepository.SaveDbChange();
             return true;
