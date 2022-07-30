@@ -69,7 +69,7 @@ namespace PawNClaw.Business.Services
 
         public Service GetService(int id)
         {
-            return _serviceRepository.Get(id);
+            return _serviceRepository.GetServiceById(id);
         }
 
         public async Task<int> CreateService(CreateService serviceP, List<CreateServicePrice> servicePricePs)

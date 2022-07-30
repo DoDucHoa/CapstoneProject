@@ -68,7 +68,7 @@ namespace PawNClaw.Business.Services
 
         public Supply GetSupply(int id)
         {
-            return _supplyRepository.Get(id);
+            return _supplyRepository.GetSupplyById(id);
         }
         
         public int CreateSupply(CreateSupplyParameter supplyP)
