@@ -19,6 +19,7 @@ const ICONS = {
   service: getIcon('ic_service'),
   food: getIcon('ic_food'),
   cage: getIcon('ic_cage'),
+  cageType: getIcon('ic_cage_type'),
   staff: getIcon('ic_staff'),
 };
 
@@ -61,7 +62,7 @@ const navConfig = [
       {
         title: 'Loại chuồng',
         path: PATH_DASHBOARD.cageType.list,
-        icon: ICONS.cage,
+        icon: ICONS.cageType,
       },
       {
         title: 'Chuồng',
@@ -113,7 +114,7 @@ export const navConfigForStaff = [
       {
         title: 'Loại chuồng',
         path: PATH_DASHBOARD.cageType.list,
-        icon: ICONS.cage,
+        icon: ICONS.cageType,
       },
       {
         title: 'Chuồng',
