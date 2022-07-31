@@ -9,7 +9,7 @@ namespace PawNClaw.Business.Services
 {
     public class ConstService
     {
-        public static async Task AddData(string project, string collection, string document, string newData)
+        public static async Task AddData(string project, string collection, string document, int newData)
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "pawnclaw-4b6ba-firebase-adminsdk-txxl7-50dcc161a7.json");
             FirestoreDb db = FirestoreDb.Create(project);
@@ -17,7 +17,7 @@ namespace PawNClaw.Business.Services
             DocumentReference docRef = db.Collection(collection).Document(document);
             Dictionary<string, object> policy = new Dictionary<string, object>
             {
-                { "policy", newData }
+                { "data", newData }
             };
             await docRef.SetAsync(policy);
             // [END fs_add_data_1]
