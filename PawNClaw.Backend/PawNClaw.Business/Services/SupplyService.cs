@@ -13,10 +13,12 @@ namespace PawNClaw.Business.Services
     public class SupplyService
     {
         ISupplyRepository _supplyRepository;
+        ISupplyOrderRepository _supplyOrderRepository;
 
-        public SupplyService(ISupplyRepository supplyRepository)
+        public SupplyService(ISupplyRepository supplyRepository, ISupplyOrderRepository supplyOrderRepository)
         {
             _supplyRepository = supplyRepository;
+            _supplyOrderRepository = supplyOrderRepository;
         }
 
         public PagedList<Supply> GetSupplysOfCenter(SupplyRequestParameter supplyRequestParameter, PagingParameter pagingParameter)
@@ -112,6 +114,28 @@ namespace PawNClaw.Business.Services
                 supply.ModifyUser = updateSupplyParameter.ModifyUser;
                 supply.Status = updateSupplyParameter.Status;
 
+                _supplyRepository.Update(supply);
+                _supplyRepository.SaveDbChange();
+                return true;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+
+        public bool UpdateStatus(int id)
+        {
+            try
+            {
+                var supply = _supplyRepository.Get(id);
+                supply.Status = false;
+
+                var supplyOrder = _supplyOrderRepository.GetAll(x => x.SupplyId == id && (x.Booking.StatusId == 1 || x.Booking.StatusId == 2));
+                if (supplyOrder.Count() > 0)
+                {
+                    throw new Exception("Cant delete");
+                }
                 _supplyRepository.Update(supply);
                 _supplyRepository.SaveDbChange();
                 return true;
