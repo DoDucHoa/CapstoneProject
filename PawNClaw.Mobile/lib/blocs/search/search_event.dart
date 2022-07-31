@@ -9,6 +9,14 @@ abstract class SearchEvent extends Equatable {
 
 class InitSearch extends SearchEvent {}
 
+class InitCheck extends SearchEvent {
+  final int centerId;
+  const InitCheck(this.centerId);
+  @override
+  // TODO: implement props
+  List<Object> get props => [centerId];
+}
+
 class SelectPet extends SearchEvent {
   final Pet pet;
 
@@ -31,12 +39,13 @@ class AddPetRequest extends SearchEvent {
 
 class ConfirmRequest extends SearchEvent {
   final List<List<Pet>> requests;
+  final int centerId;
 
-  const ConfirmRequest(this.requests);
+  const ConfirmRequest(this.requests, this.centerId);
 
   @override
   // TODO: implement props
-  List<Object> get props => [requests];
+  List<Object> get props => [requests, centerId];
 }
 
 class SearchCenter extends SearchEvent {
@@ -55,6 +64,29 @@ class SearchCenter extends SearchEvent {
   // TODO: implement props
   List<Object> get props =>
       [requests, timeFrom, due, cityCode, districtCode, pageNumber];
+}
+
+class CheckCenter extends SearchEvent {
+  final int centerId;
+  final List<List<Pet>> requests;
+  final DateTime timeFrom;
+  final int due;
+  const CheckCenter(this.centerId, this.requests, this.timeFrom, this.due);
+  @override
+  // TODO: implement props
+  List<Object> get props => [centerId, requests, timeFrom, due];
+}
+
+class CheckSponsorCenter extends SearchEvent {
+  final int centerId;
+  final List<List<Pet>> requests;
+  final DateTime timeFrom;
+  final int due;
+  const CheckSponsorCenter(
+      this.centerId, this.requests, this.timeFrom, this.due);
+  @override
+  // TODO: implement props
+  List<Object> get props => [centerId, requests, timeFrom, due];
 }
 
 class BackToPetSelection extends SearchEvent {

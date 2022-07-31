@@ -6,9 +6,21 @@ using System.Threading.Tasks;
 
 namespace PawNClaw.Data.Parameter
 {
-    public class StaffRequestParameter
+    public class StaffParameter
     {
         
+    }
+
+    public class StaffRequestParameter
+    {
+        public string? Name { get; set; }
+        public int CenterId { get; set; }
+        public bool? Status { get; set; } = true;
+
+        public string dir { get; set; } = "asc";
+        public string sort { get; set; } = null;
+        public string fields { get; set; } = null;
+        public string includeProperties { get; set; } = null;
     }
 
     public class CreateStaffParameter
@@ -27,5 +39,6 @@ namespace PawNClaw.Data.Parameter
         public int ModifyUser { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
+        public bool? Status { get; set; }
     }
 }

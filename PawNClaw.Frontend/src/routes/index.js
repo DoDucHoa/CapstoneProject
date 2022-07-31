@@ -190,6 +190,66 @@ export default function Router() {
           ],
         },
         {
+          path: 'staff',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/staff/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['owner']} currentRole={currentRole}>
+                  <StaffList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['owner']} currentRole={currentRole}>
+                  <StaffCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['owner']} currentRole={currentRole}>
+                  <StaffCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'cage-type',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/cage-type/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageTypeList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageTypeCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageTypeCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
           path: 'cage',
           children: [
             { path: '', element: <Navigate to="/dashboard/cage/list" replace />, index: true },
@@ -214,6 +274,36 @@ export default function Router() {
               element: (
                 <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
                   <CageCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'supply',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/supply/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <SupplyList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <SupplyCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <SupplyCreate />
                 </RoleBasedGuard>
               ),
             },
@@ -301,9 +391,21 @@ const AdminCreate = Loadable(lazy(() => import('../pages/dashboard/Admin/AdminCr
 const OwnerList = Loadable(lazy(() => import('../pages/dashboard/Owner/OwnerList')));
 const OwnerCreate = Loadable(lazy(() => import('../pages/dashboard/Owner/OwnerCreate')));
 
+// STAFF
+const StaffList = Loadable(lazy(() => import('../pages/dashboard/Staff/StaffList')));
+const StaffCreate = Loadable(lazy(() => import('../pages/dashboard/Staff/StaffCreate')));
+
 // BRAND
 const BrandList = Loadable(lazy(() => import('../pages/dashboard/Brand/BrandList')));
 const BrandCreate = Loadable(lazy(() => import('../pages/dashboard/Brand/BrandCreate')));
+
+// SUPPLY
+const SupplyList = Loadable(lazy(() => import('../pages/dashboard/Supply/SupplyList')));
+const SupplyCreate = Loadable(lazy(() => import('../pages/dashboard/Supply/SupplyCreate')));
+
+// CAGE TYPE
+const CageTypeList = Loadable(lazy(() => import('../pages/dashboard/CageType/CageTypeList')));
+const CageTypeCreate = Loadable(lazy(() => import('../pages/dashboard/CageType/CageTypeCreate')));
 
 // CAGE
 const CageList = Loadable(lazy(() => import('../pages/dashboard/Cage/CageList')));

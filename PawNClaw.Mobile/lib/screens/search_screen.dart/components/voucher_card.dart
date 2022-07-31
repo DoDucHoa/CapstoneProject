@@ -42,7 +42,7 @@ class _VoucherCardState extends State<VoucherCard> {
         ? InkWell(
             //enableFeedback: widget.avaiable,
             onTap: (() {
-              widget.callback(widget.voucher.code);
+              widget.callback(widget.voucher.code!);
               //BlocProvider.of<BookingBloc>(context).add(AddVoucher(voucherCode: widget.voucher.code));
               // var state = BlocProvider.of<BookingBloc>(context).state;
               //var voucherCode  = (state as BookingUpdated).booking.voucherCode;
@@ -72,7 +72,7 @@ class _VoucherCardState extends State<VoucherCard> {
                               'Giảm ' +
                                   NumberFormat.currency(
                                           decimalDigits: 0,
-                                          symbol: 'đ',
+                                          symbol: (widget.voucher.voucherTypeCode!.contains('2'))?'đ':'%',
                                           locale: 'vi_vn')
                                       .format((widget.voucher.value)) +
                                   ' đơn hàng',
@@ -160,9 +160,9 @@ class _VoucherCardState extends State<VoucherCard> {
                             width: 10,
                           ),
                           Text('Hiệu lực từ: ' +
-                              widget.voucher.startDate +
+                              widget.voucher.formatStartDate() +
                               ' - ' +
-                              widget.voucher.expireDate),
+                              widget.voucher.formatExpiredDate()),
                         ])))
               ],
             ))
@@ -187,7 +187,7 @@ class _VoucherCardState extends State<VoucherCard> {
                               'Giảm ' +
                                   NumberFormat.currency(
                                           decimalDigits: 0,
-                                          symbol: 'đ',
+                                          symbol:(widget.voucher.voucherTypeCode!.contains('2')) ?'đ':'%',
                                           locale: 'vi_vn')
                                       .format((widget.voucher.value)) +
                                   ' đơn hàng',
@@ -275,9 +275,9 @@ class _VoucherCardState extends State<VoucherCard> {
                             width: 10,
                           ),
                           Text('Hiệu lực từ: ' +
-                              widget.voucher.startDate +
+                              widget.voucher.formatStartDate() +
                               ' - ' +
-                              widget.voucher.expireDate),
+                              widget.voucher.formatExpiredDate()),
                         ]))),
                 Text(
                   '* Đơn hàng chưa đạt giá trị tối thiểu của Voucher',

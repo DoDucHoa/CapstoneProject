@@ -16,10 +16,10 @@ const ICONS = {
   brand: getIcon('ic_brand'),
   center: getIcon('ic_center'),
   list: getIcon('ic_list'),
-  price: getIcon('ic_price_tag'),
   service: getIcon('ic_service'),
   food: getIcon('ic_food'),
   cage: getIcon('ic_cage'),
+  cageType: getIcon('ic_cage_type'),
   staff: getIcon('ic_staff'),
 };
 
@@ -60,14 +60,14 @@ const navConfig = [
 
       // STAFF
       {
+        title: 'Loại chuồng',
+        path: PATH_DASHBOARD.cageType.list,
+        icon: ICONS.cageType,
+      },
+      {
         title: 'Chuồng',
         path: PATH_DASHBOARD.cage.list,
         icon: ICONS.cage,
-      },
-      {
-        title: 'Giá chuồng',
-        path: PATH_DASHBOARD.price.list,
-        icon: ICONS.price,
       },
       {
         title: 'Đồ dùng',
@@ -112,14 +112,14 @@ export const navConfigForStaff = [
     items: [
       // STAFF
       {
+        title: 'Loại chuồng',
+        path: PATH_DASHBOARD.cageType.list,
+        icon: ICONS.cageType,
+      },
+      {
         title: 'Chuồng',
         path: PATH_DASHBOARD.cage.list,
         icon: ICONS.cage,
-      },
-      {
-        title: 'Giá chuồng',
-        path: PATH_DASHBOARD.price.list,
-        icon: ICONS.price,
       },
       {
         title: 'Đồ dùng',

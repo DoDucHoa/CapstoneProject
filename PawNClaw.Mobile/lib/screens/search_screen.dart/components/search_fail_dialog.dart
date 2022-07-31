@@ -169,6 +169,11 @@ class SearchFailDialog extends StatelessWidget {
       result.add('Vui lòng chắc chắn rằng thời gian bạn chọn là thực tế.');
       return result;
     }
+    if (s.contains('no response')) {
+      result.add('Không tìm thấy trung tâm phù hợp quanh khu vực của bạn');
+      result.add('');
+      return result;
+    }
     result.add('Đã xảy ra lỗi');
     result.add('Vui Lòng thử lại sau');
     return result;

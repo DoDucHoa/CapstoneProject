@@ -10,7 +10,7 @@ import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreen
 
 import '../../../models/booking.dart';
 
-var StatusColors = [Colors.amber[700], Colors.blue, Colors.green, Colors.red];
+var statusColors = [primaryColor.withOpacity(0.45), primaryColor, primaryColor.withOpacity(0.45), Colors.red];
 
 class TransactionCard extends StatelessWidget {
   final Booking booking;
@@ -53,7 +53,7 @@ class TransactionCard extends StatelessWidget {
                           ),
                           Text(booking.status!.name!,
                               style: TextStyle(
-                                  color: StatusColors[booking.statusId! - 1],
+                                  color: statusColors[booking.statusId! - 1],
                                   fontWeight: FontWeight.w700))
                         ],
                       ),

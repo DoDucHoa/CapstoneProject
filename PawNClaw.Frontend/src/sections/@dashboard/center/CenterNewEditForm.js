@@ -11,6 +11,7 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, Typography, Button } from '@mui/material';
 // utils
 import { fData } from '../../../utils/formatNumber';
+import { addTime } from '../../../utils/formatTime';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
@@ -71,14 +72,18 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
       address: centerData?.address || '',
       phone: centerData?.phone || '',
       openTime: centerData?.openTime || '',
+      openTimeUI: centerData?.openTime || '',
       closeTime: centerData?.closeTime || '',
+      closeTimeUI: centerData?.closeTime || '',
       description: centerData?.description || '',
       createUser: centerData?.createdUser || 0,
       modifyUser: centerData?.modifyUser || 0,
       brandId: centerData?.ownerId || 0,
       avatarUrl: centerData?.avatarUrl || '',
       checkin: centerData?.checkin || '',
+      checkinUI: centerData?.checkin || '',
       checkout: centerData?.checkout || '',
+      checkoutUI: centerData?.checkout || '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [centerData]
@@ -204,17 +209,45 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
               </Grid>
 
               <Grid item xs={6}>
-                <RHFTimePicker name="openTime" label="Giờ mở cửa" />
+                <RHFTimePicker
+                  name="openTime"
+                  label="Giờ mở cửa"
+                  onChange={(value) => {
+                    setValue('openTimeUI', value);
+                    setValue('openTime', addTime(value));
+                  }}
+                />
               </Grid>
               <Grid item xs={6}>
-                <RHFTimePicker name="closeTime" label="Giờ đóng cửa" />
+                <RHFTimePicker
+                  name="closeTime"
+                  label="Giờ đóng cửa"
+                  onChange={(value) => {
+                    setValue('closeTimeUI', value);
+                    setValue('closeTime', addTime(value));
+                  }}
+                />
               </Grid>
 
               <Grid item xs={6}>
-                <RHFTimePicker name="checkin" label="Giờ checkin" />
+                <RHFTimePicker
+                  name="checkin"
+                  label="Giờ checkin"
+                  onChange={(value) => {
+                    setValue('checkinUI', value);
+                    setValue('checkin', addTime(value));
+                  }}
+                />
               </Grid>
               <Grid item xs={6}>
-                <RHFTimePicker name="checkout" label="Giờ checkout" />
+                <RHFTimePicker
+                  name="checkout"
+                  label="Giờ checkout"
+                  onChange={(value) => {
+                    setValue('checkoutUI', value);
+                    setValue('checkout', addTime(value));
+                  }}
+                />
               </Grid>
 
               <Grid item xs={12}>

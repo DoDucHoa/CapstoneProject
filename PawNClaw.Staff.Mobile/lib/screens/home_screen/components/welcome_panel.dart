@@ -22,6 +22,7 @@ class _WelcomePanelState extends State<WelcomePanel> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    var user = (BlocProvider.of<AuthBloc>(context).state as Authenticated).user;
     return SafeArea(
       child: Stack(
         children: [
@@ -82,7 +83,7 @@ class _WelcomePanelState extends State<WelcomePanel> {
                     ? CircleAvatar(
                         radius: height * 0.025,
                         backgroundColor: Colors.white,
-                        backgroundImage: AssetImage("lib/assets/cus0.png"),
+                        backgroundImage: NetworkImage(user.url ?? ""),
                       )
                     : Container(
                         width: height * 0.05,

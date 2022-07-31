@@ -23,11 +23,63 @@ class PetRepository implements BasePetRepository {
       );
       final pets =
           response.data['data'].map<Pet>((e) => Pet.fromJson(e)).toList();
-      print(pets);
+      // pets.forEach((e) => print(e.toJson()));
       return pets;
     } catch (e) {
       print(e);
       return null;
+    }
+  }
+
+  @override
+  Future<bool> createPet(Pet pet) async {
+    final pref = await SharedPreferences.getInstance();
+    try {
+      _dio.options.headers = {
+        'Authorization': 'Bearer ' + pref.get("jwtToken").toString()
+      };
+
+      print(json.encode(pet.toJson()));
+      const String _url =
+          "https://pawnclawdevelopmentapi.azurewebsites.net/api/pets";
+      var response = await _dio.post(_url, data: pet.toJson());
+
+      // pets.forEach((e) => print(e.toJson()));
+      return response.statusCode == 200;
+    } on DioError catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> update(Pet pet) async {
+    // TODO: implement update
+    final pref = await SharedPreferences.getInstance();
+    try {
+      _dio.options.headers = {
+        'Authorization': 'Bearer ' + pref.get("jwtToken").toString()
+      };
+
+      Map<String, dynamic> data = {
+        "id": pet.id,
+        "weight": pet.weight,
+        "length": pet.length,
+        "height": pet.height,
+        "name": pet.name,
+        "birth": pet.birth!.toIso8601String(),
+        "breedName": pet.breedName,
+      };
+      const String _url =
+          "https://pawnclawdevelopmentapi.azurewebsites.net/api/pets/customer";
+      print(data);
+      var response = await _dio.put(_url, data: data);
+
+      // pets.forEach((e) => print(e.toJson()));
+      return response.statusCode == 200;
+    } on DioError catch (e) {
+      print(e);
+      return false;
     }
   }
 }
