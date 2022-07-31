@@ -37,7 +37,7 @@ export default function CageNewEditForm({ isEdit, cageData }) {
   const NewUserSchema = Yup.object().shape({
     code: Yup.string().required('Bắt buộc nhập'),
     centerId: Yup.number().required('Bắt buộc nhập'),
-    name: Yup.string(),
+    name: Yup.string().required('Bắt buộc nhập'),
     color: Yup.string(),
     isOnline: Yup.boolean(),
     createUser: Yup.number().required(),
@@ -132,6 +132,8 @@ export default function CageNewEditForm({ isEdit, cageData }) {
               }}
             >
               <RHFTextField name="code" label="Mã chuồng" disabled={isEdit} />
+
+              <RHFTextField name="name" label="Tên chuồng" />
 
               <RHFTextField name="color" label="Màu sắc" />
 

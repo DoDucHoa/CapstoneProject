@@ -1,4 +1,6 @@
+// @mui
 import { Button, Divider, Stack, Typography } from '@mui/material';
+// hooks
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { RHFTextField, RHFTimePicker } from '../../../../components/hook-form';
 // components
@@ -12,6 +14,7 @@ export default function CageTypeFoodSchedule() {
     control,
     name: 'foodSchedules',
   });
+
   const handleAdd = () => {
     append({
       fromTime: '',
@@ -19,12 +22,14 @@ export default function CageTypeFoodSchedule() {
       name: '',
       fromTimeUI: '',
       toTimeUI: '',
+      cageTypeId: 0,
     });
   };
 
   const handleRemove = (index) => {
     remove(index);
   };
+
   return (
     <>
       <Typography variant="h6" sx={{ color: 'text.disabled', mb: 3 }}>

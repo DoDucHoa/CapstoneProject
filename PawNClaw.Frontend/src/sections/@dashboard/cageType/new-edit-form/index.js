@@ -15,11 +15,7 @@ import { PATH_DASHBOARD } from '../../../../routes/paths';
 import useAuth from '../../../../hooks/useAuth';
 // components
 import { FormProvider } from '../../../../components/hook-form';
-import {
-  createCageType,
-  updateCageType,
-  uploadPhotoToBackend,
-} from '../../../../pages/dashboard/CageType/useCageTypeAPI';
+import { createCageType, updateCageType } from '../../../../pages/dashboard/CageType/useCageTypeAPI';
 import CageTypeDetail from './CageTypeDetail';
 import CageTypePrice from './CageTypePrice';
 import CageTypeFoodSchedule from './CageTypeFoodSchedule';
@@ -80,8 +76,9 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
         isSingle: cageTypeData?.isSingle || false,
         createUser: cageTypeData?.createUser || accountInfo.id,
         modifyUser: accountInfo.id,
+        modifyDate: new Date(),
         centerId,
-        avatarUrl: cageTypeData?.photos || '',
+        avatarUrl: cageTypeData?.photos?.length > 0 ? cageTypeData?.photos[0].url : '',
       },
       createPriceParameters: cageTypeData?.prices || [
         {
@@ -90,7 +87,13 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
           priceTypeCode: 'PRICE-001',
         },
       ],
-      foodSchedules: cageTypeData?.foodSchedules || [
+      foodSchedules: cageTypeData?.foodSchedules?.map((foodSchedules) => ({
+        ...foodSchedules,
+        fromTime: new Date(foodSchedules.fromTimeDate),
+        fromTimeUI: new Date(foodSchedules.fromTimeDate),
+        toTime: new Date(foodSchedules.toTimeDate),
+        toTimeUI: new Date(foodSchedules.toTimeDate),
+      })) || [
         {
           fromTime: '',
           toTime: '',
@@ -136,14 +139,8 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
   const onSubmit = async () => {
     try {
       if (!isEdit) {
-        await createCageType(values);
-        // uploadPhotoToFirebase('cageTypes', values.createCageTypeParameter.avatarUrl)
-        //   .then((url) => {
-        //     uploadPhotoToBackend(values.createCageTypeParameter.id, url);
-        //   })
-        //   .catch((error) => {
-        //     console.log(error);
-        //   });
+        const idCageType = await createCageType(values);
+        await uploadPhotoToFirebase('cageTypes', values.createCageTypeParameter.avatarUrl, idCageType, 5);
       } else {
         await updateCageType(values);
       }
@@ -160,7 +157,7 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
       <Grid container spacing={3}>
         <Grid item xs={12} sm={8}>
           <Card sx={{ p: 3 }}>
-            <CageTypeDetail />
+            <CageTypeDetail isEdit={isEdit} />
 
             <Box sx={{ my: 3 }} />
 

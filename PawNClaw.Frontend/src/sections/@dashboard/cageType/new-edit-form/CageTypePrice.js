@@ -15,7 +15,7 @@ CageTypePrice.propTypes = {
 };
 
 export default function CageTypePrice({ createUser }) {
-  const { control, setValue } = useFormContext();
+  const { control } = useFormContext();
   const [priceTypes, setPriceTypes] = useState([]);
 
   useEffect(() => {
@@ -75,12 +75,7 @@ export default function CageTypePrice({ createUser }) {
                   </MenuItem>
                 ))}
               </RHFSelect>
-              <RHFTextField
-                name={`createPriceParameters[${index}].unitPrice`}
-                label="Giá"
-                type="number"
-                onChange={(event) => setValue(`createPriceParameters[${index}].unitPrice`, Number(event.target.value))}
-              />
+              <RHFTextField name={`createPriceParameters[${index}].unitPrice`} label="Giá" type="number" />
             </Stack>
 
             <Button

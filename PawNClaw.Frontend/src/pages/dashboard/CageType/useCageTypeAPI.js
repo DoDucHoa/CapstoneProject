@@ -24,11 +24,11 @@ const createCageType = async (cageTypeData) => {
   return response.data;
 };
 
-const updateCageType = async (idCageType, name, description, ownerId) => {
-  const response = await axios.put(`${URL}/${idCageType}`, {
-    name,
-    description,
-    ownerId,
+const updateCageType = async (cageTypeData) => {
+  const response = await axios.put(URL, {
+    updateCageTypeParameter: cageTypeData.createCageTypeParameter,
+    updatePriceParameters: cageTypeData.createPriceParameters,
+    updateFoodSchedules: cageTypeData.foodSchedules,
   });
   return response.status;
 };
@@ -43,22 +43,4 @@ const getPriceTypes = async () => {
   return response.data;
 };
 
-const uploadPhotoToBackend = async (idCageType, photoUrl) => {
-  const response = await axios.post('/api/photos/cagetype', {
-    photoTypeId: 5,
-    idActor: idCageType,
-    url: photoUrl,
-    isThumbnail: false,
-  });
-  return response.data;
-};
-
-export {
-  getCageType,
-  getCageTypes,
-  createCageType,
-  deleteCageType,
-  updateCageType,
-  getPriceTypes,
-  uploadPhotoToBackend,
-};
+export { getCageType, getCageTypes, createCageType, deleteCageType, updateCageType, getPriceTypes };

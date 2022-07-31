@@ -190,6 +190,36 @@ export default function Router() {
           ],
         },
         {
+          path: 'staff',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/staff/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['owner']} currentRole={currentRole}>
+                  <StaffList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['owner']} currentRole={currentRole}>
+                  <StaffCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['owner']} currentRole={currentRole}>
+                  <StaffCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
           path: 'cage-type',
           children: [
             { path: '', element: <Navigate to="/dashboard/cage-type/list" replace />, index: true },
@@ -360,6 +390,10 @@ const AdminCreate = Loadable(lazy(() => import('../pages/dashboard/Admin/AdminCr
 // OWNER
 const OwnerList = Loadable(lazy(() => import('../pages/dashboard/Owner/OwnerList')));
 const OwnerCreate = Loadable(lazy(() => import('../pages/dashboard/Owner/OwnerCreate')));
+
+// STAFF
+const StaffList = Loadable(lazy(() => import('../pages/dashboard/Staff/StaffList')));
+const StaffCreate = Loadable(lazy(() => import('../pages/dashboard/Staff/StaffCreate')));
 
 // BRAND
 const BrandList = Loadable(lazy(() => import('../pages/dashboard/Brand/BrandList')));
