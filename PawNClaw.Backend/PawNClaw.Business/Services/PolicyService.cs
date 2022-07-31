@@ -33,19 +33,39 @@ namespace PawNClaw.Business.Services
             return documentDictionaryreturn;
         }
 
-        public static async Task AddData(string project, string policyId, string newPolicy)
+        public static async Task AddData(string project, string newPolicy)
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "pawnclaw-4b6ba-firebase-adminsdk-txxl7-50dcc161a7.json");
             FirestoreDb db = FirestoreDb.Create(project);
             // [START fs_add_data_1]
-            DocumentReference docRef = db.Collection("Policy").Document(policyId);
+            DocumentReference docRef = db.Collection("Policy").Document("MainPolicy");
             Dictionary<string, object> policy = new Dictionary<string, object>
             {
                 { "policy", newPolicy }
             };
             await docRef.SetAsync(policy);
             // [END fs_add_data_1]
-            Console.WriteLine("Added data to the alovelace document in the users collection.");
         }
+
+        public static async Task<Dictionary<string, object>> GetPolicy(string project)
+        {
+            // [START fs_initialize_project_id]
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "pawnclaw-4b6ba-firebase-adminsdk-txxl7-50dcc161a7.json");
+            FirestoreDb db = FirestoreDb.Create(project);
+            // [END fs_initialize_project_id]
+
+            DocumentReference policy = db.Collection("Policy").Document("MainPolicy");
+            DocumentSnapshot snapshot = await policy.GetSnapshotAsync();
+            if (snapshot.Exists)
+            {
+                Dictionary<string, object> policyDic = snapshot.ToDictionary();
+                return policyDic;
+            }
+            else
+            {
+                throw new Exception("Document "+ snapshot.Id + " does not exist!");
+            }
+        }
+
     }
 }
