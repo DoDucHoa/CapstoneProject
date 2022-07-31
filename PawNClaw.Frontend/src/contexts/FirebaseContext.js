@@ -100,7 +100,7 @@ const AuthContext = createContext({
   login: () => Promise.resolve(),
   register: (email, password) => Promise.resolve(email, password),
   logout: () => Promise.resolve(),
-  uploadPhoto: (path, file) => Promise.resolve(path, file),
+  uploadPhotoToFirebase: (path, file, idActor, photoTypeId) => Promise.resolve(path, file, idActor, photoTypeId),
   changeCenter: () => null,
   // changePassword: (password) => Promise.resolve(password),
 });
@@ -185,7 +185,7 @@ function AuthProvider({ children }) {
   };
 
   // create function upload photo to Firebase use async
-  const uploadPhoto = (path, file) => {
+  const uploadPhotoToFirebase = (path, file, idActor, photoTypeId) => {
     const storageRef = ref(storage, `${path}/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
     uploadTask.on(
@@ -208,7 +208,9 @@ function AuthProvider({ children }) {
         console.log(error.code);
       },
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => console.log('downloadURL: ', downloadURL));
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
+          uploadPhotoToBackend(idActor, downloadURL, photoTypeId)
+        );
       }
     );
   };
@@ -246,7 +248,7 @@ function AuthProvider({ children }) {
         login,
         register,
         logout,
-        uploadPhoto,
+        uploadPhotoToFirebase,
         changeCenter,
         // changePassword,
       }}
@@ -291,4 +293,14 @@ const getPetCenter = async (idOwner) => {
     console.log('error: ', error);
     return null;
   }
+};
+
+const uploadPhotoToBackend = async (idActor, url, photoTypeId) => {
+  const response = await axios.post('/api/photos/cagetype', {
+    photoTypeId,
+    idActor,
+    url,
+    isThumbnail: false,
+  });
+  return response.data;
 };

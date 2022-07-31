@@ -15,3 +15,13 @@ class GetPets extends PetEvent {
   // TODO: implement props
   List<Object> get props => [account];
 }
+
+class UpdatePetProfile extends PetEvent {
+  final Pet pet;
+
+  const UpdatePetProfile(this.pet);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [pet];
+}

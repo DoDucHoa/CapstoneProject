@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:pawnclaw_mobile_application/models/photo.dart';
+
 class Pet {
   int? _id;
   double? _weight;
@@ -10,22 +14,27 @@ class Pet {
   String? _breedName;
   // Null? _petTypeCodeNavigation;
   // List<Null>? _petSearchDetails;
-  // List<Null>? _petHealthHistories;
+  List<PetHealthHistories>? _petHealthHistories;
+  String? _photoUrl;
+  int? _customerId;
+  List<Photo>? _photos;
 
-  Pet({
-    int? id,
-    double? weight,
-    double? length,
-    double? height,
-    String? name,
-    DateTime? birth,
-    bool? status,
-    String? petTypeCode,
-    String? breedName,
-    // Null? petTypeCodeNavigation,
-    // List<Null>? petSearchDetails,
-    // List<Null>? petHealthHistories
-  }) {
+  Pet(
+      {int? id,
+      double? weight,
+      double? length,
+      double? height,
+      String? name,
+      DateTime? birth,
+      bool? status,
+      String? petTypeCode,
+      String? breedName,
+      // Null? petTypeCodeNavigation,
+      // List<Null>? petSearchDetails,
+      List<PetHealthHistories>? petHealthHistories,
+      String? photoUrl,
+      int? customerId,
+      List<Photo>? photos}) {
     if (id != null) {
       this._id = id;
     }
@@ -59,9 +68,18 @@ class Pet {
     // if (petSearchDetails != null) {
     //   this._petSearchDetails = petSearchDetails;
     // }
-    // if (petHealthHistories != null) {
-    //   this._petHealthHistories = petHealthHistories;
-    // }
+    if (petHealthHistories != null) {
+      this._petHealthHistories = petHealthHistories;
+    }
+    if (photoUrl != null) {
+      this._photoUrl = photoUrl;
+    }
+    if (customerId != null) {
+      this._customerId = customerId;
+    }
+    if (photos != null) {
+      this._photos = photos;
+    }
   }
 
   int? get id => _id;
@@ -82,15 +100,19 @@ class Pet {
   set petTypeCode(String? petTypeCode) => _petTypeCode = petTypeCode;
   String? get breedName => _breedName;
   set breedName(String? breedName) => _breedName = breedName;
+  String? get photoUrl => _photoUrl;
+  set photoUrl(String? photoUrl) => _photoUrl = photoUrl;
+  List<Photo>? get photos => _photos;
+  set photos(List<Photo>? photos) => _photos = photos;
   // Null? get petTypeCodeNavigation => _petTypeCodeNavigation;
   // set petTypeCodeNavigation(Null? petTypeCodeNavigation) =>
   //     _petTypeCodeNavigation = petTypeCodeNavigation;
   // List<Null>? get petSearchDetails => _petSearchDetails;
   // set petSearchDetails(List<Null>? petSearchDetails) =>
   //     _petSearchDetails = petSearchDetails;
-  // List<Null>? get petHealthHistories => _petHealthHistories;
-  // set petHealthHistories(List<Null>? petHealthHistories) =>
-  //     _petHealthHistories = petHealthHistories;
+  List<PetHealthHistories>? get petHealthHistories => _petHealthHistories;
+  set petHealthHistories(List<PetHealthHistories>? petHealthHistories) =>
+      _petHealthHistories = petHealthHistories;
 
   Pet.fromJson(Map<String, dynamic> json) {
     _id = json['id'];
@@ -109,17 +131,26 @@ class Pet {
     //     _petSearchDetails!.add(new .fromJson(v));
     //   });
     // }
-    // if (json['petHealthHistories'] != null) {
-    //   _petHealthHistories = <Null>[];
-    //   json['petHealthHistories'].forEach((v) {
-    //     _petHealthHistories!.add(new Null.fromJson(v));
-    //   });
-    // }
+    if (json['petHealthHistories'] != null) {
+      _petHealthHistories = <PetHealthHistories>[];
+      json['petHealthHistories'].forEach((v) {
+        _petHealthHistories!.add(PetHealthHistories.fromJson(v));
+      });
+    }
+    if (json['photos'] != null) {
+      _photos = <Photo>[];
+      json['photos'].forEach((v) {
+        photos!.add(Photo.fromJson(v));
+      });
+    }
+    _customerId = json['customerId'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this._id;
+    if (id != null) {
+      data['id'] = this._id;
+    }
     data['weight'] = this._weight;
     data['length'] = this._length;
     data['height'] = this._height;
@@ -133,10 +164,72 @@ class Pet {
     //   data['petSearchDetails'] =
     //       this._petSearchDetails!.map((v) => v.toJson()).toList();
     // }
-    // if (this._petHealthHistories != null) {
-    //   data['petHealthHistories'] =
-    //       this._petHealthHistories!.map((v) => v.toJson()).toList();
-    // }
+    if (this._petHealthHistories != null) {
+      data['petHealthHistories'] =
+          this._petHealthHistories!.map((v) => v.toJson()).toList();
+    }
+    if (this._photoUrl != null) {
+      data['photoUrl'] = this._photoUrl;
+    }
+    data['customerId'] = this._customerId;
     return data;
   }
+}
+
+class PetHealthHistories {
+  PetHealthHistories({
+    this.id,
+    this.checkedDate,
+    this.description,
+    this.centerName,
+    this.weight,
+    this.height,
+    this.length,
+    this.petId,
+    this.bookingId,
+    this.booking,
+  });
+
+  int? id;
+  DateTime? checkedDate;
+  String? description;
+  String? centerName;
+  double? weight;
+  double? height;
+  double? length;
+  int? petId;
+  int? bookingId;
+  dynamic booking;
+
+  factory PetHealthHistories.fromRawJson(String str) =>
+      PetHealthHistories.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory PetHealthHistories.fromJson(Map<String, dynamic> json) =>
+      PetHealthHistories(
+        id: json["id"],
+        checkedDate: DateTime.parse(json["checkedDate"]),
+        description: json["description"],
+        centerName: json["centerName"],
+        weight: json["weight"].toDouble(),
+        height: json["height"].toDouble(),
+        length: json["length"].toDouble(),
+        petId: json["petId"],
+        bookingId: json["bookingId"],
+        booking: json["booking"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "checkedDate": checkedDate!.toIso8601String(),
+        "description": description,
+        "centerName": centerName,
+        "weight": weight,
+        "height": height,
+        "length": length,
+        "petId": petId,
+        "bookingId": bookingId,
+        "booking": booking,
+      };
 }

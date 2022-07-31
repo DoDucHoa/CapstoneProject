@@ -6,6 +6,7 @@ using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PawNClaw.Business.Services
 {
@@ -31,12 +32,11 @@ namespace PawNClaw.Business.Services
             return _petRepository.UpdatePetForStaff(id, Weight, Lenght, Height);
         }
 
-        public bool CreatePet(CreatePetRequestParameter createPetRequestParameter)
+        public async Task<bool> CreatePet(CreatePetRequestParameter createPetRequestParameter)
         {
             try
             {
-                _petRepository.AddNewPet(createPetRequestParameter);
-                return true;
+                return await _petRepository.AddNewPet(createPetRequestParameter);
             }
             catch
             {

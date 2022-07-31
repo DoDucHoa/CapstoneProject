@@ -30,8 +30,8 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                await _staffServicecs.AddAsync(staff);
-                return Ok();
+                var data = await _staffServicecs.AddAsync(staff);
+                return Ok(data);
             }
             catch (Exception e)
             {
@@ -55,12 +55,21 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("center")]
-        public IActionResult getStaffByCenter([FromQuery] int centerId, [FromQuery] PagingParameter paging)
+        public IActionResult getStaffByCenter([FromQuery] int centerId, [FromQuery] string? name, [FromQuery] bool? status, [FromQuery] PagingParameter paging)
         {
             try
             {
-                var data = _staffServicecs.GetByCenterId(centerId, paging);
-                return Ok(data);
+                var data = _staffServicecs.GetByCenterId(centerId,name, status, paging);
+                var metadata = new
+                {
+                    data.TotalCount,
+                    data.PageSize,
+                    data.CurrentPage,
+                    data.TotalPages,
+                    data.HasNext,
+                    data.HasPrevious
+                };
+                return Ok(new { data, metadata });
             }
             catch (Exception e)
             {
@@ -69,7 +78,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "Admin,Mod,Owner")]
+        [Authorize(Roles = "Admin,Mod,Owner,Staff")]
         public IActionResult updateStaff([FromBody] UpdateStaffParameter staff)
         {
             try
@@ -83,8 +92,8 @@ namespace PawNClaw.API.Controllers
             }
         }
 
-        [HttpPut("ban/{id}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [HttpPut("update-status/{id}")]
+        [Authorize(Roles = "Admin,Mod,Owner")]
         public IActionResult BanStaff(int id)
         {
             try

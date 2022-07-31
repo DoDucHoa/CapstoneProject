@@ -44,6 +44,7 @@ import { getCages, banCage, unbanCage, getCageTypes } from './useCageAPI';
 
 const TABLE_HEAD = [
   { id: 'code', label: 'Mã chuồng', align: 'left' },
+  { id: 'name', label: 'Tên chuồng', align: 'left' },
   { id: 'typeName', label: 'Loại chuồng', align: 'left' },
   { id: 'isSingle', label: 'Chuồng riêng', align: 'center' },
   { id: 'status', label: 'Trạng thái', align: 'left' },
@@ -84,6 +85,7 @@ export default function CageList() {
 
     const cages = data.map((cage, index) => ({
       code: cage.code,
+      name: cage.name,
       avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`,
       isSingle: cage.cageType.isSingle,
       typeName: cage.cageType.typeName,
@@ -183,6 +185,7 @@ export default function CageList() {
               </Button>
             }
           />
+
           {/* Filter dữ liệu */}
           <CageTableToolbar
             onSearch={handleSearch}
@@ -209,6 +212,7 @@ export default function CageList() {
                       <CageTableRow
                         key={row.code}
                         row={row}
+                        centerId={centerId}
                         onEditRow={() => handleEditRow(row.code)}
                         onDeleteRow={() => (row.status ? handleOpenBanDialog(row.code) : handleUnbanAdmin(row.code))}
                       />

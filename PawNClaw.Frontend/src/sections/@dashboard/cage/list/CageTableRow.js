@@ -2,11 +2,12 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 
 // @mui
-import { Avatar, TableRow, TableCell, Typography, MenuItem, Checkbox, Switch } from '@mui/material';
+import { TableRow, TableCell, Typography, MenuItem, Checkbox, Switch } from '@mui/material';
 
 // components
 import Iconify from '../../../../components/Iconify';
 import { TableMoreMenu } from '../../../../components/table';
+import { shiftCage } from '../../../../pages/dashboard/Cage/useCageAPI';
 
 // ----------------------------------------------------------------------
 
@@ -14,10 +15,11 @@ BrandTableRow.propTypes = {
   row: PropTypes.object,
   onEditRow: PropTypes.func,
   onDeleteRow: PropTypes.func,
+  centerId: PropTypes.number,
 };
 
-export default function BrandTableRow({ row, onEditRow, onDeleteRow }) {
-  const { isSingle, avatarUrl, code, isOnline, typeName, status, canShift } = row;
+export default function BrandTableRow({ row, onEditRow, onDeleteRow, centerId }) {
+  const { isSingle, code, name, isOnline, typeName, canShift } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
   const [isCageOnline, setIsCageOnline] = useState(isOnline);
@@ -30,19 +32,20 @@ export default function BrandTableRow({ row, onEditRow, onDeleteRow }) {
     setOpenMenuActions(null);
   };
 
-  const handleChangeOnlineStatus = (cageCode) => {
+  const handleChangeOnlineStatus = async (cageCode) => {
     setIsCageOnline(!isCageOnline);
-    console.log(cageCode);
+    shiftCage(cageCode, centerId);
   };
 
   return (
     <TableRow hover>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={typeName} src={avatarUrl} sx={{ mr: 2 }} />
         <Typography variant="subtitle2" noWrap>
           {code}
         </Typography>
       </TableCell>
+
+      <TableCell align="left">{name}</TableCell>
 
       <TableCell align="left">{typeName}</TableCell>
 
@@ -62,6 +65,7 @@ export default function BrandTableRow({ row, onEditRow, onDeleteRow }) {
           actions={
             <>
               <MenuItem
+                disabled={!canShift}
                 onClick={() => {
                   onEditRow();
                   handleCloseMenu();
@@ -71,14 +75,15 @@ export default function BrandTableRow({ row, onEditRow, onDeleteRow }) {
                 Sửa
               </MenuItem>
               <MenuItem
+                disabled={!canShift}
                 onClick={() => {
                   onDeleteRow();
                   handleCloseMenu();
                 }}
-                sx={{ color: status ? 'error.main' : 'success.main' }}
+                sx={{ color: 'error.main' }}
               >
-                <Iconify icon={status ? 'eva:slash-outline' : 'eva:checkmark-square-outline'} />
-                {status ? 'Khóa' : 'Mở khóa'}
+                <Iconify icon={'eva:trash-2-outline'} />
+                Xóa
               </MenuItem>
             </>
           }
