@@ -761,20 +761,10 @@ namespace PawNClaw.Data.Database
                     .HasForeignKey(d => d.CreateUser)
                     .HasConstraintName("FK__Supplies__create__52AE4273");
 
-                entity.HasOne(d => d.CreateUser1)
-                    .WithMany(p => p.SupplyCreateUser1s)
-                    .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Supplies__create__7908F585");
-
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.SupplyModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
                     .HasConstraintName("FK__Supplies__modify__53A266AC");
-
-                entity.HasOne(d => d.ModifyUser1)
-                    .WithMany(p => p.SupplyModifyUser1s)
-                    .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Supplies__modify__79FD19BE");
 
                 entity.HasOne(d => d.SupplyTypeCodeNavigation)
                     .WithMany(p => p.Supplies)

@@ -50,6 +50,5 @@ namespace PawNClaw.Data.Database
         public string Distance { get; set; }
         [NotMapped]
         public string Duration { get; set; }
-
     }
 }
