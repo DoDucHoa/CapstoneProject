@@ -68,11 +68,24 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateService([FromBody] UpdateService service)
+        public IActionResult UpdateService([FromBody] UpdateServiceParameter service)
         {
             try
             {
-                return Ok(_serviceServices.UpdateService(service));
+                return Ok(_serviceServices.UpdateService(service.serviceP, service.updateServicePrices));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut("delete/{id}")]
+        public IActionResult UpdateService(int id)
+        {
+            try
+            {
+                return Ok(_serviceServices.DeleteService(id));
             }
             catch (Exception ex)
             {

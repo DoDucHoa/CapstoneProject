@@ -12,10 +12,11 @@ abstract class BaseCenterRepository {
       String searchValue, int pageNumber, int pageSize);
   Future<List<Center>?> getAllCenter();
   Future<Center?> getCenterOverview(int centerId);
-  Future<SearchResponseModel?> checkCenterToBooking(int centerId,
-      DateTime timeFrom, int due, List<List<Pet>> requests);
+  Future<SearchResponseModel?> checkCenterToBooking(
+      int centerId, DateTime timeFrom, int due, List<List<Pet>> requests);
   Future<List<Voucher>?> getCenterVouchers(int centerId, int customerId);
   Future<Position?> getCurrentLocation();
   Future<String?> getAddress(Position position);
-  Future<List<LocationResponseModel>?> getCentersNearby(String latitude, String longitude);
+  Future<List<LocationResponseModel>?> getCentersNearby(
+      String latitude, String longitude);
 }

@@ -1,8 +1,10 @@
-﻿using PawNClaw.Data.Database;
+﻿using PawNClaw.Data.Const;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,11 +14,13 @@ namespace PawNClaw.Business.Services
     {
         IStaffRepository _staffRepository;
         IAccountRepository _accountRepository;
-        
-        public StaffServicecs(IStaffRepository staffRepository, IAccountRepository accountRepository)
+        IPhotoRepository _photoRepository;
+
+        public StaffServicecs(IStaffRepository staffRepository, IAccountRepository accountRepository, IPhotoRepository photoRepository)
         {
             _staffRepository = staffRepository;
             _accountRepository = accountRepository;
+            _photoRepository = photoRepository;
         }
 
         //Get All
@@ -50,9 +54,32 @@ namespace PawNClaw.Business.Services
         }
 
         //Get Staff By Center Id
-        public PagedList<Staff> GetByCenterId(int id, PagingParameter paging)
+        public PagedList<Staff> GetByCenterId(int id, string? name, bool? status, PagingParameter paging)
         {
-            var values = _staffRepository.GetAll(x => x.CenterId == id,includeProperties: "IdNavigation");
+            var values = _staffRepository.GetAll(x => x.CenterId == id, includeProperties: "IdNavigation").Select(x => new Staff()
+            {
+                CenterId = x.CenterId,
+                CreateDate = x.CreateDate,
+                Id = x.Id,
+                IdNavigation = x.IdNavigation,
+                ModifyDate = x.ModifyDate,
+                ModifyUser = x.ModifyUser,
+                CreateUser = x.CreateUser,
+                Name = x.Name,
+                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.Account)
+            }).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                values = values.Where(x => name.Equals(x.Name.Trim()));
+            }
+            values = status switch
+            {
+                true => values.Where(x => x.IdNavigation.Status == true),
+                false => values.Where(x => x.IdNavigation.Status == false),
+                _ => values
+            };
+
             return PagedList<Staff>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
             paging.PageSize);
@@ -86,7 +113,7 @@ namespace PawNClaw.Business.Services
 
                 _staffRepository.Add(staffToDb);
                 await _staffRepository.SaveDbChangeAsync();
-                return 1;
+                return staffToDb.Id;
             }
             catch
             {
@@ -130,7 +157,14 @@ namespace PawNClaw.Business.Services
             try
             {
                 var staff = _accountRepository.GetFirstOrDefault(x => x.Id == id);
-                staff.Status = false;
+                if(staff.Status == true)
+                {
+                    staff.Status = false;
+                }
+                else
+                {
+                    staff.Status = true;
+                }
 
                 _accountRepository.Update(staff);
                 _accountRepository.SaveDbChange();

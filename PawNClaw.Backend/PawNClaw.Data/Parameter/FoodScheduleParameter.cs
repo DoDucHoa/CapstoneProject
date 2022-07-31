@@ -18,4 +18,13 @@ namespace PawNClaw.Data.Parameter
         public string Name { get; set; }
         public int CageTypeId { get; set; }
     }
+
+    public class UpdateFoodSchedule
+    {
+        public int Id { get; set; }
+        public DateTime FromTime { get; set; }
+        public DateTime ToTime { get; set; }
+        public string Name { get; set; }
+        public int CageTypeId { get; set; }
+    }
 }

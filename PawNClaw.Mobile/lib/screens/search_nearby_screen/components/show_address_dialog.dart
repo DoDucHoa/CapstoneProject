@@ -31,7 +31,6 @@ class _ShowAddressDialogState extends State<ShowAddressDialog> {
       setState(() {
         address = value;
       });
-      
     });
 
     super.initState();
@@ -46,7 +45,8 @@ class _ShowAddressDialogState extends State<ShowAddressDialog> {
         //     create: (context) => NearbyBloc()..add(GetAddress(position)),
         //     child:
         BlocBuilder<NearbyBloc, NearbyState>(builder: (context, state) {
-      return (address != null) ? Scaffold(
+      return (address != null)
+          ? Scaffold(
               backgroundColor: frameColor,
               body: Dialog(
                   shape: RoundedRectangleBorder(
@@ -112,8 +112,8 @@ class _ShowAddressDialogState extends State<ShowAddressDialog> {
                                   'lat: ${position.latitude}, long: ${position.longitude}');
                               BlocProvider.of<NearbyBloc>(context)
                                   //.add(GetCenterNearby(state.position.latitude, state.position.longitude, state.address));
-                                  .add(GetCenterNearby(
-                                      10.824741, 106.691274, address!));
+                                  .add(GetCenterNearby(position.latitude,
+                                      position.longitude, address!));
                             },
                             style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
@@ -132,8 +132,13 @@ class _ShowAddressDialogState extends State<ShowAddressDialog> {
                                 ),
                               ),
                             )),
-                            SizedBox(height: width*smallPadRate,),
-                            SecondaryButton(text: 'Trở về trang chủ', onPressed: ()=> Navigator.of(context).pop(), contextWidth: width)
+                        SizedBox(
+                          height: width * smallPadRate,
+                        ),
+                        SecondaryButton(
+                            text: 'Trở về trang chủ',
+                            onPressed: () => Navigator.of(context).pop(),
+                            contextWidth: width)
                       ],
                     ),
                   )),

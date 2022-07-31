@@ -49,5 +49,8 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<Supply> SupplyCreateUser1s { get; set; }
         [InverseProperty(nameof(Supply.ModifyUser1))]
         public virtual ICollection<Supply> SupplyModifyUser1s { get; set; }
+        
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }

@@ -10,5 +10,7 @@ namespace PawNClaw.Data.Interface
     public interface ISupplyRepository : IRepository<Supply>
     {
         IEnumerable<Supply> GetSuppliesWithType(int centerId);
+
+        public Supply GetSupplyById(int id);
     }
 }

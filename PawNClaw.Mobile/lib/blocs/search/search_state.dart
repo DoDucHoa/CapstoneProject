@@ -16,6 +16,7 @@ class SearchInitial extends SearchState {
   // TODO: implement props
   List<Object> get props => [];
 }
+
 class CheckCenterInitial extends SearchState {
   final int centerId;
   const CheckCenterInitial(this.centerId);
@@ -59,28 +60,30 @@ class SearchCompleted extends SearchState {
   final List<Center> centers;
   final List<List<Pet>> requests;
   final DateTime bookingDate;
-  
+
   //final DateTime endDate;
   final int due;
-  const SearchCompleted(
-      this.centers, this.requests, this.bookingDate, this.due, this.searchResponse);// this.endDate);
+  const SearchCompleted(this.centers, this.requests, this.bookingDate, this.due,
+      this.searchResponse); // this.endDate);
 
   @override
   // TODO: implement props
-  List<Object> get props => [centers, requests, bookingDate, due, searchResponse];
+  List<Object> get props =>
+      [centers, requests, bookingDate, due, searchResponse];
 }
 
-class SearchFail extends SearchState{
+class SearchFail extends SearchState {
   final String errorMessage;
   final List<List<Pet>> requests;
-  const SearchFail(this.errorMessage, this.requests);
+  final int? centerId;
+  const SearchFail(this.errorMessage, this.requests, this.centerId);
 
   @override
   // TODO: implement props
   List<Object> get props => [errorMessage];
 }
 
-class CheckedCenter extends SearchState{
+class CheckedCenter extends SearchState {
   final Center center;
   final List<List<Pet>> requests;
   final DateTime bookingDate;
@@ -93,13 +96,14 @@ class CheckedCenter extends SearchState{
   List<Object> get props => [center, requests, bookingDate];
 }
 
-class CheckedSponsorCenter extends SearchState{
+class CheckedSponsorCenter extends SearchState {
   final Center center;
   final List<List<Pet>> requests;
   final DateTime bookingDate;
   final int due;
 
-  const CheckedSponsorCenter(this.center, this.requests, this.bookingDate, this.due);
+  const CheckedSponsorCenter(
+      this.center, this.requests, this.bookingDate, this.due);
 
   @override
   // TODO: implement props

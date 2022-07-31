@@ -35,7 +35,7 @@ namespace PawNClaw.Business.Services
                 values = values.Where(x => x.Name.ToLower().Equals(serviceRequestParameter.Name.ToLower().Trim()));
             }
 
-            if (serviceRequestParameter.Id == null)
+            if (serviceRequestParameter.Id != null)
             {
                 values = values.Where(x => x.Id == serviceRequestParameter.Id);
             }
@@ -69,7 +69,7 @@ namespace PawNClaw.Business.Services
 
         public Service GetService(int id)
         {
-            return _serviceRepository.Get(id);
+            return _serviceRepository.GetServiceById(id);
         }
 
         public async Task<int> CreateService(CreateService serviceP, List<CreateServicePrice> servicePricePs)
@@ -127,7 +127,7 @@ namespace PawNClaw.Business.Services
             }
         }
 
-        public bool UpdateService(UpdateService serviceP)
+        public bool UpdateService(UpdateService serviceP, List<UpdateServicePrice> updateServicePrices)
         {
             Service service = _serviceRepository.Get(serviceP.Id);
             service.Description = serviceP.Description;
@@ -139,6 +139,41 @@ namespace PawNClaw.Business.Services
 
             _serviceRepository.Update(service);
             _serviceRepository.SaveDbChange();
+
+            foreach (var item in updateServicePrices)
+            {
+                ServicePrice servicePrice = _servicePriceRepository.Get(item.Id);
+
+                servicePrice.Price = item.Price;
+                servicePrice.MinWeight = item.MinWeight;
+                servicePrice.MaxWeight = item.MaxWeight;
+                servicePrice.ModifyUser = item.ModifyUser;
+                servicePrice.Status = item.Status;
+                servicePrice.ServiceId = item.ServiceId;
+
+                _servicePriceRepository.Update(servicePrice);
+                _servicePriceRepository.SaveDbChange();
+            }
+            return true;
+        }
+
+        public bool DeleteService(int id)
+        {
+            Service service = _serviceRepository.Get(id);
+            service.Status = false;
+
+            _serviceRepository.Update(service);
+            _serviceRepository.SaveDbChange();
+
+            List<ServicePrice> servicePrices = (List<ServicePrice>)_servicePriceRepository.GetAll(x => x.ServiceId == id);
+
+            foreach (var item in servicePrices)
+            {
+                item.Status = false;
+                _servicePriceRepository.Update(item);
+                _servicePriceRepository.SaveDbChange();
+            }
+
             return true;
         }
     }

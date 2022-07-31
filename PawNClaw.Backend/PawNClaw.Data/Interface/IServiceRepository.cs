@@ -10,5 +10,7 @@ namespace PawNClaw.Data.Interface
     public interface IServiceRepository : IRepository<Service>
     {
         public IEnumerable<Service> GetServicesOfCenter(int centerId);
+
+        public Service GetServiceById(int id);
     }
 }

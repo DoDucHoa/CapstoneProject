@@ -67,4 +67,11 @@ namespace PawNClaw.Data.Parameter
 
         public List<CreateFoodSchedule> foodSchedules { get; set; }
     }
+
+    public class UpdateCageTypeFlowParameter
+    {
+        public UpdateCageTypeParameter updateCageTypeParameter { get; set; }
+        public List<UpdatePriceParameter> updatePriceParameters { get; set; }
+        public List<UpdateFoodSchedule> updateFoodSchedules { get; set; }
+    }
 }
