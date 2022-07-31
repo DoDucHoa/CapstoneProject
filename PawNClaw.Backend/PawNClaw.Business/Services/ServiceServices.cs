@@ -178,8 +178,9 @@ namespace PawNClaw.Business.Services
 
             foreach (var item in servicePrices)
             {
-                item.Status = false;
-                _servicePriceRepository.Update(item);
+                var data = _servicePriceRepository.Get(item.Id);
+                data.Status = false;
+                _servicePriceRepository.Update(data);
                 _servicePriceRepository.SaveDbChange();
             }
 
