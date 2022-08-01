@@ -26,13 +26,11 @@ namespace PawNClaw.Business.Services
             return _sponsorBannerRepository.GetSponsorBannersWithPhoto();
         }
 
-        public PagedList<SponsorBanner> GetBanners(PagingParameter pagingParameter)
+        public IEnumerable<SponsorBanner> GetBanners()
         {
             var values = _sponsorBannerRepository.GetAll(x => x.Status == true);
-            
-            return PagedList<SponsorBanner>.ToPagedList(values.AsQueryable(),
-            pagingParameter.PageNumber,
-            10);
+
+            return values;
         }
 
         public async Task<int> Create(CreateSponsorBanner sponsorBannerP)
