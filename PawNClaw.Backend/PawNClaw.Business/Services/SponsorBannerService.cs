@@ -1,5 +1,6 @@
 ﻿using PawNClaw.Data.Const;
 using PawNClaw.Data.Database;
+using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
 using System;
@@ -23,6 +24,15 @@ namespace PawNClaw.Business.Services
         {
             DateTime today = DateTime.Today;
             return _sponsorBannerRepository.GetSponsorBannersWithPhoto();
+        }
+
+        public PagedList<SponsorBanner> GetBanners(PagingParameter pagingParameter)
+        {
+            var values = _sponsorBannerRepository.GetAll(x => x.Status == true);
+            
+            return PagedList<SponsorBanner>.ToPagedList(values.AsQueryable(),
+            pagingParameter.PageNumber,
+            10);
         }
 
         public async Task<int> Create(CreateSponsorBanner sponsorBannerP)

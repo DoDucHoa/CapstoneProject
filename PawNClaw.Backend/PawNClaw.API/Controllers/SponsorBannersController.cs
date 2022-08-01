@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Database;
+using PawNClaw.Data.Helper;
 using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,29 @@ namespace PawNClaw.API.Controllers
             try
             {
                 return Ok(_sponsorBannerService.GetSponsorBanners());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("all")]
+        public IActionResult GetAllBanner(PagingParameter pagingParameter)
+        {
+            try
+            {
+                var data = _sponsorBannerService.GetBanners(pagingParameter);
+                var metadata = new
+                {
+                    data.TotalCount,
+                    data.PageSize,
+                    data.CurrentPage,
+                    data.TotalPages,
+                    data.HasNext,
+                    data.HasPrevious
+                };
+                return Ok(new { data, metadata });
             }
             catch (Exception ex)
             {
