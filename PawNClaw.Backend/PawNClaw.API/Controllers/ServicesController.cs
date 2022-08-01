@@ -72,7 +72,7 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                return Ok(_serviceServices.UpdateService(service.serviceP, service.updateServicePrices));
+                return Ok(_serviceServices.UpdateService(service.service, service.updateServicePrices));
             }
             catch (Exception ex)
             {

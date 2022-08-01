@@ -57,7 +57,7 @@ namespace PawNClaw.Data.Parameter
 
     public class UpdateServiceParameter
     {
-        public UpdateService serviceP { get; set; } 
+        public UpdateService service { get; set; } 
         public List<UpdateServicePrice> updateServicePrices { get; set; }
     }
 }

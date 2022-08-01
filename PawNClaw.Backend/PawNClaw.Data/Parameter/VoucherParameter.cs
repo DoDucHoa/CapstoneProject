@@ -12,6 +12,7 @@ namespace PawNClaw.Data.Parameter
 
     public class CreateVoucherParameter
     {
+        public string Code { get; set; }
         public decimal? MinCondition { get; set; }
         public decimal? Value { get; set; }
         public DateTime? StartDate { get; set; }

@@ -14,14 +14,17 @@ namespace PawNClaw.Business.Services
     {
         IServiceRepository _serviceRepository;
         IServicePriceRepository _servicePriceRepository;
+        IServiceOrderRepository _serviceOrderRepository;
 
         private readonly ApplicationDbContext _db;
 
         public ServiceServices(IServiceRepository serviceRepository, IServicePriceRepository servicePriceRepository,
+            IServiceOrderRepository serviceOrderRepository,
             ApplicationDbContext db)
         {
             _serviceRepository = serviceRepository;
             _servicePriceRepository = servicePriceRepository;
+            _serviceOrderRepository = serviceOrderRepository;
             _db = db;
         }
 
@@ -32,7 +35,7 @@ namespace PawNClaw.Business.Services
 
             if (!string.IsNullOrWhiteSpace(serviceRequestParameter.Name))
             {
-                values = values.Where(x => x.Name.ToLower().Equals(serviceRequestParameter.Name.ToLower().Trim()));
+                values = values.Where(x => x.Name.ToLower().Contains(serviceRequestParameter.Name.ToLower().Trim()));
             }
 
             if (serviceRequestParameter.Id != null)
@@ -162,6 +165,12 @@ namespace PawNClaw.Business.Services
             Service service = _serviceRepository.Get(id);
             service.Status = false;
 
+            //var serviceOerder = _serviceOrderRepository.GetAll(x => x.ServiceId == id && (x.Booking.StatusId == 1 || x.Booking.StatusId == 2));
+            //if (serviceOerder.Count() > 0)
+            //{
+            //    throw new Exception("Cant delete");
+            //}
+
             _serviceRepository.Update(service);
             _serviceRepository.SaveDbChange();
 
@@ -169,8 +178,9 @@ namespace PawNClaw.Business.Services
 
             foreach (var item in servicePrices)
             {
-                item.Status = false;
-                _servicePriceRepository.Update(item);
+                var data = _servicePriceRepository.Get(item.Id);
+                data.Status = false;
+                _servicePriceRepository.Update(data);
                 _servicePriceRepository.SaveDbChange();
             }
 
