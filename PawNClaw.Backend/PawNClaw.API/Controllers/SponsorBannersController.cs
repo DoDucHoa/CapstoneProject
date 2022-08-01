@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Database;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,11 +38,11 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(SponsorBanner sponsorBanner)
+        public async Task<IActionResult> Create(CreateSponsorBanner sponsorBanner)
         {
             try
             {
-                return Ok(_sponsorBannerService.Create(sponsorBanner));
+                return Ok(await _sponsorBannerService.Create(sponsorBanner));
             }
             catch (Exception ex)
             {
