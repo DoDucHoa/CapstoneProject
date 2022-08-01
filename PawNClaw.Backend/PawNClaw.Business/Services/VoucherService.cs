@@ -72,5 +72,19 @@ namespace PawNClaw.Business.Services
             _voucherRepository.SaveDbChange();
             return true;
         }
+
+        public bool UpdateStatus(string code)
+        {
+            Voucher voucher = _voucherRepository.Get(code);
+
+            bool status = (bool)!voucher.Status;
+
+            voucher.Status = status;
+
+            _voucherRepository.Update(voucher);
+            _voucherRepository.SaveDbChange();
+
+            return true;
+        }
     }
 }

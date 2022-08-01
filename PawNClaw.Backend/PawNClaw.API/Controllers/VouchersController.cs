@@ -24,7 +24,7 @@ namespace PawNClaw.API.Controllers
             _voucherService = voucherService;
         }
 
-        [HttpGet("for-cus/center/{id}")]
+        [HttpGet("for-cus/center")]
         public IActionResult GetVouchersIsAvaliable(int centerId)
         {
             try
@@ -96,6 +96,19 @@ namespace PawNClaw.API.Controllers
             try
             {
                 return Ok(_voucherService.UpdateVoucher(voucher));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut("update-status")]
+        public IActionResult UpdateStatus(string code)
+        {
+            try
+            {
+                return Ok(_voucherService.UpdateStatus(code));
             }
             catch (Exception ex)
             {
