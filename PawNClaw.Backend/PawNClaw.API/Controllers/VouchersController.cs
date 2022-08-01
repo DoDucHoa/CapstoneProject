@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Database;
+using PawNClaw.Data.Helper;
 using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
@@ -36,12 +37,26 @@ namespace PawNClaw.API.Controllers
             }
         }
 
-        [HttpGet("for-staff/center/{id}")]
-        public IActionResult GetVouchers(int centerId)
+        [HttpGet("for-staff/center")]
+        public IActionResult GetVouchers(int centerId, [FromQuery] PagingParameter pagingParameter)
         {
             try
             {
-                return Ok(_voucherService.GetVouchers(centerId));
+                var values = _voucherService.GetVouchers(centerId);
+
+                var data = PagedList<Voucher>.ToPagedList(values.AsQueryable(),
+                pagingParameter.PageNumber,
+                10);
+                var metadata = new
+                {
+                    data.TotalCount,
+                    data.PageSize,
+                    data.CurrentPage,
+                    data.TotalPages,
+                    data.HasNext,
+                    data.HasPrevious
+                };
+                return Ok(new { data, metadata });
             }
             catch (Exception ex)
             {

@@ -39,7 +39,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("all")]
-        public IActionResult GetAllBanner([FromQuery] int? id, PagingParameter pagingParameter)
+        public IActionResult GetAllBanner([FromQuery] int? id, [FromQuery] PagingParameter pagingParameter)
         {
             try
             {
