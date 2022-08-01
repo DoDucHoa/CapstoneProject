@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:pawnclaw_mobile_application/models/activity.dart';
+import 'package:pawnclaw_mobile_application/models/transaction_details.dart';
 import 'package:pawnclaw_mobile_application/repositories/activity/base_activity_repository.dart';
+import 'package:pawnclaw_mobile_application/repositories/transaction/transaction_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ActivityRepository implements BaseActivityRepository {
@@ -20,12 +22,14 @@ class ActivityRepository implements BaseActivityRepository {
         _url,
       );
       var data = response.data;
-      final activity = Activity(
-        id: data['id'],
-        time: data['provideTime'],
-        imgUrl: data['photos'][0]['url'],
-      );
       // pets.forEach((e) => print(e.toJson()));
+      TransactionDetails? transaction = await TransactionRepository()
+          .getTransactionDetails(data['bookingId']);
+      var activity = transaction!
+          .getAllActivities()
+          .firstWhere((element) => element.id == data['id']);
+      activity.imgUrl = data['photos'][0]['url'];
+      activity.time = data['provideTime'];
       return activity;
     } catch (e) {
       print(e);
