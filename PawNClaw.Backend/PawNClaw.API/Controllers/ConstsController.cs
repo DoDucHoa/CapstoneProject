@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PawNClaw.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/consts")]
     [ApiController]
     [Authorize(Roles = "Admin")]
     public class ConstsController : ControllerBase
@@ -64,6 +64,20 @@ namespace PawNClaw.API.Controllers
             {
                 await ConstService.AddData(Const.ProjectFirebaseId, "Const", "NumOfSponsor", newData);
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AllConst()
+        {
+            try
+            {
+                var data = await ConstService.GetAllConst(Const.ProjectFirebaseId, "Const");
+                return Ok(data);
             }
             catch (Exception ex)
             {

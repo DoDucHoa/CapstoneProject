@@ -42,5 +42,26 @@ namespace PawNClaw.Business.Services
                 throw new Exception("Document " + snapshot.Id + " does not exist!");
             }
         }
+
+        public static async Task<Dictionary<string, object>> GetAllConst(string project, string collection)
+        {
+            // [START fs_initialize_project_id]
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "pawnclaw-4b6ba-firebase-adminsdk-txxl7-50dcc161a7.json");
+            FirestoreDb db = FirestoreDb.Create(project);
+            // [END fs_initialize_project_id]
+
+            // [START fs_get_all]
+            CollectionReference policyReference = db.Collection(collection);
+            QuerySnapshot snapshot = await policyReference.GetSnapshotAsync();
+            Dictionary<string, object> documentDictionaryreturn = new Dictionary<string, object>();
+            foreach (DocumentSnapshot document in snapshot.Documents)
+            {
+                Dictionary<string, object> documentDictionary = document.ToDictionary();
+                documentDictionaryreturn.Add(document.Id, documentDictionary.Values);
+            }
+            // [END fs_get_all]
+
+            return documentDictionaryreturn;
+        }
     }
 }
