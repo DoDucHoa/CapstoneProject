@@ -84,5 +84,7 @@ namespace PawNClaw.Business.Services
             _sponsorBannerRepository.SaveDbChange();
             return true;
         }
+
+
     }
 }

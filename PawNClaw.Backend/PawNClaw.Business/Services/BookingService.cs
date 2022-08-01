@@ -23,6 +23,7 @@ namespace PawNClaw.Business.Services
         ICageRepository _cageRepository;
         IStaffRepository _staffRepository;
         IVoucherRepository _voucherRepository;
+        ICustomerVoucherLogRepository _customerVoucherLogRepository;
 
         private readonly ApplicationDbContext _db;
 
@@ -31,7 +32,7 @@ namespace PawNClaw.Business.Services
             ISupplyOrderRepository supplyOrderRepository, ISupplyRepository supplyRepository,
             IServicePriceRepository servicePriceRepository, IPetRepository petRepository,
             ICageRepository cageRepository, IStaffRepository staffRepository,
-            IVoucherRepository voucherRepository,
+            IVoucherRepository voucherRepository, ICustomerVoucherLogRepository customerVoucherLogRepository,
             ApplicationDbContext db)
         {
             _bookingRepository = bookingRepository;
@@ -45,6 +46,7 @@ namespace PawNClaw.Business.Services
             _cageRepository = cageRepository;
             _staffRepository = staffRepository;
             _voucherRepository = voucherRepository;
+            _customerVoucherLogRepository = customerVoucherLogRepository;
             _db = db;
         }
 
@@ -140,6 +142,16 @@ namespace PawNClaw.Business.Services
                     _bookingRepository.Add(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();
                     Id = bookingToDb.Id;
+
+                    CustomerVoucherLog customerVoucherLog = new CustomerVoucherLog()
+                    {
+                        CustomerId = bookingCreateParameter.CustomerId,
+                        CenterId = bookingCreateParameter.CenterId,
+                        VoucherCode = bookingCreateParameter.VoucherCode
+                    };
+
+                    _customerVoucherLogRepository.Add(customerVoucherLog);
+                    await _customerVoucherLogRepository.SaveDbChangeAsync();
                 }
                 catch
                 {
