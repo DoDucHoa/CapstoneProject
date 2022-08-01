@@ -13,5 +13,7 @@ namespace PawNClaw.Data.Interface
         public int CreateBookingAcivities(CreateBookingActivityParameter createBookingActivityParameter);
 
         public IEnumerable<BookingActivity> GetBookingActivitiesByBookingAndPetId(int BookingId, int BookingDetailId, int PetId);
+
+        public BookingActivity GetBookingActivityWithPhoto(int id);
     }
 }

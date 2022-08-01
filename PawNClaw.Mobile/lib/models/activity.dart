@@ -1,16 +1,20 @@
 import 'package:pawnclaw_mobile_application/models/transaction_details.dart';
 
-class Activity{
+class Activity {
   final int id;
   //final String name;
   late ActivityType? type;
   late Product? product;
-  final DateTime time;
-  late Pet? pet ;
+  DateTime time;
+  late Pet? pet;
   String? imgUrl;
-  Activity({required this.id, this.type, this.product, required this.time,this.pet, required this.imgUrl});
-
-
+  Activity(
+      {required this.id,
+      this.type,
+      this.product,
+      required this.time,
+      this.pet,
+      required this.imgUrl});
 }
 
 class Product {
@@ -19,8 +23,11 @@ class Product {
   final String imgUrl;
   final String note;
 
-  Product( {required this.id, required this.name, required this.imgUrl, required this.note});
-  
+  Product(
+      {required this.id,
+      required this.name,
+      required this.imgUrl,
+      required this.note});
 }
 
 class ActivityType {
@@ -29,16 +36,17 @@ class ActivityType {
 
   //ActivityType({required this.id, this.name});
 
-  
-  ActivityType(int id){
+  ActivityType(int id) {
     this.id = id;
-    switch (id){
-      case 0: this.name = 'Cho ăn';
-      break;
-      case 1: this.name = 'Đồ dùng';
-      break;
-      default: this.name = 'Dịch vụ';
+    switch (id) {
+      case 0:
+        this.name = 'Cho ăn';
+        break;
+      case 1:
+        this.name = 'Đồ dùng';
+        break;
+      default:
+        this.name = 'Dịch vụ';
     }
   }
-
 }
