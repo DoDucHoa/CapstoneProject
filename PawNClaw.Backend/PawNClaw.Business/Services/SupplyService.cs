@@ -131,11 +131,11 @@ namespace PawNClaw.Business.Services
                 var supply = _supplyRepository.Get(id);
                 supply.Status = false;
 
-                var supplyOrder = _supplyOrderRepository.GetAll(x => x.SupplyId == id && (x.Booking.StatusId == 1 || x.Booking.StatusId == 2));
-                if (supplyOrder.Count() > 0)
-                {
-                    throw new Exception("Cant delete");
-                }
+                //var supplyOrder = _supplyOrderRepository.GetAll(x => x.SupplyId == id && (x.Booking.StatusId == 1 || x.Booking.StatusId == 2));
+                //if (supplyOrder.Count() > 0)
+                //{
+                //    throw new Exception("Cant delete");
+                //}
                 _supplyRepository.Update(supply);
                 _supplyRepository.SaveDbChange();
                 return true;

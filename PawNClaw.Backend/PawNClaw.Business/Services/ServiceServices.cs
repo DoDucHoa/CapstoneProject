@@ -165,11 +165,11 @@ namespace PawNClaw.Business.Services
             Service service = _serviceRepository.Get(id);
             service.Status = false;
 
-            var serviceOerder = _serviceOrderRepository.GetAll(x => x.ServiceId == id && (x.Booking.StatusId == 1 || x.Booking.StatusId == 2));
-            if (serviceOerder.Count() > 0)
-            {
-                throw new Exception("Cant delete");
-            }
+            //var serviceOerder = _serviceOrderRepository.GetAll(x => x.ServiceId == id && (x.Booking.StatusId == 1 || x.Booking.StatusId == 2));
+            //if (serviceOerder.Count() > 0)
+            //{
+            //    throw new Exception("Cant delete");
+            //}
 
             _serviceRepository.Update(service);
             _serviceRepository.SaveDbChange();
