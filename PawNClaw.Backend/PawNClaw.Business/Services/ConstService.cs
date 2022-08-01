@@ -43,25 +43,19 @@ namespace PawNClaw.Business.Services
             }
         }
 
-        public static async Task<Dictionary<string, object>> GetAllConst(string project, string collection)
+        public static async Task UpdateData(string project, string collection, string document, int kmSearch, int numOfSponsor)
         {
-            // [START fs_initialize_project_id]
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "pawnclaw-4b6ba-firebase-adminsdk-txxl7-50dcc161a7.json");
             FirestoreDb db = FirestoreDb.Create(project);
-            // [END fs_initialize_project_id]
-
-            // [START fs_get_all]
-            CollectionReference policyReference = db.Collection(collection);
-            QuerySnapshot snapshot = await policyReference.GetSnapshotAsync();
-            Dictionary<string, object> documentDictionaryreturn = new Dictionary<string, object>();
-            foreach (DocumentSnapshot document in snapshot.Documents)
+            // [START fs_add_data_1]
+            DocumentReference docRef = db.Collection(collection).Document(document);
+            Dictionary<string, object> policy = new Dictionary<string, object>
             {
-                Dictionary<string, object> documentDictionary = document.ToDictionary();
-                documentDictionaryreturn.Add(document.Id, documentDictionary.Values);
-            }
-            // [END fs_get_all]
-
-            return documentDictionaryreturn;
+                { "kmSearch", kmSearch },
+                { "numOfSponsor", numOfSponsor}
+            };
+            await docRef.SetAsync(policy);
+            // [END fs_add_data_1]
         }
     }
 }
