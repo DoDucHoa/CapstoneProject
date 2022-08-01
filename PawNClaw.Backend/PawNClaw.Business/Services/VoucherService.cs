@@ -38,6 +38,7 @@ namespace PawNClaw.Business.Services
         {
             Voucher voucher = new Voucher()
             {
+                Code = voucherP.Code,
                 MinCondition = voucherP.MinCondition,
                 Value = voucherP.Value,
                 StartDate = voucherP.StartDate,
