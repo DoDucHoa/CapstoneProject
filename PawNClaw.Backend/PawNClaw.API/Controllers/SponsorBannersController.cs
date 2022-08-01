@@ -39,11 +39,20 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("all")]
-        public IActionResult GetAllBanner(PagingParameter pagingParameter)
+        public IActionResult GetAllBanner([FromQuery] int? id, PagingParameter pagingParameter)
         {
             try
             {
-                var data = _sponsorBannerService.GetBanners(pagingParameter);
+                var values = _sponsorBannerService.GetBanners();
+
+                if(id != null)
+                {
+                    values = values.Where(x => x.Id == id);
+                }
+
+                var data = PagedList<SponsorBanner>.ToPagedList(values.AsQueryable(),
+                pagingParameter.PageNumber,
+                10);
                 var metadata = new
                 {
                     data.TotalCount,
