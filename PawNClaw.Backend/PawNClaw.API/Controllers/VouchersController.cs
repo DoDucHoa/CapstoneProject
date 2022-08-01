@@ -36,7 +36,7 @@ namespace PawNClaw.API.Controllers
             }
         }
 
-        [HttpGet("for-staff/center/{id}")]
+        [HttpGet("for-staff/center")]
         public IActionResult GetVouchers(int centerId)
         {
             try
