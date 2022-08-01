@@ -1,4 +1,5 @@
-﻿using PawNClaw.Data.Database;
+﻿using PawNClaw.Data.Const;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
 using System;
@@ -11,8 +12,10 @@ namespace PawNClaw.Data.Repository
 {
     public class BookingActivityRepository : Repository<BookingActivity>, IBookingActivityRepository
     {
-        public BookingActivityRepository(ApplicationDbContext db) : base(db)
+        IPhotoRepository _photoRepository;
+        public BookingActivityRepository(ApplicationDbContext db, IPhotoRepository photoRepository) : base(db)
         {
+            _photoRepository = photoRepository;
         }
 
         public int CreateBookingAcivities(CreateBookingActivityParameter createBookingActivityParameter)
@@ -34,6 +37,13 @@ namespace PawNClaw.Data.Repository
         public IEnumerable<BookingActivity> GetBookingActivitiesByBookingAndPetId(int BookingId, int BookingDetailId, int PetId)
         {
             return _dbSet.Where(x => (x.BookingId == BookingId && x.BookingDetailId == BookingDetailId) || (x.BookingId == BookingId && x.PetId == PetId));
+        }
+
+        public BookingActivity GetBookingActivityWithPhoto(int id)
+        {
+            var activity = _dbSet.FirstOrDefault(x => x.Id == id);
+            activity.Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(id, PhotoTypesConst.BookingActivity);
+            return activity;
         }
     }
 }

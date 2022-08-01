@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:pncstaff_mobile_application/models/account.dart';
 import 'package:pncstaff_mobile_application/repositories/center/center_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,15 +50,7 @@ class AuthRepository implements BaseAuthRepository {
   }
 
   Future<String?> _getId() async {
-    var deviceInfo = DeviceInfoPlugin();
-    if (Platform.isIOS) {
-      // import 'dart:io'
-      var iosDeviceInfo = await deviceInfo.iosInfo;
-      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
-    } else if (Platform.isAndroid) {
-      var androidDeviceInfo = await deviceInfo.androidInfo;
-      return androidDeviceInfo.androidId; // unique ID on Android
-    }
+    return await FirebaseMessaging.instance.getToken();
   }
 
   @override

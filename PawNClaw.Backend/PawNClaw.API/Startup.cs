@@ -1,3 +1,4 @@
+using FirebaseAdmin.Messaging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -42,6 +43,7 @@ namespace PawNClaw.API
             services.AddControllers();
             services.AddHttpClient();
 
+            services.AddTransient<NotificationService, NotificationService>();
             services.AddTransient<SearchService, SearchService>();
 
             services.AddTransient<IRoleRepository, RoleRepository>();

@@ -63,6 +63,7 @@ dependencies:
   firebase_storage:
   image_picker:
   fl_chart:
+  firebase_messaging: ^12.0.1
   
 dev_dependencies:
   flutter_test:

@@ -19,11 +19,15 @@ namespace PawNClaw.API.Controllers
     {
         BookingService _bookingService;
         BookingActivityService _bookingActivityService;
+        AccountService _accountService;
+        NotificationService _notificationService;
 
-        public BookingsController(BookingService bookingService, BookingActivityService bookingActivityService)
+        public BookingsController(BookingService bookingService, BookingActivityService bookingActivityService, AccountService accountService, NotificationService notificationService)
         {
             _bookingService = bookingService;
             _bookingActivityService = bookingActivityService;
+            _accountService = accountService;
+            _notificationService = notificationService;
         }
 
         [HttpPut]
@@ -46,6 +50,27 @@ namespace PawNClaw.API.Controllers
                                                             updateStatusParameter.staffNote);
                     if (check)
                     {
+                        var booking = _bookingService.GetBookingById(updateStatusParameter.id);
+                        var account = _accountService.GetAccountById(booking.CustomerId);
+                        var data = new Dictionary<string, string>() {
+                            { "Type", "Booking" },
+                            { "BookingId", updateStatusParameter.id+"" }
+                        };
+                        switch (updateStatusParameter.statusId)
+                        {
+                            case 2:
+                                _notificationService.SendNoti(new List<string> { account.DeviceId }, data, "Cập nhật đơn hàng !!!", "Đơn hàng của bạn đã được xác nhận");
+                                break;
+                            case 3:
+                                _notificationService.SendNoti(new List<string> { account.DeviceId }, data, "Cập nhật đơn hàng !!!", "Đơn hàng của bạn đã được hoàn thành");
+                                break;
+                            case 4:
+                                _notificationService.SendNoti(new List<string> { account.DeviceId }, data, "Cập nhật đơn hàng !!!", "Đơn hàng của bạn đã bị hủy");
+                                break;
+                            default:
+                                break;
+                        }
+
                         return Ok();
                     }
                     else return BadRequest();
