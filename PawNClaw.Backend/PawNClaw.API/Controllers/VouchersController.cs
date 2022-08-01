@@ -87,5 +87,18 @@ namespace PawNClaw.API.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpPut("update-status")]
+        public IActionResult UpdateStatus(string code)
+        {
+            try
+            {
+                return Ok(_voucherService.UpdateStatus(code));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }
