@@ -24,7 +24,7 @@ namespace PawNClaw.API.Controllers
             _voucherService = voucherService;
         }
 
-        [HttpGet("for-cus/center/{id}")]
+        [HttpGet("for-cus/center")]
         public IActionResult GetVouchersIsAvaliable(int centerId)
         {
             try
