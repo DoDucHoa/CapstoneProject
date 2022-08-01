@@ -34,7 +34,7 @@ namespace PawNClaw.Business.Services
 
                 if (!string.IsNullOrWhiteSpace(supplyRequestParameter.Name))
                 {
-                    values = values.Where(x => x.Name.ToLower().Equals(supplyRequestParameter.Name.ToLower().Trim()));
+                    values = values.Where(x => x.Name.ToLower().Contains(supplyRequestParameter.Name.ToLower().Trim()));
                 }
 
                 if (supplyRequestParameter.Status != null)
