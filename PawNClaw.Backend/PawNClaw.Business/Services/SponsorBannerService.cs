@@ -54,9 +54,9 @@ namespace PawNClaw.Business.Services
             };
 
             var check = _sponsorBannerRepository.GetAll(x => x.Status == true && ((DateTime)x.StartDate).Date == firstDayOfMonth && ((DateTime)x.EndDate).Date == lastDayOfMonth);
-            var constraint = await ConstService.Get(Const.ProjectFirebaseId, "Const", "NumOfSponsor");
+            var constraint = await ConstService.Get(Const.ProjectFirebaseId, "Const", "Config");
 
-            var limitObj = constraint["data"];
+            var limitObj = constraint["numOfSponsor"];
             var limit = Convert.ToInt32(limitObj);
 
             if (check.Count() >= limit)
