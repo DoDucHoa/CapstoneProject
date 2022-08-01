@@ -60,7 +60,8 @@ class _AddPetScreenState extends State<AddPetScreen> {
       _breedController.text = petToUpdate.breedName!;
       birthDay = petToUpdate.birth;
       breedType = petToUpdate.petTypeCode!;
-      imgURL = petToUpdate.photos?.first.url ?? null;
+      imgURL =
+          petToUpdate.photos!.isNotEmpty ? petToUpdate.photos!.first.url : null;
     }
     return Scaffold(
       backgroundColor: frameColor,
