@@ -161,7 +161,7 @@ namespace PawNClaw.Data.Repository
         }
 
         //Get Pet Center Detail
-        public PetCenter GetPetCenterById(int id, PetSizeCage PetSizes, string StartBooking, string EndBooking)
+        public PetCenter GetPetCenterById(int id, int customerId, PetSizeCage PetSizes, string StartBooking, string EndBooking)
         {
             DateTime _startBooking = DateTime.ParseExact(StartBooking, SearchConst.DateFormat,
                                        System.Globalization.CultureInfo.InvariantCulture);
@@ -242,7 +242,9 @@ namespace PawNClaw.Data.Repository
                             MaxWeight = price.MaxWeight
                         })
                     }),
-                    Vouchers = (ICollection<Voucher>)x.Vouchers.Where(x => x.Status == true).Select(x => new Voucher()
+                    Vouchers = (ICollection<Voucher>)x.Vouchers.Where(x => x.Status == true 
+                                                                    && !x.CustomerVoucherLogs.Any(log => log.CustomerId == customerId))
+                    .Select(x => new Voucher()
                     {
                         Value = x.Value,
                         MinCondition = x.MinCondition,

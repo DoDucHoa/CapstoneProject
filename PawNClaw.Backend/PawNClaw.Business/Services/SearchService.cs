@@ -712,7 +712,7 @@ namespace PawNClaw.Business.Services
         }
 
         //Check Center Is Avaliable With Request
-        public PetCenter CheckCenter(int id, List<List<PetRequestParameter>> _petRequests, string StartBooking, int Due)
+        public PetCenter CheckCenter(int id, int customerId, List<List<PetRequestParameter>> _petRequests, string StartBooking, int Due)
         {
             var value = _petCenterRepository.GetPetCenterByIdAfterSearchName(id);
 
@@ -935,7 +935,7 @@ namespace PawNClaw.Business.Services
             try
             {
 
-                var data = _petCenterRepository.GetPetCenterById(id, petSizeCages, StartBooking, value.EndBooking.ToString("yyyy-MM-dd HH:mm:ss"));
+                var data = _petCenterRepository.GetPetCenterById(id, customerId, petSizeCages, StartBooking, value.EndBooking.ToString("yyyy-MM-dd HH:mm:ss"));
 
                 data.EndBooking = value.EndBooking;
 
