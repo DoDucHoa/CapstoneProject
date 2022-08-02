@@ -234,7 +234,9 @@ namespace PawNClaw.Data.Repository
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
-                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
+                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice),
+                    TotalCage = x.BookingDetails.Sum(detail => detail.Price),
+                    VoucherCodeNavigation = x.VoucherCodeNavigation
                 })
                 .SingleOrDefault(x => x.Id == BookingId);
 
@@ -359,7 +361,9 @@ namespace PawNClaw.Data.Repository
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
-                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
+                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice),
+                    TotalCage = x.BookingDetails.Sum(detail => detail.Price),
+                    VoucherCodeNavigation = x.VoucherCodeNavigation
                 })
                 .SingleOrDefault(x => x.Id == BookingId);
 
