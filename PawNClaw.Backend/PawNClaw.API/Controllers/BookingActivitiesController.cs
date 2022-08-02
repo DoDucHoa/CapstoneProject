@@ -48,9 +48,10 @@ namespace PawNClaw.API.Controllers
             {
                 //update activity
                 await _bookingActivityService.UpdateActivity(updateBookingActivityParameter);
-                
+
                 //get registration token from account
-                var registrationToken = _bookingActivityService.GetCustomerByActivityId(updateBookingActivityParameter.Id).DeviceId;
+                var customer = _bookingActivityService.GetCustomerByActivityId(updateBookingActivityParameter.Id);
+                var registrationToken = customer.DeviceId;
 
                 //create a list of regitration tokens
                 List<string> registrationTokens = new List<string>();
@@ -61,9 +62,21 @@ namespace PawNClaw.API.Controllers
                     { "Type", "Activity" },
                     { "ActivityId", updateBookingActivityParameter.Id+"" }
                 };
-
+                var title = "Hoạt động mới !!!";
+                var content = "Một hoạt động mới cho thú cưng của bạn vừa được cập nhật";
                 //send notification
-                _notificationService.SendNoti(registrationTokens, data, "Hoạt động mới !!!", "Một hoạt động mới cho thú cưng của bạn vừa được cập nhật");
+                _notificationService.SendNoti(registrationTokens, data, title, content);
+                //add notification to firebase
+                NotificationParameter notification = new NotificationParameter() { 
+                    actorId = updateBookingActivityParameter.Id,
+                    actorType = "Activity",
+                    targetId = customer.Id,
+                    targetType = "Customer",
+                    title = title,
+                    content = content,
+                    time = DateTime.Now
+                };
+                await _notificationService.AddNotification(notification);
 
                 return Ok();
             }
