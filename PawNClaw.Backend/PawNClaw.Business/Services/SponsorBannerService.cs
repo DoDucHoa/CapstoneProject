@@ -28,7 +28,7 @@ namespace PawNClaw.Business.Services
 
         public IEnumerable<SponsorBanner> GetBanners()
         {
-            var values = _sponsorBannerRepository.GetAll(x => x.Status == true);
+            var values = _sponsorBannerRepository.GetSponsorBanners();
 
             return values;
         }
