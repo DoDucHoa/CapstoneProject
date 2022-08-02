@@ -50,6 +50,7 @@ namespace PawNClaw.Business.Services
                 Status = true,
                 CenterId = voucherP.CenterId,
                 VoucherTypeCode = voucherP.VoucherTypeCode,
+                Description = voucherP.Description,
             };
 
             _voucherRepository.Add(voucher);
@@ -67,6 +68,7 @@ namespace PawNClaw.Business.Services
             voucher.ModifyDate = voucherP.ModifyDate;
             voucher.ModifyUser = voucherP.ModifyUser;
             voucher.Status = voucherP.Status;
+            voucher.Description = voucherP.Description;
 
             _voucherRepository.Update(voucher);
             _voucherRepository.SaveDbChange();
