@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Const;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,11 +87,11 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdatConst(int kmSearch, int numOfSponsor)
+        public async Task<IActionResult> UpdatConst(ConstParameter constParameter)
         {
             try
             {
-                await ConstService.UpdateData(Const.ProjectFirebaseId, "Const", "Config", kmSearch, numOfSponsor);
+                await ConstService.UpdateData(Const.ProjectFirebaseId, "Const", "Config", constParameter.KmSearch, constParameter.NumOfSponsor);
                 return Ok();
             }
             catch (Exception ex)
