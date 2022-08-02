@@ -25,5 +25,6 @@ namespace PawNClaw.Data.Helper
     public class CustomerCreateParameter
     {
         public string Name { get; set; }
+        public DateTime? Birth { get; set; }
     }
 }
