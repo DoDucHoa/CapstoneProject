@@ -69,8 +69,17 @@ namespace PawNClaw.Business.Services
             return sponsorBanner.Id;
         }
 
-        public bool Update(SponsorBanner sponsorBanner)
+        public bool Update(UpdateSponsorBanner sponsorBannerP)
         {
+            SponsorBanner sponsorBanner = _sponsorBannerRepository.Get(sponsorBannerP.Id);
+            sponsorBanner.Title = sponsorBannerP.Title;
+            sponsorBanner.Content = sponsorBannerP.Content;
+            sponsorBanner.Duration = sponsorBannerP.Duration;
+            sponsorBanner.ModifyDate = sponsorBannerP.ModifyDate;
+            sponsorBanner.ModifyUser = sponsorBannerP.ModifyUser;
+            sponsorBanner.Status = sponsorBannerP.Status;
+            sponsorBanner.BrandId = sponsorBannerP.BrandId;
+
             _sponsorBannerRepository.Update(sponsorBanner);
             _sponsorBannerRepository.SaveDbChange();
             return true;

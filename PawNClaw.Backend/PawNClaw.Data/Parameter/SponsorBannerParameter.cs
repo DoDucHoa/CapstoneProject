@@ -31,9 +31,7 @@ namespace PawNClaw.Data.Parameter
         public string Title { get; set; }
         public string Content { get; set; }
         public decimal? Duration { get; set; }
-        public DateTime? CreateDate { get; set; }
         public DateTime? ModifyDate { get; set; }
-        public int? CreateUser { get; set; }
         public int? ModifyUser { get; set; }
         public bool? Status { get; set; }
         public int BrandId { get; set; }
