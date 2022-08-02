@@ -84,7 +84,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        public IActionResult Update(SponsorBanner sponsorBanner)
+        public IActionResult Update(UpdateSponsorBanner sponsorBanner)
         {
             try
             {
