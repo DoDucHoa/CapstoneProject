@@ -142,16 +142,6 @@ namespace PawNClaw.Business.Services
                     _bookingRepository.Add(bookingToDb);
                     await _bookingRepository.SaveDbChangeAsync();
                     Id = bookingToDb.Id;
-
-                    CustomerVoucherLog customerVoucherLog = new CustomerVoucherLog()
-                    {
-                        CustomerId = bookingCreateParameter.CustomerId,
-                        CenterId = bookingCreateParameter.CenterId,
-                        VoucherCode = bookingCreateParameter.VoucherCode
-                    };
-
-                    _customerVoucherLogRepository.Add(customerVoucherLog);
-                    await _customerVoucherLogRepository.SaveDbChangeAsync();
                 }
                 catch
                 {
@@ -367,6 +357,19 @@ namespace PawNClaw.Business.Services
                                 Discount = (decimal)(voucher.Value);
                             }
                         }
+                    }
+
+                    if (bookingCreateParameter.VoucherCode != null && Discount > 0)
+                    {
+                        CustomerVoucherLog customerVoucherLog = new CustomerVoucherLog()
+                        {
+                            CustomerId = bookingCreateParameter.CustomerId,
+                            CenterId = bookingCreateParameter.CenterId,
+                            VoucherCode = bookingCreateParameter.VoucherCode
+                        };
+
+                        _customerVoucherLogRepository.Add(customerVoucherLog);
+                        await _customerVoucherLogRepository.SaveDbChangeAsync();
                     }
 
                     bookingToDb.SubTotal = Price;

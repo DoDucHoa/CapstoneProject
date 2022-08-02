@@ -60,6 +60,8 @@ namespace PawNClaw.Data.Database
         public decimal? TotalSupply { get; set; }
         [NotMapped]
         public decimal? TotalService { get; set; }
+        [NotMapped]
+        public decimal? TotalCage { get; set; }
 
         [ForeignKey(nameof(CenterId))]
         [InverseProperty(nameof(PetCenter.Bookings))]

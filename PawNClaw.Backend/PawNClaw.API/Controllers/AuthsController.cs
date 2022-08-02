@@ -33,8 +33,15 @@ namespace PawNClaw.API.Controllers
         [HttpPost("sign-up")]
         public async Task<ActionResult<LoginViewModel>> SignUp([FromBody] SignUpRequestModel signUpRequestModel)
         {
-            return Ok(await _authService.Register(signUpRequestModel._loginRequestModel, 
+            try
+            {
+                return Ok(await _authService.Register(signUpRequestModel._loginRequestModel,
                 signUpRequestModel._accountRequest, signUpRequestModel._customerRequest));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
     }
 }

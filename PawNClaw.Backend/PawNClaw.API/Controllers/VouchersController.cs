@@ -38,11 +38,20 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("for-staff/center")]
-        public IActionResult GetVouchers(int centerId, [FromQuery] PagingParameter pagingParameter)
+        public IActionResult GetVouchers(int centerId, bool? status, string code, [FromQuery] PagingParameter pagingParameter)
         {
             try
             {
                 var values = _voucherService.GetVouchers(centerId);
+
+                if (status != null)
+                {
+                    values = values.Where(x => x.Status == status);
+                }
+                if (!String.IsNullOrEmpty(code) && !String.IsNullOrWhiteSpace(code))
+                {
+                    values = values.Where(x => x.Code.Contains(code));
+                }
 
                 var data = PagedList<Voucher>.ToPagedList(values.AsQueryable(),
                 pagingParameter.PageNumber,
