@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PawNClaw.Data.Database
 {
+    [Index(nameof(Code), Name = "i")]
     public partial class VoucherType
     {
         public VoucherType()
