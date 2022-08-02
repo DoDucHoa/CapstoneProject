@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PawNClaw.Data.Database
 {
+    [Index(nameof(Code), nameof(Name), Name = "i")]
     public partial class SupplyType
     {
         public SupplyType()

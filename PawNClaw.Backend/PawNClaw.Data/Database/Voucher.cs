@@ -44,6 +44,9 @@ namespace PawNClaw.Data.Database
         [Column("voucher_type_code")]
         [StringLength(32)]
         public string VoucherTypeCode { get; set; }
+        [Column("description")]
+        [StringLength(512)]
+        public string Description { get; set; }
 
         [ForeignKey(nameof(CenterId))]
         [InverseProperty(nameof(PetCenter.Vouchers))]

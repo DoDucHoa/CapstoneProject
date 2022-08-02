@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PawNClaw.Data.Database
 {
+    [Index(nameof(Id), Name = "i")]
     public partial class PhotoType
     {
         public PhotoType()
