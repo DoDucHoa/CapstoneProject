@@ -58,22 +58,32 @@ class AuthRepository implements BaseAuthRepository {
       required DateTime birthday}) async {
     // TODO: implement signUp
     var deviceId = await _getId();
+    final pref = await SharedPreferences.getInstance();
     try {
       var requestBody = {
-        'IdToken': token,
-        'deviceId': deviceId,
-        'SignInMethod': 'Phone',
-        'UserName': email,
-        'Phone': phone,
-        'Name': name,
-        'Birth': birthday.toIso8601String(),
-        'RoleCode': 'CUS'
+        '_loginRequestModel': {
+          'IdToken': token,
+          'deviceId': deviceId,
+          'SignInMethod': 'Phone'
+        },
+        '_accountRequest': {
+          'UserName': email,
+          'RoleCode': 'CUS',
+          'deviceId': deviceId,
+          'Phone': phone
+        },
+        '_customerRequest': {
+          'Name': name,
+          'Birth': birthday.toIso8601String(),
+        }
       };
       print(requestBody);
       const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/auth/sign-up";
       var response = await _dio.post(_url, data: requestBody);
       final account = Account.fromJson(response.data);
+      await pref.setString("jwtToken", account.jwtToken ?? "");
+      print(pref.get("jwtToken"));
       return account;
     } catch (e) {
       print(e);
