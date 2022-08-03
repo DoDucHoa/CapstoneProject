@@ -21,14 +21,17 @@ import {
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
 
+// hooks
+import useAuth from '../../../../hooks/useAuth';
+
 // redux
-import { useDispatch } from '../../../redux/store';
-import { getBookingDetails, closeModal } from '../../../redux/slices/calendar';
+import { useDispatch } from '../../../../redux/store';
+import { getBookingDetails, closeModal } from '../../../../redux/slices/calendar';
 
 // utils
-import axios from '../../../utils/axios';
-import { FormProvider, RHFTextField } from '../../../components/hook-form';
-import { fCurrency } from '../../../utils/formatNumber';
+import axios from '../../../../utils/axios';
+import { FormProvider, RHFTextField } from '../../../../components/hook-form';
+import { fCurrency } from '../../../../utils/formatNumber';
 
 // ----------------------------------------------------------------------
 
@@ -45,6 +48,8 @@ export default function CageDialogForm({ open, onClose, cageSearchParam, booking
   const [options, setOptions] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
+
+  const { centerInfo } = useAuth();
 
   useEffect(() => {
     const getCage = async () => {
@@ -69,6 +74,7 @@ export default function CageDialogForm({ open, onClose, cageSearchParam, booking
 
   const {
     control,
+    reset,
     watch,
     setValue,
     handleSubmit,
@@ -98,8 +104,8 @@ export default function CageDialogForm({ open, onClose, cageSearchParam, booking
             isUpdatePet: true,
             createPetHealthHistoryParameter: {
               checkedDate: new Date(),
-              description: '',
-              centerName: 'Dogily',
+              description: 'Đổi chuồng',
+              centerName: centerInfo.name,
               petId: pet.id,
               length: pet.length,
               height: pet.height,
@@ -109,35 +115,24 @@ export default function CageDialogForm({ open, onClose, cageSearchParam, booking
           });
         })
       ).then(() => {
+        reset();
         onClose();
         enqueueSnackbar('Cập nhật thành công!');
         dispatch(closeModal());
         dispatch(getBookingDetails(bookingId));
       });
-
-      // // handle update pet health history
-      // cageSearchParam.listPets.map((pet) =>
-      //   axios.post('/api/pethealthhistories', {
-      //     isUpdatePet: true,
-      //     createPetHealthHistoryParameter: {
-      //       checkedDate: new Date(),
-      //       description: '',
-      //       centerName: 'Dogily',
-      //       petId: pet.id,
-      //       length: pet.length,
-      //       height: pet.height,
-      //       weight: pet.weight,
-      //       bookingId,
-      //     },
-      //   })
-      // );
     } catch (error) {
       console.log(error);
     }
   };
 
+  const handleCloseDialog = () => {
+    reset();
+    onClose();
+  };
+
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+    <Dialog open={open} onClose={handleCloseDialog} fullWidth maxWidth="md">
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <DialogTitle>Đổi chuồng</DialogTitle>
 
@@ -189,7 +184,7 @@ export default function CageDialogForm({ open, onClose, cageSearchParam, booking
 
         <DialogActions>
           <Box sx={{ flexGrow: 1 }} />
-          <Button variant="outlined" color="inherit" onClick={() => onClose()}>
+          <Button variant="outlined" color="inherit" onClick={() => handleCloseDialog()}>
             Hủy
           </Button>
           <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

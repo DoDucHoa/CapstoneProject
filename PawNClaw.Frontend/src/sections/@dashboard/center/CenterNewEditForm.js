@@ -63,7 +63,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
     avatarUrl: Yup.mixed().test('required', 'Ảnh thương hiệu bắt buộc nhập', (value) => value !== ''),
     checkin: Yup.string().nullable().required('Bắt buộc nhập'),
     checkout: Yup.string().nullable().required('Bắt buộc nhập'),
-    brandInfo: Yup.mixed().nullable().required('Thương hiệu bắt buộc nhập*'),
+    brandInfo: Yup.mixed().nullable().required('Thương hiệu bắt buộc nhập'),
   });
 
   const defaultValues = useMemo(
@@ -267,7 +267,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
                   </Button>
                 </Box>
                 {brandInfo ? (
-                  <OwnerInfo brandName={brandInfo.name} ownerName={brandInfo.owner.name} />
+                  <BrandInfo brandName={brandInfo.name} ownerName={brandInfo.owner.name} />
                 ) : (
                   <Typography typography="caption" sx={{ color: 'error.main' }}>
                     {errors.brandInfo ? errors.brandInfo.message : null}
@@ -299,11 +299,11 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
 }
 
 // ----------------------------------------------------------------------
-OwnerInfo.propTypes = {
+BrandInfo.propTypes = {
   brandName: PropTypes.string.isRequired,
   ownerName: PropTypes.string.isRequired,
 };
-function OwnerInfo({ brandName, ownerName }) {
+function BrandInfo({ brandName, ownerName }) {
   const isDesktop = useResponsive('up', 'sm');
 
   return (

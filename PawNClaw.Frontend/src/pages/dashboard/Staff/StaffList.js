@@ -42,7 +42,7 @@ import { TableEmptyRows, TableHeadCustom, TableNoData } from '../../../component
 import { StaffTableRow, StaffTableToolbar } from '../../../sections/@dashboard/staff/list';
 
 // API
-import { getStaffs, banStaff, unbanStaff } from './useStaffAPI';
+import { getStaffs, banStaff } from './useStaffAPI';
 
 // ----------------------------------------------------------------------
 
@@ -96,9 +96,9 @@ export default function UserList() {
     const response = await getStaffs(centerId, page, rowsPerPage, filterStatus, searchRequest);
     const { data, metadata } = response;
 
-    const staffs = data.map((staff, index) => ({
+    const staffs = data.map((staff) => ({
       id: staff.id,
-      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`,
+      photoUrl: staff?.photos?.length > 0 ? staff?.photos[0].url : '',
       name: staff.name,
       userName: staff.idNavigation.userName,
       phone: staff.idNavigation.phone,
@@ -112,7 +112,7 @@ export default function UserList() {
   useEffect(() => {
     getStaffData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, rowsPerPage, filterStatus, searchRequest]);
+  }, [centerId, page, rowsPerPage, filterStatus, searchRequest]);
 
   const handleFilterName = (filterName) => {
     setFilterName(filterName);
@@ -132,10 +132,6 @@ export default function UserList() {
     await getStaffData();
   };
 
-  const handleUnbanStaff = async (id) => {
-    await unbanStaff(id);
-    await getStaffData();
-  };
   const handleOpenBanDialog = (idStaff) => {
     setSelectIdStaff(idStaff);
     setOpenDialog(true);
@@ -205,7 +201,7 @@ export default function UserList() {
                         key={row.id}
                         row={row}
                         onEditRow={() => handleEditRow(row.id)}
-                        onDeleteRow={() => (row.status ? handleOpenBanDialog(row.id) : handleUnbanStaff(row.id))}
+                        onDeleteRow={() => handleOpenBanDialog(row.id)}
                       />
                     ))}
 

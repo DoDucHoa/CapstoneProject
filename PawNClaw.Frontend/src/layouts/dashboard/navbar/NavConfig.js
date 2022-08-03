@@ -21,6 +21,9 @@ const ICONS = {
   cage: getIcon('ic_cage'),
   cageType: getIcon('ic_cage_type'),
   staff: getIcon('ic_staff'),
+  price: getIcon('ic_price_tag'),
+  setting: getIcon('ic_setting'),
+  adv: getIcon('ic_adv'),
 };
 
 // nav config for owner
@@ -28,7 +31,7 @@ const navConfig = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
-    subheader: 'general',
+    subheader: 'Báo cáo',
     items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
   },
 
@@ -42,6 +45,19 @@ const navConfig = [
         title: 'Lịch Đặt',
         path: PATH_DASHBOARD.booking.calendar,
         icon: ICONS.booking,
+      },
+    ],
+  },
+
+  // DISCOUNT
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Khuyến mại',
+    items: [
+      {
+        title: 'Voucher',
+        path: PATH_DASHBOARD.voucher.list,
+        icon: ICONS.price,
       },
     ],
   },
@@ -87,7 +103,7 @@ export const navConfigForStaff = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
-    subheader: 'general',
+    subheader: 'Báo cáo',
     items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
   },
 
@@ -101,6 +117,19 @@ export const navConfigForStaff = [
         title: 'Lịch Đặt',
         path: PATH_DASHBOARD.booking.calendar,
         icon: ICONS.booking,
+      },
+    ],
+  },
+
+  // DISCOUNT
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Khuyến mại',
+    items: [
+      {
+        title: 'Voucher',
+        path: PATH_DASHBOARD.voucher.list,
+        icon: ICONS.price,
       },
     ],
   },
@@ -139,7 +168,7 @@ export const navConfigForAdmin = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
-    subheader: 'general',
+    subheader: 'Báo cáo',
     items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
   },
 
@@ -180,13 +209,32 @@ export const navConfigForAdmin = [
       },
     ],
   },
+
+  // SETTING
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Cài đặt',
+    items: [
+      // MODERATOR
+      {
+        title: 'Thông số cài đặt',
+        path: PATH_DASHBOARD.setting.list,
+        icon: ICONS.setting,
+      },
+      {
+        title: 'Quảng cáo',
+        path: PATH_DASHBOARD.sponsor.list,
+        icon: ICONS.adv,
+      },
+    ],
+  },
 ];
 
 export const navConfigForModerator = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
-    subheader: 'general',
+    subheader: 'Báo cáo',
     items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
   },
 

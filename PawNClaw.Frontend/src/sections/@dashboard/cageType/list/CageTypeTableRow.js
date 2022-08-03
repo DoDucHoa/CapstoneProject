@@ -36,7 +36,7 @@ export default function SupplyTableRow({ row, onEditRow, onDeleteRow }) {
   return (
     <TableRow hover>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Image disabledEffect alt={name} src={photoUrl} sx={{ borderRadius: 1.5, width: 50, height: 50, mr: 2 }} />
+        <Image disabledEffect src={photoUrl} sx={{ borderRadius: 1.5, width: 50, height: 50, mr: 2 }} />
         <Typography variant="subtitle2" noWrap>
           {name}
         </Typography>

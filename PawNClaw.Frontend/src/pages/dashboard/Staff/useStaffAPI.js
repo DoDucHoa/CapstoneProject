@@ -35,13 +35,8 @@ const updateStaff = async (idStaff, name, phone, gender) => {
 };
 
 const banStaff = async (idStaff) => {
-  const response = await axios.put(`${URL}/ban/${idStaff}`);
+  const response = await axios.put(`${URL}/update-status/${idStaff}`);
   return response.data;
 };
 
-const unbanStaff = async (idStaff) => {
-  const response = await axios.put(URL);
-  return response.data;
-};
-
-export { getStaff, getStaffs, createStaff, banStaff, unbanStaff, updateStaff };
+export { getStaff, getStaffs, createStaff, banStaff, updateStaff };

@@ -140,7 +140,7 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
     try {
       if (!isEdit) {
         const idCageType = await createCageType(values);
-        await uploadPhotoToFirebase('cageTypes', values.createCageTypeParameter.avatarUrl, idCageType, 5);
+        await uploadPhotoToFirebase('cageTypes', values.createCageTypeParameter.avatarUrl, idCageType, 'cagetype');
       } else {
         await updateCageType(values);
       }

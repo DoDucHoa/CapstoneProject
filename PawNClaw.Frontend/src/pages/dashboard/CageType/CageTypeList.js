@@ -98,7 +98,7 @@ export default function CageTypeList() {
   useEffect(() => {
     getCageTypeData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, rowsPerPage, searchRequest]);
+  }, [centerId, page, rowsPerPage, searchRequest]);
 
   const { themeStretch } = useSettings();
 

@@ -57,7 +57,6 @@ export const PATH_DASHBOARD = {
     profile: path(ROOTS_DASHBOARD, '/user/profile'),
     account: path(ROOTS_DASHBOARD, '/user/account'),
     edit: (name) => path(ROOTS_DASHBOARD, `/user/${name}/edit`),
-    demoEdit: path(ROOTS_DASHBOARD, `/user/reece-chung/edit`),
   },
   booking: {
     root: path(ROOTS_DASHBOARD, '/booking'),
@@ -118,5 +117,21 @@ export const PATH_DASHBOARD = {
     list: path(ROOTS_DASHBOARD, '/service/list'),
     new: path(ROOTS_DASHBOARD, '/service/new'),
     edit: (id) => path(ROOTS_DASHBOARD, `/service/${id}/edit`),
+  },
+  voucher: {
+    root: path(ROOTS_DASHBOARD, '/voucher'),
+    list: path(ROOTS_DASHBOARD, '/voucher/list'),
+    new: path(ROOTS_DASHBOARD, '/voucher/new'),
+    edit: (code) => path(ROOTS_DASHBOARD, `/voucher/${code}/edit`),
+  },
+  setting: {
+    root: path(ROOTS_DASHBOARD, '/setting'),
+    list: path(ROOTS_DASHBOARD, '/setting/list'),
+  },
+  sponsor: {
+    root: path(ROOTS_DASHBOARD, '/sponsor'),
+    list: path(ROOTS_DASHBOARD, '/sponsor/list'),
+    new: path(ROOTS_DASHBOARD, '/sponsor/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/sponsor/${id}/edit`),
   },
 };

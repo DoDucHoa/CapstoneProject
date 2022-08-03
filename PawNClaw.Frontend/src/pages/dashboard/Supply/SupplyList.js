@@ -42,7 +42,7 @@ import { TableEmptyRows, TableHeadCustom, TableNoData } from '../../../component
 import { SupplyTableRow, SupplyTableToolbar } from '../../../sections/@dashboard/supply/list';
 
 // API
-import { getSupplies, banSupply, unbanSupply } from './useSupplyAPI';
+import { getSupplies, deleteSupply } from './useSupplyAPI';
 
 // ----------------------------------------------------------------------
 
@@ -97,12 +97,12 @@ export default function SupplyList() {
 
     const supplies = data.map((supply) => ({
       id: supply.id,
-      avatarUrl: supply.photos,
       name: supply.name,
       sellPrice: supply.sellPrice,
       quantity: supply.quantity,
       supplyTypeCode: supply.supplyTypeCode,
       status: supply.status,
+      photoUrl: supply?.photos?.length > 0 ? supply?.photos[0].url : '',
     }));
     setTableData(supplies);
     setMetadata(metadata);
@@ -111,7 +111,7 @@ export default function SupplyList() {
   useEffect(() => {
     getSupplyData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, rowsPerPage, filterStatus, searchRequest]);
+  }, [centerId, page, rowsPerPage, filterStatus, searchRequest]);
 
   const { themeStretch } = useSettings();
 
@@ -130,15 +130,11 @@ export default function SupplyList() {
     navigate(PATH_DASHBOARD.supply.edit(id));
   };
 
-  const handleBanAdmin = async (id) => {
-    await banSupply(id);
+  const handleDeleteSupply = async (id) => {
+    await deleteSupply(id);
     await getSupplyData();
   };
 
-  const handleUnbanAdmin = async (id) => {
-    await unbanSupply(id);
-    await getSupplyData();
-  };
   const handleOpenBanDialog = (idAdmin) => {
     setSelectIdAdmin(idAdmin);
     setOpenDialog(true);
@@ -208,7 +204,7 @@ export default function SupplyList() {
                         key={row.id}
                         row={row}
                         onEditRow={() => handleEditRow(row.id)}
-                        onDeleteRow={() => (row.status ? handleOpenBanDialog(row.id) : handleUnbanAdmin(row.id))}
+                        onDeleteRow={() => handleOpenBanDialog(row.id)}
                       />
                     ))}
 
@@ -243,7 +239,7 @@ export default function SupplyList() {
         open={openDialog}
         onClose={handleCloseBanDialog}
         idAdmin={selectIdAdmin}
-        handleBanAdmin={handleBanAdmin}
+        handleBanAdmin={handleDeleteSupply}
       />
     </>
   );
@@ -265,10 +261,10 @@ function BanAdminDialog({ open, onClose, idAdmin, handleBanAdmin }) {
 
   return (
     <Dialog open={open} maxWidth="xs" onClose={onClose}>
-      <DialogTitle>Bạn có chắc chắn muốn khóa đồ dùng?</DialogTitle>
+      <DialogTitle>Bạn có chắc chắn muốn xóa đồ dùng?</DialogTitle>
       <DialogContent>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Bạn vẫn có thể mở khóa đồ dùng này sau khi xác nhận!
+          Bạn không thể khôi phục đồ dùng này sau khi xóa!
         </Typography>
       </DialogContent>
       <DialogActions>

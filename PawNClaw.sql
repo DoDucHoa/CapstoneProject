@@ -209,6 +209,8 @@ ALTER TABLE dbo.PriceTypes ADD FOREIGN KEY (create_user) REFERENCES [dbo].Accoun
 GO
 ALTER TABLE dbo.PriceTypes ADD FOREIGN KEY (modify_user) REFERENCES [dbo].Accounts(id)
 GO
+CREATE INDEX i ON PriceTypes (code)
+GO
 
 CREATE TABLE CageTypes
 (
@@ -300,6 +302,8 @@ ALTER TABLE dbo.PetTypes ADD FOREIGN KEY (create_user) REFERENCES [dbo].Accounts
 GO
 ALTER TABLE dbo.PetTypes ADD FOREIGN KEY (modify_user) REFERENCES [dbo].Accounts(id)
 GO
+CREATE INDEX i ON PetTypes (code)
+GO
 
 CREATE TABLE Pets
 (
@@ -370,7 +374,8 @@ ALTER TABLE dbo.SupplyTypes ADD FOREIGN KEY (create_user) REFERENCES [dbo].Accou
 GO
 ALTER TABLE dbo.SupplyTypes ADD FOREIGN KEY (modify_user) REFERENCES [dbo].Accounts(id)
 GO
-
+CREATE INDEX i ON SupplyTypes (code, name)
+GO
 
 CREATE TABLE Supplies
 (
@@ -410,6 +415,8 @@ ALTER TABLE dbo.VoucherTypes ADD FOREIGN KEY (create_user) REFERENCES [dbo].Acco
 GO
 ALTER TABLE dbo.VoucherTypes ADD FOREIGN KEY (modify_user) REFERENCES [dbo].Accounts(id)
 GO
+CREATE INDEX i ON VoucherTypes (code)
+GO
 
 CREATE TABLE Vouchers
 (
@@ -418,6 +425,7 @@ CREATE TABLE Vouchers
 	value NUMERIC(19, 5),
 	start_date DATE,
 	expire_date DATE,
+	description NVARCHAR(512),
 	create_date DATE DEFAULT GETDATE(),
 	modify_date DATE DEFAULT GETDATE(),
 	create_user INT,
@@ -459,7 +467,8 @@ CREATE TABLE Bookings
 	center_id INT NOT NULL,
 	rating TINYINT,
 	customer_note NVARCHAR(512),
-	staff_note NVARCHAR(512)
+	staff_note NVARCHAR(512),
+	invoice_url NVARCHAR(1024),
 )
 ALTER TABLE dbo.Bookings ADD FOREIGN KEY (status_id) REFERENCES [dbo].BookingStatuses(id)
 GO
@@ -553,6 +562,8 @@ CREATE TABLE PhotoTypes
 	name NVARCHAR(256),
 	status BIT DEFAULT 1
 )
+GO
+CREATE INDEX i ON PhotoTypes (id)
 GO
 
 INSERT INTO dbo.PhotoTypes (id, name)

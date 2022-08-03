@@ -9,6 +9,7 @@ const getCageTypes = async (centerId, page, rowsPerPage, searchName) => {
       TypeName: searchName,
       PageSize: rowsPerPage,
       PageNumber: page,
+      Status: true,
     },
   });
   return response.data;

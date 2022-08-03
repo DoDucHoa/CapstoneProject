@@ -100,8 +100,9 @@ const AuthContext = createContext({
   login: () => Promise.resolve(),
   register: (email, password) => Promise.resolve(email, password),
   logout: () => Promise.resolve(),
-  uploadPhotoToFirebase: (path, file, idActor, photoTypeId) => Promise.resolve(path, file, idActor, photoTypeId),
+  uploadPhotoToFirebase: (path, file, idActor, photoType) => Promise.resolve(path, file, idActor, photoType),
   changeCenter: () => null,
+  uploadFileToFirebase: (path, file, fileName) => Promise.resolve(path, file, fileName),
   // changePassword: (password) => Promise.resolve(password),
 });
 
@@ -181,38 +182,25 @@ function AuthProvider({ children }) {
     setSession(null);
     setAccountInfoSession(null);
     setCenterInfoSession(null);
+    setCenterIdSession(null);
     dispatch({ type: 'LOGOUT' });
   };
 
   // create function upload photo to Firebase use async
-  const uploadPhotoToFirebase = (path, file, idActor, photoTypeId) => {
+  const uploadPhotoToFirebase = async (path, file, idActor, photoType) => {
     const storageRef = ref(storage, `${path}/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        // const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        // console.log("Upload is " + progress + "% done");
-        switch (snapshot.state) {
-          case 'paused':
-            console.log('Upload is paused');
-            break;
-          case 'running':
-            console.log('Upload is running');
-            break;
-          default:
-            break;
-        }
-      },
-      (error) => {
-        console.log(error.code);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
-          uploadPhotoToBackend(idActor, downloadURL, photoTypeId)
-        );
-      }
-    );
+
+    await uploadTask;
+    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+    await uploadPhotoToBackend(idActor, downloadURL, photoType);
+  };
+
+  const uploadFileToFirebase = async (path, file, fileName) => {
+    const storageRef = ref(storage, `${path}/${fileName}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    await uploadTask;
   };
 
   const changeCenter = (centerId) => {
@@ -250,6 +238,7 @@ function AuthProvider({ children }) {
         logout,
         uploadPhotoToFirebase,
         changeCenter,
+        uploadFileToFirebase,
         // changePassword,
       }}
     >
@@ -295,9 +284,8 @@ const getPetCenter = async (idOwner) => {
   }
 };
 
-const uploadPhotoToBackend = async (idActor, url, photoTypeId) => {
-  const response = await axios.post('/api/photos/cagetype', {
-    photoTypeId,
+const uploadPhotoToBackend = async (idActor, url, photoType) => {
+  const response = await axios.post(`/api/photos/${photoType}`, {
     idActor,
     url,
     isThumbnail: false,

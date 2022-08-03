@@ -9,7 +9,8 @@ const getSupplies = async (centerId, page, rowsPerPage, filterStatus, searchName
       Name: searchName,
       PageSize: rowsPerPage,
       PageNumber: page,
-      Status: filterStatus,
+      TypeCode: filterStatus,
+      Status: true,
     },
   });
   return response.data;
@@ -20,34 +21,27 @@ const getSupply = async (idSupply) => {
   return response.data;
 };
 
-const createSupply = async (name, description, ownerId, createUser, modifyUser) => {
-  const response = await axios.post(URL, {
-    name,
-    description,
-    ownerId,
-    createUser,
-    modifyUser,
-  });
+const createSupply = async (supplyData) => {
+  const response = await axios.post(URL, supplyData);
   return response.data;
 };
 
-const updateSupply = async (idSupply, name, description, ownerId) => {
-  const response = await axios.put(`${URL}/${idSupply}`, {
-    name,
-    description,
-    ownerId,
+const updateSupply = async (supplyData, modifyUser) => {
+  const response = await axios.put(URL, {
+    id: supplyData.id,
+    sellPrice: supplyData.sellPrice,
+    discountPrice: supplyData.discountPrice,
+    quantity: supplyData.quantity,
+    modifyDate: new Date(),
+    modifyUser,
+    status: true,
   });
   return response.status;
 };
 
-const banSupply = async (idSupply) => {
-  const response = await axios.delete(`${URL}/${idSupply}`);
+const deleteSupply = async (idSupply) => {
+  const response = await axios.put(`${URL}/delete/${idSupply}`);
   return response.data;
 };
 
-const unbanSupply = async (idSupply) => {
-  const response = await axios.put(`${URL}/restore/${idSupply}`);
-  return response.data;
-};
-
-export { getSupply, getSupplies, createSupply, banSupply, unbanSupply, updateSupply };
+export { getSupply, getSupplies, createSupply, deleteSupply, updateSupply };

@@ -137,6 +137,7 @@ export function getBookingDetails(bookingId) {
       const response = await axios.get(`/api/bookings/for-staff/${bookingId}`);
 
       const bookingDetails = {
+        ...response.data,
         id: response.data.id,
         customer: response.data.customer,
         total: response.data.total,
