@@ -12,12 +12,14 @@ class TransactionDetails {
       this.bookingDetails,
       this.serviceOrders,
       this.supplyOrders,
-      this.bookingActivities});
+      this.bookingActivities,
+      this.invoiceUrl});
   int? bookingId;
   List<BookingDetail>? bookingDetails;
   List<ServiceOrder>? serviceOrders;
   List<SupplyOrder>? supplyOrders;
   List<BookingActivities>? bookingActivities;
+  String? invoiceUrl;
 
   factory TransactionDetails.fromRawJson(String str) =>
       TransactionDetails.fromJson(json.decode(str));
@@ -26,6 +28,7 @@ class TransactionDetails {
 
   factory TransactionDetails.fromJson(Map<String, dynamic> json) =>
       TransactionDetails(
+          invoiceUrl: json["invoiceUrl"],
           bookingId: json["id"],
           bookingDetails: List<BookingDetail>.from(
               json["bookingDetails"].map((x) => BookingDetail.fromJson(x))),
@@ -91,7 +94,8 @@ class TransactionDetails {
 
   List<Pet> getPetsInCage(int bookingDetailId) {
     List<Pet> pets = [];
-    this.bookingDetails!
+    this
+        .bookingDetails!
         .where((e) => e.id == bookingDetailId)
         .first
         .petBookingDetails!
@@ -128,28 +132,28 @@ class TransactionDetails {
     for (var act in this.bookingActivities!) {
       if (act.bookingDetailId != null && act.provideTime != null) {
         for (var pet in getPetsInCage(act.bookingDetailId!)) {
-            FEED_ACTS.add(Activity(
-                id: 0,
-                time: DateTime.parse(act.provideTime!),
-                type: ActivityType(0),
-                product: Product(
-                    id: 0,
-                    name: this
-                        .bookingDetails!
-                        .where((e) => e.id == act.bookingDetailId)
-                        .first
-                        .cage!
-                        .cageType!
-                        .typeName!,
-                    imgUrl: "lib/assets/cage.png",
-                    note: act.description != null
-                        ? act.description!
-                        : 'Cho ${pet.name} ăn'),
-                pet: pet,
-                imgUrl: act.photo!.isNotEmpty ? act.photo!.first.url : null));
+          FEED_ACTS.add(Activity(
+              id: 0,
+              time: DateTime.parse(act.provideTime!),
+              type: ActivityType(0),
+              product: Product(
+                  id: 0,
+                  name: this
+                      .bookingDetails!
+                      .where((e) => e.id == act.bookingDetailId)
+                      .first
+                      .cage!
+                      .cageType!
+                      .typeName!,
+                  imgUrl: "lib/assets/cage.png",
+                  note: act.description != null
+                      ? act.description!
+                      : 'Cho ${pet.name} ăn'),
+              pet: pet,
+              imgUrl: act.photo!.isNotEmpty ? act.photo!.first.url : null));
         }
       }
-      
+
       print(FEED_ACTS);
     }
     return FEED_ACTS;
@@ -281,15 +285,11 @@ class Cage {
   String? name;
   factory Cage.fromRawJson(String str) => Cage.fromJson(json.decode(str));
 
-  factory Cage.fromJson(Map<String, dynamic> json) => Cage(
-        cageType: CageType.fromJson(json["cageType"]),
-        name: json["name"]
-      );
+  factory Cage.fromJson(Map<String, dynamic> json) =>
+      Cage(cageType: CageType.fromJson(json["cageType"]), name: json["name"]);
 
-  Map<String, dynamic> toJson() => {
-        "cageType": cageType!.toJson(),
-        "name": name
-      };
+  Map<String, dynamic> toJson() =>
+      {"cageType": cageType!.toJson(), "name": name};
 
   String toRawJson() => json.encode(toJson());
 }
@@ -337,7 +337,13 @@ class PetBookingDetail {
 }
 
 class Pet {
-  Pet({this.id, this.name, this.weight, this.height, this.length, this.breedName});
+  Pet(
+      {this.id,
+      this.name,
+      this.weight,
+      this.height,
+      this.length,
+      this.breedName});
 
   int? id;
   String? name;
