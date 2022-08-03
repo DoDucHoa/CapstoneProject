@@ -36,7 +36,7 @@ const SUPPLY_TYPES = [
 export default function SupplyNewEditForm({ isEdit, supplyData }) {
   // STATE
   const navigate = useNavigate();
-  const { accountInfo } = useAuth();
+  const { accountInfo, uploadPhotoToFirebase, centerId } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({
@@ -45,19 +45,24 @@ export default function SupplyNewEditForm({ isEdit, supplyData }) {
     quantity: Yup.number().required('Bắt buộc nhập').typeError('Bắt buộc nhập'),
     createUser: Yup.number().required(),
     modifyUser: Yup.number().required(),
-    avatarUrl: Yup.mixed().test('required', 'Ảnh thương hiệu bắt buộc nhập', (value) => value !== ''),
+    avatarUrl: Yup.mixed().test('required', 'Ảnh đồ dùng bắt buộc nhập', (value) => value !== ''),
     supplyTypeCode: Yup.string().required('Bắt buộc nhập'),
   });
 
   const defaultValues = useMemo(
     () => ({
+      id: supplyData?.id || 0,
       name: supplyData?.name || '',
       sellPrice: supplyData?.sellPrice || 0,
+      discountPrice: 0,
       quantity: supplyData?.quantity || 0,
       createUser: supplyData?.createUser || accountInfo.id,
       modifyUser: accountInfo.id,
-      avatarUrl: supplyData?.avatarUrl || '',
+      avatarUrl: supplyData?.photos?.length > 0 ? supplyData?.photos[0].url : '',
       supplyTypeCode: supplyData?.supplyTypeCode || 'FOOD',
+      createDate: supplyData?.createDate || new Date(),
+      modifyDate: new Date(),
+      centerId: supplyData?.centerId || centerId,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [supplyData]
@@ -95,13 +100,14 @@ export default function SupplyNewEditForm({ isEdit, supplyData }) {
   const onSubmit = async () => {
     try {
       if (!isEdit) {
-        await createSupply(values.name, values.description, values.ownerInfo.id, accountInfo.id, accountInfo.id);
+        const supplyId = await createSupply(values);
+        uploadPhotoToFirebase('supplies', values.avatarUrl, supplyId, 'supply');
       } else {
-        await updateSupply(supplyData.id, values.name, values.description, values.ownerId);
+        await updateSupply(values, accountInfo.id);
       }
       reset();
       enqueueSnackbar(!isEdit ? 'Tạo mới thành công' : 'Cập nhật thành công');
-      navigate(PATH_DASHBOARD.owner.list);
+      navigate(PATH_DASHBOARD.supply.list);
     } catch (error) {
       console.error(error);
     }
@@ -136,7 +142,7 @@ export default function SupplyNewEditForm({ isEdit, supplyData }) {
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(1, 1fr)' },
               }}
             >
-              <RHFTextField name="name" label="Tên đồ dùng" />
+              <RHFTextField name="name" label="Tên đồ dùng" disabled={isEdit} />
 
               <RHFTextField label="Giá bán" name="sellPrice" type="number" />
 
@@ -145,6 +151,7 @@ export default function SupplyNewEditForm({ isEdit, supplyData }) {
               <RHFSelect
                 name="supplyTypeCode"
                 label="Loại đồ dùng"
+                disabled={isEdit}
                 InputLabelProps={{ shrink: true }}
                 SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
               >

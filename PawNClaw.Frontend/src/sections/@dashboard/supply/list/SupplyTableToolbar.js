@@ -19,7 +19,7 @@ export default function BrandTableToolbar({ filterName, onFilterName, onEnterPre
         value={filterName}
         onChange={(event) => onFilterName(event.target.value)}
         onKeyPress={(event) => event.key === 'Enter' && onEnterPress(event.target.value)}
-        placeholder="Tìm thương hiệu..."
+        placeholder="Tìm đồ dùng..."
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">

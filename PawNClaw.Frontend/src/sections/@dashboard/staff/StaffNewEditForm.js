@@ -98,7 +98,7 @@ export default function StaffNewEditForm({ isEdit, staffData }) {
     try {
       if (!isEdit) {
         await Promise.all([
-          createStaff(values).then((staffId) => uploadPhotoToFirebase('staffs', values.avatarUrl, staffId, 12)), // create account on Backend
+          createStaff(values).then((staffId) => uploadPhotoToFirebase('staffs', values.avatarUrl, staffId, 'account')), // create account on Backend
           register(values.userName, values.password), // create account on Firebase
         ]);
       } else {

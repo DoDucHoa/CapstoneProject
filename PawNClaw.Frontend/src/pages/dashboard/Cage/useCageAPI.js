@@ -11,6 +11,7 @@ const getCages = async (centerId, page, rowsPerPage, cageCode, isOnline, cageTyp
       PageNumber: page,
       IsOnline: isOnline === 3 ? null : isOnline === 1,
       CageTypeId: cageTypeId === 0 ? null : cageTypeId,
+      Status: true,
     },
   });
   return response.data;

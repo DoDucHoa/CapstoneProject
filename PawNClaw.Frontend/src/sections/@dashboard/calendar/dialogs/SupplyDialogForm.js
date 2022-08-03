@@ -11,13 +11,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, useFieldArray } from 'react-hook-form';
 
 // redux
-import { useDispatch } from '../../../redux/store';
-import { getBookingDetails, closeModal } from '../../../redux/slices/calendar';
+import { useDispatch } from '../../../../redux/store';
+import { getBookingDetails, closeModal } from '../../../../redux/slices/calendar';
 
 // components
-import axios from '../../../utils/axios';
-import { FormProvider, RHFTextField } from '../../../components/hook-form';
-import { fCurrency } from '../../../utils/formatNumber';
+import axios from '../../../../utils/axios';
+import { FormProvider, RHFTextField } from '../../../../components/hook-form';
+import { fCurrency } from '../../../../utils/formatNumber';
 
 SupplyDialogForm.propTypes = {
   open: PropTypes.bool.isRequired,

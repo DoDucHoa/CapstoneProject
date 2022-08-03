@@ -21,7 +21,7 @@ StaffTableRow.propTypes = {
 export default function StaffTableRow({ row, onEditRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { name, avatarUrl, userName, phone, status } = row;
+  const { name, photoUrl, userName, phone, status } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -36,7 +36,7 @@ export default function StaffTableRow({ row, onEditRow, onDeleteRow }) {
   return (
     <TableRow hover>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
+        <Avatar alt={name} src={photoUrl} sx={{ mr: 2 }} />
         <Typography variant="subtitle2" noWrap>
           {name}
         </Typography>

@@ -2,11 +2,12 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 
 // @mui
-import { Avatar, TableRow, TableCell, Typography, MenuItem } from '@mui/material';
+import { TableRow, TableCell, Typography, MenuItem } from '@mui/material';
 
 // components
 import Iconify from '../../../../components/Iconify';
 import { TableMoreMenu } from '../../../../components/table';
+import Image from '../../../../components/Image';
 
 // utils
 import { fCurrency, fNumber } from '../../../../utils/formatNumber';
@@ -20,7 +21,7 @@ SupplyTableRow.propTypes = {
 };
 
 export default function SupplyTableRow({ row, onEditRow, onDeleteRow }) {
-  const { name, avatarUrl, sellPrice, quantity, status } = row;
+  const { name, photoUrl, sellPrice, quantity } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -35,7 +36,7 @@ export default function SupplyTableRow({ row, onEditRow, onDeleteRow }) {
   return (
     <TableRow hover>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
+        <Image disabledEffect src={photoUrl} sx={{ borderRadius: 1.5, width: 50, height: 50, mr: 2 }} />
         <Typography variant="subtitle2" noWrap>
           {name}
         </Typography>
@@ -66,10 +67,10 @@ export default function SupplyTableRow({ row, onEditRow, onDeleteRow }) {
                   onDeleteRow();
                   handleCloseMenu();
                 }}
-                sx={{ color: status ? 'error.main' : 'success.main' }}
+                sx={{ color: 'error.main' }}
               >
-                <Iconify icon={status ? 'eva:slash-outline' : 'eva:checkmark-square-outline'} />
-                {status ? 'Khóa' : 'Mở khóa'}
+                <Iconify icon={'eva:trash-2-outline'} />
+                Xóa
               </MenuItem>
             </>
           }
