@@ -236,7 +236,8 @@ namespace PawNClaw.Data.Repository
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
                     TotalService = x.ServiceOrders.Sum(service => service.TotalPrice),
                     TotalCage = x.BookingDetails.Sum(detail => detail.Price),
-                    VoucherCodeNavigation = x.VoucherCodeNavigation
+                    VoucherCodeNavigation = x.VoucherCodeNavigation,
+                    InvoiceUrl = x.InvoiceUrl
                 })
                 .SingleOrDefault(x => x.Id == BookingId);
 
@@ -521,7 +522,8 @@ namespace PawNClaw.Data.Repository
                         Name = x.Status.Name
                     },
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
-                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
+                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice),
+                    InvoiceUrl = x.InvoiceUrl
                 })
                 .Where(x => x.CustomerId == CustomerId);
 
