@@ -14,6 +14,7 @@ import 'package:pawnclaw_mobile_application/models/transaction_details.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/components/booking_cage_card.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/components/booking_info_card.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/activity_list_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/invoice_screen.dart';
 
 import '../components/booking_item_card.dart';
 
@@ -504,17 +505,23 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                                 Container(
                                   margin: const EdgeInsets.only(right: 8.0),
                                   child: ElevatedButton(
-                                      onPressed: () {
-                                        // print(transaction.bookingActivities);
-                                        // print(booking);
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ActivityListScreen(
-                                                      transaction: transaction,
-                                                      booking: booking,
-                                                    )));
-                                      },
+                                      onPressed: (transaction.invoiceUrl !=
+                                              null)
+                                          ? () => Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: ((context) =>
+                                                      InvoiceScreen(
+                                                          invoiceUrl: transaction
+                                                              .invoiceUrl!)),
+                                                ),
+                                              )
+                                          : () => ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content:
+                                                      Text("Không có hóa đơn."),
+                                                ),
+                                              ),
                                       style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
