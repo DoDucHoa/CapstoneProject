@@ -463,5 +463,18 @@ namespace PawNClaw.Business.Services
 
             return values;
         }
+
+        //Update url for pdf
+        public bool UpdateInvoiceUrl(int id, string InvoiceUrl)
+        {
+            var booking = _bookingRepository.Get(id);
+
+            booking.InvoiceUrl = InvoiceUrl;
+
+            _bookingRepository.Update(booking);
+            _bookingRepository.SaveDbChange();
+
+            return true;
+        }
     }
 }
