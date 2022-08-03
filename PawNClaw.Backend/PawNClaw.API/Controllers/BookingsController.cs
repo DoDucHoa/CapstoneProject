@@ -192,11 +192,11 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("invoice-url/{id}")]
-        public IActionResult UpdateInvoiceUrl(int id, [FromBody] string InvoiceUrl)
+        public IActionResult UpdateInvoiceUrl(int id, [FromBody] UpdateInvoiceUrl InvoiceUrl)
         {
             try
             {
-                return Ok(_bookingService.UpdateInvoiceUrl(id, InvoiceUrl));
+                return Ok(_bookingService.UpdateInvoiceUrl(id, InvoiceUrl.InvoiceUrl));
             }
             catch (Exception ex)
             {

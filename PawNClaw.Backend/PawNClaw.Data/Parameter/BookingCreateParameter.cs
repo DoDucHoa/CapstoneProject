@@ -66,4 +66,9 @@ namespace PawNClaw.Data.Parameter
         public int BookingId { get; set; }
         public List<SupplyOrderCreateParameter> supplyOrderCreateParameters { get; set; }
     }
+
+    public class UpdateInvoiceUrl
+    {
+        public string InvoiceUrl { get; set; }
+    }
 }
