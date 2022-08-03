@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/models/account.dart';
 import 'package:pawnclaw_mobile_application/repositories/auth/base_auth_repository.dart';
@@ -45,15 +46,7 @@ class AuthRepository implements BaseAuthRepository {
   }
 
   Future<String?> _getId() async {
-    var deviceInfo = DeviceInfoPlugin();
-    if (Platform.isIOS) {
-      // import 'dart:io'
-      var iosDeviceInfo = await deviceInfo.iosInfo;
-      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
-    } else if (Platform.isAndroid) {
-      var androidDeviceInfo = await deviceInfo.androidInfo;
-      return androidDeviceInfo.androidId; // unique ID on Android
-    }
+    return await FirebaseMessaging.instance.getToken();
   }
 
   @override
@@ -65,22 +58,32 @@ class AuthRepository implements BaseAuthRepository {
       required DateTime birthday}) async {
     // TODO: implement signUp
     var deviceId = await _getId();
+    final pref = await SharedPreferences.getInstance();
     try {
       var requestBody = {
-        'IdToken': token,
-        'deviceId': deviceId,
-        'SignInMethod': 'Phone',
-        'UserName': email,
-        'Phone': phone,
-        'Name': name,
-        'Birth': birthday.toIso8601String(),
-        'RoleCode': 'CUS'
+        '_loginRequestModel': {
+          'IdToken': token,
+          'deviceId': deviceId,
+          'SignInMethod': 'Phone'
+        },
+        '_accountRequest': {
+          'UserName': email,
+          'RoleCode': 'CUS',
+          'deviceId': deviceId,
+          'Phone': phone
+        },
+        '_customerRequest': {
+          'Name': name,
+          'Birth': birthday.toIso8601String(),
+        }
       };
       print(requestBody);
       const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/auth/sign-up";
       var response = await _dio.post(_url, data: requestBody);
       final account = Account.fromJson(response.data);
+      await pref.setString("jwtToken", account.jwtToken ?? "");
+      print(pref.get("jwtToken"));
       return account;
     } catch (e) {
       print(e);

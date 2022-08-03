@@ -79,7 +79,7 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                var data = _petCenterService.GetDetailById(model.id, model._petRequests, model.StartBooking, model.EndBooking);
+                var data = _petCenterService.GetDetailById(model.id, model.customerId, model._petRequests, model.StartBooking, model.EndBooking);
                 return Ok(data);
             }
             catch (Exception ex)
@@ -94,7 +94,7 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                var data = _searchService.CheckCenter(model.id, model._petRequests, model.StartBooking, model.Due);
+                var data = _searchService.CheckCenter(model.id, model.customerId, model._petRequests, model.StartBooking, model.Due);
 
                 if (data == null)
                 {

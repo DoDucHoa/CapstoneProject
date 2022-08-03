@@ -1,3 +1,4 @@
+using FirebaseAdmin.Messaging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -42,6 +43,7 @@ namespace PawNClaw.API
             services.AddControllers();
             services.AddHttpClient();
 
+            services.AddTransient<NotificationService, NotificationService>();
             services.AddTransient<SearchService, SearchService>();
 
             services.AddTransient<IRoleRepository, RoleRepository>();
@@ -136,7 +138,12 @@ namespace PawNClaw.API
             services.AddScoped<IVoucherRepository, VoucherRepository>();
             services.AddScoped<VoucherService, VoucherService>();
 
+            services.AddScoped<IVoucherTypeRepository, VoucherTypeRepository>();
+            services.AddScoped<VoucherTypeService, VoucherTypeService>();
+
             services.AddScoped<IFoodScheduleRepository, FoodScheduleRepository>();
+
+            services.AddScoped<ICustomerVoucherLogRepository, CustomerVoucherLogRepository>();
 
             services.AddControllers();
             services.AddControllersWithViews()

@@ -38,6 +38,7 @@ namespace PawNClaw.Business.Services
         {
             Voucher voucher = new Voucher()
             {
+                Code = voucherP.Code,
                 MinCondition = voucherP.MinCondition,
                 Value = voucherP.Value,
                 StartDate = voucherP.StartDate,
@@ -49,6 +50,7 @@ namespace PawNClaw.Business.Services
                 Status = true,
                 CenterId = voucherP.CenterId,
                 VoucherTypeCode = voucherP.VoucherTypeCode,
+                Description = voucherP.Description,
             };
 
             _voucherRepository.Add(voucher);
@@ -66,9 +68,24 @@ namespace PawNClaw.Business.Services
             voucher.ModifyDate = voucherP.ModifyDate;
             voucher.ModifyUser = voucherP.ModifyUser;
             voucher.Status = voucherP.Status;
+            voucher.Description = voucherP.Description;
 
             _voucherRepository.Update(voucher);
             _voucherRepository.SaveDbChange();
+            return true;
+        }
+
+        public bool UpdateStatus(string code)
+        {
+            Voucher voucher = _voucherRepository.Get(code);
+
+            bool status = (bool)!voucher.Status;
+
+            voucher.Status = status;
+
+            _voucherRepository.Update(voucher);
+            _voucherRepository.SaveDbChange();
+
             return true;
         }
     }

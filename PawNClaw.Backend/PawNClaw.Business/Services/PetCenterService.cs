@@ -50,7 +50,7 @@ namespace PawNClaw.Business.Services
         }
 
         //Get By Id With Cage Service and Supply
-        public PetCenter GetDetailById(int id, List<List<PetRequestParameter>> _petRequests, string StartBooking, string EndBooking)
+        public PetCenter GetDetailById(int id, int customerId, List<List<PetRequestParameter>> _petRequests, string StartBooking, string EndBooking)
         {
             List<PetSizeCage> PetSizes = new List<PetSizeCage>();
 
@@ -88,7 +88,7 @@ namespace PawNClaw.Business.Services
                 IsSingle = true
             };
 
-            var value = _petCenterRepository.GetPetCenterById(id, petSizeCages, StartBooking, EndBooking);
+            var value = _petCenterRepository.GetPetCenterById(id, customerId, petSizeCages, StartBooking, EndBooking);
             return value;
         }
 

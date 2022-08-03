@@ -15,16 +15,18 @@ namespace PawNClaw.Business.Services
         ICageTypeRepository _cageTypeRepository;
         IPriceRepository _priceRepository;
         IFoodScheduleRepository _foodScheduleRepository;
+        ICageRepository _cageRepository;
 
         private readonly ApplicationDbContext _db;
 
         public CageTypeService(ICageTypeRepository cageTypeRepository, IPriceRepository priceRepository,
-            IFoodScheduleRepository foodScheduleRepository,
+            IFoodScheduleRepository foodScheduleRepository, ICageRepository cageRepository,
             ApplicationDbContext db)
         {
             _cageTypeRepository = cageTypeRepository;
             _priceRepository = priceRepository;
             _foodScheduleRepository = foodScheduleRepository;
+            _cageRepository = cageRepository;
             _db = db;
         }
 
@@ -230,6 +232,29 @@ namespace PawNClaw.Business.Services
             {
                 cagetype = _cageTypeRepository.Get(id);
                 cagetype.Status = false;
+
+                var cages = _cageRepository.GetAll(x => x.CageTypeId == id);
+                foreach (var item in cages)
+                {
+                    var cage = _cageRepository.GetCage(item.Code, item.CenterId);
+
+                    cage.Status = false;
+
+                    _cageRepository.Update(cage);
+                    _cageRepository.SaveDbChange();
+                }
+
+                var prices = _priceRepository.GetAll(x => x.CageTypeId == id);
+                foreach (var item in prices)
+                {
+                    var price = _priceRepository.Get(item.Id);
+
+                    price.Status = false;
+
+                    _priceRepository.Update(price);
+                    _priceRepository.SaveDbChange();
+                }
+
                 _cageTypeRepository.Update(cagetype);
                 _cageTypeRepository.SaveDbChange();
                 return true;

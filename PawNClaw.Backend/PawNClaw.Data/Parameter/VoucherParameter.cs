@@ -12,6 +12,7 @@ namespace PawNClaw.Data.Parameter
 
     public class CreateVoucherParameter
     {
+        public string Code { get; set; }
         public decimal? MinCondition { get; set; }
         public decimal? Value { get; set; }
         public DateTime? StartDate { get; set; }
@@ -23,6 +24,7 @@ namespace PawNClaw.Data.Parameter
         public bool? Status { get; set; }
         public int CenterId { get; set; }
         public string VoucherTypeCode { get; set; }
+        public string Description { get; set; }
     }
 
     public class UpdateVoucherParameter
@@ -35,5 +37,6 @@ namespace PawNClaw.Data.Parameter
         public DateTime? ModifyDate { get; set; }
         public int? ModifyUser { get; set; }
         public bool? Status { get; set; }
+        public string Description { get; set; }
     }
 }

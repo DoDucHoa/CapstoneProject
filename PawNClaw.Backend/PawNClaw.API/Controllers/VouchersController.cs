@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Database;
+using PawNClaw.Data.Helper;
 using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace PawNClaw.API.Controllers
             _voucherService = voucherService;
         }
 
-        [HttpGet("for-cus/center/{id}")]
+        [HttpGet("for-cus/center")]
         public IActionResult GetVouchersIsAvaliable(int centerId)
         {
             try
@@ -36,12 +37,35 @@ namespace PawNClaw.API.Controllers
             }
         }
 
-        [HttpGet("for-staff/center/{id}")]
-        public IActionResult GetVouchers(int centerId)
+        [HttpGet("for-staff/center")]
+        public IActionResult GetVouchers(int centerId, bool? status, string code, [FromQuery] PagingParameter pagingParameter)
         {
             try
             {
-                return Ok(_voucherService.GetVouchers(centerId));
+                var values = _voucherService.GetVouchers(centerId);
+
+                if (status != null)
+                {
+                    values = values.Where(x => x.Status == status);
+                }
+                if (!String.IsNullOrEmpty(code) && !String.IsNullOrWhiteSpace(code))
+                {
+                    values = values.Where(x => x.Code.Contains(code));
+                }
+
+                var data = PagedList<Voucher>.ToPagedList(values.AsQueryable(),
+                pagingParameter.PageNumber,
+                10);
+                var metadata = new
+                {
+                    data.TotalCount,
+                    data.PageSize,
+                    data.CurrentPage,
+                    data.TotalPages,
+                    data.HasNext,
+                    data.HasPrevious
+                };
+                return Ok(new { data, metadata });
             }
             catch (Exception ex)
             {
@@ -81,6 +105,19 @@ namespace PawNClaw.API.Controllers
             try
             {
                 return Ok(_voucherService.UpdateVoucher(voucher));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut("update-status")]
+        public IActionResult UpdateStatus(string code)
+        {
+            try
+            {
+                return Ok(_voucherService.UpdateStatus(code));
             }
             catch (Exception ex)
             {

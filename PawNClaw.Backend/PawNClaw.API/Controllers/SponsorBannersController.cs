@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Database;
+using PawNClaw.Data.Helper;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,12 +38,44 @@ namespace PawNClaw.API.Controllers
             }
         }
 
-        [HttpPost]
-        public IActionResult Create(SponsorBanner sponsorBanner)
+        [HttpGet("all")]
+        public IActionResult GetAllBanner([FromQuery] int? id, [FromQuery] PagingParameter pagingParameter)
         {
             try
             {
-                return Ok(_sponsorBannerService.Create(sponsorBanner));
+                var values = _sponsorBannerService.GetBanners();
+
+                if(id != null)
+                {
+                    values = values.Where(x => x.Id == id);
+                }
+
+                var data = PagedList<SponsorBanner>.ToPagedList(values.AsQueryable(),
+                pagingParameter.PageNumber,
+                10);
+                var metadata = new
+                {
+                    data.TotalCount,
+                    data.PageSize,
+                    data.CurrentPage,
+                    data.TotalPages,
+                    data.HasNext,
+                    data.HasPrevious
+                };
+                return Ok(new { data, metadata });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateSponsorBanner sponsorBanner)
+        {
+            try
+            {
+                return Ok(await _sponsorBannerService.Create(sponsorBanner));
             }
             catch (Exception ex)
             {
@@ -50,7 +84,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        public IActionResult Update(SponsorBanner sponsorBanner)
+        public IActionResult Update(UpdateSponsorBanner sponsorBanner)
         {
             try
             {
