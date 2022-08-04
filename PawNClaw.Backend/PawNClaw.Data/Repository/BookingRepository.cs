@@ -51,6 +51,16 @@ namespace PawNClaw.Data.Repository
             return (_db.SaveChanges() >= 0);
         }
 
+        public IEnumerable<Booking> GetCenterReviews(int centerId)
+        {
+            var values = _dbSet.Where(x => x.CenterId == centerId).Where(x => x.Rating != null).Select(booking => new Booking() {
+                CheckOut = booking.CheckOut,
+                Rating = booking.Rating,
+                Feedback = booking.Feedback
+            }).OrderByDescending(x => x.CheckOut).Take(10).ToList();
+            return values;
+        }
+
         public IEnumerable<Booking> GetBookingForStaff(BookingRequestParameter bookingRequestParameter)
         {
             IQueryable<Booking> query = _dbSet;

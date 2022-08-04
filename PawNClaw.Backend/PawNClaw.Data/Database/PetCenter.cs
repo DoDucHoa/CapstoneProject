@@ -105,6 +105,7 @@ namespace PawNClaw.Data.Database
 
         [NotMapped]
         public ICollection<Photo> Photos { get; set; }
+        public decimal RatingPoint { get => _getRatingPoint(this.Bookings); }
 
         private int _getRatingCount(ICollection<Booking> Bookings)
         {
@@ -117,6 +118,22 @@ namespace PawNClaw.Data.Database
                 }
             }
             return count;
+        }
+
+        private decimal _getRatingPoint(ICollection<Booking> Bookings)
+        {
+            int count = 0;
+            int sum = 0;
+            foreach (var booking in Bookings)
+            {
+                if (booking.Rating.HasValue)
+                {
+                    count++;
+                    sum += (int)booking.Rating;
+                }
+            }
+            if (count == 0) return 0;
+            return sum/count;
         }
     }
 }

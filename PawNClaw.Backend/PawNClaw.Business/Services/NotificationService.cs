@@ -64,12 +64,12 @@ namespace PawNClaw.Business.Services
             // [END fs_add_data_1]
         }
 
-        public async Task<List<NotificationParameter>> GetNotiForCustomer(int id)
+        public async Task<List<NotificationParameter>> GetNotis(int id, string target)
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "pawnclaw-4b6ba-firebase-adminsdk-txxl7-50dcc161a7.json");
             FirestoreDb db = FirestoreDb.Create(Const.ProjectFirebaseId);
 
-            Query query = db.Collection("Notification").WhereEqualTo("targetId",id).WhereEqualTo("targetType","Customer");
+            Query query = db.Collection("Notification").WhereEqualTo("targetId",id).WhereEqualTo("targetType",target);
             QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
             List<NotificationParameter> notifications = new List<NotificationParameter>();
             foreach (DocumentSnapshot snapshot in querySnapshot)
@@ -89,14 +89,6 @@ namespace PawNClaw.Business.Services
                 notifications.Add(notification);
             }
             return notifications;
-        }
-
-        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
-        {
-            // Unix timestamp is seconds past epoch
-            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dateTime;
         }
     }
 }

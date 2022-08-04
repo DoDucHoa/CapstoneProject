@@ -28,7 +28,7 @@ namespace PawNClaw.Business.Services
         //Get All
         public PagedList<PetCenter> GetAll(string includeProperties, PagingParameter paging)
         {
-            var values = _petCenterRepository.GetAll(includeProperties: "Brand");
+            var values = _petCenterRepository.GetAll(includeProperties: "Brand,Bookings");
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
@@ -38,7 +38,7 @@ namespace PawNClaw.Business.Services
         //Get Id
         public PetCenter GetById(int id)
         {
-            var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == id);
+            var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == id,includeProperties:"Bookings");
             return value;
         }
 
@@ -95,7 +95,7 @@ namespace PawNClaw.Business.Services
         //Get By Brand Id
         public IEnumerable<PetCenter> GetByBrand(int id)
         {
-            var values = _petCenterRepository.GetAll(x => x.BrandId == id);
+            var values = _petCenterRepository.GetAll(x => x.BrandId == id,includeProperties:"Bookings");
 
             return values;
         }
@@ -104,14 +104,14 @@ namespace PawNClaw.Business.Services
         public PetCenter GetByStaffId(int id)
         {
             var staff = _staffRepository.GetFirstOrDefault(x => x.Id == id);
-            var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == staff.CenterId);
+            var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == staff.CenterId, includeProperties: "Bookings");
             return value;
         }
 
         //Get By Name
         public PagedList<PetCenter> GetByName(string name, PagingParameter paging)
         {
-            var values = _petCenterRepository.GetAll(x => x.Name.Contains(name));
+            var values = _petCenterRepository.GetAll(x => x.Name.Contains(name),includeProperties: "Bookings");
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,

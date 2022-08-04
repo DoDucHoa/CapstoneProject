@@ -476,5 +476,32 @@ namespace PawNClaw.Business.Services
 
             return true;
         }
+
+        //rating booking
+        public bool RatingBooking(int id, int rating, string? feedback)
+        {
+            var booking = _bookingRepository.Get(id);
+
+            booking.Rating = (Byte)rating;
+
+            if (!string.IsNullOrWhiteSpace(feedback))
+            {
+                booking.Feedback = feedback;
+            }
+
+            try 
+            {
+
+                _bookingRepository.Update(booking);
+                _bookingRepository.SaveDbChange();
+
+                return true;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+
+        }
     }
 }
