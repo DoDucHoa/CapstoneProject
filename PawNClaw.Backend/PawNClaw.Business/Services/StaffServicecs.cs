@@ -53,6 +53,13 @@ namespace PawNClaw.Business.Services
             }
         }
 
+        //Get all staff by center
+        public IEnumerable<Staff> GetAllByCenterId(int id)
+        {
+            var values = _staffRepository.GetAll(x => x.CenterId == id, includeProperties: "IdNavigation");
+            return values;
+        }
+
         //Get Staff By Center Id
         public PagedList<Staff> GetByCenterId(int id, string? name, bool? status, PagingParameter paging)
         {
