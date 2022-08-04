@@ -47,6 +47,8 @@ namespace PawNClaw.Data.Database
         [Column("description")]
         [StringLength(512)]
         public string Description { get; set; }
+        [Column("release_amount")]
+        public int? ReleaseAmount { get; set; }
 
         [ForeignKey(nameof(CenterId))]
         [InverseProperty(nameof(PetCenter.Vouchers))]
