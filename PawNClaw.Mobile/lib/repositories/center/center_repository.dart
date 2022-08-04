@@ -186,7 +186,7 @@ class CenterRepository implements BaseCenterRepository {
   }
 
   @override
-  Future<SearchResponseModel?> checkCenterToBooking(int centerId,
+  Future<SearchResponseModel?> checkCenterToBooking(int centerId, int customerId,
       DateTime timeFrom, int due, List<List<Pet>> requests) async {
     final pref = await SharedPreferences.getInstance();
     var searchResponseModel;
@@ -197,6 +197,7 @@ class CenterRepository implements BaseCenterRepository {
       };
       var requestBody = {
         "id": centerId,
+        "customerId": customerId, 
         "startBooking": DateFormat('yyyy-MM-dd HH:mm:ss').format(timeFrom),
         "due": due,
         "_petRequests": [
@@ -234,12 +235,10 @@ class CenterRepository implements BaseCenterRepository {
     } on DioError catch (e) {
       //print(response!.statusMessage);
       // print((e as DioError).message);
-      searchResponseModel =
-          SearchResponseModel(result: e.response!.data['Message']);
+      // throw Exception(e.response!.data['Message']);
+      searchResponseModel = SearchResponseModel(
+          result: e.response != null ? e.response!.data["Message"] : "error");
       return searchResponseModel;
-      // searchResponseModel = SearchResponseModel(
-      //     result: e.response != null ? e.response!.data["mess"] : "error");
-      // return searchResponseModel;
     }
   }
 
@@ -300,7 +299,7 @@ class CenterRepository implements BaseCenterRepository {
           'Location permissions are permanently denied, we cannot request permissions.');
     }
 
-    // When we reach here, permissions are granted and we can
+    // When we reach here, permissions are granted and we can   
     // continue accessing the position of the device.
 
     Position position = await Geolocator.getCurrentPosition(
@@ -312,7 +311,7 @@ class CenterRepository implements BaseCenterRepository {
     List<Placemark> placemark =
         await placemarkFromCoordinates(position.latitude, position.longitude);
     Placemark place = placemark[0];
-    print('${place.thoroughfare}');
+    //  print('${place.thoroughfare}');
     return '${place.street}';
     // print(address);
   }
@@ -325,19 +324,22 @@ class CenterRepository implements BaseCenterRepository {
       _dio.options.headers = {
         "authorization": "Bearer " + pref.get("jwtToken").toString()
       };
-      var requestBody = {"userLatitude": latitude, "userLongtitude": longitude};
+      var requestBody = {
+        "userLatitude": latitude,
+        "userLongtitude": longitude
+      };
       // print(json.encode(requestBody));
       const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/petcenters/nearby_search";
       var response = await _dio.post(_url, data: requestBody);
-
-      final locations = List<LocationResponseModel>.from(
-          response.data.map((e) => LocationResponseModel.fromJson(e)));
+      
+      final locations =  List<LocationResponseModel>.from(response.data.map((e) => LocationResponseModel.fromJson(e)));
       print('[repo]Center nearby');
       // locations.forEach((element) {print(element.toJson());});
       return locations;
     } on DioError catch (e) {
       print(e);
+
     }
   }
 }

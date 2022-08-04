@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/sponsor/sponsor_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/transaction/transaction_bloc.dart';
+import 'package:pawnclaw_mobile_application/blocs/user/user_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/repositories/activity/activity_repository.dart';
 import 'package:pawnclaw_mobile_application/repositories/auth/auth_repository.dart';
@@ -80,6 +81,9 @@ class _MyAppState extends State<MyApp> {
             create: (context) => PetBloc(petRepository: PetRepository())),
         BlocProvider(
             create: (context) => SponsorBloc()..add(InitSponsorBanner())),
+        BlocProvider(
+          create: (context) => UserBloc()..add(InitUser(user!)),
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
