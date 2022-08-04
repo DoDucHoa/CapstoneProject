@@ -61,13 +61,13 @@ class _CenterOverviewState extends State<CenterOverview> {
     var auth = BlocProvider.of<AuthBloc>(context).state;
     int customerId = (auth as Authenticated).user.id!;
 
-    CenterRepository()
-        .getCenterVouchers(widget.petCenterId, customerId)
-        .then((value) {
-      vouchers = value;
+    // CenterRepository()
+    //     .getCenterVouchers(widget.petCenterId, customerId)
+    //     .then((value) {
+    //   vouchers = value;
       
-      //loadedDetail = true;
-    });
+    //   //loadedDetail = true;
+    // });
     // return BlocProvider(
     //     create: (context) => BookingBloc()
     //       ..add(
@@ -250,43 +250,43 @@ class _CenterOverviewState extends State<CenterOverview> {
                                             SizedBox(
                                               height: 10,
                                             ),
-                                            (vouchers != null && vouchers!.isNotEmpty)
-                                                ? OutlinedButton.icon(
-                                                    style: OutlinedButton.styleFrom(
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10))),
-                                                    onPressed: () => Navigator.of(context)
-                                                        .push(MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                ShowVouchers(
-                                                                    vouchers:
-                                                                        vouchers!))),
-                                                    icon: Image.asset(
-                                                      'lib/assets/coupon.png',
-                                                      width: 30,
-                                                    ),
-                                                    label: Container(
-                                                        padding:
-                                                            EdgeInsets.fromLTRB(
-                                                                10, 15, 5, 15),
-                                                        child: Row(
-                                                          children: [
-                                                            Text(
-                                                              'Bạn có ${vouchers!.length} ưu đãi',
-                                                              style: TextStyle(
-                                                                  color:
-                                                                      primaryFontColor),
-                                                            ),
-                                                            Expanded(
-                                                                child:
-                                                                    SizedBox()),
-                                                            Icon(Icons
-                                                                .keyboard_double_arrow_right),
-                                                          ],
-                                                        )))
-                                                : Container()
+                                            // (vouchers != null && vouchers!.isNotEmpty)
+                                            //     ? OutlinedButton.icon(
+                                            //         style: OutlinedButton.styleFrom(
+                                            //             shape: RoundedRectangleBorder(
+                                            //                 borderRadius:
+                                            //                     BorderRadius.circular(
+                                            //                         10))),
+                                            //         onPressed: () => Navigator.of(context)
+                                            //             .push(MaterialPageRoute(
+                                            //                 builder: (context) =>
+                                            //                     ShowVouchers(
+                                            //                         vouchers:
+                                            //                             vouchers!))),
+                                            //         icon: Image.asset(
+                                            //           'lib/assets/coupon.png',
+                                            //           width: 30,
+                                            //         ),
+                                            //         label: Container(
+                                            //             padding:
+                                            //                 EdgeInsets.fromLTRB(
+                                            //                     10, 15, 5, 15),
+                                            //             child: Row(
+                                            //               children: [
+                                            //                 Text(
+                                            //                   'Bạn có ${vouchers!.length} ưu đãi',
+                                            //                   style: TextStyle(
+                                            //                       color:
+                                            //                           primaryFontColor),
+                                            //                 ),
+                                            //                 Expanded(
+                                            //                     child:
+                                            //                         SizedBox()),
+                                            //                 Icon(Icons
+                                            //                     .keyboard_double_arrow_right),
+                                            //               ],
+                                            //             )))
+                                            //     : Container()
                                           ],
                                         ))),
 

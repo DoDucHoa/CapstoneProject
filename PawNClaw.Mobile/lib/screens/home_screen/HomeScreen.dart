@@ -7,6 +7,7 @@ import 'package:pawnclaw_mobile_application/common/components/elevated_container
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:pawnclaw_mobile_application/screens/profile_screen/profile_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_by_name_screen/search_by_name_screen.dart';
 
 import '../search_by_name_screen/search_by_name_screen.dart';
@@ -116,7 +117,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.all(height * 0.015),
               ),
               currentIndex: _selectedItemPosition,
-              onTap: (index) => setState(() => _selectedItemPosition = index),
+              onTap: (index) {
+                setState(() => _selectedItemPosition = index);
+                switch (index){
+                  case 0: Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HomeScreen()));
+                  break;
+                  case 1: Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HomeScreen()));
+                  break;
+                  case 2: Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ProfileScreen()));
+                  break;
+                }
+              },
               items: const [
                 BottomNavigationBarItem(
                     icon: Icon(

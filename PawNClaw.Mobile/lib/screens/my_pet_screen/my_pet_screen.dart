@@ -78,6 +78,7 @@ class _MyPetScreenState extends State<MyPetScreen> {
                                       AddPetScreen(customerId: account!.id!)))),
                           child: Container(
                             width: width * 0.15,
+                            margin: const EdgeInsets.all(2),
                             decoration: BoxDecoration(
                                 color: primaryBackgroundColor,
                                 borderRadius: BorderRadius.circular(15)),

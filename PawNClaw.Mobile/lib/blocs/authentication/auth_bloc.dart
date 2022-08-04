@@ -17,7 +17,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({required AuthRepository authRepository})
       : this._authRepository = authRepository,
         super(Loading()) {
-    on<VerifyPhonenumber>((event, emit) {
+    on<VerifyPhonenumber>((event, emit) async {
+      
+      // var verificationId = await verifyPhone(event.phoneNumber);
       emit(PhoneVerified(event.phoneNumber, null));
     });
     on<VerifyOTP>((event, emit) async {
@@ -84,4 +86,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     var account = await _authRepository.signIn(token: token);
     return account;
   }
+
+  
+  Future<String?> verifyPhone(String phoneNumber) async {
+    var id;
+    await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (phoneAuthCredential) async {
+        },
+        verificationFailed: (verificationFailed) async {
+
+        },
+        codeSent: (verificationId, resendingToken) async {
+          id = verificationId;
+        },
+        codeAutoRetrievalTimeout: (verificationId) async {});
+    //print('verify phone:' + verificationId);
+    return id;
+  }
+  
 }

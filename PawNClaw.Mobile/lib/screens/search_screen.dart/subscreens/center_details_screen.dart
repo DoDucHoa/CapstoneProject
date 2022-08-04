@@ -43,7 +43,7 @@ class CenterDetails extends StatefulWidget {
 
 class _CenterDetailsState extends State<CenterDetails> {
   petCenter.Center? center;
-  List<Voucher>? vouchers;
+  //List<Voucher>? vouchers;
   List<String> supplyType = ["DRINK", "FOOD", "MED", "OTHER"];
   @override
   void initState() {
@@ -69,12 +69,12 @@ class _CenterDetailsState extends State<CenterDetails> {
 
     var auth = BlocProvider.of<AuthBloc>(context).state;
     int customerId = (auth as Authenticated).user.id!;
-    CenterRepository()
-        .getCenterVouchers(widget.petCenterId, customerId)
-        .then((value) {
-      vouchers = value;
-      //loadedDetail = true;
-    });
+    // CenterRepository()
+    //     .getCenterVouchers(widget.petCenterId, customerId)
+    //     .then((value) {
+    //   vouchers = value;
+    //   //loadedDetail = true;
+    // });
 
     return BlocProvider(
         create: (context) => BookingBloc()
@@ -280,7 +280,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                   SizedBox(
                                                     height: 10,
                                                   ),
-                                                  (vouchers!.isNotEmpty)
+                                                  (center!.vouchers != null && center!.vouchers!.isNotEmpty)
                                                       ? OutlinedButton.icon(
                                                           style: OutlinedButton.styleFrom(
                                                               shape: RoundedRectangleBorder(
@@ -293,7 +293,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                                   builder: (context) =>
                                                                       ShowVouchers(
                                                                           vouchers:
-                                                                              vouchers!))),
+                                                                              center!.vouchers!))),
                                                           icon: Image.asset(
                                                             'lib/assets/coupon.png',
                                                             width: 30,
@@ -305,7 +305,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                               child: Row(
                                                                 children: [
                                                                   Text(
-                                                                    'Bạn có ${vouchers!.length} ưu đãi',
+                                                                    'Bạn có ${center!.vouchers!.length} ưu đãi',
                                                                     style: TextStyle(
                                                                         color:
                                                                             primaryFontColor),
@@ -556,7 +556,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                 context),
                                             child: ConfirmBooking(
                                               center: center!,
-                                              vouchers: vouchers!,
+                                              vouchers: center!.vouchers,
                                             ),
                                           )))
                                   : ScaffoldMessenger.of(context).showSnackBar(

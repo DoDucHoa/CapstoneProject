@@ -32,6 +32,8 @@ class CageDetails extends StatefulWidget {
 class _CageDetailsState extends State<CageDetails> {
   int activeIndex = 0;
   List<int>? selectedPetIds = null;
+  late List<List<Pet>> requests;
+  late bool haveAvailableRequests;
 
   bool isSuitable(List<Pet> request, CageTypes cageTypes) {
     if (cageTypes.isSingle!) return request.length == 1;
@@ -39,11 +41,11 @@ class _CageDetailsState extends State<CageDetails> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    var state = BlocProvider.of<BookingBloc>(context).state;
-    var requests = (state as BookingUpdated).requests;
-    bool haveAvailableRequests = false;
-    for (var element in requests!) {
+  void initState() {
+var state = BlocProvider.of<BookingBloc>(context).state;
+    requests = (state as BookingUpdated).requests!;
+    haveAvailableRequests = false;
+    for (var element in requests) {
       if (isSuitable(element, widget.cageType)) {
         haveAvailableRequests = true;
         selectedPetIds = [];
@@ -53,6 +55,14 @@ class _CageDetailsState extends State<CageDetails> {
         break;
       }
     }
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+var state = BlocProvider.of<BookingBloc>(context).state as BookingUpdated;
+
+    
 
     Size size = MediaQuery.of(context).size;
     double appbarSize = size.height * 0.35;

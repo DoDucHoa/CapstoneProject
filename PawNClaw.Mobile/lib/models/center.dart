@@ -1,3 +1,5 @@
+import 'package:pawnclaw_mobile_application/models/voucher.dart';
+
 import 'cage_type.dart';
 import  'dart:convert';
 
@@ -17,6 +19,7 @@ class Center {
   List<Services>? _services;
   List<Supplies>? _supplies;
   String? _endBooking;
+  List<Voucher>? _vouchers;
 
   Center(
       {int? id,
@@ -33,7 +36,8 @@ class Center {
       List<CageTypes>? cageTypes,
       List<Services>? services,
       List<Supplies>? supplies,
-      String? endBooking}) {
+      String? endBooking,
+      List<Voucher>? vouchers}) {
     if (id != null) {
       this._id = id;
     }
@@ -79,6 +83,9 @@ class Center {
     if (endBooking != null) {
       this._endBooking = endBooking;
     }
+    if (vouchers != null) {
+      this._vouchers = vouchers;
+    }
   }
 
   int? get id => _id;
@@ -110,6 +117,7 @@ class Center {
   List<Supplies>? get supplies => _supplies;
   set supplies(List<Supplies>? supplies) => _supplies = supplies;
   String? get endBooking => _endBooking;
+  List<Voucher>? get vouchers => _vouchers;
 
   Center.fromJson(Map<String, dynamic> json) {
     _id = json['id'];
@@ -142,6 +150,13 @@ class Center {
       });
     }
     _endBooking = json['endBooking'];
+
+    if(json['vouchers'] != null){
+      _vouchers = <Voucher>[];
+      json['vouchers'].forEach((v) {
+        _vouchers!.add(new Voucher.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -167,6 +182,9 @@ class Center {
       data['supplies'] = this._supplies!.map((v) => v.toJson()).toList();
     }
     data['endBooking'] = this._endBooking;
+    if (this._vouchers != null) {
+      data['vouchers'] = this._vouchers!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 
