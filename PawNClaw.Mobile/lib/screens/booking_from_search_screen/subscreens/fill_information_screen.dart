@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/common/date_picker.dart';
@@ -27,6 +30,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
   DateTime? from;
   DateTime? to;
   int? due;
+  late int customerId;
   // String? cityCode;
   // String? districtCode;
   TextEditingController _fromController = TextEditingController();
@@ -34,18 +38,12 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
   String? toTimeError;
   String? fromTimeError;
 
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   AreaRepository().getAllArea().then((value) {
-  //     setState(
-  //       () {
-  //         cities = value;
-  //       },
-  //     );
-  //   });
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    var authState = BlocProvider.of<AuthBloc>(context).state as Authenticated;
+    customerId = authState.user.id!;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -328,6 +326,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                                 BlocProvider.of<SearchBloc>(context).add(
                                     CheckSponsorCenter(
                                         (state as FillingInformation).centerId,
+                                        customerId,
                                         state.requests,
                                         from!,
                                         due!));
@@ -337,7 +336,8 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                                         (state as FillingInformation).centerId,
                                         state.requests,
                                         from!,
-                                        due!));
+                                        due!,
+                                        customerId));
                               }
                             }
                           : () {},

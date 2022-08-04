@@ -13,7 +13,7 @@ abstract class BaseCenterRepository {
   Future<List<Center>?> getAllCenter();
   Future<Center?> getCenterOverview(int centerId);
   Future<SearchResponseModel?> checkCenterToBooking(
-      int centerId, DateTime timeFrom, int due, List<List<Pet>> requests);
+      int centerId, int customerId, DateTime timeFrom, int due, List<List<Pet>> requests);
   Future<List<Voucher>?> getCenterVouchers(int centerId, int customerId);
   Future<Position?> getCurrentLocation();
   Future<String?> getAddress(Position position);

@@ -15,10 +15,12 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
+    
+    
     return BlocBuilder<UserBloc, UserState>(
-        builder: (context, state) => (state is UserUpdated)
+        builder: (context, state) { return (state is UserUpdated)
             ? Scaffold(
-                appBar: AppBar(title: Text('Profile')),
+                
                 body: Container(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -31,6 +33,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               )
-            : LoadingIndicator(loadingText: 'Vui lòng chờ'));
+            : LoadingIndicator(loadingText: 'Vui lòng chờ');});
   }
 }

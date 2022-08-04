@@ -16,7 +16,7 @@ class SponsorRepository implements BaseSponsorRepository {
       _dio.options.headers = {
         'Authorization': 'Bearer ' + pref.get("jwtToken").toString(),
       };
-      final String _url =
+      const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/sponsorbanners";
       var response = await _dio.get(_url);
       final banners = response.data
