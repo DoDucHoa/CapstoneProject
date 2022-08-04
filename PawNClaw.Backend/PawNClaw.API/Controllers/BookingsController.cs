@@ -22,8 +22,9 @@ namespace PawNClaw.API.Controllers
         AccountService _accountService;
         NotificationService _notificationService;
         StaffServicecs _staffServices;
+        PetCenterService _petCenterService;
 
-        public BookingsController(BookingService bookingService, BookingActivityService bookingActivityService, AccountService accountService, NotificationService notificationService, StaffServicecs staffServicecs)
+        public BookingsController(BookingService bookingService, BookingActivityService bookingActivityService, AccountService accountService, NotificationService notificationService, StaffServicecs staffServicecs, PetCenterService petCenterService)
         {
             _bookingService = bookingService;
             _bookingActivityService = bookingActivityService;
@@ -125,6 +126,19 @@ namespace PawNClaw.API.Controllers
                 data.HasPrevious
             };
             return Ok(new { data, metadata });
+        }
+
+        [HttpPut("rating")]
+        public IActionResult ratingBooking([FromQuery] int bookingId, [FromQuery] int rating, [FromQuery] string? feedback)
+        {
+            try
+            {
+                _bookingService.RatingBooking(bookingId, rating, feedback);
+                return Ok();
+            }
+            catch (Exception ex){
+                return BadRequest(ex);
+            }
         }
 
 
