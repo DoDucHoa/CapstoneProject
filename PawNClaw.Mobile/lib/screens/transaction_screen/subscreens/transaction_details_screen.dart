@@ -14,6 +14,7 @@ import 'package:pawnclaw_mobile_application/models/transaction_details.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/components/booking_cage_card.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/components/booking_info_card.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/activity_list_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/invoice_screen.dart';
 
 import '../components/booking_item_card.dart';
 
@@ -498,24 +499,64 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                       children: [
                         Expanded(child: SizedBox()),
                         if (activeIndex > 0)
-                          ElevatedButton(
-                              onPressed: () {
-                                // print(transaction.bookingActivities);
-                                // print(booking);
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => ActivityListScreen(
-                                          transaction: transaction,
-                                          booking: booking,
-                                        )));
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15))),
-                              child: Text(
-                                'Xem hoạt động',
-                                style: TextStyle(
-                                    fontSize: 13, fontWeight: FontWeight.w600),
-                              ))
+                          Row(
+                            children: [
+                              if (activeIndex == 2)
+                                Container(
+                                  margin: const EdgeInsets.only(right: 8.0),
+                                  child: ElevatedButton(
+                                      onPressed: (transaction.invoiceUrl !=
+                                              null)
+                                          ? () => Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: ((context) =>
+                                                      InvoiceScreen(
+                                                          invoiceUrl: transaction
+                                                              .invoiceUrl!)),
+                                                ),
+                                              )
+                                          : () => ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content:
+                                                      Text("Không có hóa đơn."),
+                                                ),
+                                              ),
+                                      style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15))),
+                                      child: Text(
+                                        'Xem hóa đơn',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600),
+                                      )),
+                                ),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    // print(transaction.bookingActivities);
+                                    // print(booking);
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ActivityListScreen(
+                                                  transaction: transaction,
+                                                  booking: booking,
+                                                )));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15))),
+                                  child: Text(
+                                    'Xem hoạt động',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600),
+                                  )),
+                            ],
+                          )
                         else
                           ElevatedButton(
                               onPressed: () {},
@@ -542,8 +583,8 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
   List<Widget> buildPreStatusCard(int fromIndex, int toIndex, double width) {
     List<Widget> list = [];
     for (var i = fromIndex; i < toIndex; i++) {
-      double top = lineLength - 5/2;
-      double bottom =  lineLength - 20 - width * extraSmallPadRate;
+      double top = lineLength - 5 / 2;
+      double bottom = lineLength - 20 - width * extraSmallPadRate;
       // if (i == toIndex - 1) {
       //   bottom = top;
       // }
@@ -552,9 +593,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
       }
       list.add(Container(
         width: width * (1 - mediumPadRate * 3 - regularPadRate),
-        padding: EdgeInsets.only(
-            top: top,
-            bottom: bottom),
+        padding: EdgeInsets.only(top: top, bottom: bottom),
         //margin: EdgeInsets.only(bottom:(lineLength*currentstatus)/2 - 18 - width*smallPadRate),
         child: Text(STATUSLIST[i],
             style: TextStyle(

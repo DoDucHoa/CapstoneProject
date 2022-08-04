@@ -145,6 +145,8 @@ namespace PawNClaw.API
 
             services.AddScoped<ICustomerVoucherLogRepository, CustomerVoucherLogRepository>();
 
+            services.AddScoped<RevenueReportOwnerService, RevenueReportOwnerService>();
+
             services.AddControllers();
             services.AddControllersWithViews()
                     .AddNewtonsoftJson(options =>
