@@ -201,6 +201,8 @@ function AuthProvider({ children }) {
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     await uploadTask;
+    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+    return downloadURL;
   };
 
   const changeCenter = (centerId) => {

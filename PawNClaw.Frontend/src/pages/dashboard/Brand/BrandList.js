@@ -91,9 +91,9 @@ export default function BrandList() {
     const response = await getBrands(page, rowsPerPage, filterStatus, searchRequest);
     const { data, metadata } = response;
 
-    const brands = data.map((brand, index) => ({
+    const brands = data.map((brand) => ({
       id: brand.id,
-      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`,
+      photoUrl: brand?.photos?.length > 0 ? brand?.photos[0].url : '',
       name: brand.name,
       ownerName: brand.owner.name,
       description: brand.description,

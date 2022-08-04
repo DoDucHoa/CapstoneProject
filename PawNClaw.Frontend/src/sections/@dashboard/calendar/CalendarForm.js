@@ -42,7 +42,7 @@ import InvoicePDF from './invoice/InvoicePDF';
 import useAuth from '../../../hooks/useAuth';
 import useResponsive from '../../../hooks/useResponsive';
 import CageDialogForm from './dialogs/CageDialogForm';
-import { checkSize } from './useCalendarAPI';
+import { checkSize, updateInvoiceUrl } from './useCalendarAPI';
 import BookingDetail from './new-edit-form/BookingDetail';
 import CageManagement from './new-edit-form/CageManagement';
 
@@ -597,7 +597,9 @@ export default function CalendarForm({
               }
             >
               {({ blob }) => {
-                uploadFileToFirebase('invoices', blob, selectedEvent.id);
+                uploadFileToFirebase('invoices', blob, selectedEvent.id).then((downloadUrl) => {
+                  updateInvoiceUrl(selectedEvent.id, downloadUrl);
+                });
                 return (
                   <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                     Xác Nhận

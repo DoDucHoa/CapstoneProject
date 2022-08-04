@@ -58,8 +58,8 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
       title: sponsorData?.title || '',
       content: sponsorData?.content || '',
       duration: sponsorData?.duration || '',
-      year: sponsorData?.year || '',
-      month: sponsorData?.month || '',
+      year: new Date(sponsorData?.startDate)?.getFullYear() || '',
+      month: new Date(sponsorData?.startDate)?.getMonth() || '',
       avatarUrl: sponsorData?.photos?.length > 0 ? sponsorData?.photos[0]?.url : '',
 
       brandId: sponsorData?.brand?.id || '',
@@ -67,6 +67,7 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
       modifyUser: accountInfo.id,
       createDate: sponsorData?.createDate || new Date(),
       modifyDate: new Date(),
+      brandInfo: sponsorData?.brand || null,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [sponsorData]
@@ -113,7 +114,7 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
           })
           .catch(() => enqueueSnackbar('Số lượng quảng cáo đạt quá giới hạn trong tháng', { variant: 'error' }));
       } else {
-        await updateSponsor(sponsorData.id, values.name, values.description, values.ownerId);
+        await updateSponsor(values);
         enqueueSnackbar('Cập nhật thành công');
         reset();
       }
@@ -159,7 +160,7 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
               </Grid>
 
               <Grid item xs={12}>
-                <RHFTextField name="content" multiline rows={3} label="Nội dung" />
+                <RHFTextField name="content" multiline rows={6} label="Nội dung" />
               </Grid>
 
               <Grid item xs={12}>
@@ -167,11 +168,11 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
               </Grid>
 
               <Grid item xs={6}>
-                <RHFTextField name="month" label="Tháng" tpye="number" />
+                <RHFTextField name="month" label="Tháng" tpye="number" disabled={isEdit} />
               </Grid>
 
               <Grid item xs={6}>
-                <RHFTextField name="year" label="Năm" tpye="number" />
+                <RHFTextField name="year" label="Năm" tpye="number" disabled={isEdit} />
               </Grid>
 
               <Grid item xs={12}>
@@ -187,7 +188,7 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
                   </Button>
                 </Box>
                 {brandInfo ? (
-                  <BrandInfo brandName={brandInfo.name} ownerName={brandInfo.owner.name} />
+                  <BrandInfo brandName={brandInfo.name} ownerName={'Viet Hong'} />
                 ) : (
                   <Typography typography="caption" sx={{ color: 'error.main' }}>
                     {errors.brandInfo ? errors.brandInfo.message : null}

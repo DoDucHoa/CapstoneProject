@@ -2,12 +2,13 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 
 // @mui
+import { MenuItem, TableCell, TableRow, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { Avatar, TableRow, TableCell, Typography, MenuItem } from '@mui/material';
 
 // components
-import Label from '../../../../components/Label';
 import Iconify from '../../../../components/Iconify';
+import Image from '../../../../components/Image';
+import Label from '../../../../components/Label';
 import { TableMoreMenu } from '../../../../components/table';
 
 // ----------------------------------------------------------------------
@@ -21,7 +22,7 @@ BrandTableRow.propTypes = {
 export default function BrandTableRow({ row, onEditRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { name, avatarUrl, ownerName, description, status } = row;
+  const { name, photoUrl, ownerName, description, status } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -36,7 +37,7 @@ export default function BrandTableRow({ row, onEditRow, onDeleteRow }) {
   return (
     <TableRow hover>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
+        <Image disabledEffect src={photoUrl} sx={{ borderRadius: 1.5, width: 50, height: 50, mr: 2 }} />
         <Typography variant="subtitle2" noWrap>
           {name}
         </Typography>

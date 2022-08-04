@@ -300,7 +300,7 @@ export default function Router() {
               ),
             },
             {
-              path: ':code/edit',
+              path: ':id/edit',
               element: (
                 <RoleBasedGuard accessibleRoles={['admin']} currentRole={currentRole}>
                   <SponsorCreate />
