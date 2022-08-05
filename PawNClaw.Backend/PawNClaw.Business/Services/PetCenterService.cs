@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using Newtonsoft.Json.Linq;
 using PawNClaw.Data.Const;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
@@ -18,11 +19,17 @@ namespace PawNClaw.Business.Services
     {
         IPetCenterRepository _petCenterRepository;
         IStaffRepository _staffRepository;
+        ILocationRepository _locationRepository;
 
-        public PetCenterService(IPetCenterRepository petCenterRepository, IStaffRepository staffRepository)
+        private readonly ApplicationDbContext _db;
+
+        public PetCenterService(IPetCenterRepository petCenterRepository, IStaffRepository staffRepository,
+            ILocationRepository locationRepository, ApplicationDbContext db)
         {
             _petCenterRepository = petCenterRepository;
             _staffRepository = staffRepository;
+            _locationRepository = locationRepository;
+            _db = db;
         }
 
         //Get All
@@ -39,6 +46,28 @@ namespace PawNClaw.Business.Services
         public PetCenter GetById(int id)
         {
             var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == id,includeProperties:"Bookings");
+            return value;
+        }
+
+        public PetCenter GetByIdForAdmin(int id)
+        {
+            var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == id, includeProperties: "Brand");
+
+            DateTime dateTime = DateTime.Today;
+
+            var checkin = value.Checkin.Split(":");
+            var checkout = value.Checkout.Split(":");
+
+            var open = value.OpenTime.Split(":");
+            var close = value.CloseTime.Split(":");
+
+
+
+            value.OpenTimeDate = dateTime.SetTime(Int32.Parse(open[0]), Int32.Parse(open[1]), Int32.Parse("00"));
+            value.CloseTimeDate = dateTime.SetTime(Int32.Parse(close[0]), Int32.Parse(close[1]), Int32.Parse("00"));
+            value.CheckinDate = dateTime.SetTime(Int32.Parse(checkin[0]), Int32.Parse(checkin[1]), Int32.Parse("00"));
+            value.CheckoutDate = dateTime.SetTime(Int32.Parse(checkout[0]), Int32.Parse(checkout[1]), Int32.Parse("00"));
+
             return value;
         }
 
@@ -119,21 +148,33 @@ namespace PawNClaw.Business.Services
         }
 
         //Add
-        public int Add(PetCenter petCenter)
+        public async Task<int> Add(PetCenter petCenter, Location location)
         {
-            try
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                if (_petCenterRepository.GetFirstOrDefault(x => x.Name.Trim().Equals(petCenter.Name)) != null)
-                    return -1;
-                if (_petCenterRepository.GetFirstOrDefault(x => x.Address.Trim().Equals(petCenter.Address)) != null)
-                    return -1;
-                _petCenterRepository.Add(petCenter);
-                _petCenterRepository.SaveDbChange();
-                return 1;
-            }
-            catch
-            {
-                return -1;
+                try
+                {
+                    if (_petCenterRepository.GetFirstOrDefault(x => x.Name.Trim().Equals(petCenter.Name)) != null)
+                        throw new Exception("This Name Already Existed");
+                    if (_petCenterRepository.GetFirstOrDefault(x => x.Address.Trim().Equals(petCenter.Address)) != null)
+                        throw new Exception("This Address Already Existed");
+                    _petCenterRepository.Add(petCenter);
+                    await _petCenterRepository.SaveDbChangeAsync();
+
+                    location.Id = petCenter.Id;
+                    _locationRepository.Add(location);
+                    await _locationRepository.SaveDbChangeAsync();
+
+                    transaction.Commit();
+
+                    return petCenter.Id;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw new Exception();
+                }
             }
         }
 

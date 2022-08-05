@@ -126,7 +126,8 @@ namespace PawNClaw.Data.Repository
                     StartBooking = x.StartBooking,
                     EndBooking = x.EndBooking,
                     StatusId = x.StatusId,
-                    Customer = x.Customer
+                    Customer = x.Customer,
+                    Status = x.Status
                 });
 
             return query.ToList();
