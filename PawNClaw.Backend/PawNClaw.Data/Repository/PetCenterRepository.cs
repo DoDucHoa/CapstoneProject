@@ -174,6 +174,8 @@ namespace PawNClaw.Data.Repository
             DateTime _endBooking = DateTime.ParseExact(EndBooking, SearchConst.DateFormat,
                                        System.Globalization.CultureInfo.InvariantCulture);
 
+            DateTime today = DateTime.Today;
+
             var center = _dbSet
                 .Include(x => x.Bookings)
                 .Include(x => x.Services)
@@ -249,13 +251,21 @@ namespace PawNClaw.Data.Repository
                         })
                     }),
                     Vouchers = (ICollection<Voucher>)x.Vouchers.Where(x => x.Status == true 
-                                                                    && !x.CustomerVoucherLogs.Any(log => log.CustomerId == customerId))
+                                                                    && !x.CustomerVoucherLogs.Any(log => log.CustomerId == customerId) 
+                                                                    && x.ReleaseAmount > 0
+                                                                    && (x.StartDate <= today && x.ExpireDate >= today))
                     .Select(x => new Voucher()
                     {
                         Value = x.Value,
                         MinCondition = x.MinCondition,
                         Code = x.Code,
-                        VoucherTypeName = x.VoucherTypeCodeNavigation.Name
+                        VoucherTypeName = x.VoucherTypeCodeNavigation.Name,
+                        StartDate = x.StartDate,
+                        ExpireDate = x.ExpireDate,
+                        CenterId = x.CenterId,
+                        Description = x.Description,
+                        ReleaseAmount = x.ReleaseAmount,
+                        VoucherTypeCode = x.VoucherTypeCode
                     }),
                     Bookings = (ICollection<Booking>)_bookingRepository.GetCenterReviews(id),
                     Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)

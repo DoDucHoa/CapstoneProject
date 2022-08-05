@@ -358,9 +358,19 @@ namespace PawNClaw.Business.Services
                             }
                         }
                     }
-
+                    
+                    
                     if (bookingCreateParameter.VoucherCode != null && Discount > 0)
                     {
+
+                        var voucher = _voucherRepository.Get(bookingCreateParameter.VoucherCode);
+
+                        if (voucher.ReleaseAmount <= 0)
+                        {
+                            transaction.Rollback();
+                            throw new Exception("Voucher not available");
+                        }
+
                         CustomerVoucherLog customerVoucherLog = new CustomerVoucherLog()
                         {
                             CustomerId = bookingCreateParameter.CustomerId,
@@ -370,6 +380,11 @@ namespace PawNClaw.Business.Services
 
                         _customerVoucherLogRepository.Add(customerVoucherLog);
                         await _customerVoucherLogRepository.SaveDbChangeAsync();
+
+                        voucher.ReleaseAmount--;
+
+                        _voucherRepository.Update(voucher);
+                        await _voucherRepository.SaveDbChangeAsync();
                     }
 
                     bookingToDb.SubTotal = Price;
