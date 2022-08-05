@@ -48,5 +48,19 @@ namespace PawNClaw.API.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpPut("seen-all")]
+        public async Task<IActionResult> seenAllNoti([FromQuery] int id, [FromQuery] string targetType)
+        {
+            try
+            {
+                await _notificationService.SeenAll(id, targetType);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }
