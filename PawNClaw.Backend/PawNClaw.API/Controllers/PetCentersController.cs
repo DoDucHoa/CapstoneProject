@@ -160,28 +160,52 @@ namespace PawNClaw.API.Controllers
             return Ok(data);
         }
 
+        [HttpGet("for-admin/{id:int}")]
+        public IActionResult GetCenterForAdmin(int id)
+        {
+            var data = _petCenterService.GetByIdForAdmin(id);
+            return Ok(data);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Create([FromBody] PetCenterRequestParameter petCenterRequestParameter)
+        public async Task<IActionResult> Create([FromBody] CreatePetCenterParameter parameter)
         {
             var petCenter = new PetCenter
             {
-                Name = petCenterRequestParameter.Name,
-                Address = petCenterRequestParameter.Address,
-                Phone = petCenterRequestParameter.Phone,
+                Name = parameter.Name,
+                Address = parameter.Address,
+                Phone = parameter.Phone,
                 Rating = null,
                 CreateDate = DateTime.Now,
-                ModifyDate = null,
-                CreateUser = petCenterRequestParameter.CreateUser,
-                ModifyUser = null,
+                ModifyDate = DateTime.Now,
+                CreateUser = parameter.CreateUser,
+                ModifyUser = parameter.ModifyUser,
                 Status = true,
-                BrandId = (int)petCenterRequestParameter.BrandId,
-                OpenTime = petCenterRequestParameter.OpenTime,
-                CloseTime = petCenterRequestParameter.CloseTime
+                BrandId = (int)parameter.BrandId,
+                OpenTime = parameter.OpenTime,
+                CloseTime = parameter.CloseTime
             };
-            if (_petCenterService.Add(petCenter) == 1)
-                return Ok();
-            return BadRequest();
+
+            var location = new Location
+            {
+                Longtitude = parameter.Longtitude,
+                Latitude = parameter.Latitude,
+                CityCode = parameter.CityCode,
+                DistrictCode = parameter.DistrictCode,
+                WardCode = parameter.WardCode
+            };
+
+            try
+            {
+                var id = await _petCenterService.Add(petCenter, location);
+
+                return Ok(id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpPut("for-admin")]
