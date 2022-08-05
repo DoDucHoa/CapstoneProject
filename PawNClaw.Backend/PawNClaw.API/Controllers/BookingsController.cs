@@ -14,7 +14,7 @@ namespace PawNClaw.API.Controllers
 {
     [Route("api/bookings")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class BookingsController : ControllerBase
     {
         BookingService _bookingService;
