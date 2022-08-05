@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/notification/notification_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
+import 'package:pawnclaw_mobile_application/common/date_picker.dart';
 import 'package:pawnclaw_mobile_application/models/booking.dart';
 import 'package:pawnclaw_mobile_application/repositories/activity/activity_repository.dart';
 import 'package:pawnclaw_mobile_application/repositories/notification/notification_repository.dart';
@@ -79,7 +81,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     },
                     child: Container(
                       padding: EdgeInsets.all(width * smallPadRate),
-                      color: state.notifications[index].seen == false
+                      color: notification.seen == false
                           ? primaryBackgroundColor
                           : Colors.white,
                       constraints: BoxConstraints(minHeight: height * 0.1),
@@ -87,14 +89,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            state.notifications[index].title!,
+                            notification.title!,
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          Container(
-                            child: Text(state.notifications[index].content!),
+                          Text(notification.content!),
+                          Text(
+                            timeAgo(DateTime.parse(notification.time!)),
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              color: lightFontColor,
+                            ),
                           ),
                         ],
                       ),

@@ -59,7 +59,7 @@ namespace PawNClaw.API.Controllers
                             { "Type", "Booking" },
                             { "BookingId", updateStatusParameter.id+"" }
                         };
-                        var title = "Cập nhật đơn hàng !!!";
+                        var title = "Cập nhật đơn hàng";
                         var content = "";
                         switch (updateStatusParameter.statusId)
                         {
@@ -201,8 +201,8 @@ namespace PawNClaw.API.Controllers
                     var noti = new Dictionary<string, string>() {
                         { "Type", "Booking" },
                     };
-                    var title = "Booking mới !!!";
-                    var content = "Center của bạn vừa có một booking mới";
+                    var title = "Đơn hàng mới";
+                    var content = "Trung tâm của bạn vừa có một đơn hàng mới";
                     //send notification
                     _notificationService.SendNoti(registrationTokens, noti, title, content);
                     //add notification to firebase
