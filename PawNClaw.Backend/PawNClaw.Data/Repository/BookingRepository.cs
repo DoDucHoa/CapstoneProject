@@ -154,6 +154,7 @@ namespace PawNClaw.Data.Repository
                     Rating = x.Rating,
                     CustomerNote = x.CustomerNote,
                     StaffNote = x.StaffNote,
+                    Feedback = x.Feedback,
                     BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
                     .Select(bookingdetail => new BookingDetail
                     {
