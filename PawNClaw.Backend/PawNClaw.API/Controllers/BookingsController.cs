@@ -34,7 +34,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "Owner,Staff")]
+        //[Authorize(Roles = "Owner,Staff")]
         public async Task<IActionResult> ConfirmBooking([FromBody] UpdateStatusBookingParameter updateStatusParameter)
         {
             try

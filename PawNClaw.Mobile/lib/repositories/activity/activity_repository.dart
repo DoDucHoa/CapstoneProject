@@ -22,14 +22,15 @@ class ActivityRepository implements BaseActivityRepository {
         _url,
       );
       var data = response.data;
+      print(data);
       // pets.forEach((e) => print(e.toJson()));
       TransactionDetails? transaction = await TransactionRepository()
           .getTransactionDetails(data['bookingId']);
       var activity = transaction!
           .getAllActivities()
-          .firstWhere((element) => element.id == data['id']);
+          .firstWhere((element) => element.id == id);
       activity.imgUrl = data['photos'][0]['url'];
-      activity.time = data['provideTime'];
+      activity.time = DateTime.parse(data['provideTime']);
       return activity;
     } catch (e) {
       print(e);

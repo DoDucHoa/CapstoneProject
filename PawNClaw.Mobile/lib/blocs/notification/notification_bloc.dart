@@ -14,7 +14,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     on<LoadNotification>((event, emit) async {
       // TODO: implement event handler
       var values = await _notificationRepository.getNotification(event.userId);
-      emit(NotificationLoaded(values!));
+
+      values!.sort((a, b) => a.time!.compareTo(b.time!) > 0 ? -1 : 1);
+      emit(NotificationLoaded(values));
       await _notificationRepository.seenAll(event.userId);
     });
   }
