@@ -12,7 +12,7 @@ namespace PawNClaw.API.Controllers
 {
     [Route("api/bookingactivities")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class BookingActivitiesController : ControllerBase
     {
         BookingActivityService _bookingActivityService;
