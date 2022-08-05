@@ -53,10 +53,18 @@ namespace PawNClaw.Data.Repository
 
         public IEnumerable<Booking> GetCenterReviews(int centerId)
         {
-            var values = _dbSet.Where(x => x.CenterId == centerId).Where(x => x.Rating != null).Select(booking => new Booking() {
+            var values = _dbSet.Include(x => x.Customer).ThenInclude(x => x.IdNavigation).Where(x => x.CenterId == centerId).Where(x => x.Rating != null).Select(booking => new Booking() {
                 CheckOut = booking.CheckOut,
                 Rating = booking.Rating,
-                Feedback = booking.Feedback
+                Feedback = booking.Feedback,
+                Customer = new Customer()
+                {
+                    Name = booking.Customer.Name,
+                    IdNavigation = new Account()
+                    {
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(booking.CustomerId,PhotoTypesConst.Account),
+                    }
+                }
             }).OrderByDescending(x => x.CheckOut).Take(10).ToList();
             return values;
         }
