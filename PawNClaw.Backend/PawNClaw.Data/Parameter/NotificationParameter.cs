@@ -15,5 +15,6 @@ namespace PawNClaw.Data.Parameter
         public long targetId { get; set; }
         public string targetType { get; set; }
         public DateTime time { get; set; }
+        public bool seen { get; set; }
     }
 }
