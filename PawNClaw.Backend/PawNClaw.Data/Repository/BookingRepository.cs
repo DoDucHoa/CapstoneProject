@@ -65,7 +65,7 @@ namespace PawNClaw.Data.Repository
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(booking.CustomerId,PhotoTypesConst.Account),
                     }
                 }
-            }).OrderByDescending(x => x.CheckOut).Take(10).ToList();
+            }).OrderByDescending(x => x.CheckOut).ToList();
             return values;
         }
 
