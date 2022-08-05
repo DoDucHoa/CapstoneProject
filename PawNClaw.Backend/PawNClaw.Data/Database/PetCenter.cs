@@ -73,6 +73,18 @@ namespace PawNClaw.Data.Database
         [NotMapped]
         public DateTime EndBooking { get; set; }
 
+        [NotMapped]
+        public DateTime OpenTimeDate {get; set;}
+
+        [NotMapped]
+        public DateTime CloseTimeDate { get; set; }
+
+        [NotMapped]
+        public DateTime CheckinDate { get; set; }
+
+        [NotMapped]
+        public DateTime CheckoutDate { get; set; }
+
         [ForeignKey(nameof(BrandId))]
         [InverseProperty("PetCenters")]
         public virtual Brand Brand { get; set; }

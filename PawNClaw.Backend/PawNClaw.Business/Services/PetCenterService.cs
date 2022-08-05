@@ -52,6 +52,22 @@ namespace PawNClaw.Business.Services
         public PetCenter GetByIdForAdmin(int id)
         {
             var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == id, includeProperties: "Brand");
+
+            DateTime dateTime = DateTime.Today;
+
+            var checkin = value.Checkin.Split(":");
+            var checkout = value.Checkout.Split(":");
+
+            var open = value.OpenTime.Split(":");
+            var close = value.CloseTime.Split(":");
+
+
+
+            value.OpenTimeDate = dateTime.SetTime(Int32.Parse(open[0]), Int32.Parse(open[1]), Int32.Parse("00"));
+            value.CloseTimeDate = dateTime.SetTime(Int32.Parse(close[0]), Int32.Parse(close[1]), Int32.Parse("00"));
+            value.CheckinDate = dateTime.SetTime(Int32.Parse(checkin[0]), Int32.Parse(checkin[1]), Int32.Parse("00"));
+            value.CheckoutDate = dateTime.SetTime(Int32.Parse(checkout[0]), Int32.Parse(checkout[1]), Int32.Parse("00"));
+
             return value;
         }
 
