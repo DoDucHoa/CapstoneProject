@@ -132,6 +132,9 @@ namespace PawNClaw.API
             services.AddTransient<IDistrictRepository, DistrictRepository>();
             services.AddTransient<DistrictService, DistrictService>();
 
+            services.AddTransient<IWardRepository, WardRepository>();
+            services.AddTransient<WardService, WardService>();
+
             services.AddScoped<ISponsorBannerRepository, SponsorBannerRepository>();
             services.AddScoped<SponsorBannerService, SponsorBannerService>();
 
