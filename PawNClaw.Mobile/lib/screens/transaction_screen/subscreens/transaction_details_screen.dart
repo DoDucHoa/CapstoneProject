@@ -10,9 +10,11 @@ import 'package:pawnclaw_mobile_application/blocs/transaction/transaction_bloc.d
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/booking.dart';
+import 'package:pawnclaw_mobile_application/models/review.dart';
 import 'package:pawnclaw_mobile_application/models/transaction_details.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/components/booking_cage_card.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/components/booking_info_card.dart';
+import 'package:pawnclaw_mobile_application/screens/transaction_screen/components/review_dialog.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/activity_list_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/invoice_screen.dart';
 
@@ -90,19 +92,31 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                       },
                     ),
                     actions: [
-                      TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            booking.status == 3
-                                ? booking.rating != null
-                                    ? "Đã đánh giá"
-                                    : "Đánh giá"
-                                : '',
-                            style: TextStyle(
-                                color: booking.rating != null
-                                    ? lightFontColor
-                                    : primaryColor),
-                          ))
+                      Container(
+                        margin: EdgeInsets.only(right: width*extraSmallPadRate),
+                        child: TextButton(
+                            onPressed: () {
+                              var review = state.transactionDetails.review;
+                              print(booking.rating);
+                              if (review == null){
+                                review = Review(rating: 0, bookingId: booking.id!);
+                              }
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => ReviewDialog(review: review!, booking: booking,));
+                            },
+                            child: Text(
+                              booking.statusId == 3
+                                  ?  state.transactionDetails.review != null
+                                      ? "Đã đánh giá"
+                                      : "Đánh giá"
+                                  : '',
+                              style: TextStyle(
+                                  color: state.transactionDetails.review != null
+                                      ? Colors.black
+                                      : primaryColor),
+                            )),
+                      )
                     ],
                   ),
                   body: SingleChildScrollView(
@@ -501,9 +515,37 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                         if (activeIndex > 0)
                           Row(
                             children: [
+                              ElevatedButton(
+                                  onPressed: () {
+                                    // print(transaction.bookingActivities);
+                                    // print(booking);
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ActivityListScreen(
+                                                  transaction: transaction,
+                                                  booking: booking,
+                                                )));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      primary: (activeIndex == 2)
+                                          ? Colors.white
+                                          : primaryColor,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15))),
+                                  child: Text(
+                                    'Xem hoạt động',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: (activeIndex == 2)
+                                            ? primaryColor
+                                            : Colors.white),
+                                  )),
                               if (activeIndex == 2)
                                 Container(
-                                  margin: const EdgeInsets.only(right: 8.0),
+                                  margin: const EdgeInsets.only(left: 8.0),
                                   child: ElevatedButton(
                                       onPressed: (transaction.invoiceUrl !=
                                               null)
@@ -533,28 +575,6 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                                             fontWeight: FontWeight.w600),
                                       )),
                                 ),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    // print(transaction.bookingActivities);
-                                    // print(booking);
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ActivityListScreen(
-                                                  transaction: transaction,
-                                                  booking: booking,
-                                                )));
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15))),
-                                  child: Text(
-                                    'Xem hoạt động',
-                                    style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600),
-                                  )),
                             ],
                           )
                         else

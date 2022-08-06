@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:pawnclaw_mobile_application/models/activity.dart';
+import 'package:pawnclaw_mobile_application/models/review.dart';
 
 class TransactionDetails {
   TransactionDetails(
@@ -20,6 +21,7 @@ class TransactionDetails {
   List<SupplyOrder>? supplyOrders;
   List<BookingActivities>? bookingActivities;
   String? invoiceUrl;
+  Review? review;
 
   factory TransactionDetails.fromRawJson(String str) =>
       TransactionDetails.fromJson(json.decode(str));
