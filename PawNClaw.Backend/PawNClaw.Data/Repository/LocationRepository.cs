@@ -23,7 +23,7 @@ namespace PawNClaw.Data.Repository
 
         public IEnumerable<Location> getAllWithCenter()
         {
-            var values = _dbSet.Include(x => x.IdNavigation).ThenInclude(x => x.Bookings).Select(x => new Location()
+            var values = _dbSet.Include(x => x.IdNavigation).ThenInclude(x => x.Bookings).Where(x=> x.IdNavigation.Status == true).Select(x => new Location()
             {
                 Id = x.Id,
                 Latitude = x.Latitude,
