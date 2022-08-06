@@ -131,6 +131,23 @@ namespace PawNClaw.API.Controllers
             return Ok(new { data, metadata });
         }
 
+        [HttpGet("for-admin/get-all")]
+        public IActionResult GetCentersForAdmin([FromQuery] string name, [FromQuery] bool? status, [FromQuery] PagingParameter paging)
+        {
+            var data = _petCenterService.GetAllForAdmin(name, status, paging);
+
+            var metadata = new
+            {
+                data.TotalCount,
+                data.PageSize,
+                data.CurrentPage,
+                data.TotalPages,
+                data.HasNext,
+                data.HasPrevious
+            };
+            return Ok(new { data, metadata });
+        }
+
         [HttpGet("{id:int}")]
         public IActionResult GetCenter(int id)
         {
