@@ -380,5 +380,58 @@ namespace PawNClaw.Data.Repository
 
             return petCenter;
         }
+
+        public PetCenter GetPetCenterById(int id)
+        {
+            PetCenter query = _dbSet
+                .Where(x => x.Id == id)
+                .Select(x => new PetCenter
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Address = x.Address,
+                    Phone = x.Phone,
+                    Rating = x.Rating,
+                    CreateDate = x.CreateDate,
+                    Status = x.Status,
+                    OpenTime = x.OpenTime,
+                    CloseTime = x.CloseTime,
+                    Description = x.Description,
+                    BrandId = x.BrandId,
+                    Checkin = x.Checkin,
+                    Checkout = x.Checkout,
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter),
+                    Brand = x.Brand,
+                    Location = x.Location
+                }).FirstOrDefault();
+
+            return query;
+        }
+
+        public IEnumerable<PetCenter> GetPetCentersForAdmin()
+        {
+            IQueryable<PetCenter> query = _dbSet
+                .Select(x => new PetCenter
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Address = x.Address,
+                    Phone = x.Phone,
+                    Rating = x.Rating,
+                    CreateDate = x.CreateDate,
+                    Status = x.Status,
+                    OpenTime = x.OpenTime,
+                    CloseTime = x.CloseTime,
+                    Description = x.Description,
+                    BrandId = x.BrandId,
+                    Checkin = x.Checkin,
+                    Checkout = x.Checkout,
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter),
+                    Brand = x.Brand,
+                    Location = x.Location
+                });
+
+            return query.ToList();
+        }
     }
 }

@@ -22,9 +22,8 @@ namespace PawNClaw.API.Controllers
         AccountService _accountService;
         NotificationService _notificationService;
         StaffServicecs _staffServices;
-        PetCenterService _petCenterService;
 
-        public BookingsController(BookingService bookingService, BookingActivityService bookingActivityService, AccountService accountService, NotificationService notificationService, StaffServicecs staffServicecs, PetCenterService petCenterService)
+        public BookingsController(BookingService bookingService, BookingActivityService bookingActivityService, AccountService accountService, NotificationService notificationService, StaffServicecs staffServicecs)
         {
             _bookingService = bookingService;
             _bookingActivityService = bookingActivityService;

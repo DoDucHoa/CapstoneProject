@@ -23,5 +23,9 @@ namespace PawNClaw.Data.Interface
         public PetCenter GetPetCenterByIdAfterSearchName(int id);
 
         public PetCenter GetPetCenterWithLocation(int id);
+
+        public PetCenter GetPetCenterById(int id);
+
+        public IEnumerable<PetCenter> GetPetCentersForAdmin();
     }
 }

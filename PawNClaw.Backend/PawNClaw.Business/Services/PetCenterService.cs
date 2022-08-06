@@ -42,6 +42,25 @@ namespace PawNClaw.Business.Services
             paging.PageSize);
         }
 
+        public PagedList<PetCenter> GetAllForAdmin(string name, bool? status, PagingParameter paging)
+        {
+            var values = _petCenterRepository.GetPetCentersForAdmin();
+
+            if (!String.IsNullOrEmpty(name))
+            {
+                values = values.Where(x => x.Name.Contains(name));
+            }
+
+            if (status != null)
+            {
+                values = values.Where(x => x.Status == status);
+            }
+
+            return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
+            paging.PageNumber,
+            paging.PageSize);
+        }
+
         //Get Id
         public PetCenter GetById(int id)
         {
@@ -51,7 +70,7 @@ namespace PawNClaw.Business.Services
 
         public PetCenter GetByIdForAdmin(int id)
         {
-            var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == id, includeProperties: "Brand");
+            var value = _petCenterRepository.GetPetCenterById(id);
 
             DateTime dateTime = DateTime.Today;
 
