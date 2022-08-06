@@ -1,4 +1,7 @@
 import 'package:pawnclaw_mobile_application/models/account.dart';
+import 'package:pawnclaw_mobile_application/models/photo.dart';
+
+import '../../models/customer.dart';
 
 abstract class BaseAuthRepository {
   Future<Account?> signIn({
@@ -12,4 +15,8 @@ abstract class BaseAuthRepository {
     required String email,
     required DateTime birthday,
   });
+
+  Future<Customer?> getCustomerInfo(int accountId);
+  Future<bool> updateCustomerInfo(Account user, Customer customer);
+  Future<bool> updateCustomerAvatar(Photo photo);
 }

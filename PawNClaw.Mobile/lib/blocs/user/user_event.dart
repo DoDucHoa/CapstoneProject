@@ -17,10 +17,10 @@ class UpdateUserInformation extends UserEvent {
 }
 
 class InitUser extends UserEvent{
-  final User user;
+  // final Account user;
 
-  const InitUser(this.user);
+  // const InitUser(this.user);
 
-  @override
-  List<Object> get props => [user];
+  // @override
+  // List<Object> get props => [user];
 }

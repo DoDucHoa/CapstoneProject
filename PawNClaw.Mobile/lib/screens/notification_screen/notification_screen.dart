@@ -32,12 +32,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
           return Scaffold(
             backgroundColor: frameColor,
             appBar: AppBar(
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_outlined,
-                    color: Colors.black),
-                onPressed: () =>
-                    Navigator.of(context).popUntil((route) => route.isFirst),
-              ),
+              // leading: IconButton(
+              //   icon: const Icon(Icons.arrow_back_ios_new_outlined,
+              //       color: Colors.black),
+              //   onPressed: () =>
+              //       Navigator.of(context).popUntil((route) => route.isFirst),
+              // ),
+              leading: Container(),
+              leadingWidth: 0,
               title: Text(
                 'Thông báo',
                 style: TextStyle(
@@ -110,7 +112,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 }),
           );
         }
-        return LoadingIndicator(loadingText: "vui long cho");
+        return LoadingIndicator(loadingText: "Vui lòng đợi...");
       },
     );
   }

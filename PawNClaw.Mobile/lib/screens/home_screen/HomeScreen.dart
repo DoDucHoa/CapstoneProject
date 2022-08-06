@@ -63,18 +63,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           floating: true,
                           backgroundColor: primaryColor.withOpacity(0.3),
                           shadowColor: primaryColor.withOpacity(0.2),
-                          expandedHeight: height * 0.3,
+                          expandedHeight: height * 0.2,
                           pinned: true,
                           leading: Container(),
                           flexibleSpace: FlexibleSpaceBar(
                             collapseMode: CollapseMode.pin,
                             background: WelcomePanel(
-                              username: state.user.name!,
+                              customer: state.customer,
+                              imgURL: state.user.photoUrl
                             ),
                           ),
                           centerTitle: false,
                           bottom: PreferredSize(
-                            preferredSize: Size(width * 0.6, height * 0.09),
+                            preferredSize: Size(width, height * 0.09),
                             child: Container(
                               padding: EdgeInsets.only(bottom: 10),
                               child: ElevatedButton.icon(
@@ -99,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   label: Container(
                                       margin:
-                                          EdgeInsets.fromLTRB(0, 12, 24, 12),
+                                          EdgeInsets.fromLTRB(0, 12, width*mediumPadRate*2.4, 12),
                                       child: Text(
                                         'Tìm kiếm trung tâm thú cưng',
                                         style: TextStyle(
