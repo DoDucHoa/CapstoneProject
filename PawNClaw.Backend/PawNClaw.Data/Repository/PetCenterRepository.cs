@@ -250,8 +250,8 @@ namespace PawNClaw.Data.Repository
                             MaxWeight = price.MaxWeight
                         })
                     }),
-                    Vouchers = (ICollection<Voucher>)x.Vouchers.Where(x => x.Status == true 
-                                                                    && !x.CustomerVoucherLogs.Any(log => log.CustomerId == customerId) 
+                    Vouchers = (ICollection<Voucher>)x.Vouchers.Where(x => x.Status == true
+                                                                    && !x.CustomerVoucherLogs.Any(log => log.CustomerId == customerId)
                                                                     && x.ReleaseAmount > 0
                                                                     && (x.StartDate <= today && x.ExpireDate >= today))
                     .Select(x => new Voucher()
@@ -401,7 +401,26 @@ namespace PawNClaw.Data.Repository
                     Checkin = x.Checkin,
                     Checkout = x.Checkout,
                     Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter),
-                    Brand = x.Brand,
+                    Brand = new Brand()
+                    {
+                        Id = x.Brand.Id,
+                        Name = x.Brand.Name,
+                        Description = x.Brand.Description,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Brand.Id, PhotoTypesConst.Brand),
+                        Owner = new Owner()
+                        {
+                            Id = x.Brand.Owner.Id,
+                            Email = x.Brand.Owner.Email,
+                            Gender = x.Brand.Owner.Gender,
+                            Name = x.Brand.Owner.Name,
+                            IdNavigation = x.Brand.Owner.IdNavigation
+                        },
+                        CreateDate = x.Brand.CreateDate,
+                        CreateUser = x.Brand.CreateUser,
+                        ModifyDate = x.Brand.ModifyDate,
+                        ModifyUser = x.Brand.ModifyUser,
+                        Status = x.Brand.Status
+                    },
                     Location = x.Location
                 }).FirstOrDefault();
 
@@ -427,7 +446,26 @@ namespace PawNClaw.Data.Repository
                     Checkin = x.Checkin,
                     Checkout = x.Checkout,
                     Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter),
-                    Brand = x.Brand,
+                    Brand = new Brand()
+                    {
+                        Id = x.Brand.Id,
+                        Name = x.Brand.Name,
+                        Description = x.Brand.Description,
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Brand.Id, PhotoTypesConst.Brand),
+                        Owner = new Owner()
+                        {
+                            Id = x.Brand.Owner.Id,
+                            Email = x.Brand.Owner.Email,
+                            Gender = x.Brand.Owner.Gender,
+                            Name = x.Brand.Owner.Name,
+                            IdNavigation = x.Brand.Owner.IdNavigation
+                        },
+                        CreateDate = x.Brand.CreateDate,
+                        CreateUser = x.Brand.CreateUser,
+                        ModifyDate = x.Brand.ModifyDate,
+                        ModifyUser = x.Brand.ModifyUser,
+                        Status = x.Brand.Status
+                    },
                     Location = x.Location
                 });
 
