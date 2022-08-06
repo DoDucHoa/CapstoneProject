@@ -184,13 +184,13 @@ namespace PawNClaw.API.Controllers
                 Status = true,
                 BrandId = (int)parameter.BrandId,
                 OpenTime = parameter.OpenTime,
-                CloseTime = parameter.CloseTime
+                CloseTime = parameter.CloseTime,
+                Checkin = parameter.Checkin,
+                Checkout = parameter.Checkout
             };
 
             var location = new Location
             {
-                Longtitude = parameter.Longtitude,
-                Latitude = parameter.Latitude,
                 CityCode = parameter.CityCode,
                 DistrictCode = parameter.DistrictCode,
                 WardCode = parameter.WardCode
@@ -198,7 +198,7 @@ namespace PawNClaw.API.Controllers
 
             try
             {
-                var id = await _petCenterService.Add(petCenter, location);
+                var id = await _petCenterService.Add(petCenter, location, parameter.FullAddress);
 
                 return Ok(id);
             }
