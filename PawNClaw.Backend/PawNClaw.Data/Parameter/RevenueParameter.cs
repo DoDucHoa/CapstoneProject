@@ -26,6 +26,8 @@ namespace PawNClaw.Data.Parameter
     public class TotalCageOfCenter
     {
         public int TotalCage { get; set; }
+
+        public int TotalCageAvailable { get; set; }
     }
 
     public class IncomeOfCenter
