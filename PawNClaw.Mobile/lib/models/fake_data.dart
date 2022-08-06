@@ -31,23 +31,23 @@ const CAGE_PHOTOS = [
   'lib/assets/cage.png',
 ];
 
-List<Review> FAKE_REVIEWS = [
-  Review(
-      customerName: 'Alice Smith',
-      customerAva: 'lib/assets/cus0.png',
-      description: 'A Sudden Warm Rainstorm Washes Down In Sweet Hyphens.',
-      rating: 5),
-  Review(
-      customerName: 'Kelly Smith',
-      customerAva: 'lib/assets/cus1.png',
-      description: 'A Sudden Warm Rainstorm Washes Down In Sweet Hyphens.',
-      rating: 4),
-  Review(
-      customerName: 'John Smith',
-      customerAva: 'lib/assets/cus2.png',
-      description: 'A Sudden Warm Rainstorm Washes Down In Sweet Hyphens.',
-      rating: 5),
-];
+// List<Review> FAKE_REVIEWS = [
+//   Review(
+//       customerName: 'Alice Smith',
+//       customerAva: 'lib/assets/cus0.png',
+//       description: 'A Sudden Warm Rainstorm Washes Down In Sweet Hyphens.',
+//       rating: 5),
+//   Review(
+//       customerName: 'Kelly Smith',
+//       customerAva: 'lib/assets/cus1.png',
+//       description: 'A Sudden Warm Rainstorm Washes Down In Sweet Hyphens.',
+//       rating: 4),
+//   Review(
+//       customerName: 'John Smith',
+//       customerAva: 'lib/assets/cus2.png',
+//       description: 'A Sudden Warm Rainstorm Washes Down In Sweet Hyphens.',
+//       rating: 5),
+// ];
 
 // List<Voucher> FAKE_VOUCHERS = [
 //   Voucher(

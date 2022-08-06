@@ -121,7 +121,7 @@ class CenterCard extends StatelessWidget {
                         ),
                       ),
                       const Expanded(child: SizedBox()),
-                      Icon(
+                      if(center.rating != 0) Row(children: [Icon(
                         Icons.star_rate_rounded,
                         size: width * regularFontRate,
                         color: primaryColor,
@@ -139,7 +139,7 @@ class CenterCard extends StatelessWidget {
                           color: lightFontColor,
                           fontWeight: FontWeight.w400,
                         ),
-                      ),
+                      ),],)
                     ],
                   ),
                 ),

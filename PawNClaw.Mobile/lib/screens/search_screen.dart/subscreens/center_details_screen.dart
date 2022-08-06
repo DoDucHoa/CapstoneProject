@@ -517,9 +517,9 @@ class _CenterDetailsState extends State<CenterDetails> {
                                           ListView.separated(
                                     itemBuilder: (context, index) {
                                       return ReviewCard(
-                                          review: FAKE_REVIEWS[index]);
+                                          review: center!.reviews![index]);
                                     },
-                                    itemCount: FAKE_REVIEWS.length,
+                                    itemCount: center!.reviews!.length,
                                     separatorBuilder: (context, index) =>
                                         const SizedBox(
                                       height: 8,

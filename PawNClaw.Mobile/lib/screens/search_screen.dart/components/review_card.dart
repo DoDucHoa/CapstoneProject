@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:pawnclaw_mobile_application/models/review.dart';
 
 import '../../../common/constants.dart';
@@ -30,8 +31,8 @@ class ReviewCard extends StatelessWidget {
                     child: Row(
                       children: [
                         Icon(
-                          Icons.star_rate_rounded,
-                          color: lightFontColor,
+                          Iconsax.star1,
+                          color: lightPrimaryColor,
                           size: 16,
                         ),
                         Text(
@@ -50,11 +51,21 @@ class ReviewCard extends StatelessWidget {
                       width: 65,
                       height: 65,
                       decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage(review.customerAva),
-                            fit: BoxFit.cover),
+                        color: Colors.blueGrey[100],
+                        image: (review.customerAva != null)
+                            ? DecorationImage(
+                                image: AssetImage(review.customerAva!),
+                                fit: BoxFit.cover)
+                            : null,
                         borderRadius: BorderRadius.circular(10),
                       ),
+                      child: (review.customerAva == null)
+                          ? Icon(
+                              Icons.person_rounded,
+                              color: Colors.white,
+                              size: 35,
+                            )
+                          : null,
                     ),
                     SizedBox(
                       width: 10,
@@ -63,7 +74,7 @@ class ReviewCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          review.customerName,
+                          review.customerName!,
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.w600),
                         ),
@@ -73,7 +84,7 @@ class ReviewCard extends StatelessWidget {
                         Container(
                           width: width * 2 / 3,
                           child: Text(
-                            review.description,
+                            review.description!,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(

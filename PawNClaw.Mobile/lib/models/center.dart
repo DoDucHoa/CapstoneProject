@@ -1,3 +1,4 @@
+import 'package:pawnclaw_mobile_application/models/review.dart';
 import 'package:pawnclaw_mobile_application/models/voucher.dart';
 
 import 'cage_type.dart';
@@ -8,7 +9,7 @@ class Center {
   String? _name;
   String? _address;
   String? _phone;
-  int? _rating;
+  double? _rating;
   int? _ratingCount;
   bool? _status;
   int? _brandId;
@@ -20,13 +21,14 @@ class Center {
   List<Supplies>? _supplies;
   String? _endBooking;
   List<Voucher>? _vouchers;
+  List<Review>? _reviews;
 
   Center(
       {int? id,
       String? name,
       String? address,
       String? phone,
-      int? rating,
+      double? rating,
       int? ratingCount,
       bool? status,
       int? brandId,
@@ -37,7 +39,8 @@ class Center {
       List<Services>? services,
       List<Supplies>? supplies,
       String? endBooking,
-      List<Voucher>? vouchers}) {
+      List<Voucher>? vouchers,
+      List<Review>? reviews}) {
     if (id != null) {
       this._id = id;
     }
@@ -86,6 +89,9 @@ class Center {
     if (vouchers != null) {
       this._vouchers = vouchers;
     }
+    if (reviews != null) {
+      this._reviews = reviews;
+    }
   }
 
   int? get id => _id;
@@ -96,8 +102,8 @@ class Center {
   set address(String? address) => _address = address;
   String? get phone => _phone;
   set phone(String? phone) => _phone = phone;
-  int? get rating => _rating;
-  set rating(int? rating) => _rating = rating;
+  double? get rating => _rating;
+  set rating(double? rating) => _rating = rating;
   int? get ratingCount => _ratingCount;
   set ratingCount(int? ratingCount) => _ratingCount = ratingCount;
   bool? get status => _status;
@@ -118,13 +124,15 @@ class Center {
   set supplies(List<Supplies>? supplies) => _supplies = supplies;
   String? get endBooking => _endBooking;
   List<Voucher>? get vouchers => _vouchers;
+  List<Review>? get reviews => _reviews;
+  set reviews(List<Review>? reviews) => _reviews = reviews;
 
   Center.fromJson(Map<String, dynamic> json) {
     _id = json['id'];
     _name = json['name'];
     _address = json['address'];
     _phone = json['phone'];
-    _rating = json['rating'];
+    _rating = json['ratingPoint'];
     _ratingCount = json['ratingCount'];
     _status = json['status'];
     _brandId = json['brandId'];
@@ -165,7 +173,7 @@ class Center {
     data['name'] = this._name;
     data['address'] = this._address;
     data['phone'] = this._phone;
-    data['rating'] = this._rating;
+    data['ratingPoint'] = this._rating;
     data['ratingCount'] = this._ratingCount;
     data['status'] = this._status;
     data['brandId'] = this._brandId;
@@ -185,6 +193,7 @@ class Center {
     if (this._vouchers != null) {
       data['vouchers'] = this._vouchers!.map((v) => v.toJson()).toList();
     }
+
     return data;
   }
 

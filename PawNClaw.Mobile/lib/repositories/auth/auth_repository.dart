@@ -35,6 +35,7 @@ class AuthRepository implements BaseAuthRepository {
       print(pref.get("jwtToken"));
       return account;
     } on DioError catch (e) {
+      signOut();
       print(e.response!.data);
       return null;
     }
