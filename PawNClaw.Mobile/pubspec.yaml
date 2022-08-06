@@ -67,6 +67,7 @@ dependencies:
   native_pdf_view: ^6.0.0+1
   internet_file: ^1.2.0
   flutter_rating_bar:
+  cloud_firestore: ^3.4.3
   
 dev_dependencies:
   flutter_test:

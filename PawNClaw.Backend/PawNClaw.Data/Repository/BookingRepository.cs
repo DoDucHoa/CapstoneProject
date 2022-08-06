@@ -51,6 +51,24 @@ namespace PawNClaw.Data.Repository
             return (_db.SaveChanges() >= 0);
         }
 
+        public IEnumerable<Booking> GetCenterReviews(int centerId)
+        {
+            var values = _dbSet.Include(x => x.Customer).ThenInclude(x => x.IdNavigation).Where(x => x.CenterId == centerId).Where(x => x.Rating != null).Select(booking => new Booking() {
+                CheckOut = booking.CheckOut,
+                Rating = booking.Rating,
+                Feedback = booking.Feedback,
+                Customer = new Customer()
+                {
+                    Name = booking.Customer.Name,
+                    IdNavigation = new Account()
+                    {
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(booking.CustomerId,PhotoTypesConst.Account),
+                    }
+                }
+            }).OrderByDescending(x => x.CheckOut).ToList();
+            return values;
+        }
+
         public IEnumerable<Booking> GetBookingForStaff(BookingRequestParameter bookingRequestParameter)
         {
             IQueryable<Booking> query = _dbSet;
@@ -108,7 +126,8 @@ namespace PawNClaw.Data.Repository
                     StartBooking = x.StartBooking,
                     EndBooking = x.EndBooking,
                     StatusId = x.StatusId,
-                    Customer = x.Customer
+                    Customer = x.Customer,
+                    Status = x.Status
                 });
 
             return query.ToList();
@@ -135,6 +154,7 @@ namespace PawNClaw.Data.Repository
                     Rating = x.Rating,
                     CustomerNote = x.CustomerNote,
                     StaffNote = x.StaffNote,
+                    Feedback = x.Feedback,
                     BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
                     .Select(bookingdetail => new BookingDetail
                     {

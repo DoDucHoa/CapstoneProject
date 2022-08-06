@@ -73,6 +73,18 @@ namespace PawNClaw.Data.Database
         [NotMapped]
         public DateTime EndBooking { get; set; }
 
+        [NotMapped]
+        public DateTime OpenTimeDate { get; set; }
+
+        [NotMapped]
+        public DateTime CloseTimeDate { get; set; }
+
+        [NotMapped]
+        public DateTime CheckinDate { get; set; }
+
+        [NotMapped]
+        public DateTime CheckoutDate { get; set; }
+
         [ForeignKey(nameof(BrandId))]
         [InverseProperty("PetCenters")]
         public virtual Brand Brand { get; set; }
@@ -106,6 +118,9 @@ namespace PawNClaw.Data.Database
         [NotMapped]
         public ICollection<Photo> Photos { get; set; }
 
+        [NotMapped]
+        public decimal RatingPoint { get => _getRatingPoint(this.Bookings);}
+
         private int _getRatingCount(ICollection<Booking> Bookings)
         {
             int count = 0;
@@ -117,6 +132,21 @@ namespace PawNClaw.Data.Database
                 }
             }
             return count;
+        }
+        private decimal _getRatingPoint(ICollection<Booking> Bookings)
+        {
+            int count = 0;
+            decimal sum = 0;
+            foreach (var booking in Bookings)
+            {
+                if (booking.Rating.HasValue)
+                {
+                    count++;
+                    sum += (int)booking.Rating;
+                }
+            }
+            if (count == 0) return 0;
+            return sum/count;
         }
     }
 }

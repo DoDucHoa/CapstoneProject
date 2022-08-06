@@ -704,7 +704,7 @@ namespace PawNClaw.Business.Services
         //Search Center By Name
         public PagedList<PetCenter> SearchCenterByName(string Name, PagingParameter paging)
         {
-            var values = _petCenterRepository.GetAll(x => x.Name.Contains(Name) && x.Status == true);
+            var values = _petCenterRepository.GetAll(x => x.Name.Contains(Name) && x.Status == true,includeProperties: "Bookings");
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
@@ -1021,7 +1021,7 @@ namespace PawNClaw.Business.Services
             List<PetCenter> petcenters = new List<PetCenter>();
             foreach (var item in centerdistance)
             {
-                var value = _petCenterRepository.Get(item.Key.Id);
+                var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == item.Key.Id,includeProperties: "Bookings");
 
                 string petCenterOpenTime = _petCenterRepository.GetFirstOrDefault(x => x.Id == value.Id).OpenTime;
                 string petCenterCloseTime = _petCenterRepository.GetFirstOrDefault(x => x.Id == value.Id).CloseTime;

@@ -51,6 +51,7 @@ namespace PawNClaw.Business.Services
                 CenterId = voucherP.CenterId,
                 VoucherTypeCode = voucherP.VoucherTypeCode,
                 Description = voucherP.Description,
+                ReleaseAmount = voucherP.ReleaseAmount,
             };
 
             _voucherRepository.Add(voucher);
@@ -69,6 +70,7 @@ namespace PawNClaw.Business.Services
             voucher.ModifyUser = voucherP.ModifyUser;
             voucher.Status = voucherP.Status;
             voucher.Description = voucherP.Description;
+            voucher.ReleaseAmount = voucherP.ReleaseAmount;
 
             _voucherRepository.Update(voucher);
             _voucherRepository.SaveDbChange();

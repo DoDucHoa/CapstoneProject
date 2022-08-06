@@ -58,6 +58,9 @@ namespace PawNClaw.Data.Database
         [Column("invoice_url")]
         [StringLength(1024)]
         public string InvoiceUrl { get; set; }
+        [Column("feedback")]
+        [StringLength(1024)]
+        public string Feedback { get; set; }
 
         [NotMapped]
         public decimal? TotalSupply { get; set; }

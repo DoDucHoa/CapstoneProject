@@ -13,14 +13,17 @@ namespace PawNClaw.Data.Repository
     {
         private readonly ApplicationDbContext _db;
 
-        public LocationRepository(ApplicationDbContext db) : base(db)
+        IBookingRepository _bookingRepository;
+
+        public LocationRepository(ApplicationDbContext db, IBookingRepository bookingRepository) : base(db)
         {
             _db = db;
+            _bookingRepository = bookingRepository;
         }
 
         public IEnumerable<Location> getAllWithCenter()
         {
-            var values = _dbSet.Include(x => x.IdNavigation).Select(x => new Location()
+            var values = _dbSet.Include(x => x.IdNavigation).ThenInclude(x => x.Bookings).Select(x => new Location()
             {
                 Id = x.Id,
                 Latitude = x.Latitude,

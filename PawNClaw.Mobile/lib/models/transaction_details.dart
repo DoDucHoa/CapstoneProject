@@ -135,7 +135,7 @@ class TransactionDetails {
       if (act.bookingDetailId != null && act.provideTime != null) {
         for (var pet in getPetsInCage(act.bookingDetailId!)) {
           FEED_ACTS.add(Activity(
-              id: 0,
+              id: act.id!,
               time: DateTime.parse(act.provideTime!),
               type: ActivityType(0),
               product: Product(
@@ -168,7 +168,7 @@ class TransactionDetails {
         for (var pet in getPets()) {
           if (pet.id == act.petId) {
             SUPPLY_ACTS.add(Activity(
-                id: 0,
+                id: act.id!,
                 time: DateTime.parse(act.provideTime!),
                 type: ActivityType(1),
                 product: Product(
@@ -199,7 +199,7 @@ class TransactionDetails {
         for (var pet in getPets()) {
           if (pet.id == act.petId) {
             SERVICE_ACTS.add(Activity(
-                id: 0,
+                id: act.id!,
                 time: DateTime.parse(act.provideTime!),
                 type: ActivityType(2),
                 product: Product(
