@@ -6,6 +6,7 @@ class Account {
   String? _phone;
   String? _email;
   String? _role;
+  String? _photoUrl;
 
   Account(
       {String? jwtToken,
@@ -14,7 +15,8 @@ class Account {
       String? name,
       String? phone,
       String? email,
-      String? role}) {
+      String? role,
+      String? photoUrl}) {
     if (jwtToken != null) {
       this._jwtToken = jwtToken;
     }
@@ -36,6 +38,9 @@ class Account {
     if (role != null) {
       this._role = role;
     }
+    if (photoUrl != null) {
+      this._photoUrl = photoUrl;
+    }
   }
 
   String? get jwtToken => _jwtToken;
@@ -52,6 +57,8 @@ class Account {
   set email(String? email) => _email = email;
   String? get role => _role;
   set role(String? role) => _role = role;
+  String? get photoUrl => _photoUrl;
+  set photoUrl(String? photoUrl) => _photoUrl = photoUrl;
 
   Account.fromJson(Map<String, dynamic> json) {
     _jwtToken = json['jwtToken'];
@@ -61,6 +68,7 @@ class Account {
     _phone = json['phone'];
     _email = json['email'];
     _role = json['role'];
+    _photoUrl = json['url'];
   }
 
   Map<String, dynamic> toJson() {
@@ -72,6 +80,7 @@ class Account {
     data['phone'] = this._phone;
     data['email'] = this._email;
     data['role'] = this._role;
+    data['url'] = this._photoUrl;
     return data;
   }
 }

@@ -85,9 +85,9 @@ class _MyAppState extends State<MyApp> {
             create: (context) => PetBloc(petRepository: PetRepository())),
         BlocProvider(
             create: (context) => SponsorBloc()..add(InitSponsorBanner())),
-        BlocProvider(
-          create: (context) => UserBloc()..add(InitUser(user!)),
-        ),
+        // BlocProvider(
+        //   create: (context) => UserBloc()..add(InitUser()),
+        // ),
         BlocProvider(
           create: (context) => NotificationBloc(NotificationRepository()),
         ),

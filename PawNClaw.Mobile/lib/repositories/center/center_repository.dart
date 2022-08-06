@@ -4,6 +4,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
+import 'package:pawnclaw_mobile_application/models/photo.dart';
 import 'package:pawnclaw_mobile_application/models/review.dart';
 import 'package:pawnclaw_mobile_application/models/voucher.dart';
 import 'package:pawnclaw_mobile_application/repositories/center/base_center_repository.dart';
@@ -111,12 +112,14 @@ class CenterRepository implements BaseCenterRepository {
         List<Review> reviews = [];
         for (var element in bookings) {
           var customer = element["customer"];
+          var idnav = customer["idNavigation"];
+          
           reviews.add(Review(
               rating: element["rating"],
               bookingId: element["id"],
               description: element["feedback"],
               customerName: customer["name"],
-              customerAva: null));
+              customerAva: Photo.fromJson(idnav["photos"].first).url));  
         }
         center.reviews = reviews;
       }
@@ -198,12 +201,14 @@ class CenterRepository implements BaseCenterRepository {
         List<Review> reviews = [];
         for (var element in bookings) {
           var customer = element["customer"];
+          var idnav = customer["idNavigation"];
+          
           reviews.add(Review(
               rating: element["rating"],
               bookingId: element["id"],
               description: element["feedback"],
               customerName: customer["name"],
-              customerAva: null));
+              customerAva: Photo.fromJson(idnav["photos"].first).url));  
         }
         center.reviews = reviews;
       }
@@ -267,12 +272,14 @@ class CenterRepository implements BaseCenterRepository {
         List<Review> reviews = [];
         for (var element in bookings) {
           var customer = element["customer"];
+          var idnav = customer["idNavigation"];
+          
           reviews.add(Review(
               rating: element["rating"],
               bookingId: element["id"],
               description: element["feedback"],
               customerName: customer["name"],
-              customerAva: null));
+              customerAva: Photo.fromJson(idnav["photos"].first).url));  
         }
         center.reviews = reviews;
       }

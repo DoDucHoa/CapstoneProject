@@ -62,21 +62,24 @@ class _ShowAvailableCenterState extends State<AvailableCenterScreen> {
             backgroundColor: backgroundColor,
             elevation: 0,
           ),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              
-              ListView.builder(
-                itemCount: state.centers.length,//(state as LoadedCenters).centers.length,
-                itemBuilder: ((context, index) {
-                  return CenterCard(
-                    center: state.centers[index],
-                  );
-                }),
-                physics: ClampingScrollPhysics(),
-                shrinkWrap: true,
-              ),
-            ],
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                
+                ListView.builder(
+                  itemCount: state.centers.length,//(state as LoadedCenters).centers.length,
+                  itemBuilder: ((context, index) {
+                     print(state.centers[index].toJson());
+                    return CenterCard(
+                      center: state.centers[index],
+                    );
+                  }),
+                  physics: ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                ),
+              ],
+            ),
           ),
         ):LoadingIndicator(loadingText: 'Vui lòng đợi');
       },

@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/user/user_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/screens/profile_screen/subscreens/personal_info_screen.dart';
@@ -25,8 +26,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
-    return BlocBuilder<UserBloc, UserState>(builder: (context, state) {
-      return (state is UserUpdated)
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      return (state is Authenticated)
           ? Scaffold(
               backgroundColor: frameColor,
               body: Padding(
@@ -41,16 +42,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           height: width * 0.2,
                           margin: EdgeInsets.fromLTRB(0, 20, 10, 20),
                           decoration: BoxDecoration(
-                              color: Colors.blueGrey[100],
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(width: 5, color: Colors.white),
-                              image:
-                                  // (state.user. != null)
-                                  //     ?
-                                  DecorationImage(
-                                      image: AssetImage('lib/assets/cus2.png'))
-                              // : null
-                              ),
+                            //color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(width: 5, color: Colors.white),
+                            image: (state.user.photoUrl != null)
+                                ? DecorationImage(
+                                    image: NetworkImage(state.user.photoUrl!))
+                                : DecorationImage(
+                                    image: AssetImage((state.customer!.gender! >
+                                            -1)
+                                        ? 'lib/assets/cus-${state.customer!.gender}.png'
+                                        : 'lib/assets/cus-2.png')),
+                            // : null
+                          ),
                           // child:
                           // (imgURL == null)
                           //     ?
@@ -66,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              state.user.name!,
+                              state.customer!.name!,
                               style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: width * regularFontRate,
@@ -88,6 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () => Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => PersonalInfoScreen(
                                 user: state.user,
+                                customer: state.customer!,
                               ))),
                       child: Container(
                         // width: width*regularPadRate,
@@ -218,7 +223,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Expanded(child: SizedBox()),
                     TextButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                  title: Text("Thông báo"),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15)),
+                                  content:
+                                      Text("Bạn có chắc chắn muốn đăng xuất không?"),
+                                  actions: [
+                                    ElevatedButton(
+                                      child: Text("Hủy"),
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.blueGrey[50],
+                                          onPrimary: primaryFontColor,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(7))),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                    ),
+                                    ElevatedButton(
+                                      child: Text("Đồng ý"),
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.red,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(7))),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        BlocProvider.of<AuthBloc>(context)
+                                            .add(SignOut(context));
+                                      },
+                                    )
+                                  ]);
+                            });
+                      },
                       style: TextButton.styleFrom(primary: Colors.red),
                       icon: Icon(
                         Iconsax.logout,
@@ -228,62 +270,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     )
                   ],
                 ),
-              ),
-              bottomNavigationBar: SnakeNavigationBar.color(
-                behaviour: SnakeBarBehaviour.floating,
-                selectedItemColor: Colors.white,
-                unselectedItemColor: Colors.black45,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
-                ),
-                elevation: 20,
-                height: height * 0.1,
-                snakeViewColor: primaryColor,
-                snakeShape: SnakeShape(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                  centered: true,
-                  height: height * 0.07,
-                  padding: EdgeInsets.all(height * 0.015),
-                ),
-                currentIndex: _selectedItemPosition,
-                onTap: (index) {
-                  setState(() => _selectedItemPosition = index);
-                  switch (index) {
-                    case 0:
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const HomeScreen()));
-                      break;
-                    case 1:
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const HomeScreen()));
-                      break;
-                    case 2:
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const ProfileScreen()));
-                      break;
-                  }
-                },
-                items: const [
-                  BottomNavigationBarItem(
-                      icon: Icon(
-                        Iconsax.home5,
-                      ),
-                      label: ""),
-                  BottomNavigationBarItem(
-                      icon: Icon(
-                        Iconsax.message5,
-                      ),
-                      label: ""),
-                  BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.person_rounded,
-                      ),
-                      label: ""),
-                ],
               ),
             )
           : LoadingIndicator(loadingText: 'Vui lòng chờ');

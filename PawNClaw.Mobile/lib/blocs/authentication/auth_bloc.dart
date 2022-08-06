@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pawnclaw_mobile_application/models/account.dart';
+import 'package:pawnclaw_mobile_application/models/customer.dart';
 import 'package:pawnclaw_mobile_application/repositories/auth/auth_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,7 +19,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       : this._authRepository = authRepository,
         super(Loading()) {
     on<VerifyPhonenumber>((event, emit) async {
-      
       // var verificationId = await verifyPhone(event.phoneNumber);
       emit(PhoneVerified(event.phoneNumber, null));
     });
@@ -27,22 +27,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
           verificationId: event.verificationId, smsCode: event.otp);
       final result = await signInWithPhoneAuthCredential(phoneAuthCredential);
-      result == "Error"
-          ? emit(PhoneVerified(
-              event.phone, "Authentication failed, please check your OTP!"))
-          : (result is Account
-              ? emit(Authenticated(result))
-              : emit(Unsigned(event.phone)));
+      if (result == "Error")
+        emit(PhoneVerified(
+            event.phone, "Authentication failed, please check your OTP!"));
+      else if (result is Account) {
+        print('at verify otp');
+        emit(Loading());
+        var customer = await _authRepository.getCustomerInfo(result.id!);
+        if (customer != null) emit(Authenticated(result, customer));
+      } else
+        emit(Unsigned(event.phone));
     });
     on<CheckingCurrentAuth>((event, emit) async {
       emit(Loading());
       if (event.user == null)
         emit(Unauthenticated());
       else {
+        // print(event.user!.toString());
         final account = await signInWithToken();
-        account != null
-            ? emit(Authenticated(account))
-            : emit(Unauthenticated());
+        if (account != null) {
+          print('at check auth');
+          emit(Loading());
+          var customer = await _authRepository.getCustomerInfo(account.id!);
+          print('customer: ${account.id}');
+          if (customer != null) emit(Authenticated(account, customer));
+        } else
+          emit(Unauthenticated());
       }
     });
     on<SignOut>(
@@ -63,7 +73,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.email,
         birthday: event.birthday,
       );
-      account != null ? emit(Authenticated(account)) : emit(Unauthenticated());
+      if (account != null) {
+        print('at sign up');
+        emit(Loading());
+        var customer = await _authRepository.getCustomerInfo(account.id!);
+        if (customer != null) emit(Authenticated(account, customer));
+      } else
+        emit(Unauthenticated());
+    });
+
+    on<UpdateProfile>((event, emit) {
+      emit(Authenticated(event.account, event.customer));
     });
   }
 
@@ -87,16 +107,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     return account;
   }
 
-  
   Future<String?> verifyPhone(String phoneNumber) async {
     var id;
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: phoneNumber,
-        verificationCompleted: (phoneAuthCredential) async {
-        },
-        verificationFailed: (verificationFailed) async {
-
-        },
+        verificationCompleted: (phoneAuthCredential) async {},
+        verificationFailed: (verificationFailed) async {},
         codeSent: (verificationId, resendingToken) async {
           id = verificationId;
         },
@@ -104,5 +120,4 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     //print('verify phone:' + verificationId);
     return id;
   }
-  
 }

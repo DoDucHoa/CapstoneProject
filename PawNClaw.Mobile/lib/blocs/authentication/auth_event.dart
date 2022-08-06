@@ -60,3 +60,12 @@ class SignUp extends AuthEvent {
   // TODO: implement props
   List<Object?> get props => [name, phone, email, birthday];
 }
+
+class UpdateProfile extends AuthEvent {
+  final Account account;
+  final Customer customer;
+  const UpdateProfile(this.account, this.customer);
+  @override
+  // TODO: implement props
+  List<Object?> get props => [account, customer];
+}

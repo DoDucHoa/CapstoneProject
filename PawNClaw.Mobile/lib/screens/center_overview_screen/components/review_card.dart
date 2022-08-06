@@ -51,13 +51,17 @@ class ReviewCard extends StatelessWidget {
                       width: 65,
                       height: 65,
                       decoration: BoxDecoration(
-                        color: Colors.blueGrey[100],
+                        color:(review.customerAva == null)? Colors.blueGrey[100]:Colors.white,
                         image: (review.customerAva != null)
                             ? DecorationImage(
-                                image: AssetImage(review.customerAva!),
+                                image: NetworkImage(review.customerAva!),
                                 fit: BoxFit.cover)
                             : null,
                         borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Colors.blueGrey[100]!,
+                          width: 2,
+                        ),
                       ),
                       child: (review.customerAva == null)
                           ? Icon(
