@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
@@ -179,7 +180,7 @@ class _CenterOverviewState extends State<CenterOverview> {
                                                       WrapCrossAlignment.center,
                                                   children: [
                                                     Icon(
-                                                      Icons.star_rate_rounded,
+                                                      Iconsax.star1,
                                                       color: lightPrimaryColor,
                                                     ),
                                                     Text(
@@ -193,7 +194,7 @@ class _CenterOverviewState extends State<CenterOverview> {
                                                     ),
                                                     Text(
                                                       ' (' +
-                                                          (center?.rating!
+                                                          (center?.ratingCount!
                                                                   .toString() ??
                                                               "") +
                                                           ')',
@@ -463,9 +464,9 @@ class _CenterOverviewState extends State<CenterOverview> {
                                     // children:
                                     ListView.separated(
                               itemBuilder: (context, index) {
-                                return ReviewCard(review: FAKE_REVIEWS[index]);
+                                return ReviewCard(review: center!.reviews![index]);
                               },
-                              itemCount: FAKE_REVIEWS.length,
+                              itemCount: center!.reviews!.length,
                               separatorBuilder: (context, index) =>
                                   const SizedBox(
                                 height: 8,

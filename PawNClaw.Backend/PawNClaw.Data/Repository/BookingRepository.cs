@@ -45,7 +45,7 @@ namespace PawNClaw.Data.Repository
 
         public bool Confirm(int Id, int StatusId)
         {
-            Booking query = _dbSet.FirstOrDefault(x => x.Id == Id);
+            Booking query = _dbSet.Find(Id);
             query.StatusId = StatusId;
             _dbSet.Update(query);
             return (_db.SaveChanges() >= 0);

@@ -4,6 +4,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
+import 'package:pawnclaw_mobile_application/models/review.dart';
 import 'package:pawnclaw_mobile_application/models/voucher.dart';
 import 'package:pawnclaw_mobile_application/repositories/center/base_center_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -104,10 +105,24 @@ class CenterRepository implements BaseCenterRepository {
       const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/petcenters/center_detail";
       var response = await _dio.post(_url, data: requestBody);
-      final center = Center.fromJson(response.data);
+      Center center = Center.fromJson(response.data);
+      if (response.data['bookings'] != null) {
+        var bookings = response.data["bookings"];
+        List<Review> reviews = [];
+        for (var element in bookings) {
+          var customer = element["customer"];
+          reviews.add(Review(
+              rating: element["rating"],
+              bookingId: element["id"],
+              description: element["feedback"],
+              customerName: customer["name"],
+              customerAva: null));
+        }
+        center.reviews = reviews;
+      }
       //print(requestBody);
       print('[repo]center_detail:');
-      print(response.data);
+      // print(response.data);
       return center;
     } on DioError catch (e) {
       print(e.response!.data);
@@ -174,10 +189,25 @@ class CenterRepository implements BaseCenterRepository {
       final String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/petcenters/detail/$centerId";
       var response = await _dio.get(_url);
-      print(response.data);
-      final center = Center.fromJson(response.data);
+      // print(response.data);
+      // final center = Center.fromJson(response.data);
       print('[repo]Center overview:');
-      print(center.toJson());
+      Center center = Center.fromJson(response.data);
+      if (response.data['bookings'] != null) {
+        var bookings = response.data["bookings"];
+        List<Review> reviews = [];
+        for (var element in bookings) {
+          var customer = element["customer"];
+          reviews.add(Review(
+              rating: element["rating"],
+              bookingId: element["id"],
+              description: element["feedback"],
+              customerName: customer["name"],
+              customerAva: null));
+        }
+        center.reviews = reviews;
+      }
+      // print(center.toJson());
       return center;
     } catch (e) {
       print(e);
@@ -186,8 +216,12 @@ class CenterRepository implements BaseCenterRepository {
   }
 
   @override
-  Future<SearchResponseModel?> checkCenterToBooking(int centerId, int customerId,
-      DateTime timeFrom, int due, List<List<Pet>> requests) async {
+  Future<SearchResponseModel?> checkCenterToBooking(
+      int centerId,
+      int customerId,
+      DateTime timeFrom,
+      int due,
+      List<List<Pet>> requests) async {
     final pref = await SharedPreferences.getInstance();
     var searchResponseModel;
     Response? response;
@@ -197,7 +231,7 @@ class CenterRepository implements BaseCenterRepository {
       };
       var requestBody = {
         "id": centerId,
-        "customerId": customerId, 
+        "customerId": customerId,
         "startBooking": DateFormat('yyyy-MM-dd HH:mm:ss').format(timeFrom),
         "due": due,
         "_petRequests": [
@@ -225,9 +259,23 @@ class CenterRepository implements BaseCenterRepository {
         }
         print('[repo] check center: ');
         //print(response.data);
-        final center = Center.fromJson(response.data);
+        Center center = Center.fromJson(response.data);
         // print('[repo] check center: ');
-        print(center.toJson());
+        // print(center.toJson());
+      if (response.data['bookings'] != null) {
+        var bookings = response.data["bookings"];
+        List<Review> reviews = [];
+        for (var element in bookings) {
+          var customer = element["customer"];
+          reviews.add(Review(
+              rating: element["rating"],
+              bookingId: element["id"],
+              description: element["feedback"],
+              customerName: customer["name"],
+              customerAva: null));
+        }
+        center.reviews = reviews;
+      }
         searchResponseModel = SearchResponseModel(petCenters: [center]);
 
         return searchResponseModel;
@@ -299,7 +347,7 @@ class CenterRepository implements BaseCenterRepository {
           'Location permissions are permanently denied, we cannot request permissions.');
     }
 
-    // When we reach here, permissions are granted and we can   
+    // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
 
     Position position = await Geolocator.getCurrentPosition(
@@ -324,22 +372,19 @@ class CenterRepository implements BaseCenterRepository {
       _dio.options.headers = {
         "authorization": "Bearer " + pref.get("jwtToken").toString()
       };
-      var requestBody = {
-        "userLatitude": latitude,
-        "userLongtitude": longitude
-      };
+      var requestBody = {"userLatitude": latitude, "userLongtitude": longitude};
       // print(json.encode(requestBody));
       const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/petcenters/nearby_search";
       var response = await _dio.post(_url, data: requestBody);
-      
-      final locations =  List<LocationResponseModel>.from(response.data.map((e) => LocationResponseModel.fromJson(e)));
+
+      final locations = List<LocationResponseModel>.from(
+          response.data.map((e) => LocationResponseModel.fromJson(e)));
       print('[repo]Center nearby');
       // locations.forEach((element) {print(element.toJson());});
       return locations;
     } on DioError catch (e) {
       print(e);
-
     }
   }
 }
