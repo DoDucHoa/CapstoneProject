@@ -32,6 +32,12 @@ namespace PawNClaw.Data.Parameter
         public string Phone { get; set; } = null;
         public string Address { get; set; } = null;
         public bool Status { get; set; }
+
+        public string FullAddress { get; set; }
+
+        public string CityCode { get; set; }
+        public string DistrictCode { get; set; }
+        public string WardCode { get; set; }
     }
 
     public class PetCenterRequestParameter
@@ -79,9 +85,11 @@ namespace PawNClaw.Data.Parameter
         public int? BrandId { get; set; } = null;
         public string OpenTime { get; set; } = null;
         public string CloseTime { get; set; } = null;
+        public string Description { get; set; }
+        public string Checkin { get; set; }
+        public string Checkout { get; set; }
+        public string FullAddress { get; set; }
 
-        public string Longtitude { get; set; }
-        public string Latitude { get; set; }
         public string CityCode { get; set; }
         public string DistrictCode { get; set; }
         public string WardCode { get; set; }

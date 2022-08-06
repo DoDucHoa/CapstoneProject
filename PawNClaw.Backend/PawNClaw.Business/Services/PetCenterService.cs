@@ -148,7 +148,7 @@ namespace PawNClaw.Business.Services
         }
 
         //Add
-        public async Task<int> Add(PetCenter petCenter, Location location)
+        public async Task<int> Add(PetCenter petCenter, Location location, string fullAddress)
         {
 
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
@@ -163,6 +163,19 @@ namespace PawNClaw.Business.Services
                     await _petCenterRepository.SaveDbChangeAsync();
 
                     location.Id = petCenter.Id;
+                    var client = new HttpClient();
+                    string url = "https://rsapi.goong.io/geocode?address=" + HttpUtility.UrlEncode(fullAddress) + SearchConst.GoongAPIKey;
+                    Console.WriteLine(url);
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+
+                    var result = await response.Content.ReadAsStringAsync();
+
+                    var cust = JObject.Parse(result);
+
+                    location.Latitude = cust["results"][0]["geometry"]["location"]["lat"].ToString();
+                    location.Longtitude = cust["results"][0]["geometry"]["location"]["lng"].ToString();
+
                     _locationRepository.Add(location);
                     await _locationRepository.SaveDbChangeAsync();
 
@@ -204,6 +217,9 @@ namespace PawNClaw.Business.Services
 
                 petCenter.Location.Latitude = cust["results"][0]["geometry"]["location"]["lat"].ToString();
                 petCenter.Location.Longtitude = cust["results"][0]["geometry"]["location"]["lng"].ToString();
+                petCenter.Location.CityCode = petCenterRequestParameter.CityCode;
+                petCenter.Location.DistrictCode = petCenterRequestParameter.DistrictCode;
+                petCenter.Location.WardCode = petCenterRequestParameter.WardCode;
 
                 _petCenterRepository.Update(petCenter);
                 _petCenterRepository.SaveDbChange();
