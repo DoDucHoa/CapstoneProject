@@ -98,5 +98,31 @@ namespace PawNClaw.API.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpGet("total-service")]
+        public IActionResult TotalService(int centerId)
+        {
+            try
+            {
+                return Ok(_service.TotalService(centerId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("total-supply")]
+        public IActionResult TotalSupply(int centerId)
+        {
+            try
+            {
+                return Ok(_service.TotalSupply(centerId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }
