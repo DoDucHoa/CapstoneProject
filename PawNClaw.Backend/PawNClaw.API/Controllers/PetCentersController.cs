@@ -203,7 +203,8 @@ namespace PawNClaw.API.Controllers
                 OpenTime = parameter.OpenTime,
                 CloseTime = parameter.CloseTime,
                 Checkin = parameter.Checkin,
-                Checkout = parameter.Checkout
+                Checkout = parameter.Checkout,
+                Description = parameter.Description
             };
 
             var location = new Location
