@@ -321,7 +321,7 @@ namespace PawNClaw.Data.Repository
                     BrandId = x.BrandId,
                     Checkin = x.Checkin,
                     Checkout = x.Checkout,
-                    CageTypes = (ICollection<CageType>)x.CageTypes.Select(cagetype => new CageType
+                    CageTypes = (ICollection<CageType>)x.CageTypes.Where(x => x.Cages != null).Select(cagetype => new CageType
                     {
                         Id = cagetype.Id,
                         TypeName = cagetype.TypeName,
