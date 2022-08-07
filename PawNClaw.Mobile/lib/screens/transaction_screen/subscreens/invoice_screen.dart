@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:internet_file/internet_file.dart';
 import 'package:native_pdf_view/native_pdf_view.dart';
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
@@ -46,6 +47,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               controller: PdfController(
                 document: PdfDocument.openData(doc!),
               ),
+              scrollDirection: Axis.vertical,
             ),
           )
         : LoadingIndicator(loadingText: "Đang tải");

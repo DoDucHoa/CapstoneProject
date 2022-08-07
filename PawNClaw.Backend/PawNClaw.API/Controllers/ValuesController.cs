@@ -2,12 +2,15 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
+using PawNClaw.Data.Const;
 using PawNClaw.Data.Parameter;
 using PawNClaw.Data.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace PawNClaw.API.Controllers
 {
@@ -41,6 +44,20 @@ namespace PawNClaw.API.Controllers
         public IActionResult TestGet(int CenterId, int? StatusId, string CageCode)
         {
             return Ok(bookingService.GetBookingByCageCode(CenterId, StatusId, CageCode));
+        }
+
+        [HttpGet("test-geo")]
+        public async Task<IActionResult> TestGeo(string address)
+        {
+            var client = new HttpClient();
+            string url = "https://rsapi.goong.io/geocode?address=" + HttpUtility.UrlEncode(address) + SearchConst.GoongAPIKey;
+            Console.WriteLine(url);
+            HttpResponseMessage response = await client.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadAsStringAsync();
+
+            return Ok(result);
         }
     }
 }

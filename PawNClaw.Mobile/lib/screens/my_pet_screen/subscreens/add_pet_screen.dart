@@ -57,17 +57,20 @@ class _AddPetScreenState extends State<AddPetScreen> {
       _heightController.text = petToUpdate.height!.toStringAsFixed(0);
       _weightController.text = petToUpdate.weight!.toStringAsFixed(0);
       _lengthController.text = petToUpdate.length!.toStringAsFixed(0);
-      _breedController.text = petToUpdate.breedName!;
+      //_breedController.text = petToUpdate.breedName!;// it makes user cannot change breed
       birthDay = petToUpdate.birth;
-      breedType = petToUpdate.petTypeCode!;
+      //breedType = petToUpdate.petTypeCode!;// it makes user cannot change breed2
+
       imgURL =
           petToUpdate.photos!.isNotEmpty ? petToUpdate.photos!.first.url : null;
+      //  print(petToUpdate.photos!.length);
     }
     return Scaffold(
       backgroundColor: frameColor,
       appBar: AppBar(
           leading: Container(),
           backgroundColor: frameColor,
+          toolbarHeight: 35,
           elevation: 0,
           actions: [
             IconButton(
@@ -157,6 +160,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
                     onTap: () {
                       setState(() {
                         breedType = 'DOG';
+                        _breedController.clear();
                       });
                     },
                     child: Column(children: [
@@ -202,6 +206,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
                     onTap: () {
                       setState(() {
                         breedType = 'CAT';
+                        _breedController.clear();
                       });
                     },
                     child: Column(children: [
@@ -272,6 +277,13 @@ class _AddPetScreenState extends State<AddPetScreen> {
                         height: 1.4,
                       ),
                       border: InputBorder.none,
+                      suffixIcon: IconButton(
+                          icon: const Icon(
+                            Icons.close_rounded,
+                            color: lightFontColor,
+                          ),
+                          onPressed: () => _breedController.clear(),
+                        )
                     ),
                   ),
                 ),
@@ -342,10 +354,10 @@ class _AddPetScreenState extends State<AddPetScreen> {
                   Container(
                     height: height * 0.07,
                     width: width * (1 - 3 * mediumPadRate) / 2,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: width * smallPadRate),
+                    // padding:
+                    //     EdgeInsets.symmetric(horizontal: width * smallPadRate),
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        //color: Colors.white,
                         borderRadius: BorderRadius.circular(15)),
                     child: TextField(
                       controller: _heightController,
@@ -353,42 +365,86 @@ class _AddPetScreenState extends State<AddPetScreen> {
                       style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: width * regularFontRate),
-                      decoration: const InputDecoration(
-                          hintText: "Chiều cao",
-                          hintStyle: TextStyle(
+                      decoration: InputDecoration(
+                          labelText: "Chiều cao",
+                          labelStyle: TextStyle(
                             color: lightFontColor,
                             fontWeight: FontWeight.w500,
                             fontSize: 15,
                             height: 1.4,
                           ),
+                          //floatingLabelStyle: TextStyle(color: lightPrimaryColor),
+                          // border: InputBorder.none,
+                          fillColor: Colors.white54,
+                          filled: true,
+                          focusColor: primaryBackgroundColor,
                           border: InputBorder.none,
-                          suffix: Text('cm')),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: Colors.white, width: 1.5)
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: primaryBackgroundColor, width: 1.5)
+                          ),
+                          suffix:const Text(
+                            'cm',
+                            style: TextStyle(
+                              color: lightFontColor,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                              height: 1.4,
+                            ),
+                          )
+                          ),
                     ),
                   ),
                   Container(
                     height: height * 0.07,
                     width: width * (1 - 3 * mediumPadRate) / 2,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: width * smallPadRate),
+                    // padding:
+                    //     EdgeInsets.symmetric(horizontal: width * smallPadRate),
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        // color: Colors.white,
                         borderRadius: BorderRadius.circular(15)),
                     child: TextField(
                       controller: _lengthController,
                       keyboardType: TextInputType.number,
-                      style: TextStyle(
+                      style:TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: width * regularFontRate),
-                      decoration: const InputDecoration(
-                          hintText: "Chiều dài",
-                          hintStyle: TextStyle(
+                      decoration: InputDecoration(
+                          labelText: "Chiều dài",
+                          labelStyle: TextStyle(
                             color: lightFontColor,
                             fontWeight: FontWeight.w500,
                             fontSize: 15,
                             height: 1.4,
                           ),
+                          //floatingLabelStyle: TextStyle(color: lightPrimaryColor),
+                          // border: InputBorder.none,
+                          fillColor: Colors.white54,
+                          filled: true,
+                          focusColor: primaryBackgroundColor,
                           border: InputBorder.none,
-                          suffix: Text('cm')),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: Colors.white, width: 1.5)
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: primaryBackgroundColor, width: 1.5)
+                          ),
+                          suffix:const Text(
+                            'cm',
+                            style: TextStyle(
+                              color: lightFontColor,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                              height: 1.4,
+                            ),
+                          )
+                          ),
                     ),
                   ),
                 ],
@@ -397,28 +453,50 @@ class _AddPetScreenState extends State<AddPetScreen> {
               Container(
                 height: height * 0.07,
                 width: width * (1 - 2 * mediumPadRate),
-                padding: EdgeInsets.symmetric(horizontal: width * smallPadRate),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15)),
+                // padding: EdgeInsets.symmetric(horizontal: width * smallPadRate),
+                // decoration: BoxDecoration(
+                //     // color: Colors.white,
+                //     borderRadius: BorderRadius.circular(15)),
                 child: TextField(
                   controller: _weightController,
                   keyboardType: TextInputType.number,
                   style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: width * regularFontRate),
-                  decoration: const InputDecoration(
-                      hintText: "Cân nặng",
-                      hintStyle: TextStyle(
-                        color: lightFontColor,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15,
-                        height: 1.4,
-                      ),
-                      border: InputBorder.none,
-                      suffix: Text('kg')),
-                ),
-              ),
+                          fontWeight: FontWeight.w500,
+                          fontSize: width * regularFontRate),
+                      decoration: InputDecoration(
+                          labelText: "Cân nặng",
+                          labelStyle: TextStyle(
+                            color: lightFontColor,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                            height: 1.4,
+                          ),
+                          //floatingLabelStyle: TextStyle(color: lightPrimaryColor),
+                          // border: InputBorder.none,
+                          fillColor: Colors.white54,
+                          filled: true,
+                          focusColor: primaryBackgroundColor,
+                          border: InputBorder.none,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: Colors.white, width: 1.5)
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: primaryBackgroundColor, width: 1.5)
+                          ),
+                          suffix:const Text(
+                            'kg',
+                            style: TextStyle(
+                              color: lightFontColor,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                              height: 1.4,
+                            ),
+                          )
+                          ),
+                    ),
+                  ),
               buildSpacing(
                 width * 6,
               )

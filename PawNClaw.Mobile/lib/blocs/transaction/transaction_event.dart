@@ -24,3 +24,12 @@ class GetTransactionDetails extends TransactionEvent{
   @override 
   List<Object> get props => [bookingId];
 }
+
+class SendReview extends TransactionEvent{
+  final Review review;
+  const SendReview(this.review);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [review];
+}

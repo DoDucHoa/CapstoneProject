@@ -1,14 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pawnclaw_mobile_application/blocs/notification/notification_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/sponsor/sponsor_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/transaction/transaction_bloc.dart';
+import 'package:pawnclaw_mobile_application/blocs/user/user_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/repositories/activity/activity_repository.dart';
 import 'package:pawnclaw_mobile_application/repositories/auth/auth_repository.dart';
+import 'package:pawnclaw_mobile_application/repositories/notification/notification_repository.dart';
 import 'package:pawnclaw_mobile_application/repositories/pet/pet_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/signin_screen/SignInScreen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -80,6 +85,12 @@ class _MyAppState extends State<MyApp> {
             create: (context) => PetBloc(petRepository: PetRepository())),
         BlocProvider(
             create: (context) => SponsorBloc()..add(InitSponsorBanner())),
+        // BlocProvider(
+        //   create: (context) => UserBloc()..add(InitUser()),
+        // ),
+        BlocProvider(
+          create: (context) => NotificationBloc(NotificationRepository()),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -55,7 +55,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("center")]
-        public IActionResult getStaffByCenter([FromQuery] int centerId, [FromQuery] string? name, [FromQuery] bool? status, [FromQuery] PagingParameter paging)
+        public IActionResult getStaffByCenter([FromQuery] int centerId, [FromQuery] string name, [FromQuery] bool? status, [FromQuery] PagingParameter paging)
         {
             try
             {

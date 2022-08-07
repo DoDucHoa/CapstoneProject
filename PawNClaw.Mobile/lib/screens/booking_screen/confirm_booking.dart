@@ -19,7 +19,7 @@ class ConfirmBooking extends StatefulWidget {
       : super(key: key);
 
   final petCenter.Center center;
-  final List<Voucher> vouchers;
+  final List<Voucher>? vouchers;
   @override
   State<ConfirmBooking> createState() => _ConfirmBookingState();
 }
@@ -409,7 +409,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                           ),
                         )
                       : Container(),
-                  (widget.vouchers.isNotEmpty)
+                  (widget.vouchers!.isNotEmpty)
                       ? Container(
                           // padding: EdgeInsets.symmetric(
                           //   horizontal: width * smallPadRate,
@@ -435,7 +435,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                           value: BlocProvider.of<BookingBloc>(
                                               context),
                                           child: Vouchers(
-                                            vouchers: widget.vouchers,
+                                            vouchers: widget.vouchers!,
                                           ))))
                                 ..then((value) => context
                                     .findRootAncestorStateOfType()!
@@ -449,7 +449,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                   child: Row(
                                     children: [
                                       Text(
-                                        'Bạn có ${widget.vouchers.length} ưu đãi',
+                                        'Bạn có ${widget.vouchers!.length} ưu đãi',
                                         style:
                                             TextStyle(color: primaryFontColor),
                                       ),
@@ -643,7 +643,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                                 decimalDigits: 0,
                                                 symbol: 'đ',
                                                 locale: 'vi_vn')
-                                            .format(state.booking.getTotalDiscount(widget.vouchers)),
+                                            .format(state.booking.getTotalDiscount(widget.vouchers!)),
                                     style: TextStyle(
                                       color: primaryFontColor,
                                       fontWeight: FontWeight.w500,
@@ -678,10 +678,12 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                           decimalDigits: 0,
                                           symbol: 'đ',
                                           locale: 'vi_vn')
-                                      .format((haveDiscount)
+                                      .format(
+                                        (haveDiscount)
                                           ? (state.booking.getTotal() -
-                                              state.booking.getTotalDiscount(widget.vouchers))
-                                          : state.booking.getTotal()),
+                                              state.booking.getTotalDiscount(widget.vouchers!))
+                                          : 
+                                          state.booking.getTotal()),
                                   style: TextStyle(
                                     color: primaryFontColor,
                                     fontWeight: FontWeight.w800,

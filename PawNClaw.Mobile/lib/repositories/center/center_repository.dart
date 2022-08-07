@@ -4,6 +4,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
+import 'package:pawnclaw_mobile_application/models/photo.dart';
+import 'package:pawnclaw_mobile_application/models/review.dart';
 import 'package:pawnclaw_mobile_application/models/voucher.dart';
 import 'package:pawnclaw_mobile_application/repositories/center/base_center_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -104,10 +106,26 @@ class CenterRepository implements BaseCenterRepository {
       const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/petcenters/center_detail";
       var response = await _dio.post(_url, data: requestBody);
-      final center = Center.fromJson(response.data);
+      Center center = Center.fromJson(response.data);
+      if (response.data['bookings'] != null) {
+        var bookings = response.data["bookings"];
+        List<Review> reviews = [];
+        for (var element in bookings) {
+          var customer = element["customer"];
+          var idnav = customer["idNavigation"];
+          
+          reviews.add(Review(
+              rating: element["rating"],
+              bookingId: element["id"],
+              description: element["feedback"],
+              customerName: customer["name"],
+              customerAva: Photo.fromJson(idnav["photos"].first).url));  
+        }
+        center.reviews = reviews;
+      }
       //print(requestBody);
       print('[repo]center_detail:');
-      print(response.data);
+      // print(response.data);
       return center;
     } on DioError catch (e) {
       print(e.response!.data);
@@ -174,10 +192,27 @@ class CenterRepository implements BaseCenterRepository {
       final String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/petcenters/detail/$centerId";
       var response = await _dio.get(_url);
-      print(response.data);
-      final center = Center.fromJson(response.data);
+      // print(response.data);
+      // final center = Center.fromJson(response.data);
       print('[repo]Center overview:');
-      print(center.toJson());
+      Center center = Center.fromJson(response.data);
+      if (response.data['bookings'] != null) {
+        var bookings = response.data["bookings"];
+        List<Review> reviews = [];
+        for (var element in bookings) {
+          var customer = element["customer"];
+          var idnav = customer["idNavigation"];
+          
+          reviews.add(Review(
+              rating: element["rating"],
+              bookingId: element["id"],
+              description: element["feedback"],
+              customerName: customer["name"],
+              customerAva: Photo.fromJson(idnav["photos"].first).url));  
+        }
+        center.reviews = reviews;
+      }
+      // print(center.toJson());
       return center;
     } catch (e) {
       print(e);
@@ -186,8 +221,12 @@ class CenterRepository implements BaseCenterRepository {
   }
 
   @override
-  Future<SearchResponseModel?> checkCenterToBooking(int centerId,
-      DateTime timeFrom, int due, List<List<Pet>> requests) async {
+  Future<SearchResponseModel?> checkCenterToBooking(
+      int centerId,
+      int customerId,
+      DateTime timeFrom,
+      int due,
+      List<List<Pet>> requests) async {
     final pref = await SharedPreferences.getInstance();
     var searchResponseModel;
     Response? response;
@@ -197,6 +236,7 @@ class CenterRepository implements BaseCenterRepository {
       };
       var requestBody = {
         "id": centerId,
+        "customerId": customerId,
         "startBooking": DateFormat('yyyy-MM-dd HH:mm:ss').format(timeFrom),
         "due": due,
         "_petRequests": [
@@ -224,9 +264,25 @@ class CenterRepository implements BaseCenterRepository {
         }
         print('[repo] check center: ');
         //print(response.data);
-        final center = Center.fromJson(response.data);
+        Center center = Center.fromJson(response.data);
         // print('[repo] check center: ');
-        print(center.toJson());
+        // print(center.toJson());
+      if (response.data['bookings'] != null) {
+        var bookings = response.data["bookings"];
+        List<Review> reviews = [];
+        for (var element in bookings) {
+          var customer = element["customer"];
+          var idnav = customer["idNavigation"];
+          
+          reviews.add(Review(
+              rating: element["rating"],
+              bookingId: element["id"],
+              description: element["feedback"],
+              customerName: customer["name"],
+              customerAva: Photo.fromJson(idnav["photos"].first).url));  
+        }
+        center.reviews = reviews;
+      }
         searchResponseModel = SearchResponseModel(petCenters: [center]);
 
         return searchResponseModel;
@@ -234,12 +290,10 @@ class CenterRepository implements BaseCenterRepository {
     } on DioError catch (e) {
       //print(response!.statusMessage);
       // print((e as DioError).message);
-      searchResponseModel =
-          SearchResponseModel(result: e.response!.data['Message']);
+      // throw Exception(e.response!.data['Message']);
+      searchResponseModel = SearchResponseModel(
+          result: e.response != null ? e.response!.data["Message"] : "error");
       return searchResponseModel;
-      // searchResponseModel = SearchResponseModel(
-      //     result: e.response != null ? e.response!.data["mess"] : "error");
-      // return searchResponseModel;
     }
   }
 
@@ -312,7 +366,7 @@ class CenterRepository implements BaseCenterRepository {
     List<Placemark> placemark =
         await placemarkFromCoordinates(position.latitude, position.longitude);
     Placemark place = placemark[0];
-    print('${place.thoroughfare}');
+    //  print('${place.thoroughfare}');
     return '${place.street}';
     // print(address);
   }

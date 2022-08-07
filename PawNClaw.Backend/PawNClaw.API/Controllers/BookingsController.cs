@@ -21,13 +21,15 @@ namespace PawNClaw.API.Controllers
         BookingActivityService _bookingActivityService;
         AccountService _accountService;
         NotificationService _notificationService;
+        StaffServicecs _staffServices;
 
-        public BookingsController(BookingService bookingService, BookingActivityService bookingActivityService, AccountService accountService, NotificationService notificationService)
+        public BookingsController(BookingService bookingService, BookingActivityService bookingActivityService, AccountService accountService, NotificationService notificationService, StaffServicecs staffServicecs)
         {
             _bookingService = bookingService;
             _bookingActivityService = bookingActivityService;
             _accountService = accountService;
             _notificationService = notificationService;
+            _staffServices = staffServicecs;
         }
 
         [HttpPut]
@@ -56,20 +58,36 @@ namespace PawNClaw.API.Controllers
                             { "Type", "Booking" },
                             { "BookingId", updateStatusParameter.id+"" }
                         };
+                        var title = "Cập nhật đơn hàng";
+                        var content = "";
                         switch (updateStatusParameter.statusId)
                         {
                             case 2:
-                                _notificationService.SendNoti(new List<string> { account.DeviceId }, data, "Cập nhật đơn hàng !!!", "Đơn hàng của bạn đã được xác nhận");
+                                content = "Đơn hàng của bạn đã được xác nhận";
+                                _notificationService.SendNoti(new List<string> { account.DeviceId }, data, title, content);
                                 break;
                             case 3:
-                                _notificationService.SendNoti(new List<string> { account.DeviceId }, data, "Cập nhật đơn hàng !!!", "Đơn hàng của bạn đã được hoàn thành");
+                                content = "Đơn hàng của bạn đã được hoàn thành";
+                                _notificationService.SendNoti(new List<string> { account.DeviceId }, data, title, content);
                                 break;
                             case 4:
-                                _notificationService.SendNoti(new List<string> { account.DeviceId }, data, "Cập nhật đơn hàng !!!", "Đơn hàng của bạn đã bị hủy");
+                                content = "Đơn hàng của bạn đã bị hủy";
+                                _notificationService.SendNoti(new List<string> { account.DeviceId }, data, title, content);
                                 break;
                             default:
                                 break;
                         }
+                        NotificationParameter notification = new NotificationParameter()
+                        {
+                            actorId = booking.Id,
+                            actorType = "Booking",
+                            targetId = booking.CustomerId,
+                            targetType = "Customer",
+                            title = title,
+                            content = content,
+                            time = DateTime.Now
+                        };
+                        await _notificationService.AddNotification(notification);
 
                         return Ok();
                     }
@@ -106,12 +124,25 @@ namespace PawNClaw.API.Controllers
                 data.HasNext,
                 data.HasPrevious
             };
-            return Ok(new { data,metadata}) ;
+            return Ok(new { data, metadata });
+        }
+
+        [HttpPut("rating")]
+        public IActionResult ratingBooking([FromQuery] int bookingId, [FromQuery] int rating, [FromQuery] string? feedback)
+        {
+            try
+            {
+                _bookingService.RatingBooking(bookingId, rating, feedback);
+                return Ok();
+            }
+            catch (Exception ex){
+                return BadRequest(ex);
+            }
         }
 
 
         [HttpGet("customer/{id}")]
-        [Authorize(Roles = "Owner,Staff,Customer")]
+        //[Authorize(Roles = "Owner,Staff,Customer")]
         public IActionResult GetBookingByCustomerId(int id, int statusId)
         {
             var data = _bookingService.GetBookingsByCustomerId(id, statusId);
@@ -119,7 +150,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("for-customer/{id}")]
-        [Authorize(Roles = "Owner,Staff,Customer")]
+        //[Authorize(Roles = "Owner,Staff,Customer")]
         public IActionResult GetBookingById(int id)
         {
             var data = _bookingService.GetBookingById(id);
@@ -156,7 +187,38 @@ namespace PawNClaw.API.Controllers
                     return BadRequest();
                 }
                 else
+                {
+                    //get all staff of center
+                    var staffs = _staffServices.GetAllByCenterId(data.CenterId);
+                    //get registrationtokens
+                    List<string> registrationTokens = new List<string>();
+                    foreach (Staff staff in staffs)
+                    {
+                        registrationTokens.Add(staff.IdNavigation.DeviceId);
+                    }
+                    //insert data to message
+                    var noti = new Dictionary<string, string>() {
+                        { "Type", "Booking" },
+                    };
+                    var title = "Đơn hàng mới";
+                    var content = "Trung tâm của bạn vừa có một đơn hàng mới";
+                    //send notification
+                    _notificationService.SendNoti(registrationTokens, noti, title, content);
+                    //add notification to firebase
+                    NotificationParameter notification = new NotificationParameter()
+                    {
+                        actorId = data.Id,
+                        actorType = "Booking",
+                        targetId = data.CenterId,
+                        targetType = "Center",
+                        title = title,
+                        content = content,
+                        time = DateTime.Now
+                    };
+                    await _notificationService.AddNotification(notification);
+
                     return Ok(data);
+                }
             }
             catch (Exception ex)
             {

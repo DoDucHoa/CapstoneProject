@@ -390,41 +390,43 @@ namespace PawNClaw.Business.Services
                 DateTime _endBooking = _startBooking.AddDays(Due).AddHours(diffOfDates.Hours);
 
                 center.EndBooking = _endBooking;
-                //bool CheckPetIsBooked = false;
+                bool CheckPetIsBooked = false;
 
-                //foreach (var petIds in _petRequests)
-                //{
-                //    foreach (var petId in petIds)
-                //    {
-                //        CheckPetIsBooked = false;
+                foreach (var petIds in _petRequests)
+                {
+                    foreach (var petId in petIds)
+                    {
+                        CheckPetIsBooked = false;
 
-                //        if (_petBookingDetailRepository.GetAll(x => x.PetId == petId.Id &&
-                //                ((DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) <= 0
-                //                && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) >= 0)
-                //                ||
-                //                (DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) >= 0
-                //                && DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.EndBooking) < 0)
-                //                ||
-                //                (DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.StartBooking) > 0
-                //                && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) <= 0))).Count() != 0)
-                //        {
-                //            CheckPetIsBooked = true;
-                //            break;
-                //            //throw new Exception("Pet is Booking Already");
-                //        }
-                //    }
+                        if (_petBookingDetailRepository.GetAll(x => x.PetId == petId.Id 
+                                && (x.BookingDetail.Booking.StatusId == 2 || x.BookingDetail.Booking.StatusId == 1)
+                                &&
+                                ((DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) <= 0
+                                && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) >= 0)
+                                ||
+                                (DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.StartBooking) >= 0
+                                && DateTime.Compare(_startBooking, (DateTime)x.BookingDetail.Booking.EndBooking) < 0)
+                                ||
+                                (DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.StartBooking) > 0
+                                && DateTime.Compare(_endBooking, (DateTime)x.BookingDetail.Booking.EndBooking) <= 0))).Count() != 0)
+                        {
+                            CheckPetIsBooked = true;
+                            break;
+                            //throw new Exception("Pet is Booking Already");
+                        }
+                    }
 
-                //    if (CheckPetIsBooked)
-                //    {
-                //        break;
-                //    }
+                    if (CheckPetIsBooked)
+                    {
+                        break;
+                    }
 
-                //}
+                }
 
-                //if (CheckPetIsBooked)
-                //{
-                //    break;
-                //}
+                if (CheckPetIsBooked)
+                {
+                    break;
+                }
 
                 var BookingOfCenter = _bookingRepository.GetBookingValidSearch(center.Id, _startBooking, _endBooking);
 
@@ -704,7 +706,7 @@ namespace PawNClaw.Business.Services
         //Search Center By Name
         public PagedList<PetCenter> SearchCenterByName(string Name, PagingParameter paging)
         {
-            var values = _petCenterRepository.GetAll(x => x.Name.Contains(Name) && x.Status == true);
+            var values = _petCenterRepository.GetAll(x => x.Name.Contains(Name) && x.Status == true,includeProperties: "Bookings");
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
@@ -1021,7 +1023,7 @@ namespace PawNClaw.Business.Services
             List<PetCenter> petcenters = new List<PetCenter>();
             foreach (var item in centerdistance)
             {
-                var value = _petCenterRepository.Get(item.Key.Id);
+                var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == item.Key.Id,includeProperties: "Bookings");
 
                 string petCenterOpenTime = _petCenterRepository.GetFirstOrDefault(x => x.Id == value.Id).OpenTime;
                 string petCenterCloseTime = _petCenterRepository.GetFirstOrDefault(x => x.Id == value.Id).CloseTime;

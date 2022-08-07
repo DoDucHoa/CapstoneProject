@@ -62,7 +62,7 @@ namespace PawNClaw.API.Controllers
                     { "Type", "Activity" },
                     { "ActivityId", updateBookingActivityParameter.Id+"" }
                 };
-                var title = "Hoạt động mới !!!";
+                var title = "Hoạt động mới";
                 var content = "Một hoạt động mới cho thú cưng của bạn vừa được cập nhật";
                 //send notification
                 _notificationService.SendNoti(registrationTokens, data, title, content);

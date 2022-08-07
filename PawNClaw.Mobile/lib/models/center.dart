@@ -1,3 +1,6 @@
+import 'package:pawnclaw_mobile_application/models/review.dart';
+import 'package:pawnclaw_mobile_application/models/voucher.dart';
+
 import 'cage_type.dart';
 import  'dart:convert';
 
@@ -6,7 +9,7 @@ class Center {
   String? _name;
   String? _address;
   String? _phone;
-  int? _rating;
+  double? _rating;
   int? _ratingCount;
   bool? _status;
   int? _brandId;
@@ -17,13 +20,15 @@ class Center {
   List<Services>? _services;
   List<Supplies>? _supplies;
   String? _endBooking;
+  List<Voucher>? _vouchers;
+  List<Review>? _reviews;
 
   Center(
       {int? id,
       String? name,
       String? address,
       String? phone,
-      int? rating,
+      double? rating,
       int? ratingCount,
       bool? status,
       int? brandId,
@@ -33,7 +38,9 @@ class Center {
       List<CageTypes>? cageTypes,
       List<Services>? services,
       List<Supplies>? supplies,
-      String? endBooking}) {
+      String? endBooking,
+      List<Voucher>? vouchers,
+      List<Review>? reviews}) {
     if (id != null) {
       this._id = id;
     }
@@ -79,6 +86,12 @@ class Center {
     if (endBooking != null) {
       this._endBooking = endBooking;
     }
+    if (vouchers != null) {
+      this._vouchers = vouchers;
+    }
+    if (reviews != null) {
+      this._reviews = reviews;
+    }
   }
 
   int? get id => _id;
@@ -89,8 +102,8 @@ class Center {
   set address(String? address) => _address = address;
   String? get phone => _phone;
   set phone(String? phone) => _phone = phone;
-  int? get rating => _rating;
-  set rating(int? rating) => _rating = rating;
+  double? get rating => _rating;
+  set rating(double? rating) => _rating = rating;
   int? get ratingCount => _ratingCount;
   set ratingCount(int? ratingCount) => _ratingCount = ratingCount;
   bool? get status => _status;
@@ -110,13 +123,16 @@ class Center {
   List<Supplies>? get supplies => _supplies;
   set supplies(List<Supplies>? supplies) => _supplies = supplies;
   String? get endBooking => _endBooking;
+  List<Voucher>? get vouchers => _vouchers;
+  List<Review>? get reviews => _reviews;
+  set reviews(List<Review>? reviews) => _reviews = reviews;
 
   Center.fromJson(Map<String, dynamic> json) {
     _id = json['id'];
     _name = json['name'];
     _address = json['address'];
     _phone = json['phone'];
-    _rating = json['rating'];
+    _rating = json['ratingPoint'];
     _ratingCount = json['ratingCount'];
     _status = json['status'];
     _brandId = json['brandId'];
@@ -142,6 +158,13 @@ class Center {
       });
     }
     _endBooking = json['endBooking'];
+
+    if(json['vouchers'] != null){
+      _vouchers = <Voucher>[];
+      json['vouchers'].forEach((v) {
+        _vouchers!.add(new Voucher.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -150,7 +173,7 @@ class Center {
     data['name'] = this._name;
     data['address'] = this._address;
     data['phone'] = this._phone;
-    data['rating'] = this._rating;
+    data['ratingPoint'] = this._rating;
     data['ratingCount'] = this._ratingCount;
     data['status'] = this._status;
     data['brandId'] = this._brandId;
@@ -167,12 +190,20 @@ class Center {
       data['supplies'] = this._supplies!.map((v) => v.toJson()).toList();
     }
     data['endBooking'] = this._endBooking;
+    if (this._vouchers != null) {
+      data['vouchers'] = this._vouchers!.map((v) => v.toJson()).toList();
+    }
+
     return data;
   }
 
   String shortAddress() {
     var splited = this.address!.split(",");
-    return splited[0] + ', ' + splited[1];
+    if (splited.length > 1) {
+      return splited[0] + "," + splited[1];
+    } 
+      return this.address!;
+    
   }
 }
 

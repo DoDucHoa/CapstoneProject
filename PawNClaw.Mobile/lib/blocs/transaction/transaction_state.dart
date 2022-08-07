@@ -25,3 +25,12 @@ class TransactionDetailsLoaded extends TransactionState{
   @override 
   List<Object> get props => [transactionDetails];
 }
+
+class ReviewSent extends TransactionState{
+  final int bookingId;
+  const ReviewSent(this.bookingId);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [bookingId];
+}

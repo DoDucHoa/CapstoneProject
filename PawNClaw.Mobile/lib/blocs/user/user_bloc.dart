@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart';
 import 'package:pawnclaw_mobile_application/models/account.dart';
+import 'package:pawnclaw_mobile_application/models/customer.dart';
 
 import '../../repositories/auth/auth_repository.dart';
 
@@ -13,13 +15,19 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   UserBloc() : super(UserInitial()) {
     on<UpdateUserInformation>((event, emit) {
       //to-do
-      emit(UserUpdated(event.user));
+      emit(UserUpdated(event.user, null));
     });
 
     on<InitUser>(
       (event, emit) async {
         final account = await signInWithToken();
-        account != null ? emit(UserUpdated(account)) : emit(UserInitial());
+        if (account != null) {
+          
+          var customer = await _authRepository.getCustomerInfo(account.id!);
+          print(customer!.toJson());
+          emit(UserUpdated(account, customer));
+        } else
+          emit(UserInitial());
       },
     );
   }

@@ -1,7 +1,9 @@
-﻿using PawNClaw.Data.Database;
+﻿using PawNClaw.Data.Const;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PawNClaw.Business.Services
@@ -10,11 +12,14 @@ namespace PawNClaw.Business.Services
     {
         private IAdminRepository _adminRepository;
         private IAccountRepository _accountRepository;
+        private IPhotoRepository _photoRepository;
 
-        public AdminService(IAdminRepository adminRepository, IAccountRepository accountRepository)
+        public AdminService(IAdminRepository adminRepository, IAccountRepository accountRepository,
+            IPhotoRepository photoRepository)
         {
             _adminRepository = adminRepository;
             _accountRepository = accountRepository;
+            _photoRepository = photoRepository;
         }
 
         //Get All Admin Detail
@@ -133,7 +138,9 @@ namespace PawNClaw.Business.Services
         //Get Admin by Id
         public Admin GetAdminById(int id)
         {
-            return _adminRepository.GetAll().FirstOrDefault(x => x.Id == id);
+            var admin = _adminRepository.GetAll(includeProperties: "IdNavigation").FirstOrDefault(x => x.Id == id);
+            admin.IdNavigation.Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(admin.Id, PhotoTypesConst.Account);
+            return admin;
         }
 
         //Add Admin

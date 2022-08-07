@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:pawnclaw_mobile_application/models/review.dart';
 
 import '../../models/account.dart';
 import '../../models/booking.dart';
@@ -35,6 +36,14 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       print('act: ' + transactionDetails.bookingActivities!.length.toString());
       if (transactionDetails != null)
         emit(TransactionDetailsLoaded(transactionDetails));
+    });
+
+    on<SendReview>((event, emit) async{
+      bool sent = await _transactionRepository.sendReview(event.review);
+      if (sent) {
+        emit(ReviewSent(event.review.bookingId!));
+      }
+
     });
   }
 }

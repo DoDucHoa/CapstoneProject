@@ -70,6 +70,16 @@ namespace PawNClaw.Business.Services
 
             booking.StaffNote = StaffNote;
 
+            if (StatusId == 2)
+            {
+                booking.CheckIn = DateTime.Now;
+            }
+
+            if (StatusId == 3)
+            {
+                booking.CheckOut = DateTime.Now;
+            }
+
             try
             {
                 _bookingRepository.Update(booking);
@@ -103,22 +113,28 @@ namespace PawNClaw.Business.Services
             int Id = 0;
 
             //Check cage is booking and pet is booking in time
-            //foreach (var bookingDetailCreateParameter in bookingDetailCreateParameters)
-            //{
-            //    if (_cageRepository.GetAll(cage => cage.Code.Trim().Equals(bookingDetailCreateParameter.CageCode) && cage.BookingDetails.Any(bookingdetail =>
-            //                    ((DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
-            //                    && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
-            //                    ||
-            //                    (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) >= 0
-            //                    && DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
-            //                    ||
-            //                    (DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
-            //                    && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))
-            //                    && (bookingdetail.Booking.StatusId == 1 || bookingdetail.Booking.StatusId == 2))).Count() != 0)
-            //    {
-            //        throw new Exception("This Cage Has Been Used With Booking Time");
-            //    }
-            //}
+            foreach (var bookingDetailCreateParameter in bookingDetailCreateParameters)
+            {
+                if (_cageRepository.GetAll(cage => cage.Code.Trim().Equals(bookingDetailCreateParameter.CageCode)
+                                && cage.BookingDetails.Any(bookingdetail =>
+                                ((DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0)
+                                ||
+                                (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.StartBooking) >= 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingdetail.Booking.EndBooking) < 0)
+                                ||
+                                (DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.StartBooking) > 0
+                                && DateTime.Compare((DateTime)bookingCreateParameter.EndBooking, (DateTime)bookingdetail.Booking.EndBooking) <= 0))
+                                && (bookingdetail.Booking.StatusId == 1 || bookingdetail.Booking.StatusId == 2))).Count() != 0)
+                {
+                    throw new Exception("This Cage Has Been Used With Booking Time");
+                }
+            }
+
+            if (DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, DateTime.Now) <= 0 || DateTime.Compare((DateTime)bookingCreateParameter.StartBooking, (DateTime)bookingCreateParameter.EndBooking) >= 0)
+            {
+                throw new Exception("StartBooking or EndBooking is INVALID");
+            }
 
 
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
@@ -358,9 +374,19 @@ namespace PawNClaw.Business.Services
                             }
                         }
                     }
-
+                    
+                    
                     if (bookingCreateParameter.VoucherCode != null && Discount > 0)
                     {
+
+                        var voucher = _voucherRepository.Get(bookingCreateParameter.VoucherCode);
+
+                        if (voucher.ReleaseAmount <= 0)
+                        {
+                            transaction.Rollback();
+                            throw new Exception("Voucher not available");
+                        }
+
                         CustomerVoucherLog customerVoucherLog = new CustomerVoucherLog()
                         {
                             CustomerId = bookingCreateParameter.CustomerId,
@@ -370,6 +396,11 @@ namespace PawNClaw.Business.Services
 
                         _customerVoucherLogRepository.Add(customerVoucherLog);
                         await _customerVoucherLogRepository.SaveDbChangeAsync();
+
+                        voucher.ReleaseAmount--;
+
+                        _voucherRepository.Update(voucher);
+                        await _voucherRepository.SaveDbChangeAsync();
                     }
 
                     bookingToDb.SubTotal = Price;
@@ -475,6 +506,33 @@ namespace PawNClaw.Business.Services
             _bookingRepository.SaveDbChange();
 
             return true;
+        }
+
+        //rating booking
+        public bool RatingBooking(int id, int rating, string? feedback)
+        {
+            var booking = _bookingRepository.Get(id);
+
+            booking.Rating = (Byte)rating;
+
+            if (!string.IsNullOrWhiteSpace(feedback))
+            {
+                booking.Feedback = feedback;
+            }
+
+            try 
+            {
+
+                _bookingRepository.Update(booking);
+                _bookingRepository.SaveDbChange();
+
+                return true;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+
         }
     }
 }

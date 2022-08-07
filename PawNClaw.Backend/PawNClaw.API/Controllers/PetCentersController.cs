@@ -131,6 +131,23 @@ namespace PawNClaw.API.Controllers
             return Ok(new { data, metadata });
         }
 
+        [HttpGet("for-admin/get-all")]
+        public IActionResult GetCentersForAdmin([FromQuery] string name, [FromQuery] bool? status, [FromQuery] PagingParameter paging)
+        {
+            var data = _petCenterService.GetAllForAdmin(name, status, paging);
+
+            var metadata = new
+            {
+                data.TotalCount,
+                data.PageSize,
+                data.CurrentPage,
+                data.TotalPages,
+                data.HasNext,
+                data.HasPrevious
+            };
+            return Ok(new { data, metadata });
+        }
+
         [HttpGet("{id:int}")]
         public IActionResult GetCenter(int id)
         {
@@ -160,28 +177,53 @@ namespace PawNClaw.API.Controllers
             return Ok(data);
         }
 
+        [HttpGet("for-admin/{id:int}")]
+        public IActionResult GetCenterForAdmin(int id)
+        {
+            var data = _petCenterService.GetByIdForAdmin(id);
+            return Ok(data);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Create([FromBody] PetCenterRequestParameter petCenterRequestParameter)
+        public async Task<IActionResult> Create([FromBody] CreatePetCenterParameter parameter)
         {
             var petCenter = new PetCenter
             {
-                Name = petCenterRequestParameter.Name,
-                Address = petCenterRequestParameter.Address,
-                Phone = petCenterRequestParameter.Phone,
+                Name = parameter.Name,
+                Address = parameter.Address,
+                Phone = parameter.Phone,
                 Rating = null,
                 CreateDate = DateTime.Now,
-                ModifyDate = null,
-                CreateUser = petCenterRequestParameter.CreateUser,
-                ModifyUser = null,
+                ModifyDate = DateTime.Now,
+                CreateUser = parameter.CreateUser,
+                ModifyUser = parameter.ModifyUser,
                 Status = true,
-                BrandId = (int)petCenterRequestParameter.BrandId,
-                OpenTime = petCenterRequestParameter.OpenTime,
-                CloseTime = petCenterRequestParameter.CloseTime
+                BrandId = (int)parameter.BrandId,
+                OpenTime = parameter.OpenTime,
+                CloseTime = parameter.CloseTime,
+                Checkin = parameter.Checkin,
+                Checkout = parameter.Checkout,
+                Description = parameter.Description
             };
-            if (_petCenterService.Add(petCenter) == 1)
-                return Ok();
-            return BadRequest();
+
+            var location = new Location
+            {
+                CityCode = parameter.CityCode,
+                DistrictCode = parameter.DistrictCode,
+                WardCode = parameter.WardCode
+            };
+
+            try
+            {
+                var id = await _petCenterService.Add(petCenter, location, parameter.FullAddress);
+
+                return Ok(id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpPut("for-admin")]

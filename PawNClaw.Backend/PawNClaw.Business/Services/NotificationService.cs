@@ -56,20 +56,38 @@ namespace PawNClaw.Business.Services
                 { "actorType", data.actorType },
                 { "targetId", data.targetId },
                 { "targetType", data.targetType },
-                { "time", Timestamp.FromDateTime(data.time)},
+                { "time", Timestamp.FromDateTime(data.time.ToUniversalTime())},
                 { "title", data.title },
-                { "content", data.content }
+                { "content", data.content },
+                { "seen", false }
             };
             await docRef.SetAsync(notification);
             // [END fs_add_data_1]
         }
 
-        public async Task<List<NotificationParameter>> GetNotiForCustomer(int id)
+        public async Task SeenAll(int id, string target)
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "pawnclaw-4b6ba-firebase-adminsdk-txxl7-50dcc161a7.json");
             FirestoreDb db = FirestoreDb.Create(Const.ProjectFirebaseId);
 
-            Query query = db.Collection("Notification").WhereEqualTo("targetId",id).WhereEqualTo("targetType","Customer");
+            Query query = db.Collection("Notification").WhereEqualTo("targetId", id).WhereEqualTo("targetType", target).WhereEqualTo("seen", false);
+            QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+            Dictionary<string, object> updates = new Dictionary<string, object>
+            {
+                { "seen", true }
+            };
+            foreach (DocumentSnapshot snapshot in querySnapshot)
+            {
+                await snapshot.Reference.UpdateAsync(updates);
+            }
+        }
+
+        public async Task<List<NotificationParameter>> GetNotis(int id, string target)
+        {
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "pawnclaw-4b6ba-firebase-adminsdk-txxl7-50dcc161a7.json");
+            FirestoreDb db = FirestoreDb.Create(Const.ProjectFirebaseId);
+
+            Query query = db.Collection("Notification").WhereEqualTo("targetId", id).WhereEqualTo("targetType", target);
             QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
             List<NotificationParameter> notifications = new List<NotificationParameter>();
             foreach (DocumentSnapshot snapshot in querySnapshot)
@@ -84,19 +102,12 @@ namespace PawNClaw.Business.Services
                     targetType = noti["targetType"],
                     time = timestamp.ToDateTime(),
                     content = noti["content"],
-                    title = noti["title"]
+                    title = noti["title"],
+                    seen = noti["seen"]
                 };
                 notifications.Add(notification);
             }
             return notifications;
-        }
-
-        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
-        {
-            // Unix timestamp is seconds past epoch
-            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dateTime;
         }
     }
 }

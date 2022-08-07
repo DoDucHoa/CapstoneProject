@@ -26,8 +26,36 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                var data = await _notificationService.GetNotiForCustomer(id);
+                var data = await _notificationService.GetNotis(id, "Customer");
                 return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("for-center/{id}")]
+        public async Task<IActionResult> getNotificationForCenter([FromRoute] int id)
+        {
+            try
+            {
+                var data = await _notificationService.GetNotis(id, "Center");
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut("seen-all")]
+        public async Task<IActionResult> seenAllNoti([FromQuery] int id, [FromQuery] string targetType)
+        {
+            try
+            {
+                await _notificationService.SeenAll(id, targetType);
+                return Ok();
             }
             catch (Exception ex)
             {

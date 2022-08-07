@@ -140,7 +140,7 @@ class BookingRequestModel {
 
   double getTotalDiscount(List<Voucher> vouchers) {
     var voucher = vouchers.firstWhere((element) => element.code == bookingCreateParameter!.voucherCode);
-    if (voucher.voucherTypeCode!.contains('1')) {
+    if (voucher.voucherTypeName!.contains('Phần trăm')) {
       return getTotal() * voucher.value! / 100;
     }
     return voucher.value!;
