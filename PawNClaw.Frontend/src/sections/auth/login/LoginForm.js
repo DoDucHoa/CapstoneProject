@@ -11,7 +11,7 @@ import { LoadingButton } from '@mui/lab';
 import { PATH_AUTH } from '../../../routes/paths';
 // hooks
 import useAuth from '../../../hooks/useAuth';
-import useIsMountedRef from '../../../hooks/useIsMountedRef';
+// import useIsMountedRef from '../../../hooks/useIsMountedRef';
 // components
 import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField, RHFCheckbox } from '../../../components/hook-form';
@@ -21,7 +21,7 @@ import { FormProvider, RHFTextField, RHFCheckbox } from '../../../components/hoo
 export default function LoginForm() {
   const { login } = useAuth();
 
-  const isMountedRef = useIsMountedRef();
+  // const isMountedRef = useIsMountedRef();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -52,10 +52,12 @@ export default function LoginForm() {
     try {
       await login(data.email, data.password);
     } catch (error) {
-      console.error(error);
       reset();
-      if (isMountedRef.current) {
-        setError('afterSubmit', { ...error, message: error.message });
+      if (error.message.includes('auth/wrong-password')) {
+        setError('afterSubmit', { ...error, message: 'Sai mật khẩu' });
+      }
+      if (error.message.includes('auth/user-not-found')) {
+        setError('afterSubmit', { ...error, message: 'Không tìm thấy tài khoản' });
       }
     }
   };

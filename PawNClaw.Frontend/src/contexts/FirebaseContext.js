@@ -153,25 +153,38 @@ function AuthProvider({ children }) {
   }, [dispatch]);
 
   const login = async (email, password) => {
-    const userCredentials = await signInWithEmailAndPassword(AUTH, email, password);
+    try {
+      const userCredentials = await signInWithEmailAndPassword(AUTH, email, password);
 
-    if (userCredentials) {
-      const { accessToken } = userCredentials.user;
+      if (userCredentials) {
+        const { accessToken } = userCredentials.user;
 
-      const userData = await getBackendToken(accessToken, 'Email');
-      const petCenter = await getPetCenter(userData.id);
+        const userData = await getBackendToken(accessToken, 'Email');
 
-      if (userData) {
-        dispatch({
-          type: 'LOGIN',
-          payload: {
-            user: userCredentials.user,
-            accountInfo: userData,
-            centerInfo: petCenter || null,
-            centerId: petCenter?.petCenters[0].id || null,
-          },
-        });
+        let petCenter = null;
+        if (userData?.role === 'Owner') {
+          petCenter = await getPetCenter(userData.id);
+        }
+
+        let staffCenterId = null;
+        if (userData?.role === 'Staff') {
+          staffCenterId = await getStaffCenterId(userData.id);
+        }
+
+        if (userData) {
+          dispatch({
+            type: 'LOGIN',
+            payload: {
+              user: userCredentials.user,
+              accountInfo: userData,
+              centerInfo: petCenter || null,
+              centerId: petCenter?.petCenters[0].id || staffCenterId || null,
+            },
+          });
+        }
       }
+    } catch (error) {
+      throw new Error(error);
     }
   };
 
@@ -278,6 +291,19 @@ const getPetCenter = async (idOwner) => {
     if (response.statusText === 'OK') {
       setCenterInfoSession(JSON.stringify(response.data));
       return response.data;
+    }
+    return null;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const getStaffCenterId = async (idStaff) => {
+  try {
+    const response = await axios.get(`/api/petcenters/staff/${idStaff}`);
+    if (response.statusText === 'OK') {
+      setCenterIdSession(response.data.id);
+      return response.data.id;
     }
     return null;
   } catch (error) {

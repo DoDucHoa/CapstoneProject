@@ -9,7 +9,7 @@ import GuestGuard from '../guards/GuestGuard';
 import AuthGuard from '../guards/AuthGuard';
 import RoleBasedGuard from '../guards/RoleBasedGuard';
 // config
-import { PATH_AFTER_LOGIN } from '../config';
+import { PATH_AFTER_LOGIN, PATH_AFTER_LOGIN_FOR_STAFF } from '../config';
 // components
 import LoadingScreen from '../components/LoadingScreen';
 import useAuth from '../hooks/useAuth';
@@ -67,7 +67,15 @@ export default function Router() {
         </AuthGuard>
       ),
       children: [
-        { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
+        {
+          element: (
+            <Navigate
+              to={currentRole?.toLowerCase() === 'staff' ? PATH_AFTER_LOGIN_FOR_STAFF : PATH_AFTER_LOGIN}
+              replace
+            />
+          ),
+          index: true,
+        },
         { path: 'bookingchart', element: <GeneralBooking /> },
         {
           path: 'admin',

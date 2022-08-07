@@ -47,7 +47,7 @@ import { getStaffs, banStaff } from './useStaffAPI';
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [
-  { key: 0, value: '', label: 'Tất cả' },
+  { key: 0, value: 'all', label: 'Tất cả' },
   { key: 1, value: 'true', label: 'Hoạt động' },
   { key: 2, value: 'false', label: 'Đã khóa' },
 ];
@@ -86,7 +86,7 @@ export default function UserList() {
     onChangeRowsPerPage,
   } = useTable();
 
-  const { currentTab: filterStatus, onChangeTab } = useTabs('');
+  const { currentTab: filterStatus, onChangeTab } = useTabs('all');
   const onChangeFilterStatus = (event, newValue) => {
     onChangeTab(event, newValue);
     setPage(0);

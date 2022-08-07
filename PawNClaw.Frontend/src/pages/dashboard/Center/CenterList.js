@@ -106,6 +106,10 @@ export default function CenterList() {
 
   useEffect(() => {
     getCenterData();
+    return () => {
+      setTableData([]);
+      setMetadata({});
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, rowsPerPage, filterStatus, searchRequest]);
 

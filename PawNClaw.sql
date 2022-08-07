@@ -60,23 +60,24 @@ CREATE TABLE Customers
     id INT PRIMARY KEY,
 	name NVARCHAR(256) NOT NULL,
 	birth DATE,
-	gender TINYINT
+	gender INT,
+	address NVARCHAR(256)
 )
 ALTER TABLE dbo.Customers ADD FOREIGN KEY (id) REFERENCES [dbo].[Accounts](id)
 GO
 
-CREATE TABLE CustomerAddresses
-(
-    id INT IDENTITY PRIMARY KEY,
-	name NVARCHAR(512) NOT NULL,
-	address NVARCHAR(512) NOT NULL,
-	longtitude VARCHAR(64),
-	latitude VARCHAR(64),
-	status BIT DEFAULT 1,
-	customer_id INT NOT NULL
-)
-ALTER TABLE dbo.CustomerAddresses ADD FOREIGN KEY (customer_id) REFERENCES [dbo].Customers(id)
-GO
+-- CREATE TABLE CustomerAddresses
+-- (
+--     id INT IDENTITY PRIMARY KEY,
+-- 	name NVARCHAR(512) NOT NULL,
+-- 	address NVARCHAR(512) NOT NULL,
+-- 	longtitude VARCHAR(64),
+-- 	latitude VARCHAR(64),
+-- 	status BIT DEFAULT 1,
+-- 	customer_id INT NOT NULL
+-- )
+-- ALTER TABLE dbo.CustomerAddresses ADD FOREIGN KEY (customer_id) REFERENCES [dbo].Customers(id)
+-- GO
 
 CREATE TABLE Brands
 (
@@ -105,7 +106,7 @@ CREATE TABLE PetCenters
 	name NVARCHAR(256) NOT NULL,
 	address NVARCHAR(256),
 	phone VARCHAR(32),
-	rating INT,
+	rating NUMERIC(19, 5),
 	open_time TIME,
 	close_time TIME,
 	create_date DATE DEFAULT GETDATE(),
@@ -432,7 +433,8 @@ CREATE TABLE Vouchers
 	modify_user INT,
 	status BIT DEFAULT 1,
 	center_id INT NOT NULL,
-	voucher_type_code VARCHAR(32) NOT NULL
+	voucher_type_code VARCHAR(32) NOT NULL,
+	release_amount INT,
 )
 ALTER TABLE dbo.Vouchers ADD FOREIGN KEY (create_user) REFERENCES [dbo].Accounts(id)
 GO
@@ -469,6 +471,7 @@ CREATE TABLE Bookings
 	customer_note NVARCHAR(512),
 	staff_note NVARCHAR(512),
 	invoice_url NVARCHAR(1024),
+	feedback NVARCHAR(1024),
 )
 ALTER TABLE dbo.Bookings ADD FOREIGN KEY (status_id) REFERENCES [dbo].BookingStatuses(id)
 GO

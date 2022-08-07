@@ -17,7 +17,7 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 import useAuth from '../../../hooks/useAuth';
 import useResponsive from '../../../hooks/useResponsive';
 // components
-import { FormProvider, RHFTextField, RHFUploadPhoto } from '../../../components/hook-form';
+import { FormProvider, RHFSlider, RHFTextField, RHFUploadPhoto } from '../../../components/hook-form';
 import Iconify from '../../../components/Iconify';
 import { createSponsor, updateSponsor } from '../../../pages/dashboard/Sponsor/useSponsorAPI';
 import BrandDialog from '../center/BrandDialog';
@@ -163,9 +163,9 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
                 <RHFTextField name="content" multiline rows={6} label="Nội dung" />
               </Grid>
 
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <RHFTextField name="duration" label="Thời gian quảng cáo (giây)" tpye="number" />
-              </Grid>
+              </Grid> */}
 
               <Grid item xs={6}>
                 <RHFTextField name="month" label="Tháng" tpye="number" disabled={isEdit} />
@@ -173,6 +173,18 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
 
               <Grid item xs={6}>
                 <RHFTextField name="year" label="Năm" tpye="number" disabled={isEdit} />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <RHFSlider
+                  name="duration"
+                  label="Thời gian quảng cáo (giây)"
+                  size="medium"
+                  min={0}
+                  max={20}
+                  aria-label="Default"
+                  valueLabelDisplay="auto"
+                />
               </Grid>
 
               <Grid item xs={12}>

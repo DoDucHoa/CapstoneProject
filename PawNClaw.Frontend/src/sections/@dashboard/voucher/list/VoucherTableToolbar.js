@@ -8,17 +8,15 @@ import Iconify from '../../../../components/Iconify';
 VoucherTableToolbar.propTypes = {
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
-  onEnterPress: PropTypes.func,
 };
 
-export default function VoucherTableToolbar({ filterName, onFilterName, onEnterPress }) {
+export default function VoucherTableToolbar({ filterName, onFilterName }) {
   return (
     <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} sx={{ py: 2.5, px: 3 }}>
       <TextField
         fullWidth
         value={filterName}
         onChange={(event) => onFilterName(event.target.value)}
-        onKeyPress={(event) => event.key === 'Enter' && onEnterPress(event.target.value)}
         placeholder="Tìm mã voucher..."
         InputProps={{
           startAdornment: (
