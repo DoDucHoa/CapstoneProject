@@ -1,29 +1,36 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { isEmpty } from 'lodash';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 // @mui
-import { Box, Card, Container, Table, TableBody, TableContainer } from '@mui/material';
+import { Box, Card, Container, DialogTitle, Table, TableBody, TableContainer, TablePagination } from '@mui/material';
 
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
 
 // hooks
+import useAuth from '../../../hooks/useAuth';
 import useSettings from '../../../hooks/useSettings';
 import useTable, { emptyRows } from '../../../hooks/useTable';
-
+// redux
+import { closeModal, getBookingDetails } from '../../../redux/slices/calendar';
 // components
-import Page from '../../../components/Page';
+import { DialogAnimate } from '../../../components/animate';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
+import Page from '../../../components/Page';
 import Scrollbar from '../../../components/Scrollbar';
 import { TableEmptyRows, TableHeadCustom, TableNoData } from '../../../components/table';
-import { BookingRow, BookingListToolbar } from '../../../sections/@dashboard/bookingList';
+import { BookingListToolbar, BookingRow } from '../../../sections/@dashboard/bookingList';
+import { CalendarForm } from '../../../sections/@dashboard/calendar';
+import { getBookingList } from './useBookingListAPI';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Tên thương thiệu', align: 'left' },
-  { id: 'description', label: 'Mô tả', align: 'left' },
-  { id: 'ownerName', label: 'Chủ sở hữu', align: 'left' },
+  { id: 'id', label: 'Số chứng từ', align: 'left' },
+  { id: 'customerName', label: 'Khách hàng', align: 'left' },
+  { id: 'startBooking', label: 'Ngày đặt', align: 'center' },
+  { id: 'endBooking', label: 'Ngày kết thúc', align: 'center' },
   { id: 'status', label: 'Trạng thái', align: 'left' },
   { id: '' },
 ];
@@ -31,39 +38,75 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 export default function BookingList() {
-  // STATE
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
-  const [bookingStatus, setBookingStatus] = useState(3);
-
-  const [tableData, setTableData] = useState([]);
-  const [metadata, setMetadata] = useState({});
-  const [filterName, setFilterName] = useState('');
-  const [searchRequest, setSearchRequest] = useState('');
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectIdAdmin, setSelectIdAdmin] = useState();
-
-  const { events, isOpenModal, bookingDetails, bookingStatuses, petData } = useSelector((state) => state.calendar);
-
   // CONFIG
   const { themeStretch } = useSettings();
   const denseHeight = 72;
 
+  // * --------------------------------------------------------------------------------------------------------------------------------------------
+  // STATE
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  const [bookingStatus, setBookingStatus] = useState(0);
+
+  const [tableData, setTableData] = useState([]);
+  const [metadata, setMetadata] = useState({});
+
+  // * --------------------------------------------------------------------------------------------------------------------------------------------
+  // REDUX
+  const dispatch = useDispatch();
+  const { isOpenModal, bookingDetails, bookingStatuses, petData } = useSelector((state) => state.calendar);
+
+  // * --------------------------------------------------------------------------------------------------------------------------------------------
+  // HOOKS
   const {
     page,
     order,
     orderBy,
     rowsPerPage,
-    setPage,
     //
     onSort,
     onChangePage,
     onChangeRowsPerPage,
   } = useTable();
+  const { centerId, centerInfo } = useAuth();
 
-  const isNotFound =
-    (!(metadata.totalCount ? metadata.totalCount : 0) && !!filterName) ||
-    (!(metadata.totalCount ? metadata.totalCount : 0) && !!bookingStatus);
+  // * --------------------------------------------------------------------------------------------------------------------------------------------
+  // STARTUP
+  const getBookings = async () => {
+    const { data, metadata } = await getBookingList(centerId, page, rowsPerPage, bookingStatus);
+
+    const bookingList = data.map((booking) => ({
+      id: booking.id,
+      customerName: booking.customer.name,
+      startBooking: booking.startBooking,
+      endBooking: booking.endBooking,
+      status: booking.status,
+    }));
+
+    setTableData(bookingList);
+    setMetadata(metadata);
+  };
+  useEffect(() => {
+    getBookings();
+
+    return () => {
+      setTableData([]);
+      setMetadata({});
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, rowsPerPage, bookingStatus, centerId]);
+
+  // * --------------------------------------------------------------------------------------------------------------------------------------------
+  // REDUX FUNCTION
+  const handleOpenCalendarDialog = (idBooking) => {
+    dispatch(getBookingDetails(idBooking));
+  };
+
+  const handleCloseModal = () => {
+    dispatch(closeModal());
+  };
+
+  const isNotFound = !(metadata.totalCount ? metadata.totalCount : 0);
 
   return (
     <Page title="Đơn booking">
@@ -92,7 +135,12 @@ export default function BookingList() {
 
                 <TableBody>
                   {tableData.map((row) => (
-                    <BookingRow key={row.id} row={row} />
+                    <BookingRow
+                      key={row.id}
+                      row={row}
+                      onClick={handleOpenCalendarDialog}
+                      bookingStatuses={bookingStatuses}
+                    />
                   ))}
 
                   <TableEmptyRows
@@ -105,7 +153,34 @@ export default function BookingList() {
               </Table>
             </TableContainer>
           </Scrollbar>
+
+          <Box sx={{ position: 'relative' }}>
+            <TablePagination
+              labelRowsPerPage="Số dòng trên trang"
+              labelDisplayedRows={({ from, to, count }) => `${from} đến ${to} trên ${count}`}
+              rowsPerPageOptions={[5, 10, 15, 20]}
+              component="div"
+              count={metadata.totalCount ? metadata.totalCount : 0}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={onChangePage}
+              onRowsPerPageChange={onChangeRowsPerPage}
+            />
+          </Box>
         </Card>
+
+        <DialogAnimate open={isOpenModal} onClose={handleCloseModal}>
+          <DialogTitle>Khách hàng: {isEmpty(bookingDetails) ? '' : bookingDetails.customer.name}</DialogTitle>
+          <CalendarForm
+            centerId={centerId}
+            centerInfo={centerInfo}
+            selectedEvent={bookingDetails || {}}
+            onCancel={handleCloseModal}
+            bookingStatuses={bookingStatuses}
+            petData={petData}
+            updateStatusColor={() => {}} // FIXME: fix update status for booking list
+          />
+        </DialogAnimate>
       </Container>
     </Page>
   );

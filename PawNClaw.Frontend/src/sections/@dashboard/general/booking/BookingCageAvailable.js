@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import merge from 'lodash/merge';
 import ReactApexChart from 'react-apexcharts';
@@ -6,17 +7,35 @@ import { useTheme } from '@mui/material/styles';
 import { Card, CardHeader, Stack, Box, Typography } from '@mui/material';
 // utils
 import { fNumber } from '../../../../utils/formatNumber';
-//
+// chart
 import { BaseOptionChart } from '../../../../components/chart';
+// API
+import { getTotalCage } from './useOwnerDashboardAPI';
 
 // ----------------------------------------------------------------------
+BookingCageAvailable.propTypes = {
+  centerId: PropTypes.number.isRequired,
+  from: PropTypes.any,
+  to: PropTypes.any,
+};
 
-const CHART_DATA = [75];
-const SOLD_OUT = 120;
-const AVAILABLE = 66;
+export default function BookingCageAvailable({ centerId, from, to }) {
+  const [totalCage, setTotalCage] = useState(0);
+  const [totalCageAvailable, setTotalCageAvailable] = useState(0);
 
-export default function BookingRoomAvailable() {
+  const AVAILABLE = totalCageAvailable;
+  const SOLD_OUT = totalCage - totalCageAvailable;
+  const CHART_DATA = [totalCage === 0 ? 0 : (SOLD_OUT * 100) / totalCage];
+
+  // HOOKS
   const theme = useTheme();
+
+  useEffect(() => {
+    getTotalCage(centerId, from, to).then((data) => {
+      setTotalCage(data.totalCage);
+      setTotalCageAvailable(data.totalCageAvailable);
+    });
+  }, [centerId, from, to]);
 
   const chartOptions = merge(BaseOptionChart(), {
     legend: { show: false },
@@ -41,8 +60,8 @@ export default function BookingRoomAvailable() {
           name: { offsetY: -16 },
           value: { offsetY: 8 },
           total: {
-            label: 'Rooms',
-            formatter: () => fNumber(186),
+            label: 'Tổng chuồng',
+            formatter: () => fNumber(totalCage),
           },
         },
       },
@@ -51,12 +70,12 @@ export default function BookingRoomAvailable() {
 
   return (
     <Card>
-      <CardHeader title="Room Available" sx={{ mb: 8 }} />
+      <CardHeader title="Chuồng trống" sx={{ mb: 8 }} />
       <ReactApexChart type="radialBar" series={CHART_DATA} options={chartOptions} height={310} />
 
       <Stack spacing={2} sx={{ p: 5 }}>
-        <Legend label="Sold out" number={SOLD_OUT} />
-        <Legend label="Available" number={AVAILABLE} />
+        <Legend label="Đang đặt" number={SOLD_OUT} />
+        <Legend label="Còn trống" number={AVAILABLE} />
       </Stack>
     </Card>
   );
@@ -79,7 +98,7 @@ function Legend({ label, number }) {
             height: 16,
             bgcolor: 'grey.50016',
             borderRadius: 0.75,
-            ...(label === 'Sold out' && {
+            ...(label === 'Đang đặt' && {
               bgcolor: 'primary.main',
             }),
           }}
@@ -88,7 +107,7 @@ function Legend({ label, number }) {
           {label}
         </Typography>
       </Stack>
-      <Typography variant="subtitle1">{number} Rooms</Typography>
+      <Typography variant="subtitle1">{number} chuồng</Typography>
     </Stack>
   );
 }

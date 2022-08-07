@@ -53,28 +53,36 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 export default function UserList() {
+  // CONFIG
+  const denseHeight = 72;
+
+  // STATE
   const [tableData, setTableData] = useState([]);
   const [metadata, setMetadata] = useState({});
   const [filterName, setFilterName] = useState('');
-  const [searchRequest, setSearchRequest] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
   const [selectCodeVoucher, setSelectCodeVoucher] = useState();
   const [voucherType, setVoucherType] = useState([]);
 
+  // HOOKS
   const {
     page,
     order,
     orderBy,
     rowsPerPage,
-    setPage,
     //
     onSort,
     onChangePage,
     onChangeRowsPerPage,
   } = useTable();
 
+  const { themeStretch } = useSettings();
+  const { centerId } = useAuth();
+  const navigate = useNavigate();
+
+  // START UP
   const getVoucherData = async () => {
-    const response = await getVouchers(page, rowsPerPage, centerId);
+    const response = await getVouchers(page, rowsPerPage, filterName, centerId);
     const { data, metadata } = response;
 
     const vouchers = data.map((voucher) => ({
@@ -90,7 +98,7 @@ export default function UserList() {
   useEffect(() => {
     getVoucherData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, rowsPerPage, searchRequest]);
+  }, [page, rowsPerPage, filterName, centerId]);
 
   useEffect(() => {
     getVoucherType().then((res) => {
@@ -98,17 +106,9 @@ export default function UserList() {
     });
   }, []);
 
-  const { themeStretch } = useSettings();
-  const { centerId } = useAuth();
-  const navigate = useNavigate();
-
+  // HANDLE FUNCTION
   const handleFilterName = (filterName) => {
     setFilterName(filterName);
-  };
-
-  const handleSearchRequest = (name) => {
-    setSearchRequest(name);
-    setPage(0);
   };
 
   const handleEditRow = (code) => {
@@ -129,9 +129,8 @@ export default function UserList() {
     setOpenDialog(false);
   };
 
-  const denseHeight = 72;
-
-  const isNotFound = !(metadata.totalCount ? metadata.totalCount : 0) && !!filterName;
+  // handle if table don't have data
+  const isNotFound = !(metadata.totalCount ? metadata.totalCount : 0);
 
   return (
     <>
@@ -154,11 +153,7 @@ export default function UserList() {
 
           <Card>
             {/* Filter dữ liệu */}
-            <VoucherTableToolbar
-              filterName={filterName}
-              onFilterName={handleFilterName}
-              onEnterPress={handleSearchRequest}
-            />
+            <VoucherTableToolbar filterName={filterName} onFilterName={handleFilterName} />
 
             {/* Scrollbar dùng để tạo scroll ngang cho giao diện điện thoại */}
             <Scrollbar>

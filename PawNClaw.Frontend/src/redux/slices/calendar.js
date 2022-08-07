@@ -225,7 +225,7 @@ export function createPetHealthStatus({ petData }, bookingId) {
               height: pet.height,
               length: pet.length,
               description: pet.description,
-              centerName: 'Dogily',
+              centerName: 'Dogily', // FIXME: this variable is static
             },
           });
         });

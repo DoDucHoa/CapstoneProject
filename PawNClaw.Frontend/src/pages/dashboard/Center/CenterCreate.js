@@ -16,7 +16,7 @@ import CenterNewEditForm from '../../../sections/@dashboard/center/CenterNewEdit
 // ----------------------------------------------------------------------
 
 export default function CenterCreate() {
-  const [adminData, setAdminData] = useState({});
+  const [centerData, setCenterData] = useState({});
 
   const { themeStretch } = useSettings();
   const { pathname } = useLocation();
@@ -27,7 +27,7 @@ export default function CenterCreate() {
   useEffect(() => {
     if (isEdit) {
       getCenter(id).then((data) => {
-        setAdminData(data);
+        setCenterData(data);
       });
     }
   }, [id, isEdit]);
@@ -43,7 +43,7 @@ export default function CenterCreate() {
             { name: !isEdit ? 'Thêm mới' : 'Sửa' },
           ]}
         />
-        <CenterNewEditForm isEdit={isEdit} adminData={adminData} />
+        <CenterNewEditForm isEdit={isEdit} centerData={centerData} />
       </Container>
     </Page>
   );

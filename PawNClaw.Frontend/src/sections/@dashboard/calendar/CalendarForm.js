@@ -42,7 +42,7 @@ import InvoicePDF from './invoice/InvoicePDF';
 import useAuth from '../../../hooks/useAuth';
 import useResponsive from '../../../hooks/useResponsive';
 import CageDialogForm from './dialogs/CageDialogForm';
-import { checkSize } from './useCalendarAPI';
+import { checkSize, updateInvoiceUrl } from './useCalendarAPI';
 import BookingDetail from './new-edit-form/BookingDetail';
 import CageManagement from './new-edit-form/CageManagement';
 
@@ -235,10 +235,8 @@ export default function CalendarForm({
 
   const onSubmit = async (data) => {
     try {
-      // get current date
-      const currentDate = new Date();
-
-      if (startBooking >= currentDate.toISOString()) {
+      // check if current date occurs before booking date
+      if (statusId !== 1 || new Date() >= new Date(startBooking)) {
         if (statusId !== 1 || (!isDirty && isSizeValid)) {
           dispatch(createPetHealthStatus(data, id));
           dispatch(updateBookingStatus(data));
@@ -470,7 +468,7 @@ export default function CalendarForm({
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <Typography variant="body2" align="right" mr={3} sx={{ fontWeight: 700 }}>
                     Mã:{' '}
-                    {`${voucherCode} (${voucherCodeNavigation?.value}${
+                    {`${voucherCode} (${fCurrency(voucherCodeNavigation?.value)}${
                       voucherCodeNavigation?.voucherTypeCode === '1' ? '%' : '₫'
                     })`}
                   </Typography>
@@ -577,34 +575,40 @@ export default function CalendarForm({
           )}
 
           <Button variant="outlined" color="inherit" onClick={onCancel}>
-            Hủy
+            {statusId !== 3 && statusId !== 4 ? 'Hủy' : 'Thoát'}
           </Button>
 
-          {values.statusId !== 3 ? (
-            <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-              Xác Nhận
-            </LoadingButton>
-          ) : (
-            <BlobProvider
-              document={
-                <InvoicePDF
-                  invoice={selectedEvent}
-                  petData={petData}
-                  supplyOrders={supplyOrders}
-                  serviceOrders={serviceOrders}
-                  centerInfo={centerInfo}
-                />
-              }
-            >
-              {({ blob }) => {
-                uploadFileToFirebase('invoices', blob, selectedEvent.id);
-                return (
-                  <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                    Xác Nhận
-                  </LoadingButton>
-                );
-              }}
-            </BlobProvider>
+          {statusId !== 3 && statusId !== 4 && (
+            <>
+              {values.statusId !== 3 ? (
+                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                  Xác Nhận
+                </LoadingButton>
+              ) : (
+                <BlobProvider
+                  document={
+                    <InvoicePDF
+                      invoice={selectedEvent}
+                      petData={petData}
+                      supplyOrders={supplyOrders}
+                      serviceOrders={serviceOrders}
+                      centerInfo={centerInfo}
+                    />
+                  }
+                >
+                  {({ blob }) => {
+                    uploadFileToFirebase('invoices', blob, selectedEvent.id).then((downloadUrl) => {
+                      updateInvoiceUrl(selectedEvent.id, downloadUrl);
+                    });
+                    return (
+                      <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                        Xác Nhận
+                      </LoadingButton>
+                    );
+                  }}
+                </BlobProvider>
+              )}
+            </>
           )}
         </DialogActions>
       </FormProvider>
