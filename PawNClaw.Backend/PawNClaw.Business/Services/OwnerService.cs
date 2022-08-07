@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using PawNClaw.Data.Const;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
@@ -11,11 +13,14 @@ namespace PawNClaw.Business.Services
     {
         private readonly IAccountRepository _accountRepository;
         private readonly IOwnerRepository _ownerRepository;
+        private readonly IPhotoRepository _photoRepository;
 
-        public OwnerService(IOwnerRepository ownerRepository, IAccountRepository accountRepository)
+        public OwnerService(IOwnerRepository ownerRepository, IAccountRepository accountRepository,
+            IPhotoRepository photoRepository)
         {
             _ownerRepository = ownerRepository;
             _accountRepository = accountRepository;
+            _photoRepository = photoRepository;
         }
 
         //Get All
@@ -44,7 +49,8 @@ namespace PawNClaw.Business.Services
         //Get Id
         public Owner GetOwnerById(int id)
         {
-            var value = _ownerRepository.GetFirstOrDefault(x => x.Id == id);
+            var value = _ownerRepository.GetAll(includeProperties: "IdNavigation").FirstOrDefault(x => x.Id == id);
+            value.IdNavigation.Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(value.Id, PhotoTypesConst.Account);
             return value;
         }
 
