@@ -294,9 +294,12 @@ namespace PawNClaw.Data.Repository
 
         public PetCenter GetPetCenterByIdAfterSearchName(int id)
         {
+            DateTime today = DateTime.Today;
+
             PetCenter query = _dbSet
                 .Include(x => x.Bookings)
                 .Include(x => x.Location)
+                .Include(x => x.Vouchers)
                 .Include(x => x.CageTypes)
                 .ThenInclude(x => x.Cages)
                 .Include(x => x.Services)
@@ -332,6 +335,23 @@ namespace PawNClaw.Data.Repository
                         Cages = cagetype.Cages.Where(x => x.IsOnline == true && x.Status == true).ToList(),
                         MinPrice = cagetype.Prices.Min(x => x.UnitPrice),
                         MaxPrice = cagetype.Prices.Max(x => x.UnitPrice),
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(cagetype.Id,PhotoTypesConst.CageType)
+                    }),
+                    Vouchers = (ICollection<Voucher>)x.Vouchers.Where(x => x.Status == true
+                                                                    && x.ReleaseAmount > 0
+                                                                    && (x.StartDate <= today && x.ExpireDate >= today))
+                    .Select(x => new Voucher()
+                    {
+                        Value = x.Value,
+                        MinCondition = x.MinCondition,
+                        Code = x.Code,
+                        VoucherTypeName = x.VoucherTypeCodeNavigation.Name,
+                        StartDate = x.StartDate,
+                        ExpireDate = x.ExpireDate,
+                        CenterId = x.CenterId,
+                        Description = x.Description,
+                        ReleaseAmount = x.ReleaseAmount,
+                        VoucherTypeCode = x.VoucherTypeCode
                     }),
                     Supplies = (ICollection<Supply>)x.Supplies.Where(s => s.Quantity > 0 && s.Status == true)
                     .Select(s => new Supply
