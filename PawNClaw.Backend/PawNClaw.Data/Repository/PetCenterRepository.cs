@@ -305,7 +305,6 @@ namespace PawNClaw.Data.Repository
                 .Include(x => x.Services)
                 .Include(x => x.Supplies)
                 .Where(x => x.Id == id)
-                .Where(x => x.CageTypes.Any(x => x.Cages.Count() != 0))
                 .Select(x => new PetCenter
                 {
                     Id = x.Id,
@@ -321,7 +320,7 @@ namespace PawNClaw.Data.Repository
                     BrandId = x.BrandId,
                     Checkin = x.Checkin,
                     Checkout = x.Checkout,
-                    CageTypes = (ICollection<CageType>)x.CageTypes.Select(cagetype => new CageType
+                    CageTypes = (ICollection<CageType>)x.CageTypes.Where(x => x.Cages.Any(x => x.IsOnline == true && x.Status == true)).Select(cagetype => new CageType
                     {
                         Id = cagetype.Id,
                         TypeName = cagetype.TypeName,
