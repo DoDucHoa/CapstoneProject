@@ -22,22 +22,17 @@ class CheckoutToday extends StatefulWidget {
 }
 
 class _CheckoutTodayState extends State<CheckoutToday> {
-  PetCenter? center;
   @override
   void initState() {
     // TODO: implement initState
-
-    var user = (BlocProvider.of<AuthBloc>(context).state as Authenticated).user;
-    CenterRepository().getCenterByStaff(user.id!).then((value) {
-      setState(() {
-        center = value;
-      });
-    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    var center = (BlocProvider.of<AuthBloc>(context).state as Authenticated)
+        .user
+        .petCenter;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     List<BookingDetail> bookings = widget.bookings
@@ -73,7 +68,7 @@ class _CheckoutTodayState extends State<CheckoutToday> {
                                   padding: EdgeInsets.only(
                                       right: width * smallPadRate),
                                   child: Text(
-                                    "${center!.openTime}",
+                                    "${center.openTime}",
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       color: lightFontColor,

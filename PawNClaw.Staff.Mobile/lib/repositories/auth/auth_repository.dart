@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:pncstaff_mobile_application/models/account.dart';
+import 'package:pncstaff_mobile_application/repositories/center/center_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'base_auth_repository.dart';
@@ -29,9 +31,12 @@ class AuthRepository implements BaseAuthRepository {
       const String _url =
           "https://pawnclawdevelopmentapi.azurewebsites.net/api/auth/sign-in";
       var response = await _dio.post(_url, data: requestBody);
+      print(response);
       final account = Account.fromJson(response.data);
       await pref.setString("jwtToken", account.jwtToken ?? "");
       print(pref.get("jwtToken"));
+      var center = await CenterRepository().getCenterByStaff(account.id!);
+      account.petCenter = center;
       return account;
     } catch (e) {
       print(e);
@@ -45,15 +50,7 @@ class AuthRepository implements BaseAuthRepository {
   }
 
   Future<String?> _getId() async {
-    var deviceInfo = DeviceInfoPlugin();
-    if (Platform.isIOS) {
-      // import 'dart:io'
-      var iosDeviceInfo = await deviceInfo.iosInfo;
-      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
-    } else if (Platform.isAndroid) {
-      var androidDeviceInfo = await deviceInfo.androidInfo;
-      return androidDeviceInfo.androidId; // unique ID on Android
-    }
+    return await FirebaseMessaging.instance.getToken();
   }
 
   @override

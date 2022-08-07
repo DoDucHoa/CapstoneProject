@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:pawnclaw_mobile_application/models/center.dart';
 import 'package:pawnclaw_mobile_application/models/rating.dart';
+import 'package:pawnclaw_mobile_application/models/review.dart';
 
 import 'account.dart';
 
@@ -21,6 +22,7 @@ class Booking {
         this.startBooking,
         this.endBooking,
         this.rating,
+        this.customerId,
         this.customerNote,
         this.staffNote,
         this.center,
@@ -37,12 +39,17 @@ class Booking {
     DateTime? createTime;
     DateTime? startBooking;
     DateTime? endBooking;
-    double? rating;
+    int? rating;
+    int? customerId;
     String? customerNote;
     String? staffNote;
     Center? center;
     Status? status;
     int? statusId;
+    Review? review;
+
+    // int? get rate => rating;
+    // set customerReview(Review iReview) => review = iReview;
 
     factory Booking.fromRawJson(String str) => Booking.fromJson(json.decode(str));
 
@@ -58,7 +65,8 @@ class Booking {
         createTime: DateTime.parse(json["createTime"]),
         startBooking: DateTime.parse(json["startBooking"]),
         endBooking: DateTime.parse(json["endBooking"]),
-        rating: json["rating"] != null ? json["rating"].toDouble():0,
+        rating: json["rating"] != null ? json["rating"]:null,
+        customerId: json["customerId"],
         customerNote: json["customerNote"],
         staffNote: json["staffNote"],
         center: Center.fromJson(json["center"]),
@@ -77,6 +85,7 @@ class Booking {
         "startBooking": startBooking!.toIso8601String(),
         "endBooking": endBooking!.toIso8601String(),
         "rating": rating,
+        "customerId": customerId,
         "customerNote": customerNote,
         "staffNote": staffNote,
         "center": center!.toJson(),

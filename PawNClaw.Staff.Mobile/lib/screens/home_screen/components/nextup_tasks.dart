@@ -142,6 +142,8 @@ class _NextUpTasksState extends State<NextUpTasks> {
                                                             .pet!,
                                                         supply:
                                                             supplies[supIndex],
+                                                        booking:
+                                                            bookings[index],
                                                       )))),
                                       child: ActivityCard(
                                           activityName:
@@ -184,6 +186,8 @@ class _NextUpTasksState extends State<NextUpTasks> {
                                                             .pet!,
                                                         service:
                                                             services[serIndex],
+                                                        booking:
+                                                            bookings[index],
                                                       )))),
                                       child: ActivityCard(
                                           activityName:

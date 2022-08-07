@@ -16,6 +16,7 @@ namespace PawNClaw.Data.Database
             Bookings = new HashSet<Booking>();
             CageTypes = new HashSet<CageType>();
             Cages = new HashSet<Cage>();
+            CustomerVoucherLogs = new HashSet<CustomerVoucherLog>();
             GeneralLedgers = new HashSet<GeneralLedger>();
             Services = new HashSet<Service>();
             Supplies = new HashSet<Supply>();
@@ -36,8 +37,8 @@ namespace PawNClaw.Data.Database
         [Column("phone")]
         [StringLength(32)]
         public string Phone { get; set; }
-        [Column("rating")]
-        public int? Rating { get; set; }
+        [Column("rating", TypeName = "numeric(19, 5)")]
+        public decimal? Rating { get; set; }
         [Column("create_date", TypeName = "date")]
         public DateTime? CreateDate { get; set; }
         [Column("modify_date", TypeName = "date")]
@@ -72,6 +73,18 @@ namespace PawNClaw.Data.Database
         [NotMapped]
         public DateTime EndBooking { get; set; }
 
+        [NotMapped]
+        public DateTime OpenTimeDate { get; set; }
+
+        [NotMapped]
+        public DateTime CloseTimeDate { get; set; }
+
+        [NotMapped]
+        public DateTime CheckinDate { get; set; }
+
+        [NotMapped]
+        public DateTime CheckoutDate { get; set; }
+
         [ForeignKey(nameof(BrandId))]
         [InverseProperty("PetCenters")]
         public virtual Brand Brand { get; set; }
@@ -89,6 +102,8 @@ namespace PawNClaw.Data.Database
         public virtual ICollection<CageType> CageTypes { get; set; }
         [InverseProperty(nameof(Cage.Center))]
         public virtual ICollection<Cage> Cages { get; set; }
+        [InverseProperty(nameof(CustomerVoucherLog.Center))]
+        public virtual ICollection<CustomerVoucherLog> CustomerVoucherLogs { get; set; }
         [InverseProperty(nameof(GeneralLedger.Center))]
         public virtual ICollection<GeneralLedger> GeneralLedgers { get; set; }
         [InverseProperty(nameof(Service.Center))]
@@ -103,6 +118,9 @@ namespace PawNClaw.Data.Database
         [NotMapped]
         public ICollection<Photo> Photos { get; set; }
 
+        [NotMapped]
+        public decimal RatingPoint { get => _getRatingPoint(this.Bookings); }
+
         private int _getRatingCount(ICollection<Booking> Bookings)
         {
             int count = 0;
@@ -114,6 +132,21 @@ namespace PawNClaw.Data.Database
                 }
             }
             return count;
+        }
+        private decimal _getRatingPoint(ICollection<Booking> Bookings)
+        {
+            int count = 0;
+            decimal sum = 0;
+            foreach (var booking in Bookings)
+            {
+                if (booking.Rating.HasValue)
+                {
+                    count++;
+                    sum += (int)booking.Rating;
+                }
+            }
+            if (count == 0) return 0;
+            return sum / count;
         }
     }
 }

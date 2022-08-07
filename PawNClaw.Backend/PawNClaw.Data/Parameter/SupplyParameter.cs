@@ -11,6 +11,19 @@ namespace PawNClaw.Data.Parameter
 
     }
 
+    public class SupplyRequestParameter
+    {
+        public int CenterId { get; set; }
+        public string? Name { get; set; }
+        public bool? Status { get; set; }
+        public string? TypeCode { get; set; }
+
+        public string dir { get; set; } = "asc";
+        public string sort { get; set; } = null;
+        public string fields { get; set; } = null;
+        public string includeProperties { get; set; } = null;
+    }
+
     public class UpdateSupplyParameter
     {
         public int Id { get; set; }
@@ -20,5 +33,20 @@ namespace PawNClaw.Data.Parameter
         public DateTime? ModifyDate { get; set; }
         public int? ModifyUser { get; set; }
         public bool? Status { get; set; }
+    }
+
+    public class CreateSupplyParameter
+    {
+        public string Name { get; set; }
+        public decimal SellPrice { get; set; }
+        public decimal? DiscountPrice { get; set; }
+        public int Quantity { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public DateTime? ModifyDate { get; set; }
+        public int? CreateUser { get; set; }
+        public int? ModifyUser { get; set; }
+        public bool? Status { get; set; }
+        public string SupplyTypeCode { get; set; }
+        public int CenterId { get; set; }
     }
 }

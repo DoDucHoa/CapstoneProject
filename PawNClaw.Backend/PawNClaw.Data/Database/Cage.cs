@@ -58,5 +58,8 @@ namespace PawNClaw.Data.Database
         public virtual Account ModifyUserNavigation { get; set; }
         [InverseProperty(nameof(BookingDetail.C))]
         public virtual ICollection<BookingDetail> BookingDetails { get; set; }
+
+        [NotMapped]
+        public bool CanShift { get; set; }
     }
 }

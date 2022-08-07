@@ -57,7 +57,6 @@ export const PATH_DASHBOARD = {
     profile: path(ROOTS_DASHBOARD, '/user/profile'),
     account: path(ROOTS_DASHBOARD, '/user/account'),
     edit: (name) => path(ROOTS_DASHBOARD, `/user/${name}/edit`),
-    demoEdit: path(ROOTS_DASHBOARD, `/user/reece-chung/edit`),
   },
   booking: {
     root: path(ROOTS_DASHBOARD, '/booking'),
@@ -89,11 +88,17 @@ export const PATH_DASHBOARD = {
     new: path(ROOTS_DASHBOARD, '/staff/new'),
     edit: (id) => path(ROOTS_DASHBOARD, `/staff/${id}/edit`),
   },
+  cageType: {
+    root: path(ROOTS_DASHBOARD, '/cage-type'),
+    list: path(ROOTS_DASHBOARD, '/cage-type/list'),
+    new: path(ROOTS_DASHBOARD, '/cage-type/new'),
+    edit: (code) => path(ROOTS_DASHBOARD, `/cage-type/${code}/edit`),
+  },
   cage: {
     root: path(ROOTS_DASHBOARD, '/cage'),
     list: path(ROOTS_DASHBOARD, '/cage/list'),
     new: path(ROOTS_DASHBOARD, '/cage/new'),
-    edit: (id) => path(ROOTS_DASHBOARD, `/cage/${id}/edit`),
+    edit: (code) => path(ROOTS_DASHBOARD, `/cage/${code}/edit`),
   },
   price: {
     root: path(ROOTS_DASHBOARD, '/price'),
@@ -112,5 +117,21 @@ export const PATH_DASHBOARD = {
     list: path(ROOTS_DASHBOARD, '/service/list'),
     new: path(ROOTS_DASHBOARD, '/service/new'),
     edit: (id) => path(ROOTS_DASHBOARD, `/service/${id}/edit`),
+  },
+  voucher: {
+    root: path(ROOTS_DASHBOARD, '/voucher'),
+    list: path(ROOTS_DASHBOARD, '/voucher/list'),
+    new: path(ROOTS_DASHBOARD, '/voucher/new'),
+    edit: (code) => path(ROOTS_DASHBOARD, `/voucher/${code}/edit`),
+  },
+  setting: {
+    root: path(ROOTS_DASHBOARD, '/setting'),
+    list: path(ROOTS_DASHBOARD, '/setting/list'),
+  },
+  sponsor: {
+    root: path(ROOTS_DASHBOARD, '/sponsor'),
+    list: path(ROOTS_DASHBOARD, '/sponsor/list'),
+    new: path(ROOTS_DASHBOARD, '/sponsor/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/sponsor/${id}/edit`),
   },
 };

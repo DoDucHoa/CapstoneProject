@@ -1,9 +1,13 @@
-import { format, getTime, formatDistanceToNow } from 'date-fns';
+import { format, getTime, formatDistanceToNow, add, isValid } from 'date-fns';
 
 // ----------------------------------------------------------------------
 
 export function fDate(date) {
   return format(new Date(date), 'dd MMMM yyyy');
+}
+
+export function fVNDate(date) {
+  return format(new Date(date), 'dd/MM/yyyy');
 }
 
 export function fDateTime(date) {
@@ -22,4 +26,13 @@ export function fToNow(date) {
   return formatDistanceToNow(new Date(date), {
     addSuffix: true,
   });
+}
+
+export function addTime(date) {
+  return add(new Date(date), { hours: 7 });
+}
+
+export function formatTime(date) {
+  if (!isValid(new Date(date))) return '';
+  return format(new Date(date), 'HH:mm');
 }

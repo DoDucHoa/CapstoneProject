@@ -41,7 +41,7 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
             ),
             const Spacer(flex: 1),
             Text(
-              "để sử dụng dịch vụ của bạn",
+              "để sử dụng dịch vụ",
               style: TextStyle(
                 color: lightFontColor,
                 fontSize: width * largeFontRate,
@@ -92,26 +92,30 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
               child: Opacity(
                 opacity: isValid ? 1 : 0.3,
                 child: ElevatedButton(
-                  onPressed: isValid
-                      ? () {
-                          FirebaseAuth.instance.signOut();
-                          BlocProvider.of<AuthBloc>(context)
-                              .add(VerifyPhonenumber(phoneController.text));
-                        }
-                      : () {},
-                  child: Text(
-                    "Xác thực số điện thoại của bạn",
-                    style: TextStyle(
-                        color: Colors.white, fontSize: width * regularFontRate),
-                  ),
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                    onPressed: isValid
+                        ? () {
+                            FirebaseAuth.instance.signOut();
+                            BlocProvider.of<AuthBloc>(context)
+                                .add(VerifyPhonenumber(phoneController.text));
+                          }
+                        : () {},
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    )),
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: width * smallPadRate),
+                      child: const Center(
+                        child: Text(
+                          'Xác thực số điện thoại',
+                          style:  TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
+                    )),
               ),
             ),
           ],

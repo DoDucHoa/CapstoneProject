@@ -9,5 +9,6 @@ namespace PawNClaw.Data.Interface
 {
     public interface ILocationRepository : IRepository<Location>
     {
+        IEnumerable<Location> getAllWithCenter();
     }
 }

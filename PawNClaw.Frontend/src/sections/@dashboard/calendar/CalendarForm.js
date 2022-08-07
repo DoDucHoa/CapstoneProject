@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { useSnackbar } from 'notistack';
 import { isEmpty } from 'lodash';
+import { PDFDownloadLink, PDFViewer, BlobProvider } from '@react-pdf/renderer';
 // form
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import {
@@ -20,6 +21,9 @@ import {
   TableCell,
   TableBody,
   MenuItem,
+  Dialog,
+  Tooltip,
+  IconButton,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // redux
@@ -28,21 +32,25 @@ import { updateBookingStatus, createPetHealthStatus } from '../../../redux/slice
 // components
 import Scrollbar from '../../../components/Scrollbar';
 import { FormProvider, RHFSelect, RHFTextField } from '../../../components/hook-form';
-import { fDateTimeSuffix, fDateTime } from '../../../utils/formatTime';
+import { fDateTime } from '../../../utils/formatTime';
 import { fCurrency, fNumber } from '../../../utils/formatNumber';
-import { SupplyDialogForm } from './SupplyDialogForm';
-import { ServiceDialogForm } from './ServiceDialogForm';
+import { SupplyDialogForm } from './dialogs/SupplyDialogForm';
+import { ServiceDialogForm } from './dialogs/ServiceDialogForm';
+import Iconify from '../../../components/Iconify';
+import InvoicePDF from './invoice/InvoicePDF';
 // hooks
+import useAuth from '../../../hooks/useAuth';
 import useResponsive from '../../../hooks/useResponsive';
-import CageDialogForm from './CageDialogForm';
-import { checkSize } from './useCalendarAPI';
-
-// ----------------------------------------------------------------------
+import CageDialogForm from './dialogs/CageDialogForm';
+import { checkSize, updateInvoiceUrl } from './useCalendarAPI';
+import BookingDetail from './new-edit-form/BookingDetail';
+import CageManagement from './new-edit-form/CageManagement';
 
 // ----------------------------------------------------------------------
 
 CalendarForm.propTypes = {
   centerId: PropTypes.number,
+  centerInfo: PropTypes.object,
   selectedEvent: PropTypes.object,
   onCancel: PropTypes.func,
   bookingStatuses: PropTypes.array,
@@ -52,6 +60,7 @@ CalendarForm.propTypes = {
 
 export default function CalendarForm({
   centerId,
+  centerInfo,
   selectedEvent,
   onCancel,
   bookingStatuses,
@@ -63,14 +72,34 @@ export default function CalendarForm({
   const [openSupplyDialogForm, setOpenSupplyDialogForm] = useState(false);
   const [openServiceDialogForm, setOpenServiceDialogForm] = useState(false);
   const [openCageDialogForm, setOpenCageDialogForm] = useState(false);
-  const [isSizeValid, setIsSizeValid] = useState(false);
+  const [openPDFDialog, setOpenPDFDialog] = useState(false);
 
+  const [isSizeValid, setIsSizeValid] = useState(false);
   const [cageSearchParam, setCageSearchParam] = useState({});
+
+  const { uploadFileToFirebase } = useAuth();
 
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
-  const { id, statusId, startBooking, endBooking, total, customerNote, serviceOrders, supplyOrders, bookingDetails } =
-    selectedEvent;
+  const {
+    id,
+    statusId,
+    startBooking,
+    endBooking,
+    serviceOrders,
+    supplyOrders,
+    bookingDetails,
+
+    // money
+    total,
+    subTotal,
+    discount,
+    totalSupply,
+    totalService,
+    totalCage,
+    voucherCode,
+    voucherCodeNavigation,
+  } = selectedEvent;
 
   const petOldInfo = bookingDetails
     .map((detail) =>
@@ -89,7 +118,7 @@ export default function CalendarForm({
     }
 
     if (statusId === 2) {
-      return status.id === 2 || status.id === 3;
+      return status.id === 2 || status.id === 3 || status.id === 4;
     }
 
     if (statusId === 3) {
@@ -127,19 +156,19 @@ export default function CalendarForm({
             weight: Yup.number()
               .required('Bắt buộc nhập')
               .moreThan(0, 'Không được nhỏ hơn hoặc bằng 0')
-              .max(100, 'Không được vượt quá 100kg')
+              // .max(100, 'Không được vượt quá 100kg')
               .typeError('Bắt buộc nhập'),
             height: Yup.number()
               .required('Bắt buộc nhập')
               .moreThan(0, 'Không được nhỏ hơn hoặc bằng 0')
-              .max(250, 'Không được vượt quá 250cm')
+              // .max(250, 'Không được vượt quá 250cm')
               .typeError('Bắt buộc nhập'),
             length: Yup.number()
               .required('Bắt buộc nhập')
               .moreThan(0, 'Không được nhỏ hơn hoặc bằng 0')
-              .max(250, 'Không được vượt quá 250cm')
+              // .max(250, 'Không được vượt quá 250cm')
               .typeError('Bắt buộc nhập'),
-            description: Yup.string().required('Bắt buộc nhập').typeError('Bắt buộc nhập'),
+            description: Yup.string(),
           })
         ),
       })
@@ -152,18 +181,11 @@ export default function CalendarForm({
   });
 
   const {
-    control,
     reset,
     watch,
     handleSubmit,
-    trigger,
     formState: { isSubmitting, isDirty },
   } = methods;
-
-  const { fields } = useFieldArray({
-    control,
-    name: 'petData',
-  });
 
   const values = watch();
 
@@ -186,6 +208,14 @@ export default function CalendarForm({
     setOpenServiceDialogForm(false);
   };
 
+  const handleClosePDFDialog = () => {
+    setOpenPDFDialog(false);
+  };
+
+  const handleOpenPDFDialog = () => {
+    setOpenPDFDialog(true);
+  };
+
   const handleOpenCageDialogForm = (cageIndex, bookingDetailLine) => {
     const searchParam = {
       listPets: values.petData[cageIndex].petBookingDetails,
@@ -205,14 +235,20 @@ export default function CalendarForm({
 
   const onSubmit = async (data) => {
     try {
-      if (!isDirty && isSizeValid) {
-        dispatch(createPetHealthStatus(data, id));
-        dispatch(updateBookingStatus(data));
-        updateStatusColor(data.id, data.statusId);
-        enqueueSnackbar('Cập nhật thành công!');
-        onCancel();
+      // check if current date occurs before booking date
+      if (statusId !== 1 || new Date() >= new Date(startBooking)) {
+        if (statusId !== 1 || (!isDirty && isSizeValid)) {
+          dispatch(createPetHealthStatus(data, id));
+          dispatch(updateBookingStatus(data));
+          updateStatusColor(data.id, data.statusId);
+
+          enqueueSnackbar('Cập nhật thành công!');
+          onCancel();
+        } else {
+          enqueueSnackbar('Vui lòng kiểm tra lại kích thước của thú cưng!', { variant: 'error' });
+        }
       } else {
-        enqueueSnackbar('Vui lòng kiểm tra lại kích thước của thú cưng!', { variant: 'error' });
+        enqueueSnackbar('Chưa đến thời gian xác nhận đơn hàng!', { variant: 'error' });
       }
     } catch (error) {
       console.error(error);
@@ -241,177 +277,15 @@ export default function CalendarForm({
   return (
     <>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={3} sx={{ p: 3 }}>
-          <Grid item xs={6} sm={3}>
-            <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
-              Thời điểm bắt đầu
-            </Typography>
-            <Typography variant="body2">{fDateTimeSuffix(startBooking)}</Typography>
-          </Grid>
+        <BookingDetail details={selectedEvent} petOldInfo={petOldInfo} />
 
-          <Grid item xs={6} sm={3}>
-            <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
-              Thời điểm kết thúc
-            </Typography>
-            <Typography variant="body2">{fDateTimeSuffix(endBooking)}</Typography>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
-              Ghi chú khách hàng
-            </Typography>
-            <Typography variant="body2">{customerNote || 'Không có ghi chú'}</Typography>
-          </Grid>
-
-          {statusId === 1 && (
-            <Grid item xs={12} sm={6}>
-              <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
-                Thông tin cũ của thú cưng
-              </Typography>
-              <Grid container>
-                <Grid item xs={3}>
-                  <Typography variant="caption">Tên</Typography>
-                </Grid>
-                <Grid item xs={3}>
-                  <Typography variant="caption">Cao (cm)</Typography>
-                </Grid>
-                <Grid item xs={3}>
-                  <Typography variant="caption">Dài (cm)</Typography>
-                </Grid>
-                <Grid item xs={3}>
-                  <Typography variant="caption">Nặng (kg)</Typography>
-                </Grid>
-
-                {petOldInfo.map((pet, index) => (
-                  <Grid container key={index}>
-                    <Grid item xs={3}>
-                      <Typography variant="body2">
-                        <b>{pet.name}</b>
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Typography variant="body2">{pet.height}</Typography>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Typography variant="body2">{pet.length}</Typography>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Typography variant="body2">{pet.weight}</Typography>
-                    </Grid>
-                  </Grid>
-                ))}
-              </Grid>
-            </Grid>
-          )}
-        </Grid>
-
-        <Typography paragraph variant="overline" sx={{ color: 'green', pl: 3 }}>
-          Thông tin thú cưng
-        </Typography>
-
-        {/* Cage management */}
-        {fields.map((cage, index) => {
-          const cageIndex = index;
-          const pet = cage.petBookingDetails;
-          return (
-            <Grid container spacing={3} sx={{ px: 3, pb: 3 }} key={cageIndex}>
-              <Grid item xs={4} sm={2}>
-                <Typography variant="caption">Mã chuồng</Typography>
-                <Typography variant="h6">{cage.cageCode}</Typography>
-              </Grid>
-              <Grid item xs={4} sm={2}>
-                <Typography variant="caption">Thời lượng</Typography>
-                <Typography variant="h6">{fNumber(cage.duration)} tiếng</Typography>
-              </Grid>
-              <Grid item xs={4} sm={2}>
-                <Typography variant="caption">Giá tiền</Typography>
-                <Typography variant="h6">{fCurrency(cage.price)} ₫</Typography>
-              </Grid>
-              {statusId === 1 && isDesktop && (
-                <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                  <Box>
-                    <Button
-                      sx={{ mr: 3 }}
-                      variant="contained"
-                      color="primary"
-                      onClick={() => {
-                        trigger('petData').then((isValid) => {
-                          if (isValid) {
-                            handleCheckSize(cageIndex, centerId);
-                          }
-                        });
-                      }}
-                    >
-                      Kiểm tra kích thước
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="warning"
-                      onClick={() => handleOpenCageDialogForm(cageIndex, cage.line)}
-                    >
-                      Đổi chuồng
-                    </Button>
-                  </Box>
-                </Grid>
-              )}
-              {statusId === 1 && !isDesktop && (
-                <Grid item xs={12}>
-                  <Button
-                    variant="contained"
-                    color="warning"
-                    onClick={() => handleOpenCageDialogForm(cageIndex, cage.line)}
-                  >
-                    Đổi chuồng
-                  </Button>
-                </Grid>
-              )}
-
-              {pet.map((pet, petIndex) => (
-                <Grid item xs={12} key={petIndex}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} sm={2}>
-                      <Typography variant="caption" color="textSecondary">
-                        Tên pet
-                      </Typography>
-                      <Typography variant="body1">{pet.name}</Typography>
-                    </Grid>
-                    <Grid item xs={6} sm={2}>
-                      <RHFTextField
-                        disabled={statusId !== 1}
-                        name={`petData[${cageIndex}].petBookingDetails[${petIndex}].height`}
-                        type="number"
-                        label="Chiều cao (cm)"
-                      />
-                    </Grid>
-                    <Grid item xs={6} sm={2}>
-                      <RHFTextField
-                        disabled={statusId !== 1}
-                        name={`petData[${cageIndex}].petBookingDetails[${petIndex}].length`}
-                        type="number"
-                        label="Chiều dài (cm)"
-                      />
-                    </Grid>
-                    <Grid item xs={6} sm={2}>
-                      <RHFTextField
-                        disabled={statusId !== 1}
-                        name={`petData[${cageIndex}].petBookingDetails[${petIndex}].weight`}
-                        type="number"
-                        label="Cân nặng (kg)"
-                      />
-                    </Grid>
-                    <Grid item xs={6} sm={4}>
-                      <RHFTextField
-                        disabled={statusId !== 1}
-                        name={`petData[${cageIndex}].petBookingDetails[${petIndex}].description`}
-                        label="Tình trạng sức khỏe"
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-              ))}
-            </Grid>
-          );
-        })}
+        <CageManagement
+          centerId={centerId}
+          statusId={statusId}
+          isDesktop={isDesktop}
+          handleCheckSize={handleCheckSize}
+          handleOpenCageDialogForm={handleOpenCageDialogForm}
+        />
 
         {/* Supplies management */}
         <Box sx={{ px: 3, pt: 5 }}>
@@ -541,17 +415,88 @@ export default function CalendarForm({
         </Box>
 
         {/* Total */}
-        <Grid container spacing={3} sx={{ p: 3, pt: 6 }}>
+        <Grid container spacing={1} sx={{ p: 3, pt: 6 }}>
           <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Box>
-              <Typography variant="h6" align="right">
-                Tổng tiền
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="overline" align="right" mr={3}>
+                Tổng giá chuồng
               </Typography>
-              <Typography variant="h4">{fCurrency(total)} ₫</Typography>
+              <Typography variant="body1" align="right" width={130}>
+                {fCurrency(totalCage)} ₫
+              </Typography>
             </Box>
           </Grid>
-          <Grid item xs={12}>
-            <RHFTextField disabled={statusId !== 1} name="staffNote" label="Ghi chú của nhân viên" multiline rows={3} />
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="overline" align="right" mr={3}>
+                Tổng đồ dùng
+              </Typography>
+              <Typography variant="body1" align="right" width={130}>
+                {fCurrency(totalSupply)} ₫
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="overline" align="right" mr={3}>
+                Tổng dịch vụ
+              </Typography>
+              <Typography variant="body1" align="right" width={130}>
+                {fCurrency(totalService)} ₫
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="overline" align="right" mr={3}>
+                Tổng tiền
+              </Typography>
+              <Typography variant="body1" align="right" width={130}>
+                {fCurrency(subTotal)} ₫
+              </Typography>
+            </Box>
+          </Grid>
+          {voucherCodeNavigation && (
+            <>
+              <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Typography variant="overline" align="right" mr={3} color="primary">
+                  Voucher giảm giá
+                </Typography>
+                <Typography variant="overline" align="right" width={130} />
+              </Grid>
+              <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Typography variant="body2" align="right" mr={3} sx={{ fontWeight: 700 }}>
+                    Mã:{' '}
+                    {`${voucherCode} (${fCurrency(voucherCodeNavigation?.value)}${
+                      voucherCodeNavigation?.voucherTypeCode === '1' ? '%' : '₫'
+                    })`}
+                  </Typography>
+                  <Typography variant="body1" align="right" width={130}>
+                    -{fCurrency(discount)} ₫
+                  </Typography>
+                </Box>
+              </Grid>
+            </>
+          )}
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="h6" align="right" mr={3}>
+                Tổng thanh toán
+              </Typography>
+              <Typography variant="h4" align="right">
+                {fCurrency(total)} ₫
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sx={{ mt: 3 }}>
+            <RHFTextField
+              disabled={statusId === 3 || statusId === 4}
+              name="staffNote"
+              label="Ghi chú của nhân viên"
+              multiline
+              rows={3}
+            />
           </Grid>
         </Grid>
 
@@ -590,16 +535,92 @@ export default function CalendarForm({
         {/* Buttons */}
         <DialogActions>
           <Box sx={{ flexGrow: 1 }} />
+          {statusId === 3 && (
+            <>
+              <PDFDownloadLink
+                document={
+                  <InvoicePDF
+                    invoice={selectedEvent}
+                    petData={petData}
+                    supplyOrders={supplyOrders}
+                    serviceOrders={serviceOrders}
+                    centerInfo={centerInfo}
+                  />
+                }
+                fileName={`${selectedEvent.id}-invoice.pdf`}
+                style={{ textDecoration: 'none' }}
+              >
+                {({ loading }) => (
+                  <LoadingButton
+                    color="info"
+                    variant="text"
+                    loading={loading}
+                    startIcon={<Iconify icon="ant-design:download-outlined" />}
+                  >
+                    Tải hóa đơn
+                  </LoadingButton>
+                )}
+              </PDFDownloadLink>
+
+              <Button
+                sx={{ ml: 2 }}
+                onClick={handleOpenPDFDialog}
+                color="inherit"
+                variant="text"
+                startIcon={<Iconify icon={'eva:eye-fill'} />}
+              >
+                Xem hóa đơn
+              </Button>
+            </>
+          )}
 
           <Button variant="outlined" color="inherit" onClick={onCancel}>
-            Hủy
+            {statusId !== 3 && statusId !== 4 ? 'Hủy' : 'Thoát'}
           </Button>
 
-          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            Xác Nhận
-          </LoadingButton>
+          {statusId !== 3 && statusId !== 4 && (
+            <>
+              {values.statusId !== 3 ? (
+                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                  Xác Nhận
+                </LoadingButton>
+              ) : (
+                <BlobProvider
+                  document={
+                    <InvoicePDF
+                      invoice={selectedEvent}
+                      petData={petData}
+                      supplyOrders={supplyOrders}
+                      serviceOrders={serviceOrders}
+                      centerInfo={centerInfo}
+                    />
+                  }
+                >
+                  {({ blob }) => {
+                    uploadFileToFirebase('invoices', blob, selectedEvent.id).then((downloadUrl) => {
+                      updateInvoiceUrl(selectedEvent.id, downloadUrl);
+                    });
+                    return (
+                      <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                        Xác Nhận
+                      </LoadingButton>
+                    );
+                  }}
+                </BlobProvider>
+              )}
+            </>
+          )}
         </DialogActions>
       </FormProvider>
+
+      {!isEmpty(cageSearchParam) && (
+        <CageDialogForm
+          open={openCageDialogForm}
+          onClose={handleCloseCageDialogForm}
+          cageSearchParam={cageSearchParam}
+          bookingId={id}
+        />
+      )}
 
       <SupplyDialogForm
         open={openSupplyDialogForm}
@@ -615,14 +636,35 @@ export default function CalendarForm({
         bookingId={id}
       />
 
-      {!isEmpty(cageSearchParam) && (
-        <CageDialogForm
-          open={openCageDialogForm}
-          onClose={handleCloseCageDialogForm}
-          cageSearchParam={cageSearchParam}
-          bookingId={id}
-        />
-      )}
+      <Dialog fullScreen open={openPDFDialog}>
+        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <DialogActions
+            sx={{
+              zIndex: 9,
+              padding: '12px !important',
+              boxShadow: (theme) => theme.customShadows.z8,
+            }}
+          >
+            <Tooltip title="Close">
+              <IconButton color="inherit" onClick={handleClosePDFDialog}>
+                <Iconify icon={'eva:close-fill'} />
+              </IconButton>
+            </Tooltip>
+          </DialogActions>
+
+          <Box sx={{ flexGrow: 1, height: '100%', overflow: 'hidden' }}>
+            <PDFViewer width="100%" height="100%" style={{ border: 'none' }}>
+              <InvoicePDF
+                invoice={selectedEvent}
+                petData={petData}
+                supplyOrders={supplyOrders}
+                serviceOrders={serviceOrders}
+                centerInfo={centerInfo}
+              />
+            </PDFViewer>
+          </Box>
+        </Box>
+      </Dialog>
     </>
   );
 }

@@ -17,8 +17,7 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 import useAuth from '../../../hooks/useAuth';
 import useResponsive from '../../../hooks/useResponsive';
 // components
-import Label from '../../../components/Label';
-import { FormProvider, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
+import { FormProvider, RHFTextField, RHFUploadPhoto } from '../../../components/hook-form';
 import { createBrand, updateBrand } from '../../../pages/dashboard/Brand/useBrandAPI';
 import Iconify from '../../../components/Iconify';
 import OwnerDialog from './OwnerDialog';
@@ -51,8 +50,8 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
     () => ({
       name: brandData?.name || '',
       description: brandData?.description || '',
-      createUser: brandData?.createUser || 0,
-      modifyUser: brandData?.modifyUser || 0,
+      createUser: brandData?.createUser || accountInfo.id,
+      modifyUser: accountInfo.id,
       ownerId: brandData?.ownerId || 0,
       avatarUrl: brandData?.avatarUrl || '',
       ownerInfo: brandData?.owner || null,
@@ -135,18 +134,9 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
-          <Card sx={{ py: 10, px: 3 }}>
-            {isEdit && (
-              <Label
-                color={brandData.status !== 'true' ? 'error' : 'success'}
-                sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
-              >
-                {brandData.status !== 'true' ? 'Đã khóa' : 'Hoạt động'}
-              </Label>
-            )}
-
-            <Box sx={{ mb: 5 }}>
-              <RHFUploadAvatar
+          <Card sx={{ py: 6, px: 3 }}>
+            <Box sx={{ mb: 3 }}>
+              <RHFUploadPhoto
                 name="avatarUrl"
                 accept="image/*"
                 maxSize={3145728}

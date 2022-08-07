@@ -11,8 +11,9 @@ class UserInitial extends UserState {}
 
 class UserUpdated extends UserState {
   final Account user;
+  final Customer? customer;
 
-  const UserUpdated(this.user);
+  const UserUpdated(this.user, this.customer);
 
   @override
   List<Object> get props => [user];

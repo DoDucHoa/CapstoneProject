@@ -25,10 +25,6 @@ const MENU_OPTIONS = [
     label: 'Thông tin cá nhân',
     linkTo: PATH_DASHBOARD.user.profile,
   },
-  {
-    label: 'Cài đặt',
-    linkTo: PATH_DASHBOARD.user.account,
-  },
 ];
 
 // ----------------------------------------------------------------------

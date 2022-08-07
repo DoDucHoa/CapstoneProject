@@ -11,12 +11,15 @@ import 'package:pawnclaw_mobile_application/repositories/booking/booking_reposit
 import 'package:pawnclaw_mobile_application/screens/booking_screen/components/booking_item_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/booking_success_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/vouchers_screen.dart';
+import '../../models/voucher.dart';
 import 'components/booking_cage_card.dart';
 
 class ConfirmBooking extends StatefulWidget {
-  ConfirmBooking({required this.center, Key? key}) : super(key: key);
+  ConfirmBooking({required this.center, required this.vouchers, Key? key})
+      : super(key: key);
 
   final petCenter.Center center;
+  final List<Voucher>? vouchers;
   @override
   State<ConfirmBooking> createState() => _ConfirmBookingState();
 }
@@ -42,13 +45,17 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
           if (state.booking.getTotalSupply() > 0) LineOfBill++;
           if (state.booking.getTotalService() > 0) LineOfBill++;
 // if(state.booking.getTotal() > 0 ) LineOfBill++;
-          if (state.booking.voucherCode != null) haveDiscount = true;
+
           List<Pet> pets = [];
           state.requests!.forEach(
             (element) => element.forEach((pet) {
               pets.add(pet);
             }),
           );
+          if (state.booking.bookingCreateParameter!.voucherCode != null) {
+            haveDiscount = true;
+          }
+
           return Scaffold(
             backgroundColor: backgroundColor,
             appBar: AppBar(
@@ -402,50 +409,55 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                           ),
                         )
                       : Container(),
-                  Container(
-                      // padding: EdgeInsets.symmetric(
-                      //   horizontal: width * smallPadRate,
-                      //   vertical: width * smallPadRate * 0.5,
-                      // ),
-                      margin: EdgeInsets.symmetric(
-                        horizontal: width * mediumPadRate,
-                        vertical: width * smallPadRate,
-                      ),
-                      //width: width,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Colors.white,
-                        // border: Border.all(color: Colors.black12),
-                      ),
-                      child: OutlinedButton.icon(
-                          style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10))),
-                          onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (_) => BlocProvider.value(
-                                      value:
-                                          BlocProvider.of<BookingBloc>(context),
-                                      child: Vouchers())))
-                            ..then((value) => context
-                                .findRootAncestorStateOfType()!
-                                .setState(() {})),
-                          icon: Image.asset(
-                            'lib/assets/coupon.png',
-                            width: 30,
+                  (widget.vouchers!.isNotEmpty)
+                      ? Container(
+                          // padding: EdgeInsets.symmetric(
+                          //   horizontal: width * smallPadRate,
+                          //   vertical: width * smallPadRate * 0.5,
+                          // ),
+                          margin: EdgeInsets.symmetric(
+                            horizontal: width * mediumPadRate,
+                            vertical: width * smallPadRate,
                           ),
-                          label: Container(
-                              padding: EdgeInsets.fromLTRB(10, 15, 5, 15),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    'Bạn có ${FAKE_VOUCHERS.length} ưu đãi',
-                                    style: TextStyle(color: primaryFontColor),
-                                  ),
-                                  Expanded(child: SizedBox()),
-                                  Icon(Icons.keyboard_double_arrow_right),
-                                ],
-                              )))),
+                          //width: width,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: Colors.white,
+                            // border: Border.all(color: Colors.black12),
+                          ),
+                          child: OutlinedButton.icon(
+                              style: OutlinedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10))),
+                              onPressed: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (_) => BlocProvider.value(
+                                          value: BlocProvider.of<BookingBloc>(
+                                              context),
+                                          child: Vouchers(
+                                            vouchers: widget.vouchers!,
+                                          ))))
+                                ..then((value) => context
+                                    .findRootAncestorStateOfType()!
+                                    .setState(() {})),
+                              icon: Image.asset(
+                                'lib/assets/coupon.png',
+                                width: 30,
+                              ),
+                              label: Container(
+                                  padding: EdgeInsets.fromLTRB(10, 15, 5, 15),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'Bạn có ${widget.vouchers!.length} ưu đãi',
+                                        style:
+                                            TextStyle(color: primaryFontColor),
+                                      ),
+                                      Expanded(child: SizedBox()),
+                                      Icon(Icons.keyboard_double_arrow_right),
+                                    ],
+                                  ))))
+                      : Container(),
                   Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: width * smallPadRate,
@@ -631,14 +643,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                                 decimalDigits: 0,
                                                 symbol: 'đ',
                                                 locale: 'vi_vn')
-                                            .format(FAKE_VOUCHERS
-                                                .where((element) =>
-                                                    element.code ==
-                                                    (state as BookingUpdated)
-                                                        .booking
-                                                        .voucherCode)
-                                                .first
-                                                .value),
+                                            .format(state.booking.getTotalDiscount(widget.vouchers!)),
                                     style: TextStyle(
                                       color: primaryFontColor,
                                       fontWeight: FontWeight.w500,
@@ -673,17 +678,12 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                           decimalDigits: 0,
                                           symbol: 'đ',
                                           locale: 'vi_vn')
-                                      .format((haveDiscount)
-                                          ? state.booking.getTotal() -
-                                              FAKE_VOUCHERS
-                                                  .where((element) =>
-                                                      element.code ==
-                                                      (state as BookingUpdated)
-                                                          .booking
-                                                          .voucherCode)
-                                                  .first
-                                                  .value
-                                          : state.booking.getTotal()),
+                                      .format(
+                                        (haveDiscount)
+                                          ? (state.booking.getTotal() -
+                                              state.booking.getTotalDiscount(widget.vouchers!))
+                                          : 
+                                          state.booking.getTotal()),
                                   style: TextStyle(
                                     color: primaryFontColor,
                                     fontWeight: FontWeight.w800,

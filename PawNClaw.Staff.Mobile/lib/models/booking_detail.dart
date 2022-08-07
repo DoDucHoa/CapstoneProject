@@ -106,14 +106,12 @@ class BookingDetail {
 
   List<BookingDetails> getUndoneFeedingAct() {
     List<BookingDetails> undone = [];
-    this.bookingActivities!.forEach((element) {
-      if (element.provideTime == null && element.bookingDetailId != null) {
-        this.bookingDetails!.forEach((booking) {
-          if (booking.id == element.bookingDetailId) {
-            undone.add(booking);
-          }
-        });
-      }
+    this.bookingDetails!.forEach((booking) {
+      booking.bookingActivities?.forEach((element) {
+        if (element.provideTime == null) {
+          undone.add(booking);
+        }
+      });
     });
     return undone;
   }
@@ -164,6 +162,20 @@ class BookingDetail {
     return undone;
   }
 
+  List<SupplyOrders> getDoneSupplyAct() {
+    List<SupplyOrders> done = [];
+    this.bookingActivities!.forEach((element) {
+      if (element.supplyId != null && element.provideTime != null) {
+        this.supplyOrders?.forEach((supply) {
+          if (element.petId == supply.petId) {
+            done.add(supply);
+          }
+        });
+      }
+    });
+    return done;
+  }
+
   int getRemainSupplyAct(SupplyOrders supply) {
     int count = 0;
     this.bookingActivities!.forEach((element) {
@@ -186,6 +198,16 @@ class BookingDetail {
     return count;
   }
 
+  int getRemainFeedingAct() {
+    int count = 0;
+    this.bookingActivities!.forEach((element) {
+      if (element.bookingDetailId != null && element.provideTime == null) {
+        count++;
+      }
+    });
+    return count;
+  }
+
   List<ServiceOrders> getUndoneServiceAct() {
     List<ServiceOrders> undone = [];
     this.bookingActivities!.forEach((element) {
@@ -198,6 +220,20 @@ class BookingDetail {
       }
     });
     return undone;
+  }
+
+  List<ServiceOrders> getDoneServiceAct() {
+    List<ServiceOrders> done = [];
+    this.bookingActivities!.forEach((element) {
+      if (element.serviceId != null && element.provideTime != null) {
+        this.serviceOrders?.forEach((service) {
+          if (element.petId == service.petId) {
+            done.add(service);
+          }
+        });
+      }
+    });
+    return done;
   }
 
   int getDoneActivites() {

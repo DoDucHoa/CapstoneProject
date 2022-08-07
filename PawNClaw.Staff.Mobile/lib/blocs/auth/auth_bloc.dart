@@ -43,6 +43,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           ? emit(Authenticated(account))
           : emit(Unauthenticated("*Tài khoản không tồn tại"));
     });
+    on<SignOut>(
+      (event, emit) async {
+        await _authRepository.signOut();
+        emit(Unauthenticated(""));
+      },
+    );
   }
 
   Future<Account?> signInWithToken() async {

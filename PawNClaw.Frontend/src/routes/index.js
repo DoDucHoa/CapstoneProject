@@ -9,7 +9,7 @@ import GuestGuard from '../guards/GuestGuard';
 import AuthGuard from '../guards/AuthGuard';
 import RoleBasedGuard from '../guards/RoleBasedGuard';
 // config
-import { PATH_AFTER_LOGIN } from '../config';
+import { PATH_AFTER_LOGIN, PATH_AFTER_LOGIN_FOR_STAFF } from '../config';
 // components
 import LoadingScreen from '../components/LoadingScreen';
 import useAuth from '../hooks/useAuth';
@@ -67,7 +67,15 @@ export default function Router() {
         </AuthGuard>
       ),
       children: [
-        { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
+        {
+          element: (
+            <Navigate
+              to={currentRole?.toLowerCase() === 'staff' ? PATH_AFTER_LOGIN_FOR_STAFF : PATH_AFTER_LOGIN}
+              replace
+            />
+          ),
+          index: true,
+        },
         { path: 'bookingchart', element: <GeneralBooking /> },
         {
           path: 'admin',
@@ -190,6 +198,216 @@ export default function Router() {
           ],
         },
         {
+          path: 'staff',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/staff/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['owner']} currentRole={currentRole}>
+                  <StaffList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['owner']} currentRole={currentRole}>
+                  <StaffCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['owner']} currentRole={currentRole}>
+                  <StaffCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'cage-type',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/cage-type/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageTypeList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageTypeCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageTypeCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'cage',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/cage/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':code/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <CageCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'sponsor',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/sponsor/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin']} currentRole={currentRole}>
+                  <SponsorList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin']} currentRole={currentRole}>
+                  <SponsorCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin']} currentRole={currentRole}>
+                  <SponsorCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'supply',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/supply/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <SupplyList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <SupplyCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <SupplyCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'service',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/service/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <ServiceList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <ServiceCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <ServiceCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'voucher',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/voucher/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <VoucherList />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <VoucherCreate />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':code/edit',
+              element: (
+                <RoleBasedGuard accessibleRoles={['staff', 'owner']} currentRole={currentRole}>
+                  <VoucherCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
           path: 'booking',
           children: [
             { path: '', element: <Navigate to="/dashboard/booking/calendar" replace />, index: true },
@@ -198,6 +416,20 @@ export default function Router() {
               element: (
                 <RoleBasedGuard accessibleRoles={['owner', 'staff']} currentRole={currentRole}>
                   <BookingCalendar />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'setting',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/setting/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin']} currentRole={currentRole}>
+                  <SettingList />
                 </RoleBasedGuard>
               ),
             },
@@ -267,13 +499,41 @@ const NotFound = Loadable(lazy(() => import('../pages/Page404')));
 const AdminList = Loadable(lazy(() => import('../pages/dashboard/Admin/AdminList')));
 const AdminCreate = Loadable(lazy(() => import('../pages/dashboard/Admin/AdminCreate')));
 
+// VOUCHER
+const VoucherList = Loadable(lazy(() => import('../pages/dashboard/Voucher/VoucherList')));
+const VoucherCreate = Loadable(lazy(() => import('../pages/dashboard/Voucher/VoucherCreate')));
+
 // OWNER
 const OwnerList = Loadable(lazy(() => import('../pages/dashboard/Owner/OwnerList')));
 const OwnerCreate = Loadable(lazy(() => import('../pages/dashboard/Owner/OwnerCreate')));
 
+// STAFF
+const StaffList = Loadable(lazy(() => import('../pages/dashboard/Staff/StaffList')));
+const StaffCreate = Loadable(lazy(() => import('../pages/dashboard/Staff/StaffCreate')));
+
 // BRAND
 const BrandList = Loadable(lazy(() => import('../pages/dashboard/Brand/BrandList')));
 const BrandCreate = Loadable(lazy(() => import('../pages/dashboard/Brand/BrandCreate')));
+
+// SUPPLY
+const SupplyList = Loadable(lazy(() => import('../pages/dashboard/Supply/SupplyList')));
+const SupplyCreate = Loadable(lazy(() => import('../pages/dashboard/Supply/SupplyCreate')));
+
+// SERVICE
+const ServiceList = Loadable(lazy(() => import('../pages/dashboard/Service/ServiceList')));
+const ServiceCreate = Loadable(lazy(() => import('../pages/dashboard/Service/ServiceCreate')));
+
+// CAGE TYPE
+const CageTypeList = Loadable(lazy(() => import('../pages/dashboard/CageType/CageTypeList')));
+const CageTypeCreate = Loadable(lazy(() => import('../pages/dashboard/CageType/CageTypeCreate')));
+
+// CAGE
+const CageList = Loadable(lazy(() => import('../pages/dashboard/Cage/CageList')));
+const CageCreate = Loadable(lazy(() => import('../pages/dashboard/Cage/CageCreate')));
+
+// SPONSOR
+const SponsorList = Loadable(lazy(() => import('../pages/dashboard/Sponsor/SponsorList')));
+const SponsorCreate = Loadable(lazy(() => import('../pages/dashboard/Sponsor/SponsorCreate')));
 
 // BOOKING CALENDAR
 const BookingCalendar = Loadable(lazy(() => import('../pages/dashboard/Calendar')));
@@ -284,3 +544,6 @@ const BookingList = Loadable(lazy(() => import('../pages/dashboard/BookingList/B
 // CENTER
 const CenterList = Loadable(lazy(() => import('../pages/dashboard/Center/CenterList')));
 const CenterCreate = Loadable(lazy(() => import('../pages/dashboard/Center/CenterCreate')));
+
+// SETTING
+const SettingList = Loadable(lazy(() => import('../pages/dashboard/Setting/SettingList')));

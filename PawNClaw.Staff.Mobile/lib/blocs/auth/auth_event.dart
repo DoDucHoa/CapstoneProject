@@ -27,3 +27,11 @@ class SignIn extends AuthEvent {
   // TODO: implement props
   List<Object?> get props => [email, password];
 }
+
+class SignOut extends AuthEvent {
+  const SignOut();
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => super.props;
+}

@@ -38,5 +38,30 @@ namespace PawNClaw.Data.Repository
 
             return query.ToList();
         }
+
+        public IEnumerable<SponsorBanner> GetSponsorBanners()
+        {
+            IQueryable<SponsorBanner> query = _dbSet
+                .Where(x => x.Status == true)
+                .Select(x => new SponsorBanner
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Content = x.Content,
+                    StartDate = x.StartDate,
+                    EndDate = x.EndDate,
+                    Duration = x.Duration,
+                    BrandId = x.BrandId,
+                    Brand = x.Brand,
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.Banner),
+                    CreateDate = x.CreateDate,
+                    CreateUser = x.CreateUser,
+                    ModifyDate = x.ModifyDate,
+                    ModifyUser = x.ModifyUser,
+                    Status = x.Status
+                });
+
+            return query.ToList();
+        }
     }
 }

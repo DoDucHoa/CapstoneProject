@@ -117,6 +117,8 @@ export function getEvents(CenterId) {
         start: booking.startBooking,
         color: booking.color,
         textColor: BOOKING_STATUS_COLOR[booking.statusId],
+
+        end: booking.endBooking,
       }));
 
       dispatch(slice.actions.getEventsSuccess(bookingData));
@@ -135,6 +137,7 @@ export function getBookingDetails(bookingId) {
       const response = await axios.get(`/api/bookings/for-staff/${bookingId}`);
 
       const bookingDetails = {
+        ...response.data,
         id: response.data.id,
         customer: response.data.customer,
         total: response.data.total,
@@ -154,7 +157,7 @@ export function getBookingDetails(bookingId) {
 
       const petData = bookingDetails.bookingDetails.map((data) => ({
         cageCode: data.cageCode,
-        line: data.line,
+        line: data.id,
         price: data.price,
         duration: data.duration,
         petBookingDetails: data.petBookingDetails.map((row) => ({
@@ -222,7 +225,7 @@ export function createPetHealthStatus({ petData }, bookingId) {
               height: pet.height,
               length: pet.length,
               description: pet.description,
-              centerName: 'Dogily',
+              centerName: 'Dogily', // FIXME: this variable is static
             },
           });
         });

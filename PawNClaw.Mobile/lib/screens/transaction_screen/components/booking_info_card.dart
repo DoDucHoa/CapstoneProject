@@ -320,11 +320,11 @@ class BookingInfoCard extends StatelessWidget {
                             ),
                           if (haveServiceOrder)
                             Text(
-                              NumberFormat.currency(
-                                    decimalDigits: 0,
-                                    symbol: '',
-                                  ).format(details.getTotalServices()) +
-                                  "đ",
+                             NumberFormat.currency(
+                                  decimalDigits: 0,
+                                  symbol: 'đ',
+                                  locale: 'vi_vn')
+                              .format(details.getTotalServices()),
                               style: TextStyle(
                                 color: primaryFontColor,
                                 fontWeight: FontWeight.w500,
@@ -347,10 +347,10 @@ class BookingInfoCard extends StatelessWidget {
                           if (haveSupplyOrder)
                             Text(
                               NumberFormat.currency(
-                                    decimalDigits: 0,
-                                    symbol: '',
-                                  ).format(details.getTotalSupplies()) +
-                                  "đ",
+                                  decimalDigits: 0,
+                                  symbol: 'đ',
+                                  locale: 'vi_vn')
+                              .format(details.getTotalSupplies()),
                               style: TextStyle(
                                 color: primaryFontColor,
                                 fontWeight: FontWeight.w500,
@@ -375,9 +375,9 @@ class BookingInfoCard extends StatelessWidget {
                           Text(
                             NumberFormat.currency(
                                   decimalDigits: 0,
-                                  symbol: '',
-                                ).format(details.getTotalCages()) +
-                                "đ",
+                                  symbol: 'đ',
+                                  locale: 'vi_vn')
+                              .format(details.getTotalCages()) ,
                             style: TextStyle(
                               color: primaryFontColor,
                               fontWeight: FontWeight.w500,
@@ -398,7 +398,11 @@ class BookingInfoCard extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  "-200.000 đ",
+                                  "- " + NumberFormat.currency(
+                                  decimalDigits: 0,
+                                  symbol: 'đ',
+                                  locale: 'vi_vn')
+                              .format(booking.discount) ,
                                   style: TextStyle(
                                     color: primaryFontColor,
                                     fontWeight: FontWeight.w500,
@@ -430,11 +434,11 @@ class BookingInfoCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            NumberFormat.currency(
+                           NumberFormat.currency(
                                   decimalDigits: 0,
-                                  symbol: '',
-                                ).format(booking.total) +
-                                "đ",
+                                  symbol: 'đ',
+                                  locale: 'vi_vn')
+                              .format(booking.total) ,
                             style: TextStyle(
                               color: primaryFontColor,
                               fontWeight: FontWeight.w800,

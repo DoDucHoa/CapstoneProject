@@ -16,7 +16,7 @@ import { FIREBASE_API } from '../config';
 
 // utils
 import axios from '../utils/axios';
-import { setSession, setAccountInfoSession, setCenterInfoSession } from '../utils/jwt';
+import { setSession, setAccountInfoSession, setCenterInfoSession, setCenterIdSession } from '../utils/jwt';
 
 // ----------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ const initialState = {
 
 const reducer = (state, action) => {
   if (action.type === 'INITIALIZE') {
-    const { isAuthenticated, user, accountInfo, centerInfo } = action.payload;
+    const { isAuthenticated, user, accountInfo, centerInfo, centerId } = action.payload;
     return {
       ...state,
       isAuthenticated,
@@ -56,17 +56,19 @@ const reducer = (state, action) => {
       user,
       accountInfo,
       centerInfo,
+      centerId,
     };
   }
 
   if (action.type === 'LOGIN') {
-    const { user, accountInfo, centerInfo } = action.payload;
+    const { user, accountInfo, centerInfo, centerId } = action.payload;
     return {
       ...state,
       isAuthenticated: true,
       user,
       accountInfo,
       centerInfo,
+      centerId,
     };
   }
 
@@ -98,8 +100,9 @@ const AuthContext = createContext({
   login: () => Promise.resolve(),
   register: (email, password) => Promise.resolve(email, password),
   logout: () => Promise.resolve(),
-  uploadPhoto: (path, file) => Promise.resolve(path, file),
+  uploadPhotoToFirebase: (path, file, idActor, photoType) => Promise.resolve(path, file, idActor, photoType),
   changeCenter: () => null,
+  uploadFileToFirebase: (path, file, fileName) => Promise.resolve(path, file, fileName),
   // changePassword: (password) => Promise.resolve(password),
 });
 
@@ -117,6 +120,7 @@ function AuthProvider({ children }) {
   useEffect(() => {
     const accountInfo = JSON.parse(window.localStorage.getItem('accountInfo'));
     const centerInfo = JSON.parse(window.localStorage.getItem('centerInfo'));
+    const centerId = window.localStorage.getItem('centerId');
 
     if (accountInfo) {
       onAuthStateChanged(AUTH, async (user) => {
@@ -131,42 +135,56 @@ function AuthProvider({ children }) {
 
           dispatch({
             type: 'INITIALIZE',
-            payload: { isAuthenticated: true, user, accountInfo, centerInfo },
+            payload: { isAuthenticated: true, user, accountInfo, centerInfo, centerId },
           });
         } else {
           dispatch({
             type: 'INITIALIZE',
-            payload: { isAuthenticated: false, user: null, accountInfo: null, centerInfo: null },
+            payload: { isAuthenticated: false, user: null, accountInfo: null, centerInfo: null, centerId: null },
           });
         }
       });
     } else {
       dispatch({
         type: 'INITIALIZE',
-        payload: { isAuthenticated: false, user: null, accountInfo: null, centerInfo: null },
+        payload: { isAuthenticated: false, user: null, accountInfo: null, centerInfo: null, centerId: null },
       });
     }
   }, [dispatch]);
 
   const login = async (email, password) => {
-    const userCredentials = await signInWithEmailAndPassword(AUTH, email, password);
+    try {
+      const userCredentials = await signInWithEmailAndPassword(AUTH, email, password);
 
-    if (userCredentials) {
-      const { accessToken } = userCredentials.user;
+      if (userCredentials) {
+        const { accessToken } = userCredentials.user;
 
-      const userData = await getBackendToken(accessToken, 'Email');
-      const petCenter = await getPetCenter(userData.id);
+        const userData = await getBackendToken(accessToken, 'Email');
 
-      if (userData) {
-        dispatch({
-          type: 'LOGIN',
-          payload: {
-            user: userCredentials.user,
-            accountInfo: userData,
-            centerInfo: petCenter,
-          },
-        });
+        let petCenter = null;
+        if (userData?.role === 'Owner') {
+          petCenter = await getPetCenter(userData.id);
+        }
+
+        let staffCenterId = null;
+        if (userData?.role === 'Staff') {
+          staffCenterId = await getStaffCenterId(userData.id);
+        }
+
+        if (userData) {
+          dispatch({
+            type: 'LOGIN',
+            payload: {
+              user: userCredentials.user,
+              accountInfo: userData,
+              centerInfo: petCenter || null,
+              centerId: petCenter?.petCenters[0].id || staffCenterId || null,
+            },
+          });
+        }
       }
+    } catch (error) {
+      throw new Error(error);
     }
   };
 
@@ -177,39 +195,31 @@ function AuthProvider({ children }) {
     setSession(null);
     setAccountInfoSession(null);
     setCenterInfoSession(null);
+    setCenterIdSession(null);
     dispatch({ type: 'LOGOUT' });
   };
 
   // create function upload photo to Firebase use async
-  const uploadPhoto = (path, file) => {
+  const uploadPhotoToFirebase = async (path, file, idActor, photoType) => {
     const storageRef = ref(storage, `${path}/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        // const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        // console.log("Upload is " + progress + "% done");
-        switch (snapshot.state) {
-          case 'paused':
-            console.log('Upload is paused');
-            break;
-          case 'running':
-            console.log('Upload is running');
-            break;
-          default:
-            break;
-        }
-      },
-      (error) => {
-        console.log(error.code);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => console.log('downloadURL: ', downloadURL));
-      }
-    );
+
+    await uploadTask;
+    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+    await uploadPhotoToBackend(idActor, downloadURL, photoType);
+  };
+
+  const uploadFileToFirebase = async (path, file, fileName) => {
+    const storageRef = ref(storage, `${path}/${fileName}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    await uploadTask;
+    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+    return downloadURL;
   };
 
   const changeCenter = (centerId) => {
+    setCenterIdSession(centerId);
     dispatch({
       type: 'CHANGE_CENTER',
       payload: { centerId },
@@ -241,8 +251,9 @@ function AuthProvider({ children }) {
         login,
         register,
         logout,
-        uploadPhoto,
+        uploadPhotoToFirebase,
         changeCenter,
+        uploadFileToFirebase,
         // changePassword,
       }}
     >
@@ -283,7 +294,29 @@ const getPetCenter = async (idOwner) => {
     }
     return null;
   } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const getStaffCenterId = async (idStaff) => {
+  try {
+    const response = await axios.get(`/api/petcenters/staff/${idStaff}`);
+    if (response.statusText === 'OK') {
+      setCenterIdSession(response.data.id);
+      return response.data.id;
+    }
+    return null;
+  } catch (error) {
     console.log('error: ', error);
     return null;
   }
+};
+
+const uploadPhotoToBackend = async (idActor, url, photoType) => {
+  const response = await axios.post(`/api/photos/${photoType}`, {
+    idActor,
+    url,
+    isThumbnail: false,
+  });
+  return response.data;
 };

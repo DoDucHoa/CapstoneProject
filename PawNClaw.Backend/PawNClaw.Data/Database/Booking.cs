@@ -55,11 +55,19 @@ namespace PawNClaw.Data.Database
         [Column("staff_note")]
         [StringLength(512)]
         public string StaffNote { get; set; }
+        [Column("invoice_url")]
+        [StringLength(1024)]
+        public string InvoiceUrl { get; set; }
+        [Column("feedback")]
+        [StringLength(1024)]
+        public string Feedback { get; set; }
 
         [NotMapped]
         public decimal? TotalSupply { get; set; }
         [NotMapped]
         public decimal? TotalService { get; set; }
+        [NotMapped]
+        public decimal? TotalCage { get; set; }
 
         [ForeignKey(nameof(CenterId))]
         [InverseProperty(nameof(PetCenter.Bookings))]

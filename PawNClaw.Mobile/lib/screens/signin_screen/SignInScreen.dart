@@ -21,6 +21,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
+        print(state);
         if (state is Unauthenticated) {
           return const InputPhonePanel();
         }

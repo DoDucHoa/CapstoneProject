@@ -48,6 +48,13 @@ import reportWebVitals from './reportWebVitals';
 
 // ----------------------------------------------------------------------
 
+// disable console when production
+if (process.env.NODE_ENV === 'production') {
+  console.log = () => {};
+  console.error = () => {};
+  console.debug = () => {};
+}
+
 ReactDOM.render(
   <AuthProvider>
     <HelmetProvider>

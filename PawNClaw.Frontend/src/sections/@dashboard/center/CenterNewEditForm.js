@@ -8,18 +8,24 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { LoadingButton } from '@mui/lab';
-import { Box, Card, Grid, Stack, Typography, Button } from '@mui/material';
+import { Box, Card, Grid, Stack, Typography, Button, MenuItem } from '@mui/material';
 // utils
 import { fData } from '../../../utils/formatNumber';
+import { formatTime } from '../../../utils/formatTime';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
 import useAuth from '../../../hooks/useAuth';
 import useResponsive from '../../../hooks/useResponsive';
 // components
-import Label from '../../../components/Label';
-import { FormProvider, RHFTextField, RHFUploadAvatar, RHFTimePicker } from '../../../components/hook-form';
-import { createCenter, updateCenter } from '../../../pages/dashboard/Center/useCenterAPI';
+import { FormProvider, RHFSelect, RHFTextField, RHFTimePicker, RHFUploadPhoto } from '../../../components/hook-form';
+import {
+  createCenter,
+  getCities,
+  getDistricts,
+  getWards,
+  updateCenter,
+} from '../../../pages/dashboard/Center/useCenterAPI';
 import BrandDialog from './BrandDialog';
 import Iconify from '../../../components/Iconify';
 
@@ -34,35 +40,31 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
   // STATE
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
-  const { accountInfo, register } = useAuth();
+  const [cities, setCities] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+
+  // * ----------------------------------------------------------------------
+  // HOOKS
+  const { accountInfo, uploadPhotoToFirebase } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
-  useEffect(() => {
-    if (isEdit && centerData) {
-      reset(defaultValues);
-    }
-    if (!isEdit) {
-      reset(defaultValues);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEdit, centerData]);
-
-  // ----------------------------------------------------------------------
+  // * ----------------------------------------------------------------------
   // FORM
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Bắt buộc nhập'),
     address: Yup.string().required('Bắt buộc nhập'),
     phone: Yup.string().required('Bắt buộc nhập'),
-    openTime: Yup.string().nullable().required('Bắt buộc nhập'),
-    closeTime: Yup.string().nullable().required('Bắt buộc nhập'),
+    openTimeUI: Yup.string().nullable().required('Bắt buộc nhập'),
+    closeTimeUI: Yup.string().nullable().required('Bắt buộc nhập'),
     description: Yup.string(),
-    createUser: Yup.number().required(),
-    modifyUser: Yup.number().required(),
-    brandId: Yup.number().required('Bắt buộc nhập'),
-    avatarUrl: Yup.mixed().test('required', 'Ảnh thương hiệu bắt buộc nhập', (value) => value !== ''),
-    checkin: Yup.string().nullable().required('Bắt buộc nhập'),
-    checkout: Yup.string().nullable().required('Bắt buộc nhập'),
-    brandInfo: Yup.mixed().nullable().required('Thương hiệu bắt buộc nhập*'),
+    avatarUrl: Yup.mixed().test('required', 'Ảnh trung tâm bắt buộc nhập', (value) => value !== ''),
+    checkinUI: Yup.string().nullable().required('Bắt buộc nhập'),
+    checkoutUI: Yup.string().nullable().required('Bắt buộc nhập'),
+    brandInfo: Yup.mixed().nullable().required('Thương hiệu bắt buộc nhập'),
+    cityCode: Yup.string().required('Bắt buộc nhập'),
+    districtCode: Yup.string().required('Bắt buộc nhập'),
+    wardCode: Yup.string(),
   });
 
   const defaultValues = useMemo(
@@ -70,15 +72,25 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
       name: centerData?.name || '',
       address: centerData?.address || '',
       phone: centerData?.phone || '',
-      openTime: centerData?.openTime || '',
-      closeTime: centerData?.closeTime || '',
       description: centerData?.description || '',
-      createUser: centerData?.createdUser || 0,
-      modifyUser: centerData?.modifyUser || 0,
-      brandId: centerData?.ownerId || 0,
-      avatarUrl: centerData?.avatarUrl || '',
+      createUser: centerData?.createUser || accountInfo.id,
+      modifyUser: accountInfo.id,
+      brandId: centerData?.brandId || 0,
+      avatarUrl: centerData?.photos?.length > 0 ? centerData?.photos[0].url : '',
+      cityCode: centerData?.location?.cityCode || '',
+      districtCode: centerData?.location?.districtCode || '',
+      wardCode: centerData?.location?.wardCode || '',
+      brandInfo: centerData?.brand || null,
+
+      openTime: centerData?.openTime || '',
+      openTimeUI: centerData?.openTimeDate || '',
+      closeTime: centerData?.closeTime || '',
+      closeTimeUI: centerData?.closeTimeDate || '',
       checkin: centerData?.checkin || '',
+      checkinUI: centerData?.checkinDate || '',
       checkout: centerData?.checkout || '',
+      checkoutUI: centerData?.checkoutDate || '',
+      fullAddress: '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [centerData]
@@ -99,28 +111,53 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
 
   const values = watch();
 
-  // ----------------------------------------------------------------------
+  // * ----------------------------------------------------------------------
+  // STARTUP
+  useEffect(() => {
+    if (isEdit && centerData) {
+      reset(defaultValues);
+    }
+    if (!isEdit) {
+      reset(defaultValues);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEdit, centerData]);
+
+  useEffect(() => {
+    getCities().then((data) => setCities(data));
+  }, []);
+
+  useEffect(() => {
+    setValue('wardCode', centerData?.location?.wardCode || '');
+    setValue('districtCode', centerData?.location?.districtCode || '');
+    getDistricts(values.cityCode).then((data) => setDistricts(data));
+  }, [centerData?.location?.districtCode, centerData?.location?.wardCode, setValue, values.cityCode]);
+
+  useEffect(() => {
+    getWards(values.districtCode).then((data) => setWards(data));
+  }, [values.cityCode, values.districtCode]);
+
+  // * ----------------------------------------------------------------------
   // HANDLE SUBMIT
   const onSubmit = async () => {
     try {
       if (!isEdit) {
-        await Promise.all([
-          createCenter(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender), // create account on Backend
-          register(values.email, values.password), // create account on Firebase
-        ]);
+        const centerId = await createCenter(values);
+        await uploadPhotoToFirebase('petCenters', values.avatarUrl, centerId, 'petcenter');
       } else {
-        await updateCenter(accountInfo.id, values.name, values.phoneNumber, values.gender);
+        await updateCenter(values);
       }
 
       reset();
       enqueueSnackbar(!isEdit ? 'Tạo mới thành công' : 'Cập nhật thành công');
-      navigate(PATH_DASHBOARD.owner.list);
+      navigate(PATH_DASHBOARD.center.list);
     } catch (error) {
       console.error(error);
     }
   };
 
-  // FUNCTION
+  // * ----------------------------------------------------------------------
+  // HANDLE FUNCTION
   // function to handle change avatar
   const handleDrop = useCallback(
     (acceptedFiles) => {
@@ -146,24 +183,38 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
     setOpenDialog(true);
   };
 
+  useEffect(() => {
+    function getCityName(code) {
+      const city = cities.find((city) => city.code === code);
+      return city ? city.name : '';
+    }
+
+    function getDistrictName(code) {
+      const district = districts.find((district) => district.code === code);
+      return district ? district.name : '';
+    }
+
+    function getWardName(code) {
+      const ward = wards.find((ward) => ward.code === code);
+      return ward ? ward.name : '';
+    }
+    setValue(
+      'fullAddress',
+      `${values.address}, ${getWardName(values.wardCode)}, ${getDistrictName(values.districtCode)}, ${getCityName(
+        values.cityCode
+      )}`
+    );
+  }, [cities, districts, wards, setValue, values.address, values.cityCode, values.districtCode, values.wardCode]);
+
   const { brandInfo } = values;
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
-          <Card sx={{ py: 10, px: 3 }}>
-            {isEdit && (
-              <Label
-                color={centerData.status !== 'true' ? 'error' : 'success'}
-                sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
-              >
-                {centerData.status !== 'true' ? 'Đã khóa' : 'Hoạt động'}
-              </Label>
-            )}
-
-            <Box sx={{ mb: 5 }}>
-              <RHFUploadAvatar
+        <Grid item xs={12} md={3}>
+          <Card sx={{ py: 6, px: 3 }}>
+            <Box sx={{ mb: 3 }}>
+              <RHFUploadPhoto
                 name="avatarUrl"
                 accept="image/*"
                 maxSize={3145728}
@@ -188,43 +239,195 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={9}>
           <Card sx={{ p: 3 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <RHFTextField name="name" label="Tên trung tâm" disabled={isEdit} />
+              <Grid item xs={12} sm={6}>
+                <RHFTextField name="name" label="Tên trung tâm" />
               </Grid>
 
-              <Grid item xs={12}>
-                <RHFTextField name="address" label="Địa chỉ" disabled={isEdit} />
-              </Grid>
-
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6}>
                 <RHFTextField name="phone" label="Số điện thoại" />
               </Grid>
 
-              <Grid item xs={6}>
-                <RHFTimePicker name="openTime" label="Giờ mở cửa" />
+              <Grid item xs={12} sm={6}>
+                <RHFSelect
+                  name="cityCode"
+                  label="Thành phố/Tỉnh"
+                  InputLabelProps={{ shrink: true }}
+                  SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
+                  sx={{ maxHeight: 50 }}
+                >
+                  {cities?.length > 0 ? (
+                    cities?.map((city) => (
+                      <MenuItem
+                        key={city.code}
+                        value={city.code}
+                        sx={{
+                          mx: 1,
+                          my: 0.5,
+                          borderRadius: 0.75,
+                          typography: 'body2',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {city.name}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem
+                      value={''}
+                      sx={{
+                        mx: 1,
+                        my: 0.5,
+                        borderRadius: 0.75,
+                        typography: 'body2',
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      <em>Đang tải dữ liệu</em>
+                    </MenuItem>
+                  )}
+                </RHFSelect>
               </Grid>
-              <Grid item xs={6}>
-                <RHFTimePicker name="closeTime" label="Giờ đóng cửa" />
+
+              <Grid item xs={12} sm={6}>
+                <RHFSelect
+                  name="districtCode"
+                  label="Quận/Huyện"
+                  InputLabelProps={{ shrink: true }}
+                  SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
+                  sx={{ maxHeight: 50 }}
+                >
+                  {districts?.length > 0 ? (
+                    districts?.map((district) => (
+                      <MenuItem
+                        key={district.code}
+                        value={district.code}
+                        sx={{
+                          mx: 1,
+                          my: 0.5,
+                          borderRadius: 0.75,
+                          typography: 'body2',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {district.name}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem
+                      value={''}
+                      sx={{
+                        mx: 1,
+                        my: 0.5,
+                        borderRadius: 0.75,
+                        typography: 'body2',
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      <em>Không có dữ liệu</em>
+                    </MenuItem>
+                  )}
+                </RHFSelect>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <RHFSelect
+                  name="wardCode"
+                  label="Phường/Xã"
+                  InputLabelProps={{ shrink: true }}
+                  SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
+                  sx={{ maxHeight: 50 }}
+                >
+                  {wards?.length > 0 ? (
+                    wards?.map((ward) => (
+                      <MenuItem
+                        key={ward.code}
+                        value={ward.code}
+                        sx={{
+                          mx: 1,
+                          my: 0.5,
+                          borderRadius: 0.75,
+                          typography: 'body2',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {ward.name}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem
+                      value={''}
+                      sx={{
+                        mx: 1,
+                        my: 0.5,
+                        borderRadius: 0.75,
+                        typography: 'body2',
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      <em>Không có dữ liệu</em>
+                    </MenuItem>
+                  )}
+                </RHFSelect>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <RHFTextField name="address" label="Địa chỉ" />
               </Grid>
 
               <Grid item xs={6}>
-                <RHFTimePicker name="checkin" label="Giờ checkin" />
+                <RHFTimePicker
+                  name="openTimeUI"
+                  label="Giờ mở cửa"
+                  onChange={(value) => {
+                    setValue('openTimeUI', value);
+                    if (value) setValue('openTime', formatTime(value));
+                  }}
+                />
               </Grid>
               <Grid item xs={6}>
-                <RHFTimePicker name="checkout" label="Giờ checkout" />
+                <RHFTimePicker
+                  name="closeTimeUI"
+                  label="Giờ đóng cửa"
+                  onChange={(value) => {
+                    setValue('closeTimeUI', value);
+                    setValue('closeTime', formatTime(value));
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={6}>
+                <RHFTimePicker
+                  name="checkinUI"
+                  label="Giờ checkin"
+                  onChange={(value) => {
+                    setValue('checkinUI', value);
+                    setValue('checkin', formatTime(value));
+                  }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <RHFTimePicker
+                  name="checkoutUI"
+                  label="Giờ checkout"
+                  onChange={(value) => {
+                    setValue('checkoutUI', value);
+                    setValue('checkout', formatTime(value));
+                  }}
+                />
               </Grid>
 
               <Grid item xs={12}>
-                <RHFTextField name="description" multiline rows={3} label="Mô tả" />
+                <RHFTextField name="description" multiline rows={6} label="Mô tả" />
               </Grid>
 
               <Grid item xs={12}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <Typography>Thương hiệu</Typography>
                   <Button
+                    disabled={isEdit}
                     onClick={handleOpen}
                     sx={{ width: 100, ml: 5 }}
                     variant="text"
@@ -234,7 +437,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
                   </Button>
                 </Box>
                 {brandInfo ? (
-                  <OwnerInfo brandName={brandInfo.name} ownerName={brandInfo.owner.name} />
+                  <BrandInfo brandName={brandInfo?.name} ownerName={brandInfo?.owner?.name} />
                 ) : (
                   <Typography typography="caption" sx={{ color: 'error.main' }}>
                     {errors.brandInfo ? errors.brandInfo.message : null}
@@ -266,11 +469,11 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
 }
 
 // ----------------------------------------------------------------------
-OwnerInfo.propTypes = {
-  brandName: PropTypes.string.isRequired,
-  ownerName: PropTypes.string.isRequired,
+BrandInfo.propTypes = {
+  brandName: PropTypes.string,
+  ownerName: PropTypes.string,
 };
-function OwnerInfo({ brandName, ownerName }) {
+function BrandInfo({ brandName, ownerName }) {
   const isDesktop = useResponsive('up', 'sm');
 
   return (

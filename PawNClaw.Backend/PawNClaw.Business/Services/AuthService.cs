@@ -86,6 +86,7 @@ namespace PawNClaw.Business.Services
 
             Customer customerToDb = new Customer();
             customerToDb.Name = _customer.Name;
+            customerToDb.Birth = _customer.Birth;
 
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
@@ -94,7 +95,7 @@ namespace PawNClaw.Business.Services
                     if (_repository.GetFirstOrDefault(x => x.UserName.Trim().Equals(accountToDb.UserName)) != null
                         || _repository.GetFirstOrDefault(x => x.Phone.Trim().Equals(accountToDb.Phone)) != null)
                     {
-                        throw new Exception();
+                        throw new Exception("This Phone or Account is Used");
                     }
                     _repository.Add(accountToDb);
                     _repository.SaveDbChange();
@@ -276,6 +277,8 @@ namespace PawNClaw.Business.Services
                         break;
 
                     case "STF":
+                        Name = _staffRepository.Get(account.Id).Name;
+                        Email = "";
                         break;
 
                     case "CUS":

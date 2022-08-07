@@ -29,10 +29,23 @@ typedef void PetsCallback(List<int> val);
 class _ChooseRequestCardState extends State<ChooseRequestCard> {
   List<Pet>? pets;
   int selectedIndex = 0;
-
+ bool haveAvailableRequests = false;
   bool isSuitable(List<Pet> request, CageTypes cageTypes) {
     if (cageTypes.isSingle!) return request.length == 1;
     return true;
+  }
+
+  @override
+  void initState() {
+    for (var i = 0; i < widget.requests.length; i++) {
+      if (isSuitable(widget.requests[i], widget.cageType)) {
+        haveAvailableRequests = true;
+        pets = widget.requests[i];
+        selectedIndex = i;
+        break;
+      }
+    }
+    super.initState();
   }
 
   @override
@@ -42,35 +55,6 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
 
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    //pets = widget.requests[0];
-
-    bool haveAvailableRequests = false;
-    for (var i = 0; i < widget.requests.length; i++) {
-      if (isSuitable(widget.requests[i], widget.cageType)) {
-        haveAvailableRequests = true;
-        pets = widget.requests[i];
-        pets!.forEach((e) {print(e.id); });
-        selectedIndex = i;
-        
-        // setState(() {
-        //   selectedIndex = i;
-        // }); 
-        break;
-      }
-    }
-    // widget.requests.forEach(
-    //   (element) {
-    //     if (isSuitable(element, widget.cageType)) {
-    //       haveAvailableRequests = true;
-    //       return;
-    //     }
-    //   },
-    // );
-
-    // List<int> result = [];
-    // pets!.forEach(((element) => result.add(element.id!)));
-    // print(result);
-    // BlocProvider.of<BookingBloc>(context).add(SelectRequest(petId: result));
     return Container(
       height: height * 0.2,
       width: width,
@@ -78,11 +62,6 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
       child: SizedBox(
         height: width,
         child:
-            //  SingleChildScrollView(
-            //   scrollDirection: Axis.horizontal, child: Row(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   mainAxisSize: MainAxisSize.min,
-            //   children: [
             (haveAvailableRequests)
                 ? ListView.separated(
                     itemBuilder: (context, index) {
@@ -99,9 +78,9 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                                 });
                                 print('selectedindex ' + selectedIndex.toString());
                                 print(index);
-                                print(result);
+                               print(result);
                                 widget.callback(result);
-                                print(context.read<BookingBloc>().state);
+                                //print(context.read<BookingBloc>().state);
                               },
                               child: Stack(children: [
                                 selectedIndex == index
@@ -338,23 +317,5 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
           ],
         );
     }
-    //  return Container(
-    //           margin: EdgeInsets.only(
-    //               bottom: width * extraSmallPadRate,
-    //               top: width * mediumPadRate,
-    //               right: width * extraSmallPadRate,
-    //               left: 0),
-    //           padding: EdgeInsets.all(width * smallPadRate * 0.25),
-    //           height: height * 0.1,
-    //           width: height * 0.1,
-    //           // decoration: BoxDecoration(
-    //           //   color: primaryColor.withOpacity(0.15),
-    //           //   borderRadius: BorderRadius.circular(15),
-    //           // ),
-    //           child: pets.length > 1
-    //               ?
-
-    //       : ,
-    // );
   }
 }

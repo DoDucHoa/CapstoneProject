@@ -5,13 +5,13 @@ import Iconify from '../../../../components/Iconify';
 
 // ----------------------------------------------------------------------
 
-BrandTableToolbar.propTypes = {
+CenterTableToolbar.propTypes = {
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
   onEnterPress: PropTypes.func,
 };
 
-export default function BrandTableToolbar({ filterName, onFilterName, onEnterPress }) {
+export default function CenterTableToolbar({ filterName, onFilterName, onEnterPress }) {
   return (
     <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} sx={{ py: 2.5, px: 3 }}>
       <TextField

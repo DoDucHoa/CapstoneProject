@@ -24,10 +24,11 @@ namespace PawNClaw.API.Controllers
             _cageTypeService = cageTypeService;
         }
 
-        [HttpGet("center/{id}")]
-        public IActionResult GetCageTypes(int id, [FromQuery] PagingParameter paging)
+        [HttpGet]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult GetCageTypes([FromQuery] CageTypeRequestParameter cageTypeRequestParameter, [FromQuery] PagingParameter paging)
         {
-            var data = _cageTypeService.GetCageTypes(id, paging);
+            var data = _cageTypeService.GetCageTypes(cageTypeRequestParameter, paging);
             var metadata = new
             {
                 data.TotalCount,
@@ -54,11 +55,54 @@ namespace PawNClaw.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Owner,Staff")]
-        public IActionResult Create([FromBody] CreateCageTypeFlowParameter createCageTypeFlowParameter)
+        public async Task<IActionResult> Create([FromBody] CreateCageTypeFlowParameter createCageTypeFlowParameter)
         {
             try
             {
-                return Ok(_cageTypeService.CreateCageType(createCageTypeFlowParameter.createCageTypeParameter, createCageTypeFlowParameter.createPriceParameters));
+                var data = await _cageTypeService.CreateCageType(createCageTypeFlowParameter.createCageTypeParameter, createCageTypeFlowParameter.createPriceParameters, createCageTypeFlowParameter.foodSchedules);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult Update([FromBody] UpdateCageTypeFlowParameter cageType)
+        {
+            try
+            {
+                return Ok(_cageTypeService.Update(cageType.updateCageTypeParameter, cageType.updatePriceParameters, cageType.updateFoodSchedules));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut("delete/{id}")]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult Delete(int id)
+        {
+            try
+            {
+                return Ok(_cageTypeService.Delete(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Owner,Staff")]
+        public IActionResult GetCageTypeWithCageAndPrice(int id)
+        {
+            try
+            {
+                return Ok(_cageTypeService.GetCageTypeWithCageAndPrice(id));
             }
             catch (Exception ex)
             {

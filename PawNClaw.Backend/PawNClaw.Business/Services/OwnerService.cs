@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using PawNClaw.Data.Const;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
@@ -11,22 +13,25 @@ namespace PawNClaw.Business.Services
     {
         private readonly IAccountRepository _accountRepository;
         private readonly IOwnerRepository _ownerRepository;
+        private readonly IPhotoRepository _photoRepository;
 
-        public OwnerService(IOwnerRepository ownerRepository, IAccountRepository accountRepository)
+        public OwnerService(IOwnerRepository ownerRepository, IAccountRepository accountRepository,
+            IPhotoRepository photoRepository)
         {
             _ownerRepository = ownerRepository;
             _accountRepository = accountRepository;
+            _photoRepository = photoRepository;
         }
 
         //Get All
-        public PagedList<Owner> GetModerators(string Name, bool? Status, string dir, string sort, PagingParameter paging)
+        public PagedList<Owner> GetOwners(string Name, bool? Status, string dir, string sort, PagingParameter paging)
         {
             var values = _ownerRepository.GetAll(includeProperties: "IdNavigation");
 
             values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("OWN"));
 
             // lọc theo name
-            if (!string.IsNullOrWhiteSpace(Name)) values = values.Where(x => x.Name.Trim().Equals(Name));
+            if (!string.IsNullOrWhiteSpace(Name)) values = values.Where(x => x.Name.Trim().Contains(Name));
 
             // lọc theo status
             if (Status != null)
@@ -44,7 +49,8 @@ namespace PawNClaw.Business.Services
         //Get Id
         public Owner GetOwnerById(int id)
         {
-            var value = _ownerRepository.GetFirstOrDefault(x => x.Id == id);
+            var value = _ownerRepository.GetAll(includeProperties: "IdNavigation").FirstOrDefault(x => x.Id == id);
+            value.IdNavigation.Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(value.Id, PhotoTypesConst.Account);
             return value;
         }
 
@@ -98,6 +104,20 @@ namespace PawNClaw.Business.Services
                 account.Phone = Phone;
                 _accountRepository.Update(account);
                 _accountRepository.SaveDbChange();
+                _ownerRepository.Update(owner);
+                _ownerRepository.SaveDbChange();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool Update(Owner owner)
+        {
+            try
+            {
                 _ownerRepository.Update(owner);
                 _ownerRepository.SaveDbChange();
                 return true;

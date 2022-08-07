@@ -60,5 +60,11 @@ namespace PawNClaw.Data.Database
 
         [NotMapped]
         public ICollection<Photo> Photos { get; set; }
+
+        [NotMapped]
+        public decimal MinPrice { get; internal set; }
+
+        [NotMapped]
+        public decimal MaxPrice { get; internal set; }
     }
 }

@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,10 +24,10 @@ namespace PawNClaw.API.Controllers
             _serviceServices = serviceServices;
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetServicesOfCenter(int id, PagingParameter paging)
+        [HttpGet("center")]
+        public IActionResult GetServicesOfCenter([FromQuery] ServiceRequestParameter serviceRequestParameter, [FromQuery] PagingParameter paging)
         {
-            var data = _serviceServices.GetServices(id, paging);
+            var data = _serviceServices.GetServices(serviceRequestParameter, paging);
             var metadata = new
             {
                 data.TotalCount,
@@ -36,6 +38,59 @@ namespace PawNClaw.API.Controllers
                 data.HasPrevious
             };
             return Ok(new { data, metadata });
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetService(int id)
+        {
+            try
+            {
+                return Ok(_serviceServices.GetService(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateService([FromBody] CreateServiceParameter createServiceParameter)
+        {
+            try
+            {
+                var data = await _serviceServices.CreateService(createServiceParameter.service, createServiceParameter.servicePrice);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut]
+        public IActionResult UpdateService([FromBody] UpdateServiceParameter service)
+        {
+            try
+            {
+                return Ok(_serviceServices.UpdateService(service.service, service.updateServicePrices));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut("delete/{id}")]
+        public IActionResult UpdateService(int id)
+        {
+            try
+            {
+                return Ok(_serviceServices.DeleteService(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
     }
 }

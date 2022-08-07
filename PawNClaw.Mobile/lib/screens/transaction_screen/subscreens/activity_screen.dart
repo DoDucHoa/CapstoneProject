@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:pawnclaw_mobile_application/common/components/primary_button.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/activity.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/components/activity_card.dart';
@@ -61,13 +62,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                                 SizedBox(
                                   height: 10,
                                 ),
-                                ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Container(
-                                        width: width * (0.5 - 2 * smallPadRate),
-                                        child: Center(child: Text('Đóng'))))
+                                PrimaryButton(text: 'Đóng', onPressed: ()=> Navigator.of(context).pop(), contextWidth: width)
                               ],
                             ),
                           ),
@@ -94,7 +89,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: (activity.imgUrl != null)
-                          ? FadeInImage.assetNetwork(placeholder: 'lib/assets/paw-gif.gif', image:
+                          ? FadeInImage.assetNetwork(placeholder: 'lib/assets/new-paw.gif', image:
                               activity.imgUrl!,
                               width: width * (1 - 2 * mediumPadRate),
                               height: width * (1 - 2 * mediumPadRate) * 3 / 2,

@@ -92,9 +92,9 @@ export default function CenterList() {
     const response = await getCenters(page, rowsPerPage, filterStatus, searchRequest);
     const { data, metadata } = response;
 
-    const centers = data.map((center, index) => ({
+    const centers = data.map((center) => ({
       id: center.id,
-      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`,
+      photoUrl: center?.photos?.length > 0 ? center?.photos[0].url : '',
       name: center.name,
       address: center.address,
       brandName: center.brand.name,
@@ -106,6 +106,10 @@ export default function CenterList() {
 
   useEffect(() => {
     getCenterData();
+    return () => {
+      setTableData([]);
+      setMetadata({});
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, rowsPerPage, filterStatus, searchRequest]);
 

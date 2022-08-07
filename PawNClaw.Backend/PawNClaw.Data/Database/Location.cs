@@ -45,5 +45,10 @@ namespace PawNClaw.Data.Database
         [ForeignKey(nameof(WardCode))]
         [InverseProperty(nameof(Ward.Locations))]
         public virtual Ward WardCodeNavigation { get; set; }
+
+        [NotMapped]
+        public string Distance { get; set; }
+        [NotMapped]
+        public string Duration { get; set; }
     }
 }

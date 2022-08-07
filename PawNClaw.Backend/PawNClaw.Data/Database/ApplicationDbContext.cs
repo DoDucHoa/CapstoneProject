@@ -28,7 +28,7 @@ namespace PawNClaw.Data.Database
         public virtual DbSet<CageType> CageTypes { get; set; }
         public virtual DbSet<City> Cities { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
-        public virtual DbSet<CustomerAddress> CustomerAddresses { get; set; }
+        public virtual DbSet<CustomerVoucherLog> CustomerVoucherLogs { get; set; }
         public virtual DbSet<District> Districts { get; set; }
         public virtual DbSet<FoodSchedule> FoodSchedules { get; set; }
         public virtual DbSet<GeneralLedger> GeneralLedgers { get; set; }
@@ -282,19 +282,27 @@ namespace PawNClaw.Data.Database
                     .HasConstraintName("FK__Customers__id__6E01572D");
             });
 
-            modelBuilder.Entity<CustomerAddress>(entity =>
+            modelBuilder.Entity<CustomerVoucherLog>(entity =>
             {
-                entity.Property(e => e.Latitude).IsUnicode(false);
+                entity.Property(e => e.VoucherCode).IsUnicode(false);
 
-                entity.Property(e => e.Longtitude).IsUnicode(false);
-
-                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
+                entity.HasOne(d => d.Center)
+                    .WithMany(p => p.CustomerVoucherLogs)
+                    .HasForeignKey(d => d.CenterId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__CustomerV__cente__7ABC33CD");
 
                 entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.CustomerAddresses)
+                    .WithMany(p => p.CustomerVoucherLogs)
                     .HasForeignKey(d => d.CustomerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CustomerA__custo__71D1E811");
+                    .HasConstraintName("FK__CustomerV__custo__79C80F94");
+
+                entity.HasOne(d => d.VoucherCodeNavigation)
+                    .WithMany(p => p.CustomerVoucherLogs)
+                    .HasForeignKey(d => d.VoucherCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__CustomerV__vouch__7BB05806");
             });
 
             modelBuilder.Entity<District>(entity =>
@@ -737,20 +745,10 @@ namespace PawNClaw.Data.Database
                     .HasForeignKey(d => d.CreateUser)
                     .HasConstraintName("FK__Supplies__create__52AE4273");
 
-                entity.HasOne(d => d.CreateUser1)
-                    .WithMany(p => p.SupplyCreateUser1s)
-                    .HasForeignKey(d => d.CreateUser)
-                    .HasConstraintName("FK__Supplies__create__7908F585");
-
                 entity.HasOne(d => d.ModifyUserNavigation)
                     .WithMany(p => p.SupplyModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
                     .HasConstraintName("FK__Supplies__modify__53A266AC");
-
-                entity.HasOne(d => d.ModifyUser1)
-                    .WithMany(p => p.SupplyModifyUser1s)
-                    .HasForeignKey(d => d.ModifyUser)
-                    .HasConstraintName("FK__Supplies__modify__79FD19BE");
 
                 entity.HasOne(d => d.SupplyTypeCodeNavigation)
                     .WithMany(p => p.Supplies)

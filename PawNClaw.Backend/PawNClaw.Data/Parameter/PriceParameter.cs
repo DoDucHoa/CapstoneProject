@@ -15,6 +15,21 @@ namespace PawNClaw.Data.Parameter
         public decimal UnitPrice { get; set; }
         public DateTime? CreateDate { get; set; }
         public int? CreateUser { get; set; }
+        public DateTime? ModifyDate { get; set; }
+        public int? ModifyUser { get; set; }
         public string PriceTypeCode { get; set; }
+    }
+
+    public class UpdatePriceParameter
+    {
+        public int Id { get; set; }
+        public decimal UnitPrice { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public int? CreateUser { get; set; }
+        public DateTime? ModifyDate { get; set; }
+        public int? ModifyUser { get; set; }
+        public string PriceTypeCode { get; set; }
+        public int CageTypeId { get; set; }
+        public bool? Status { get; set; }
     }
 }

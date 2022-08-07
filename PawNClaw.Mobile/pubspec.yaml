@@ -57,6 +57,17 @@ dependencies:
   percent_indicator:
   dotted_border:
   iconsax:
+  http:
+  geolocator: ^9.0.0 #8.2.1
+  geocoding: 
+  firebase_storage:
+  image_picker:
+  fl_chart:
+  firebase_messaging: ^12.0.1
+  native_pdf_view: ^6.0.0+1
+  internet_file: ^1.2.0
+  flutter_rating_bar:
+  cloud_firestore: ^3.4.3
   
 dev_dependencies:
   flutter_test:

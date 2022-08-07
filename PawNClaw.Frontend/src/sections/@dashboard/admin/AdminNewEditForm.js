@@ -1,14 +1,14 @@
-import PropTypes from 'prop-types';
-import { useState, useCallback, useEffect, useMemo } from 'react';
-import * as Yup from 'yup';
 import { useSnackbar } from 'notistack';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
 // form
-import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
 // @mui
 import { LoadingButton } from '@mui/lab';
-import { Box, Card, Grid, Stack, Typography, Button, InputAdornment, IconButton } from '@mui/material';
+import { Box, Button, Card, Grid, IconButton, InputAdornment, MenuItem, Stack, Typography } from '@mui/material';
 // utils
 import { fData } from '../../../utils/formatNumber';
 // routes
@@ -16,14 +16,19 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
 import useAuth from '../../../hooks/useAuth';
 // components
-import Label from '../../../components/Label';
 import { FormProvider, RHFSelect, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
-import { createAdmin, updateAdmin } from '../../../pages/dashboard/Admin/useAdminAPI';
 import Iconify from '../../../components/Iconify';
+import Label from '../../../components/Label';
+import { createAdmin, updateAdmin } from '../../../pages/dashboard/Admin/useAdminAPI';
 
 // ----------------------------------------------------------------------
 
 const specialString = 'Awz@******ÿ123';
+const GENDER_OPTIONS = [
+  { value: 1, label: 'Nam' },
+  { value: 2, label: 'Nữ' },
+  { value: 3, label: 'Khác' },
+];
 
 AdminNewEditForm.propTypes = {
   isEdit: PropTypes.bool,
@@ -32,7 +37,7 @@ AdminNewEditForm.propTypes = {
 
 export default function AdminNewEditForm({ isEdit, adminData }) {
   const navigate = useNavigate();
-  const { accountInfo, register, uploadPhoto } = useAuth();
+  const { accountInfo, register, uploadPhotoToFirebase } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -102,7 +107,7 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
         await Promise.all([
           createAdmin(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender), // create account on Backend
           register(values.email, values.password), // create account on Firebase
-          uploadPhoto('moderators', values.avatarUrl),
+          uploadPhotoToFirebase('moderators', values.avatarUrl),
         ]);
       } else {
         updateAdmin(accountInfo.id, values.name, values.phoneNumber, values.gender);
@@ -192,16 +197,27 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
               <RHFTextField name="email" label="Email" disabled={isEdit} />
 
               <RHFTextField name="phoneNumber" label="Số điện thoại" />
-              <RHFSelect name="gender" label="Giới tính">
-                <option key="1" value="1">
-                  Nam
-                </option>
-                <option key="2" value="2">
-                  Nữ
-                </option>
-                <option key="3" value="3">
-                  Khác
-                </option>
+              <RHFSelect
+                name="gender"
+                label="Giới tính"
+                InputLabelProps={{ shrink: true }}
+                SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
+              >
+                {GENDER_OPTIONS.map((option) => (
+                  <MenuItem
+                    key={option.value}
+                    value={option.value}
+                    sx={{
+                      mx: 1,
+                      my: 0.5,
+                      borderRadius: 0.75,
+                      typography: 'body2',
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {option.name}
+                  </MenuItem>
+                ))}
               </RHFSelect>
 
               {!isEdit && (

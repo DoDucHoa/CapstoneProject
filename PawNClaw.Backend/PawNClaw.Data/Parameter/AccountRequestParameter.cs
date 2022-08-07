@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PawNClaw.Data.Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,5 +21,14 @@ namespace PawNClaw.Data.Parameter
         public string sort { get; set; } = null;
         public string fields { get; set; } = null;
         public string includeProperties { get; set; } = null;
+    }
+
+    public class UpdateAccountParam
+    {
+        public Account account { get; set; }
+        public Admin admin { get; set; }
+        public Owner owner { get; set; }
+        public Customer customer { get; set; }
+        public Staff staff { get; set; }
     }
 }

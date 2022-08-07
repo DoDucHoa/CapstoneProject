@@ -10,12 +10,6 @@ namespace PawNClaw.Data.Database
 {
     public partial class Staff
     {
-        public Staff()
-        {
-            SupplyCreateUser1s = new HashSet<Supply>();
-            SupplyModifyUser1s = new HashSet<Supply>();
-        }
-
         [Key]
         [Column("id")]
         public int Id { get; set; }
@@ -45,9 +39,8 @@ namespace PawNClaw.Data.Database
         [ForeignKey(nameof(ModifyUser))]
         [InverseProperty(nameof(Account.StaffModifyUserNavigations))]
         public virtual Account ModifyUserNavigation { get; set; }
-        [InverseProperty(nameof(Supply.CreateUser1))]
-        public virtual ICollection<Supply> SupplyCreateUser1s { get; set; }
-        [InverseProperty(nameof(Supply.ModifyUser1))]
-        public virtual ICollection<Supply> SupplyModifyUser1s { get; set; }
+
+        [NotMapped]
+        public ICollection<Photo> Photos { get; set; }
     }
 }

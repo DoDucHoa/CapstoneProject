@@ -1,7 +1,7 @@
 export { default as BookingDetails } from './BookingDetails';
-export { default as BookingBookedRoom } from './BookingBookedRoom';
+export { default as BookingStatuses } from './BookingStatuses';
 export { default as BookingTotalIncomes } from './BookingTotalIncomes';
-export { default as BookingRoomAvailable } from './BookingRoomAvailable';
+export { default as BookingRoomAvailable } from './BookingCageAvailable';
 export { default as BookingNewestBooking } from './BookingNewestBooking';
 export { default as BookingCheckInWidgets } from './BookingCheckInWidgets';
 export { default as BookingCustomerReviews } from './BookingCustomerReviews';

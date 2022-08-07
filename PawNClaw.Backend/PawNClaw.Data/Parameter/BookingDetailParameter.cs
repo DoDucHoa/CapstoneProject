@@ -12,8 +12,7 @@ namespace PawNClaw.Data.Parameter
 
     public class UpdateBookingDetailParameter
     {
-        public int BookingId { get; set; }
-        public int Line { get; set; }
+        public int Id { get; set; }
         public decimal Price { get; set; }
         public string CageCode { get; set; }
         public string Note { get; set; }

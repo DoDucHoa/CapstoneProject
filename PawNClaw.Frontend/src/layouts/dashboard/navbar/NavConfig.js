@@ -16,18 +16,22 @@ const ICONS = {
   brand: getIcon('ic_brand'),
   center: getIcon('ic_center'),
   list: getIcon('ic_list'),
-  price: getIcon('ic_price_tag'),
   service: getIcon('ic_service'),
   food: getIcon('ic_food'),
   cage: getIcon('ic_cage'),
+  cageType: getIcon('ic_cage_type'),
   staff: getIcon('ic_staff'),
+  price: getIcon('ic_price_tag'),
+  setting: getIcon('ic_setting'),
+  adv: getIcon('ic_adv'),
 };
 
+// nav config for owner
 const navConfig = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
-    subheader: 'general',
+    subheader: 'Báo cáo',
     items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
   },
 
@@ -41,6 +45,19 @@ const navConfig = [
         title: 'Lịch Đặt',
         path: PATH_DASHBOARD.booking.calendar,
         icon: ICONS.booking,
+      },
+    ],
+  },
+
+  // DISCOUNT
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Khuyến mại',
+    items: [
+      {
+        title: 'Voucher',
+        path: PATH_DASHBOARD.voucher.list,
+        icon: ICONS.price,
       },
     ],
   },
@@ -59,14 +76,14 @@ const navConfig = [
 
       // STAFF
       {
+        title: 'Loại chuồng',
+        path: PATH_DASHBOARD.cageType.list,
+        icon: ICONS.cageType,
+      },
+      {
         title: 'Chuồng',
         path: PATH_DASHBOARD.cage.list,
         icon: ICONS.cage,
-      },
-      {
-        title: 'Giá chuồng',
-        path: PATH_DASHBOARD.price.list,
-        icon: ICONS.price,
       },
       {
         title: 'Đồ dùng',
@@ -83,13 +100,6 @@ const navConfig = [
 ];
 
 export const navConfigForStaff = [
-  // GENERAL
-  // ----------------------------------------------------------------------
-  {
-    subheader: 'general',
-    items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
-  },
-
   // BOOKING
   // ----------------------------------------------------------------------
   {
@@ -102,6 +112,57 @@ export const navConfigForStaff = [
         icon: ICONS.booking,
       },
     ],
+  },
+
+  // DISCOUNT
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Khuyến mại',
+    items: [
+      {
+        title: 'Voucher',
+        path: PATH_DASHBOARD.voucher.list,
+        icon: ICONS.price,
+      },
+    ],
+  },
+
+  // CENTER MANAGEMENT
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Quản Lý Trung Tâm',
+    items: [
+      // STAFF
+      {
+        title: 'Loại chuồng',
+        path: PATH_DASHBOARD.cageType.list,
+        icon: ICONS.cageType,
+      },
+      {
+        title: 'Chuồng',
+        path: PATH_DASHBOARD.cage.list,
+        icon: ICONS.cage,
+      },
+      {
+        title: 'Đồ dùng',
+        path: PATH_DASHBOARD.supply.list,
+        icon: ICONS.food,
+      },
+      {
+        title: 'Dịch vụ',
+        path: PATH_DASHBOARD.service.list,
+        icon: ICONS.service,
+      },
+    ],
+  },
+];
+
+export const navConfigForAdmin = [
+  // GENERAL
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Báo cáo',
+    items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
   },
 
   // MANAGEMENT
@@ -142,41 +203,31 @@ export const navConfigForStaff = [
     ],
   },
 
-  // CENTER MANAGEMENT
+  // SETTING
   // ----------------------------------------------------------------------
   {
-    subheader: 'Quản Lý Trung Tâm',
+    subheader: 'Cài đặt',
     items: [
-      // STAFF
+      // MODERATOR
       {
-        title: 'Chuồng',
-        path: PATH_DASHBOARD.cage.list,
-        icon: ICONS.cage,
+        title: 'Thông số cài đặt',
+        path: PATH_DASHBOARD.setting.list,
+        icon: ICONS.setting,
       },
       {
-        title: 'Giá chuồng',
-        path: PATH_DASHBOARD.price.list,
-        icon: ICONS.price,
-      },
-      {
-        title: 'Đồ dùng',
-        path: PATH_DASHBOARD.supply.list,
-        icon: ICONS.food,
-      },
-      {
-        title: 'Dịch vụ',
-        path: PATH_DASHBOARD.service.list,
-        icon: ICONS.service,
+        title: 'Quảng cáo',
+        path: PATH_DASHBOARD.sponsor.list,
+        icon: ICONS.adv,
       },
     ],
   },
 ];
 
-export const navConfigForAdmin = [
+export const navConfigForModerator = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
-    subheader: 'general',
+    subheader: 'Báo cáo',
     items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
   },
 
@@ -185,12 +236,6 @@ export const navConfigForAdmin = [
   {
     subheader: 'Quản Lý',
     items: [
-      // MODERATOR
-      {
-        title: 'Người điều hành',
-        path: PATH_DASHBOARD.admin.list,
-        icon: ICONS.admin,
-      },
       {
         title: 'Chủ trung tâm',
         path: PATH_DASHBOARD.owner.list,

@@ -18,8 +18,14 @@ namespace PawNClaw.Data.Interface
         public IEnumerable<PetCenter> SearchPetCenterQueryNonBooking(string City, string District,
             string StartBooking, string EndBooking, List<PetSizeCage> PetSizes);
 
-        public PetCenter GetPetCenterById(int id, PetSizeCage PetSizes, string StartBooking, string EndBooking);
+        public PetCenter GetPetCenterById(int id, int customerId, PetSizeCage PetSizes, string StartBooking, string EndBooking);
 
         public PetCenter GetPetCenterByIdAfterSearchName(int id);
+
+        public PetCenter GetPetCenterWithLocation(int id);
+
+        public PetCenter GetPetCenterById(int id);
+
+        public IEnumerable<PetCenter> GetPetCentersForAdmin();
     }
 }

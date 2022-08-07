@@ -60,23 +60,24 @@ CREATE TABLE Customers
     id INT PRIMARY KEY,
 	name NVARCHAR(256) NOT NULL,
 	birth DATE,
-	gender TINYINT
+	gender INT,
+	address NVARCHAR(256)
 )
 ALTER TABLE dbo.Customers ADD FOREIGN KEY (id) REFERENCES [dbo].[Accounts](id)
 GO
 
-CREATE TABLE CustomerAddresses
-(
-    id INT IDENTITY PRIMARY KEY,
-	name NVARCHAR(512) NOT NULL,
-	address NVARCHAR(512) NOT NULL,
-	longtitude VARCHAR(64),
-	latitude VARCHAR(64),
-	status BIT DEFAULT 1,
-	customer_id INT NOT NULL
-)
-ALTER TABLE dbo.CustomerAddresses ADD FOREIGN KEY (customer_id) REFERENCES [dbo].Customers(id)
-GO
+-- CREATE TABLE CustomerAddresses
+-- (
+--     id INT IDENTITY PRIMARY KEY,
+-- 	name NVARCHAR(512) NOT NULL,
+-- 	address NVARCHAR(512) NOT NULL,
+-- 	longtitude VARCHAR(64),
+-- 	latitude VARCHAR(64),
+-- 	status BIT DEFAULT 1,
+-- 	customer_id INT NOT NULL
+-- )
+-- ALTER TABLE dbo.CustomerAddresses ADD FOREIGN KEY (customer_id) REFERENCES [dbo].Customers(id)
+-- GO
 
 CREATE TABLE Brands
 (
@@ -105,7 +106,7 @@ CREATE TABLE PetCenters
 	name NVARCHAR(256) NOT NULL,
 	address NVARCHAR(256),
 	phone VARCHAR(32),
-	rating INT,
+	rating NUMERIC(19, 5),
 	open_time TIME,
 	close_time TIME,
 	create_date DATE DEFAULT GETDATE(),
@@ -209,6 +210,8 @@ ALTER TABLE dbo.PriceTypes ADD FOREIGN KEY (create_user) REFERENCES [dbo].Accoun
 GO
 ALTER TABLE dbo.PriceTypes ADD FOREIGN KEY (modify_user) REFERENCES [dbo].Accounts(id)
 GO
+CREATE INDEX i ON PriceTypes (code)
+GO
 
 CREATE TABLE CageTypes
 (
@@ -300,6 +303,8 @@ ALTER TABLE dbo.PetTypes ADD FOREIGN KEY (create_user) REFERENCES [dbo].Accounts
 GO
 ALTER TABLE dbo.PetTypes ADD FOREIGN KEY (modify_user) REFERENCES [dbo].Accounts(id)
 GO
+CREATE INDEX i ON PetTypes (code)
+GO
 
 CREATE TABLE Pets
 (
@@ -370,7 +375,8 @@ ALTER TABLE dbo.SupplyTypes ADD FOREIGN KEY (create_user) REFERENCES [dbo].Accou
 GO
 ALTER TABLE dbo.SupplyTypes ADD FOREIGN KEY (modify_user) REFERENCES [dbo].Accounts(id)
 GO
-
+CREATE INDEX i ON SupplyTypes (code, name)
+GO
 
 CREATE TABLE Supplies
 (
@@ -410,6 +416,8 @@ ALTER TABLE dbo.VoucherTypes ADD FOREIGN KEY (create_user) REFERENCES [dbo].Acco
 GO
 ALTER TABLE dbo.VoucherTypes ADD FOREIGN KEY (modify_user) REFERENCES [dbo].Accounts(id)
 GO
+CREATE INDEX i ON VoucherTypes (code)
+GO
 
 CREATE TABLE Vouchers
 (
@@ -418,13 +426,15 @@ CREATE TABLE Vouchers
 	value NUMERIC(19, 5),
 	start_date DATE,
 	expire_date DATE,
+	description NVARCHAR(512),
 	create_date DATE DEFAULT GETDATE(),
 	modify_date DATE DEFAULT GETDATE(),
 	create_user INT,
 	modify_user INT,
 	status BIT DEFAULT 1,
 	center_id INT NOT NULL,
-	voucher_type_code VARCHAR(32) NOT NULL
+	voucher_type_code VARCHAR(32) NOT NULL,
+	release_amount INT,
 )
 ALTER TABLE dbo.Vouchers ADD FOREIGN KEY (create_user) REFERENCES [dbo].Accounts(id)
 GO
@@ -459,7 +469,9 @@ CREATE TABLE Bookings
 	center_id INT NOT NULL,
 	rating TINYINT,
 	customer_note NVARCHAR(512),
-	staff_note NVARCHAR(512)
+	staff_note NVARCHAR(512),
+	invoice_url NVARCHAR(1024),
+	feedback NVARCHAR(1024),
 )
 ALTER TABLE dbo.Bookings ADD FOREIGN KEY (status_id) REFERENCES [dbo].BookingStatuses(id)
 GO
@@ -553,6 +565,8 @@ CREATE TABLE PhotoTypes
 	name NVARCHAR(256),
 	status BIT DEFAULT 1
 )
+GO
+CREATE INDEX i ON PhotoTypes (id)
 GO
 
 INSERT INTO dbo.PhotoTypes (id, name)
@@ -671,4 +685,19 @@ CREATE TABLE FoodSchedule
 	cage_type_id INT NOT NULL
 )
 ALTER TABLE dbo.FoodSchedule ADD FOREIGN KEY (cage_type_id) REFERENCES [dbo].CageTypes(id)
+GO
+
+CREATE TABLE CustomerVoucherLog
+(
+    id INT PRIMARY KEY IDENTITY,
+	customer_id INT NOT NULL,
+	center_id INT NOT NULL,
+	voucher_code VARCHAR(32) NOT NULL,
+)
+GO
+ALTER TABLE dbo.CustomerVoucherLog ADD FOREIGN KEY (customer_id) REFERENCES [dbo].Customers(id)
+GO
+ALTER TABLE dbo.CustomerVoucherLog ADD FOREIGN KEY (center_id) REFERENCES [dbo].PetCenters(id)
+GO
+ALTER TABLE dbo.CustomerVoucherLog ADD FOREIGN KEY (voucher_code) REFERENCES [dbo].Vouchers(code)
 GO

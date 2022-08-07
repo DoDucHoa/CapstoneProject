@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
+import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pinput/pinput.dart';
 
@@ -17,13 +18,14 @@ class InputOTPPanel extends StatefulWidget {
 
 class _InputOTPPanelState extends State<InputOTPPanel> {
   TextEditingController otpController = TextEditingController();
-  late String verificationId;
+  String? verificationId;
   bool isValid = false;
 
   @override
   void initState() {
     // TODO: implement initState
     _verifyPhone(widget.phoneNumber);
+    
     super.initState();
   }
 
@@ -35,6 +37,7 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
         codeSent: (verificationId, resendingToken) async {
           setState(() {
             this.verificationId = verificationId;
+            // isValid = true;
           });
         },
         codeAutoRetrievalTimeout: (verificationId) async {});
@@ -44,7 +47,7 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return Scaffold(
+    return (verificationId ==null) ?LoadingIndicator(loadingText: 'Vui lòng đợi..') : Scaffold(
       body: Container(
         padding: EdgeInsets.all(width * regularPadRate),
         child: Column(
@@ -81,20 +84,24 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
                     length: 6,
                     controller: otpController,
                     textCapitalization: TextCapitalization.characters,
-                    showCursor: false,
+                    // showCursor: (verificationId != null),
                     keyboardType: TextInputType.number,
-                    onChanged: (input) {
-                      input.length == 6
-                          ? setState(() {
-                              isValid = true;
-                            })
-                          : setState(() {
-                              isValid = false;
-                            });
-                    },
-                    // onCompleted: ((value) {
-                    //   print(value)
-                    // }),
+                    autofocus: true,
+                    // onChanged: (input) {
+                    //   input.length == 6
+                    //       ? setState(() {
+                    //           isValid = true;
+                    //         })
+                    //       : setState(() {
+                    //           isValid = false;
+                    //         });
+                    // },
+                    onCompleted: ((value) {
+                      BlocProvider.of<AuthBloc>(context).add(VerifyOTP(
+                          verificationId!,
+                          otpController.text,
+                          widget.phoneNumber));
+                    }),
                   ),
                   Text(
                     widget.error ?? "",
@@ -104,31 +111,35 @@ class _InputOTPPanelState extends State<InputOTPPanel> {
               ),
             ),
             const Spacer(flex: 30),
-            Center(
-              child: Opacity(
-                opacity: isValid ? 1 : 0.3,
-                child: ElevatedButton(
-                  onPressed: () {
-                    BlocProvider.of<AuthBloc>(context).add(VerifyOTP(
-                        verificationId,
-                        otpController.text,
-                        widget.phoneNumber));
-                  },
-                  child: Text(
-                    "Xác nhận",
-                    style: TextStyle(
-                        color: Colors.white, fontSize: width * regularFontRate),
-                  ),
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // Center(
+            //   child: Opacity(
+            //     opacity: isValid ? 1 : 0.3,
+            //     child: ElevatedButton(
+            //         onPressed: () {
+            //           BlocProvider.of<AuthBloc>(context).add(VerifyOTP(
+            //               verificationId,
+            //               otpController.text,
+            //               widget.phoneNumber));
+            //         },
+            //         style: ElevatedButton.styleFrom(
+            //             shape: RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.circular(15),
+            //         )),
+            //         child: Container(
+            //           padding:
+            //               EdgeInsets.symmetric(vertical: width * smallPadRate),
+            //           child: const Center(
+            //             child: Text(
+            //               'Xác nhận',
+            //               style: TextStyle(
+            //                   color: Colors.white,
+            //                   fontSize: 15,
+            //                   fontWeight: FontWeight.w700),
+            //             ),
+            //           ),
+            //         )),
+            //   ),
+            // ),
           ],
         ),
       ),

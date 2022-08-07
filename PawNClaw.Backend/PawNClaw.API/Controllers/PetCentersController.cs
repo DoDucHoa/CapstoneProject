@@ -58,12 +58,28 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
+        [Route("nearby_search")]
+        public async Task<IActionResult> searchNearbyCenter([FromBody] SearchNearbyCenterModel model) 
+        {
+            try
+            {
+                var data = await _searchService.searchNearbyCenter(model.userLongtitude, model.userLatitude);
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
         [Route("center_detail")]
         public IActionResult GetCenterByIdWithInclude([FromBody] GetCenterByIdRequestModel model)
         {
             try
             {
-                var data = _petCenterService.GetDetailById(model.id, model._petRequests, model.StartBooking, model.EndBooking);
+                var data = _petCenterService.GetDetailById(model.id, model.customerId, model._petRequests, model.StartBooking, model.EndBooking);
                 return Ok(data);
             }
             catch (Exception ex)
@@ -74,11 +90,23 @@ namespace PawNClaw.API.Controllers
 
         [HttpPost]
         [Route("check_center")]
-        public IActionResult GetCenterByIdAfterSearch([FromBody] GetCenterByIdAfterSearchnameRequestModel model)
+        public async Task<IActionResult> GetCenterByIdAfterSearch([FromBody] GetCenterByIdAfterSearchnameRequestModel model)
         {
             try
             {
-                var data = _searchService.CheckCenter(model.id, model._petRequests, model.StartBooking, model.Due);
+                var data = _searchService.CheckCenter(model.id, model.customerId, model._petRequests, model.StartBooking, model.Due);
+
+                if (data == null)
+                {
+                    var referenceCenter = await _searchService.SearchCenterNearByCenterId(model.id, model.StartBooking, model.Due, model._petRequests);
+
+                    var addition = new
+                    {
+                        mess = "Reference Center!!!"
+                    };
+                    return Ok(new { referenceCenter,  addition});
+                }
+
                 return Ok(data);
             }
             catch (Exception ex)
@@ -91,6 +119,23 @@ namespace PawNClaw.API.Controllers
         public IActionResult GetCenters([FromQuery] string name, [FromQuery] bool? status, [FromQuery] string sort, [FromQuery] PagingParameter paging, string includeProperties)
         {
             var data = _petCenterService.GetAll(includeProperties, paging);
+            var metadata = new
+            {
+                data.TotalCount,
+                data.PageSize,
+                data.CurrentPage,
+                data.TotalPages,
+                data.HasNext,
+                data.HasPrevious
+            };
+            return Ok(new { data, metadata });
+        }
+
+        [HttpGet("for-admin/get-all")]
+        public IActionResult GetCentersForAdmin([FromQuery] string name, [FromQuery] bool? status, [FromQuery] PagingParameter paging)
+        {
+            var data = _petCenterService.GetAllForAdmin(name, status, paging);
+
             var metadata = new
             {
                 data.TotalCount,
@@ -117,79 +162,101 @@ namespace PawNClaw.API.Controllers
             return Ok(data);
         }
 
-        [HttpGet("brand/{id:int}")]
-        public IActionResult GetCentersByBrand(int id, PagingParameter paging)
+        [HttpGet("detail/{id:int}")]
+        public IActionResult GetCenterById(int id)
         {
-            var data = _petCenterService.GetByBrand(id, paging);
-            var metadata = new
-            {
-                data.TotalCount,
-                data.PageSize,
-                data.CurrentPage,
-                data.TotalPages,
-                data.HasNext,
-                data.HasPrevious
-            };
-            return Ok(new { data, metadata });
+            var data = _petCenterService.GetDetailByCenterId(id);
+            return Ok(data);
         }
 
-        [HttpGet("name/{name}")]
-        public IActionResult GetCenterByName(string name, PagingParameter paging)
+        [HttpGet("brand/{id:int}")]
+        public IActionResult GetCentersByBrand(int id)
         {
-            var data = _petCenterService.GetByName(name, paging);
-            var metadata = new
-            {
-                data.TotalCount,
-                data.PageSize,
-                data.CurrentPage,
-                data.TotalPages,
-                data.HasNext,
-                data.HasPrevious
-            };
-            return Ok(new { data, metadata });
+            var data = _petCenterService.GetByBrand(id);
+            
+            return Ok(data);
+        }
+
+        [HttpGet("for-admin/{id:int}")]
+        public IActionResult GetCenterForAdmin(int id)
+        {
+            var data = _petCenterService.GetByIdForAdmin(id);
+            return Ok(data);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Create([FromBody] PetCenterRequestParameter petCenterRequestParameter)
+        public async Task<IActionResult> Create([FromBody] CreatePetCenterParameter parameter)
         {
             var petCenter = new PetCenter
             {
-                Name = petCenterRequestParameter.Name,
-                Address = petCenterRequestParameter.Address,
-                Phone = petCenterRequestParameter.Phone,
+                Name = parameter.Name,
+                Address = parameter.Address,
+                Phone = parameter.Phone,
                 Rating = null,
                 CreateDate = DateTime.Now,
-                ModifyDate = null,
-                CreateUser = petCenterRequestParameter.CreateUser,
-                ModifyUser = null,
+                ModifyDate = DateTime.Now,
+                CreateUser = parameter.CreateUser,
+                ModifyUser = parameter.ModifyUser,
                 Status = true,
-                BrandId = (int)petCenterRequestParameter.BrandId,
-                OpenTime = petCenterRequestParameter.OpenTime,
-                CloseTime = petCenterRequestParameter.CloseTime
+                BrandId = (int)parameter.BrandId,
+                OpenTime = parameter.OpenTime,
+                CloseTime = parameter.CloseTime,
+                Checkin = parameter.Checkin,
+                Checkout = parameter.Checkout,
+                Description = parameter.Description
             };
-            if (_petCenterService.Add(petCenter) == 1)
-                return Ok();
-            return BadRequest();
+
+            var location = new Location
+            {
+                CityCode = parameter.CityCode,
+                DistrictCode = parameter.DistrictCode,
+                WardCode = parameter.WardCode
+            };
+
+            try
+            {
+                var id = await _petCenterService.Add(petCenter, location, parameter.FullAddress);
+
+                return Ok(id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
-        [HttpPut]
-        public IActionResult Update([FromBody] PetCenterRequestParameter petCenterRequestParameter)
+        [HttpPut("for-admin")]
+        public async Task<IActionResult> UpdateByAdmin([FromBody] UpdatePetCenterForAdminParam petCenterRequestParameter)
         {
-            var petCenter = _petCenterService.GetById((int)petCenterRequestParameter.Id);
+            try
+            {
 
-            petCenter.Name = petCenterRequestParameter.Name;
-            petCenter.Address = petCenterRequestParameter.Address;
-            petCenter.Phone = petCenterRequestParameter.Phone;
-            petCenter.ModifyDate = DateTime.Now;
-            petCenter.ModifyUser = petCenterRequestParameter.ModifyUser;
-            petCenter.BrandId = (int)petCenterRequestParameter.BrandId;
-            petCenter.OpenTime = petCenterRequestParameter.OpenTime;
-            petCenter.CloseTime = petCenterRequestParameter.CloseTime;
+                await _petCenterService.UpdateForAdminAsync(petCenterRequestParameter);
 
-            if (_petCenterService.Update(petCenter))
                 return Ok();
-            return BadRequest();
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpPut("for-owner")]
+        public IActionResult UpdateByOwner([FromBody] UpdatePetCenterForOwnerParam petCenterRequestParameter)
+        {
+            try
+            {
+
+                _petCenterService.UpdateForOwner(petCenterRequestParameter);
+
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e);
+            }
+
         }
 
         [HttpDelete("{id}")]
@@ -212,7 +279,7 @@ namespace PawNClaw.API.Controllers
 
         [HttpGet]
         [Route("search-name")]
-        public IActionResult SearchByName(string name, PagingParameter paging)
+        public IActionResult SearchByName(string name, [FromQuery] PagingParameter paging)
         {
             var data = _searchService.SearchCenterByName(name, paging);
 

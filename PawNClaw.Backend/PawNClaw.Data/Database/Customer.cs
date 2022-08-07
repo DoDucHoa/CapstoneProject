@@ -13,7 +13,7 @@ namespace PawNClaw.Data.Database
         public Customer()
         {
             Bookings = new HashSet<Booking>();
-            CustomerAddresses = new HashSet<CustomerAddress>();
+            CustomerVoucherLogs = new HashSet<CustomerVoucherLog>();
             Pets = new HashSet<Pet>();
         }
 
@@ -27,15 +27,18 @@ namespace PawNClaw.Data.Database
         [Column("birth", TypeName = "date")]
         public DateTime? Birth { get; set; }
         [Column("gender")]
-        public byte? Gender { get; set; }
+        public int? Gender { get; set; }
+        [Column("address")]
+        [StringLength(256)]
+        public string Address { get; set; }
 
         [ForeignKey(nameof(Id))]
         [InverseProperty(nameof(Account.Customer))]
         public virtual Account IdNavigation { get; set; }
         [InverseProperty(nameof(Booking.Customer))]
         public virtual ICollection<Booking> Bookings { get; set; }
-        [InverseProperty(nameof(CustomerAddress.Customer))]
-        public virtual ICollection<CustomerAddress> CustomerAddresses { get; set; }
+        [InverseProperty(nameof(CustomerVoucherLog.Customer))]
+        public virtual ICollection<CustomerVoucherLog> CustomerVoucherLogs { get; set; }
         [InverseProperty(nameof(Pet.Customer))]
         public virtual ICollection<Pet> Pets { get; set; }
     }

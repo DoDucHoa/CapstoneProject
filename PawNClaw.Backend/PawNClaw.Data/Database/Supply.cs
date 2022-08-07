@@ -50,14 +50,8 @@ namespace PawNClaw.Data.Database
         [InverseProperty(nameof(PetCenter.Supplies))]
         public virtual PetCenter Center { get; set; }
         [ForeignKey(nameof(CreateUser))]
-        [InverseProperty(nameof(Staff.SupplyCreateUser1s))]
-        public virtual Staff CreateUser1 { get; set; }
-        [ForeignKey(nameof(CreateUser))]
         [InverseProperty(nameof(Account.SupplyCreateUserNavigations))]
         public virtual Account CreateUserNavigation { get; set; }
-        [ForeignKey(nameof(ModifyUser))]
-        [InverseProperty(nameof(Staff.SupplyModifyUser1s))]
-        public virtual Staff ModifyUser1 { get; set; }
         [ForeignKey(nameof(ModifyUser))]
         [InverseProperty(nameof(Account.SupplyModifyUserNavigations))]
         public virtual Account ModifyUserNavigation { get; set; }

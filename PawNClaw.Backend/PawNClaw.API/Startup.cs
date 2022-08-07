@@ -1,3 +1,4 @@
+using FirebaseAdmin.Messaging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -42,6 +43,7 @@ namespace PawNClaw.API
             services.AddControllers();
             services.AddHttpClient();
 
+            services.AddTransient<NotificationService, NotificationService>();
             services.AddTransient<SearchService, SearchService>();
 
             services.AddTransient<IRoleRepository, RoleRepository>();
@@ -59,6 +61,7 @@ namespace PawNClaw.API
             services.AddTransient<StaffServicecs, StaffServicecs>();
 
             services.AddTransient<ICustomerRepository, CustomerRepository>();
+            services.AddTransient<CustomerService, CustomerService>();
 
             services.AddTransient<IBrandRepository, BrandRepository>();
             services.AddTransient<BrandService, BrandService>();
@@ -80,6 +83,7 @@ namespace PawNClaw.API
             services.AddTransient<PetService, PetService>();
 
             services.AddTransient<ILocationRepository, LocationRepository>();
+            
 
             services.AddTransient<IBookingRepository, BookingRepository>();
             services.AddTransient<BookingService, BookingService>();
@@ -103,14 +107,20 @@ namespace PawNClaw.API
             services.AddTransient<SupplyOrderService, SupplyOrderService>();
 
             services.AddTransient<ISupplyRepository, SupplyRepository>();
+            services.AddTransient<SupplyService, SupplyService>();
 
             services.AddTransient<ICageRepository, CageRepository>();
+            services.AddTransient<CageService, CageService>();
 
             services.AddTransient<ICageTypeRepository, CageTypeRepository>();
             services.AddTransient<CageTypeService, CageTypeService>();
 
             services.AddTransient<IPriceRepository, PriceRepository>();
             services.AddTransient<PriceRepository, PriceRepository>();
+            services.AddTransient<PriceService, PriceService>();
+
+            services.AddTransient<IPriceTypeRepository, PriceTypeRepository>();
+            services.AddTransient<PriceTypeService, PriceTypeService>();
 
             services.AddTransient<IPhotoRepository, PhotoRepository>();
             services.AddTransient<PhotoRepository, PhotoRepository>();
@@ -122,8 +132,25 @@ namespace PawNClaw.API
             services.AddTransient<IDistrictRepository, DistrictRepository>();
             services.AddTransient<DistrictService, DistrictService>();
 
+            services.AddTransient<IWardRepository, WardRepository>();
+            services.AddTransient<WardService, WardService>();
+
             services.AddScoped<ISponsorBannerRepository, SponsorBannerRepository>();
             services.AddScoped<SponsorBannerService, SponsorBannerService>();
+
+            services.AddScoped<IVoucherRepository, VoucherRepository>();
+            services.AddScoped<VoucherService, VoucherService>();
+
+            services.AddScoped<IVoucherTypeRepository, VoucherTypeRepository>();
+            services.AddScoped<VoucherTypeService, VoucherTypeService>();
+
+            services.AddScoped<IFoodScheduleRepository, FoodScheduleRepository>();
+
+            services.AddScoped<ICustomerVoucherLogRepository, CustomerVoucherLogRepository>();
+
+            services.AddScoped<RevenueReportOwnerService, RevenueReportOwnerService>();
+
+            services.AddScoped<AdminDashboardService, AdminDashboardService>();
 
             services.AddControllers();
             services.AddControllersWithViews()

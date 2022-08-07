@@ -1,28 +1,34 @@
+import 'package:pawnclaw_mobile_application/models/review.dart';
+import 'package:pawnclaw_mobile_application/models/voucher.dart';
+
 import 'cage_type.dart';
+import  'dart:convert';
 
 class Center {
   int? _id;
   String? _name;
   String? _address;
   String? _phone;
-  int? _rating;
+  double? _rating;
   int? _ratingCount;
   bool? _status;
   int? _brandId;
   String? _openTime;
   String? _closeTime;
-  String? _brand;
+  dynamic _brand;
   List<CageTypes>? _cageTypes;
   List<Services>? _services;
   List<Supplies>? _supplies;
   String? _endBooking;
+  List<Voucher>? _vouchers;
+  List<Review>? _reviews;
 
   Center(
       {int? id,
       String? name,
       String? address,
       String? phone,
-      int? rating,
+      double? rating,
       int? ratingCount,
       bool? status,
       int? brandId,
@@ -32,7 +38,9 @@ class Center {
       List<CageTypes>? cageTypes,
       List<Services>? services,
       List<Supplies>? supplies,
-      String? endBooking}) {
+      String? endBooking,
+      List<Voucher>? vouchers,
+      List<Review>? reviews}) {
     if (id != null) {
       this._id = id;
     }
@@ -78,6 +86,12 @@ class Center {
     if (endBooking != null) {
       this._endBooking = endBooking;
     }
+    if (vouchers != null) {
+      this._vouchers = vouchers;
+    }
+    if (reviews != null) {
+      this._reviews = reviews;
+    }
   }
 
   int? get id => _id;
@@ -88,8 +102,8 @@ class Center {
   set address(String? address) => _address = address;
   String? get phone => _phone;
   set phone(String? phone) => _phone = phone;
-  int? get rating => _rating;
-  set rating(int? rating) => _rating = rating;
+  double? get rating => _rating;
+  set rating(double? rating) => _rating = rating;
   int? get ratingCount => _ratingCount;
   set ratingCount(int? ratingCount) => _ratingCount = ratingCount;
   bool? get status => _status;
@@ -109,13 +123,16 @@ class Center {
   List<Supplies>? get supplies => _supplies;
   set supplies(List<Supplies>? supplies) => _supplies = supplies;
   String? get endBooking => _endBooking;
+  List<Voucher>? get vouchers => _vouchers;
+  List<Review>? get reviews => _reviews;
+  set reviews(List<Review>? reviews) => _reviews = reviews;
 
   Center.fromJson(Map<String, dynamic> json) {
     _id = json['id'];
     _name = json['name'];
     _address = json['address'];
     _phone = json['phone'];
-    _rating = json['rating'];
+    _rating = json['ratingPoint'];
     _ratingCount = json['ratingCount'];
     _status = json['status'];
     _brandId = json['brandId'];
@@ -141,6 +158,13 @@ class Center {
       });
     }
     _endBooking = json['endBooking'];
+
+    if(json['vouchers'] != null){
+      _vouchers = <Voucher>[];
+      json['vouchers'].forEach((v) {
+        _vouchers!.add(new Voucher.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -149,7 +173,7 @@ class Center {
     data['name'] = this._name;
     data['address'] = this._address;
     data['phone'] = this._phone;
-    data['rating'] = this._rating;
+    data['ratingPoint'] = this._rating;
     data['ratingCount'] = this._ratingCount;
     data['status'] = this._status;
     data['brandId'] = this._brandId;
@@ -166,39 +190,53 @@ class Center {
       data['supplies'] = this._supplies!.map((v) => v.toJson()).toList();
     }
     data['endBooking'] = this._endBooking;
+    if (this._vouchers != null) {
+      data['vouchers'] = this._vouchers!.map((v) => v.toJson()).toList();
+    }
+
     return data;
   }
 
-  String shortAddress(){
+  String shortAddress() {
     var splited = this.address!.split(",");
-    return splited[0] + ', ' + splited[1];
+    if (splited.length > 1) {
+      return splited[0] + "," + splited[1];
+    } 
+      return this.address!;
+    
   }
 }
 
 class Services {
   int? id;
   String? description;
-  double? sellPrice;
   double? discountPrice;
   List<ServicePrices>? servicePrices;
+  double? minPrice;
+  double? maxPrice;
 
   Services(
       {this.id,
       this.description,
-      this.sellPrice,
       this.discountPrice,
-      this.servicePrices});
+      this.servicePrices,
+      this.minPrice,
+      this.maxPrice});
 
   Services.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     description = json['description'];
-    sellPrice = json['sellPrice'];
     discountPrice = json['discountPrice'];
     if (json['servicePrices'] != null) {
       servicePrices = <ServicePrices>[];
       json['servicePrices'].forEach((v) {
         servicePrices!.add(new ServicePrices.fromJson(v));
       });
+      if (servicePrices!.isEmpty) {
+        servicePrices = null;
+        minPrice = json['minPrice'].toDouble();
+        maxPrice = json['maxPrice'].toDouble();
+      }
     }
   }
 
@@ -206,11 +244,13 @@ class Services {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['description'] = this.description;
-    data['sellPrice'] = this.sellPrice;
     data['discountPrice'] = this.discountPrice;
     if (this.servicePrices != null) {
       data['servicePrices'] =
           this.servicePrices!.map((v) => v.toJson()).toList();
+    } else {
+      data['minPrice'] = this.minPrice;
+      data['maxPrice'] = this.maxPrice;
     }
     return data;
   }
@@ -303,4 +343,56 @@ class SearchResponseModel {
     // TODO: implement toString
     return super.toString();
   }
+}
+
+class LocationResponseModel {
+    LocationResponseModel({
+        this.id,
+        this.longtitude,
+        this.latitude,
+        this.cityCode,
+        this.districtCode,
+        this.wardCode,
+        this.center,
+        this.distance,
+        this.duration,
+    });
+
+    int? id;
+    String? longtitude;
+    String? latitude;
+    int? cityCode;
+    int? districtCode;
+    int? wardCode;
+    Center? center;
+    String? distance;
+    String? duration;
+
+    factory LocationResponseModel.fromRawJson(String str) => LocationResponseModel.fromJson(json.decode(str));
+
+    String toRawJson() => json.encode(toJson());
+
+    factory LocationResponseModel.fromJson(Map<String, dynamic> json) => LocationResponseModel(
+        id: json["id"],
+        longtitude: json["longtitude"],
+        latitude: json["latitude"],
+        cityCode: json["cityCode"],
+        districtCode: json["districtCode"],
+        wardCode: json["wardCode"],
+        center: Center.fromJson(json["idNavigation"]),
+        distance: json["distance"],
+        duration: json["duration"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "longtitude": longtitude,
+        "latitude": latitude,
+        "cityCode": cityCode,
+        "districtCode": districtCode,
+        "wardCode": wardCode,
+        "idNavigation": center!.toJson(),
+        "distance": distance,
+        "duration": duration,
+    };
 }

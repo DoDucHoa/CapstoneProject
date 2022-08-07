@@ -29,7 +29,7 @@ import { BOOKING_STATUS_COLOR } from '../../config';
 // ----------------------------------------------------------------------
 
 export default function Calendar() {
-  const { centerId } = useAuth();
+  const { centerId, centerInfo } = useAuth();
   const { themeStretch } = useSettings();
 
   const dispatch = useDispatch();
@@ -137,6 +137,7 @@ export default function Calendar() {
           <DialogTitle>Khách hàng: {isEmpty(bookingDetails) ? '' : bookingDetails.customer.name}</DialogTitle>
           <CalendarForm
             centerId={centerId}
+            centerInfo={centerInfo}
             selectedEvent={bookingDetails || {}}
             onCancel={handleCloseModal}
             bookingStatuses={bookingStatuses}

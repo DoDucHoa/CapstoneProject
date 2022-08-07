@@ -19,7 +19,7 @@ namespace PawNClaw.Business.Services
         //Get All
         public PagedList<Brand> GetBrands(string name, bool? status, string dir, PagingParameter paging)
         {
-            var values = _brandRepository.GetAll(includeProperties: "Owner");
+            var values = _brandRepository.GetBrands();
 
             // lọc theo name
             if (!string.IsNullOrWhiteSpace(name))

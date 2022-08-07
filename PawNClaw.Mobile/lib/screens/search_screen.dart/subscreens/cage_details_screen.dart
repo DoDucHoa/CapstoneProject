@@ -32,6 +32,8 @@ class CageDetails extends StatefulWidget {
 class _CageDetailsState extends State<CageDetails> {
   int activeIndex = 0;
   List<int>? selectedPetIds = null;
+  late List<List<Pet>> requests;
+  late bool haveAvailableRequests;
 
   bool isSuitable(List<Pet> request, CageTypes cageTypes) {
     if (cageTypes.isSingle!) return request.length == 1;
@@ -39,11 +41,11 @@ class _CageDetailsState extends State<CageDetails> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    var state = BlocProvider.of<BookingBloc>(context).state;
-    var requests = (state as BookingUpdated).requests;
-    bool haveAvailableRequests = false;
-    for (var element in requests!) {
+  void initState() {
+var state = BlocProvider.of<BookingBloc>(context).state;
+    requests = (state as BookingUpdated).requests!;
+    haveAvailableRequests = false;
+    for (var element in requests) {
       if (isSuitable(element, widget.cageType)) {
         haveAvailableRequests = true;
         selectedPetIds = [];
@@ -53,6 +55,14 @@ class _CageDetailsState extends State<CageDetails> {
         break;
       }
     }
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+var state = BlocProvider.of<BookingBloc>(context).state as BookingUpdated;
+
+    
 
     Size size = MediaQuery.of(context).size;
     double appbarSize = size.height * 0.35;
@@ -127,8 +137,8 @@ class _CageDetailsState extends State<CageDetails> {
             child: ElevatedButton(
               onPressed: (selectedPetIds != null)
                   ? () {
-                      print(context.read<BookingBloc>().state);
-                      // print('selected petid');
+                      // print(context.read<BookingBloc>().state);
+                      // print(state.booking.selectedPetsIds);
                       // print(selectedPetIds);
                       BlocProvider.of<BookingBloc>(context).add(SelectCage(
                         price: cageType.totalPrice!,
@@ -139,8 +149,8 @@ class _CageDetailsState extends State<CageDetails> {
                       ));
                       ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("Thêm chuồng thành công.")));
-                      print('cart count' +
-                          state.booking.getCartCount().toString());
+                      // print('cart count' +
+                      //     state.booking.getCartCount().toString());
                       Navigator.of(context).pop();
                     }
                   : null,
@@ -169,8 +179,7 @@ class _CageDetailsState extends State<CageDetails> {
                   'Thêm vào giỏ hàng - ' +
                       NumberFormat.currency(
                               decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
-                          .format(cageType.totalPrice! *
-                              state.booking.bookingCreateParameter!.due!),
+                          .format(cageType.totalPrice!),
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
                 Expanded(child: SizedBox(height: 45)),
@@ -292,8 +301,10 @@ Widget buildContent(CageTypes cageType, Cages cage, Size size,
             callback: (val) {
               print('value: ');
               print(val);
+
               BlocProvider.of<BookingBloc>(context)
                   .add(SelectRequest(petId: val));
+              context.findRootAncestorStateOfType()!.setState(() {});
             }),
         SizedBox(
           height: 15,

@@ -1,4 +1,5 @@
 ﻿using PawNClaw.Data.Database;
+using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
 using System;
@@ -12,31 +13,88 @@ namespace PawNClaw.Business.Services
     public class SupplyService
     {
         ISupplyRepository _supplyRepository;
+        ISupplyOrderRepository _supplyOrderRepository;
 
-        public SupplyService(ISupplyRepository supplyRepository)
+        public SupplyService(ISupplyRepository supplyRepository, ISupplyOrderRepository supplyOrderRepository)
         {
             _supplyRepository = supplyRepository;
+            _supplyOrderRepository = supplyOrderRepository;
         }
 
-        public IEnumerable<Supply> GetSupplyOfCenter(int CenterId)
+        public PagedList<Supply> GetSupplysOfCenter(SupplyRequestParameter supplyRequestParameter, PagingParameter pagingParameter)
         {
             try
             {
-                return _supplyRepository.GetAll(x => x.CenterId == CenterId);
+                var values = _supplyRepository.GetSuppliesWithType(supplyRequestParameter.CenterId);
+
+                if(!string.IsNullOrWhiteSpace(supplyRequestParameter.TypeCode))
+                {
+                    values = values.Where(x => x.SupplyTypeCode.ToLower().Equals(supplyRequestParameter.TypeCode.ToLower().Trim()));
+                }
+
+                if (!string.IsNullOrWhiteSpace(supplyRequestParameter.Name))
+                {
+                    values = values.Where(x => x.Name.ToLower().Contains(supplyRequestParameter.Name.ToLower().Trim()));
+                }
+
+                if (supplyRequestParameter.Status != null)
+                {
+                    values = supplyRequestParameter.Status switch
+                    {
+                        true => values.Where(x => x.Status == true),
+                        false => values.Where(x => x.Status == false),
+                        _ => values
+                    };
+                }
+
+                if (!string.IsNullOrWhiteSpace(supplyRequestParameter.sort))
+                {
+                    switch (supplyRequestParameter.sort)
+                    {
+                        case "name":
+                            if (supplyRequestParameter.dir == "asc")
+                                values = values.OrderBy(d => d.Name);
+                            else if (supplyRequestParameter.dir == "desc")
+                                values = values.OrderByDescending(d => d.Name);
+                            break;
+                    }
+                }
+
+                return PagedList<Supply>.ToPagedList(values.AsQueryable(), pagingParameter.PageNumber, pagingParameter.PageSize);
             }
             catch
             {
                 throw new Exception();
             }
         }
+
+        public Supply GetSupply(int id)
+        {
+            return _supplyRepository.GetSupplyById(id);
+        }
         
-        public bool CreateSupply(Supply supply)
+        public int CreateSupply(CreateSupplyParameter supplyP)
         {
             try
             {
+                Supply supply = new Supply()
+                {
+                    Name = supplyP.Name,
+                    SellPrice = supplyP.SellPrice,
+                    DiscountPrice = supplyP.DiscountPrice,
+                    Quantity = supplyP.Quantity,
+                    CreateDate = supplyP.CreateDate,
+                    ModifyDate = supplyP.ModifyDate,
+                    CreateUser = supplyP.CreateUser,
+                    ModifyUser = supplyP.ModifyUser,
+                    Status = true,
+                    SupplyTypeCode = supplyP.SupplyTypeCode,
+                    CenterId = supplyP.CenterId
+                };
+
                 _supplyRepository.Add(supply);
                 _supplyRepository.SaveDbChange();
-                return true;
+                return supply.Id;
             }
             catch
             {
@@ -56,6 +114,28 @@ namespace PawNClaw.Business.Services
                 supply.ModifyUser = updateSupplyParameter.ModifyUser;
                 supply.Status = updateSupplyParameter.Status;
 
+                _supplyRepository.Update(supply);
+                _supplyRepository.SaveDbChange();
+                return true;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+
+        public bool UpdateStatus(int id)
+        {
+            try
+            {
+                var supply = _supplyRepository.Get(id);
+                supply.Status = false;
+
+                //var supplyOrder = _supplyOrderRepository.GetAll(x => x.SupplyId == id && (x.Booking.StatusId == 1 || x.Booking.StatusId == 2));
+                //if (supplyOrder.Count() > 0)
+                //{
+                //    throw new Exception("Cant delete");
+                //}
                 _supplyRepository.Update(supply);
                 _supplyRepository.SaveDbChange();
                 return true;

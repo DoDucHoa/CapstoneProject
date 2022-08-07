@@ -17,7 +17,7 @@ import Logo from '../../../components/Logo';
 import Scrollbar from '../../../components/Scrollbar';
 import { NavSectionVertical } from '../../../components/nav-section';
 //
-import navConfig, { navConfigForAdmin } from './NavConfig';
+import navConfig, { navConfigForAdmin, navConfigForStaff, navConfigForModerator } from './NavConfig';
 import NavbarAccount from './NavbarAccount';
 import CollapseButton from './CollapseButton';
 
@@ -60,6 +60,8 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }) {
   const navbarConfig = () => {
     if (accountInfo.role === 'Admin') return navConfigForAdmin;
     if (accountInfo.role === 'Owner') return navConfig;
+    if (accountInfo.role === 'Staff') return navConfigForStaff;
+    if (accountInfo.role === 'Moderator') return navConfigForModerator;
 
     return navbarConfig;
   };

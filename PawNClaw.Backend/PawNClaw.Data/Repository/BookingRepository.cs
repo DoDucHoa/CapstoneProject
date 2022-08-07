@@ -45,10 +45,28 @@ namespace PawNClaw.Data.Repository
 
         public bool Confirm(int Id, int StatusId)
         {
-            Booking query = _dbSet.FirstOrDefault(x => x.Id == Id);
+            Booking query = _dbSet.Find(Id);
             query.StatusId = StatusId;
             _dbSet.Update(query);
             return (_db.SaveChanges() >= 0);
+        }
+
+        public IEnumerable<Booking> GetCenterReviews(int centerId)
+        {
+            var values = _dbSet.Include(x => x.Customer).ThenInclude(x => x.IdNavigation).Where(x => x.CenterId == centerId).Where(x => x.Rating != null).Select(booking => new Booking() {
+                CheckOut = booking.CheckOut,
+                Rating = booking.Rating,
+                Feedback = booking.Feedback,
+                Customer = new Customer()
+                {
+                    Name = booking.Customer.Name,
+                    IdNavigation = new Account()
+                    {
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(booking.CustomerId,PhotoTypesConst.Account),
+                    }
+                }
+            }).OrderByDescending(x => x.CheckOut).ToList();
+            return values;
         }
 
         public IEnumerable<Booking> GetBookingForStaff(BookingRequestParameter bookingRequestParameter)
@@ -108,7 +126,8 @@ namespace PawNClaw.Data.Repository
                     StartBooking = x.StartBooking,
                     EndBooking = x.EndBooking,
                     StatusId = x.StatusId,
-                    Customer = x.Customer
+                    Customer = x.Customer,
+                    Status = x.Status
                 });
 
             return query.ToList();
@@ -135,6 +154,7 @@ namespace PawNClaw.Data.Repository
                     Rating = x.Rating,
                     CustomerNote = x.CustomerNote,
                     StaffNote = x.StaffNote,
+                    Feedback = x.Feedback,
                     BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
                     .Select(bookingdetail => new BookingDetail
                     {
@@ -234,7 +254,10 @@ namespace PawNClaw.Data.Repository
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
-                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
+                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice),
+                    TotalCage = x.BookingDetails.Sum(detail => detail.Price),
+                    VoucherCodeNavigation = x.VoucherCodeNavigation,
+                    InvoiceUrl = x.InvoiceUrl
                 })
                 .SingleOrDefault(x => x.Id == BookingId);
 
@@ -359,7 +382,9 @@ namespace PawNClaw.Data.Repository
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingact.Id, PhotoTypesConst.BookingActivity)
                     }),
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
-                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
+                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice),
+                    TotalCage = x.BookingDetails.Sum(detail => detail.Price),
+                    VoucherCodeNavigation = x.VoucherCodeNavigation
                 })
                 .SingleOrDefault(x => x.Id == BookingId);
 
@@ -517,7 +542,8 @@ namespace PawNClaw.Data.Repository
                         Name = x.Status.Name
                     },
                     TotalSupply = x.SupplyOrders.Sum(supply => supply.TotalPrice),
-                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice)
+                    TotalService = x.ServiceOrders.Sum(service => service.TotalPrice),
+                    InvoiceUrl = x.InvoiceUrl
                 })
                 .Where(x => x.CustomerId == CustomerId);
 
@@ -562,6 +588,7 @@ namespace PawNClaw.Data.Repository
                         SupplyId = supplyorder.SupplyId,
                         BookingId = supplyorder.BookingId,
                         PetId = supplyorder.PetId,
+                        Quantity = supplyorder.Quantity,
                         Pet = new Pet
                         {
                             Name = supplyorder.Pet.Name,
@@ -573,6 +600,7 @@ namespace PawNClaw.Data.Repository
                         ServiceId = serviceorder.ServiceId,
                         BookingId = serviceorder.BookingId,
                         PetId = serviceorder.PetId,
+                        Quantity = serviceorder.Quantity,
                         Pet = new Pet
                         {
                             Name = serviceorder.Pet.Name,
