@@ -213,41 +213,58 @@ namespace PawNClaw.Business.Services
         //Update full for admin
         public async Task<bool> UpdateForAdminAsync(UpdatePetCenterForAdminParam petCenterRequestParameter)
         {
-            try
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                PetCenter petCenter = _petCenterRepository.GetPetCenterWithLocation(petCenterRequestParameter.Id);
-                petCenter.Address = petCenterRequestParameter.Address;
-                petCenter.Phone = petCenterRequestParameter.Phone;
-                petCenter.ModifyDate = DateTime.Now;
-                petCenter.ModifyUser = petCenterRequestParameter.ModifyUser;
-                petCenter.OpenTime = petCenterRequestParameter.OpenTime;
-                petCenter.CloseTime = petCenterRequestParameter.CloseTime;
-                petCenter.Checkin = petCenterRequestParameter.CheckIn;
-                petCenter.Checkout = petCenterRequestParameter.CheckOut;
+                try
+                {
+                    PetCenter petCenter = _petCenterRepository.GetPetCenterWithLocation(petCenterRequestParameter.Id);
+                    petCenter.Address = petCenterRequestParameter.Address;
+                    petCenter.Phone = petCenterRequestParameter.Phone;
+                    petCenter.ModifyDate = DateTime.Now;
+                    petCenter.ModifyUser = petCenterRequestParameter.ModifyUser;
+                    petCenter.OpenTime = petCenterRequestParameter.OpenTime;
+                    petCenter.CloseTime = petCenterRequestParameter.CloseTime;
+                    petCenter.Checkin = petCenterRequestParameter.CheckIn;
+                    petCenter.Checkout = petCenterRequestParameter.CheckOut;
+                    petCenter.Description = petCenterRequestParameter.Description;
 
-                var client = new HttpClient();
-                string url = "https://rsapi.goong.io/geocode?address=" + HttpUtility.UrlEncode(petCenter.Address) +SearchConst.GoongAPIKey;
-                Console.WriteLine(url);
-                HttpResponseMessage response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode();
+                    petCenter.Location.CityCode = petCenterRequestParameter.CityCode;
+                    petCenter.Location.DistrictCode = petCenterRequestParameter.DistrictCode;
+                    petCenter.Location.WardCode = petCenterRequestParameter.WardCode;
 
-                var result = await response.Content.ReadAsStringAsync();
-                var cust = JObject.Parse(result);
+                    _petCenterRepository.Update(petCenter);
+                    await _petCenterRepository.SaveDbChangeAsync();
 
-                petCenter.Location.Latitude = cust["results"][0]["geometry"]["location"]["lat"].ToString();
-                petCenter.Location.Longtitude = cust["results"][0]["geometry"]["location"]["lng"].ToString();
-                petCenter.Location.CityCode = petCenterRequestParameter.CityCode;
-                petCenter.Location.DistrictCode = petCenterRequestParameter.DistrictCode;
-                petCenter.Location.WardCode = petCenterRequestParameter.WardCode;
+                    Location location = _locationRepository.Get(petCenter.Id);
+                    location.CityCode = petCenterRequestParameter.CityCode;
+                    location.DistrictCode = petCenterRequestParameter.DistrictCode;
+                    location.WardCode = petCenterRequestParameter.WardCode;
 
-                _petCenterRepository.Update(petCenter);
-                _petCenterRepository.SaveDbChange();
+                    var client = new HttpClient();
+                    string url = "https://rsapi.goong.io/geocode?address=" + HttpUtility.UrlEncode(petCenterRequestParameter.FullAddress) + SearchConst.GoongAPIKey;
+                    Console.WriteLine(url);
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
 
-                return true;
-            }
-            catch
-            {
-                throw new Exception();
+                    var result = await response.Content.ReadAsStringAsync();
+
+                    var cust = JObject.Parse(result);
+
+                    location.Latitude = cust["results"][0]["geometry"]["location"]["lat"].ToString();
+                    location.Longtitude = cust["results"][0]["geometry"]["location"]["lng"].ToString();
+
+                    _locationRepository.Update(location);
+                    await _locationRepository.SaveDbChangeAsync();
+
+                    transaction.Commit();
+
+                    return true;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw new Exception();
+                }
             }
         }
 
