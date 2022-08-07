@@ -15,7 +15,7 @@ class Booking {
   // int? statusId;
   // Null? voucherCode;
   // int? customerId;
-  // int? centerId;
+  int? centerId;
   // Null? rating;
   // Null? customerNote;
   // String? staffNote;
@@ -44,7 +44,7 @@ class Booking {
     // this.statusId,
     // this.voucherCode,
     // this.customerId,
-    // this.centerId,
+    this.centerId,
     // this.rating,
     // this.customerNote,
     // this.staffNote,
@@ -74,7 +74,7 @@ class Booking {
     // statusId = json['statusId'];
     // voucherCode = json['voucherCode'];
     // customerId = json['customerId'];
-    // centerId = json['centerId'];
+    centerId = json['centerId'];
     // rating = json['rating'];
     // customerNote = json['customerNote'];
     // staffNote = json['staffNote'];
