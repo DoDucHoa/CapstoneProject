@@ -68,6 +68,7 @@ namespace PawNClaw.Data.Repository
                         Status = cagetype.Status,
                         CenterId = cagetype.CenterId
                     }),
+                    Bookings = (ICollection<Booking>)_bookingRepository.GetCenterReviews(x.Id),
                     Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
                 });
             return query.ToList();
@@ -101,6 +102,21 @@ namespace PawNClaw.Data.Repository
                     && x.Bookings.Any(y => (y.StatusId == 1 || y.StatusId == 2)
                                         && DateTime.Compare(_startBooking, (DateTime)y.StartBooking) <= 0
                                         && DateTime.Compare(_endBooking, (DateTime)y.EndBooking) >= 0));
+            query.Select(x => new PetCenter() {
+                Id = x.Id,
+                Name = x.Name,
+                Address = x.Address,
+                Phone = x.Phone,
+                Rating = x.Rating,
+                CreateDate = x.CreateDate,
+                Status = x.Status,
+                OpenTime = x.OpenTime,
+                CloseTime = x.CloseTime,
+                Description = x.Description,
+                BrandId = x.BrandId,
+                Bookings = (ICollection<Booking>)_bookingRepository.GetCenterReviews(x.Id),
+                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
+            });
             return query.ToList();
         }
 
@@ -157,7 +173,8 @@ namespace PawNClaw.Data.Repository
                                         || bookingdetail.Booking.StatusId == 2)
                                         && (DateTime.Compare(_startBooking, (DateTime)bookingdetail.Booking.EndBooking) >= 0
                                         || DateTime.Compare(_endBooking, (DateTime)bookingdetail.Booking.StartBooking) <= 0)))
-                     .Count() >= Count)
+                     .Count() >= Count),
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
                 });
 
 
@@ -281,9 +298,11 @@ namespace PawNClaw.Data.Repository
                 .Include(x => x.Bookings)
                 .Include(x => x.Location)
                 .Include(x => x.CageTypes)
+                .ThenInclude(x => x.Cages)
                 .Include(x => x.Services)
                 .Include(x => x.Supplies)
                 .Where(x => x.Id == id)
+                .Where(x => x.CageTypes.Any(x => x.Cages.Count() != 0))
                 .Select(x => new PetCenter
                 {
                     Id = x.Id,
@@ -376,7 +395,23 @@ namespace PawNClaw.Data.Repository
 
         public PetCenter GetPetCenterWithLocation(int id)
         {
-            PetCenter petCenter = _dbSet.Include(x => x.Location).FirstOrDefault(x => x.Id == id);
+            PetCenter petCenter = _dbSet.Include(x => x.Location).Select(x => new PetCenter()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Address = x.Address,
+                Phone = x.Phone,
+                Rating = x.Rating,
+                CreateDate = x.CreateDate,
+                Status = x.Status,
+                OpenTime = x.OpenTime,
+                CloseTime = x.CloseTime,
+                Description = x.Description,
+                BrandId = x.BrandId,
+                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter),
+                Bookings = (ICollection<Booking>)_bookingRepository.GetCenterReviews(id),
+                Location = x.Location,
+            }).FirstOrDefault(x => x.Id == id);
 
             return petCenter;
         }

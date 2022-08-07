@@ -49,7 +49,10 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
             leading: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                BlocProvider.of<SearchBloc>(context).add(ClearSearch());
+                Navigator.of(context).pop();
+              },
               icon: Icon(
                 Icons.arrow_back_ios_new,
                 color: primaryFontColor,
