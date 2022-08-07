@@ -11,4 +11,9 @@ const checkSize = async (petInfo, cageCode, centerId) => {
   return response.data;
 };
 
-export { checkSize };
+const updateInvoiceUrl = async (bookingId, invoiceUrl) => {
+  const response = await axios.put(`${URL}/invoice-url/${bookingId}`, { invoiceUrl });
+  return response.data;
+};
+
+export { checkSize, updateInvoiceUrl };

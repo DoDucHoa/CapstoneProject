@@ -25,12 +25,12 @@ class PhoneVerified extends AuthState {
 
 class Authenticated extends AuthState {
   final Account user;
-
-  const Authenticated(this.user);
+  final Customer? customer;
+  const Authenticated(this.user, this.customer);
 
   @override
   // TODO: implement props
-  List<Object?> get props => [user];
+  List<Object?> get props => [user, customer];
 }
 
 class Unsigned extends AuthState {
@@ -42,3 +42,4 @@ class Unsigned extends AuthState {
   // TODO: implement props
   List<Object?> get props => [phone];
 }
+

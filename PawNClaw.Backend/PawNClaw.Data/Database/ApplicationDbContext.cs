@@ -28,7 +28,6 @@ namespace PawNClaw.Data.Database
         public virtual DbSet<CageType> CageTypes { get; set; }
         public virtual DbSet<City> Cities { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
-        public virtual DbSet<CustomerAddress> CustomerAddresses { get; set; }
         public virtual DbSet<CustomerVoucherLog> CustomerVoucherLogs { get; set; }
         public virtual DbSet<District> Districts { get; set; }
         public virtual DbSet<FoodSchedule> FoodSchedules { get; set; }
@@ -281,21 +280,6 @@ namespace PawNClaw.Data.Database
                     .HasForeignKey<Customer>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Customers__id__6E01572D");
-            });
-
-            modelBuilder.Entity<CustomerAddress>(entity =>
-            {
-                entity.Property(e => e.Latitude).IsUnicode(false);
-
-                entity.Property(e => e.Longtitude).IsUnicode(false);
-
-                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
-
-                entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.CustomerAddresses)
-                    .HasForeignKey(d => d.CustomerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CustomerA__custo__71D1E811");
             });
 
             modelBuilder.Entity<CustomerVoucherLog>(entity =>

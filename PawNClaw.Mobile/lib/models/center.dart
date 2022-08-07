@@ -199,7 +199,11 @@ class Center {
 
   String shortAddress() {
     var splited = this.address!.split(",");
-    return splited[0] + ', ' + splited[1];
+    if (splited.length > 1) {
+      return splited[0] + "," + splited[1];
+    } 
+      return this.address!;
+    
   }
 }
 

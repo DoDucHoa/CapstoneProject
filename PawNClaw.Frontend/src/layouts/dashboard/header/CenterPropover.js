@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 // @mui
-import { MenuItem, Stack } from '@mui/material';
+import { MenuItem, Stack, Typography } from '@mui/material';
 // components
 import Image from '../../../components/Image';
 import MenuPopover from '../../../components/MenuPopover';
@@ -48,7 +48,7 @@ export default function CenterPopover({ petCenters, onChange }) {
         <Image
           disabledEffect
           src={
-            'https://firebasestorage.googleapis.com/v0/b/pawnclaw-4b6ba.appspot.com/o/sponsor%2FBin-Bon-Dog-Shop.jpg?alt=media&token=c776bac1-52e0-44e1-9ef4-147f90488b8d'
+            'https://firebasestorage.googleapis.com/v0/b/pawnclaw-4b6ba.appspot.com/o/sponsor%2FBin-Bon-Dog-Shop.jpg?alt=media&token=c776bac1-52e0-44e1-9ef4-147f90488b8d' // FIXME: center photo is static
           }
           alt={selectedCenter.name}
         />
@@ -61,7 +61,7 @@ export default function CenterPopover({ petCenters, onChange }) {
         sx={{
           mt: 1.5,
           ml: 0.75,
-          width: 180,
+          width: 220,
           '& .MuiMenuItem-root': { px: 1, typography: 'body2', borderRadius: 0.75 },
         }}
       >
@@ -80,8 +80,12 @@ export default function CenterPopover({ petCenters, onChange }) {
                 }
                 sx={{ width: 28, mr: 2 }}
               />
-
-              {center.name}
+              <Typography
+                variant="body2"
+                sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: 140 }}
+              >
+                {center.name}
+              </Typography>
             </MenuItem>
           ))}
         </Stack>

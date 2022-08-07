@@ -37,7 +37,22 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
       .required('Bắt buộc nhập')
       .typeError('Bắt buộc nhập')
       .min(0, 'Giá trị không được nhỏ hơn 0'),
-    value: Yup.number().required('Bắt buộc nhập').typeError('Bắt buộc nhập').moreThan(0, 'Giá trị phải lớn hơn 0'),
+    value: Yup.number()
+      .required('Bắt buộc nhập')
+      .typeError('Bắt buộc nhập')
+      .moreThan(0, 'Giá trị phải lớn hơn 0')
+      .when('voucherTypeCode', {
+        is: '1',
+        then: Yup.number()
+          .required('Bắt buộc nhập')
+          .typeError('Bắt buộc nhập')
+          .moreThan(0, 'Giá trị phải lớn hơn 0')
+          .max(100, 'Giá trị không được lớn hơn 100'),
+      }),
+    releaseAmount: Yup.number()
+      .required('Bắt buộc nhập')
+      .typeError('Bắt buộc nhập')
+      .moreThan(0, 'Giá trị phải lớn hơn 0'),
     voucherTypeCode: Yup.string().required('Bắt buộc nhập'),
     description: Yup.string(),
   });
@@ -49,6 +64,7 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
       value: voucherData.value || 0,
       voucherTypeCode: voucherData.voucherTypeCode || '1',
       description: voucherData.description || '',
+      releaseAmount: voucherData.releaseAmount || 0,
 
       createDate: voucherData.createDate || new Date(),
       modifyDate: new Date(),
@@ -108,6 +124,7 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
     }
   };
 
+  // TODO: fix this UI using <Grid>
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
@@ -151,10 +168,13 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
               <RHFTextField
                 disabled={isEdit}
                 name="value"
+                type="number"
                 label={values?.voucherTypeCode === '1' ? 'Giá trị giảm (%)' : 'Giá trị giảm (VND)'}
               />
 
-              <RHFTextField name="minCondition" label="Điều kiện đơn hàng tối thiểu" disabled={isEdit} />
+              <RHFTextField name="minCondition" label="Điều kiện đơn hàng tối thiểu" disabled={isEdit} type="number" />
+
+              <RHFTextField name="releaseAmount" label="Số lượng phát hành" disabled={isEdit} type="number" />
 
               <RHFTextField name="description" label="Mô tả điều kiện" multiline rows={5} />
             </Box>

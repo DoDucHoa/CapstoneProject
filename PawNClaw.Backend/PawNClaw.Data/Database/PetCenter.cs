@@ -37,8 +37,8 @@ namespace PawNClaw.Data.Database
         [Column("phone")]
         [StringLength(32)]
         public string Phone { get; set; }
-        [Column("rating")]
-        public int? Rating { get; set; }
+        [Column("rating", TypeName = "numeric(19, 5)")]
+        public decimal? Rating { get; set; }
         [Column("create_date", TypeName = "date")]
         public DateTime? CreateDate { get; set; }
         [Column("modify_date", TypeName = "date")]
@@ -119,7 +119,7 @@ namespace PawNClaw.Data.Database
         public ICollection<Photo> Photos { get; set; }
 
         [NotMapped]
-        public decimal RatingPoint { get => _getRatingPoint(this.Bookings);}
+        public decimal RatingPoint { get => _getRatingPoint(this.Bookings); }
 
         private int _getRatingCount(ICollection<Booking> Bookings)
         {
@@ -146,7 +146,7 @@ namespace PawNClaw.Data.Database
                 }
             }
             if (count == 0) return 0;
-            return sum/count;
+            return sum / count;
         }
     }
 }

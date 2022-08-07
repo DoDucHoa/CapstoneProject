@@ -13,11 +13,16 @@ namespace PawNClaw.Business.Services
     {
         IBookingRepository _bookingRepository;
         ICageRepository _cageRepository;
+        ISupplyRepository _supplyRepository;
+        IServiceRepository _serviceRepository;
 
-        public RevenueReportOwnerService(IBookingRepository bookingRepository, ICageRepository cageRepository)
+        public RevenueReportOwnerService(IBookingRepository bookingRepository, ICageRepository cageRepository,
+            ISupplyRepository supplyRepository, IServiceRepository serviceRepository)
         {
             _bookingRepository = bookingRepository;
             _cageRepository = cageRepository;
+            _supplyRepository = supplyRepository;
+            _serviceRepository = serviceRepository;
         }
 
         public BookingCount BookingCount(int centerId, DateTime? from, DateTime? to)
@@ -139,6 +144,16 @@ namespace PawNClaw.Business.Services
             };
 
             return incomeOfCenter;
+        }
+
+        public int TotalService(int centerId)
+        {
+            return _serviceRepository.GetAll(x => x.CenterId == centerId && x.Status == true).Count();
+        }
+
+        public int TotalSupply(int centerId)
+        {
+            return _supplyRepository.GetAll(x => x.CenterId == centerId && x.Status == true).Count();
         }
     }
 }

@@ -133,7 +133,7 @@ export default function CageTypeList() {
 
   const denseHeight = 72;
 
-  const isNotFound = !(metadata.totalCount ? metadata.totalCount : 0) && !!filterName;
+  const isNotFound = !(metadata.totalCount ? metadata.totalCount : 0);
 
   return (
     <>

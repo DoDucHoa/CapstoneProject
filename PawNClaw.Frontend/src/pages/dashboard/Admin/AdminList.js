@@ -93,7 +93,7 @@ export default function UserList() {
 
     const admins = data.map((admin, index) => ({
       id: admin.id,
-      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`,
+      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`, // FIXME: update photo for moderator
       name: admin.name,
       email: admin.email,
       phoneNumber: admin.idNavigation.phone,

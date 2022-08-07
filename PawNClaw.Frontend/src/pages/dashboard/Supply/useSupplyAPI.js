@@ -2,14 +2,14 @@ import axios from '../../../utils/axios';
 
 const URL = '/api/supplies';
 
-const getSupplies = async (centerId, page, rowsPerPage, filterStatus, searchName) => {
+const getSupplies = async (centerId, page, rowsPerPage, filterSupplyType, searchName) => {
   const response = await axios.get(`${URL}/center`, {
     params: {
       CenterId: centerId,
       Name: searchName,
       PageSize: rowsPerPage,
       PageNumber: page,
-      TypeCode: filterStatus,
+      TypeCode: filterSupplyType === 'all' ? null : filterSupplyType,
       Status: true,
     },
   });
