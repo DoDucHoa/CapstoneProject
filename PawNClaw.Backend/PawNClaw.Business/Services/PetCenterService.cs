@@ -5,6 +5,7 @@ using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
+using PawNClaw.Data.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,15 +21,17 @@ namespace PawNClaw.Business.Services
         IPetCenterRepository _petCenterRepository;
         IStaffRepository _staffRepository;
         ILocationRepository _locationRepository;
+        IPhotoRepository _photoRepository;
 
         private readonly ApplicationDbContext _db;
 
         public PetCenterService(IPetCenterRepository petCenterRepository, IStaffRepository staffRepository,
-            ILocationRepository locationRepository, ApplicationDbContext db)
+            ILocationRepository locationRepository, IPhotoRepository photoRepository, ApplicationDbContext db)
         {
             _petCenterRepository = petCenterRepository;
             _staffRepository = staffRepository;
             _locationRepository = locationRepository;
+            _photoRepository = photoRepository;
             _db = db;
         }
 
@@ -143,7 +146,22 @@ namespace PawNClaw.Business.Services
         //Get By Brand Id
         public IEnumerable<PetCenter> GetByBrand(int id)
         {
-            var values = _petCenterRepository.GetAll(x => x.BrandId == id,includeProperties:"Bookings");
+            var values = _petCenterRepository.GetAll(x => x.BrandId == id,includeProperties:"Bookings").Select(x => new PetCenter()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Address = x.Address,
+                Phone = x.Phone,
+                Rating = x.Rating,
+                CreateDate = x.CreateDate,
+                Status = x.Status,
+                OpenTime = x.OpenTime,
+                CloseTime = x.CloseTime,
+                Description = x.Description,
+                BrandId = x.BrandId,
+                Bookings = x.Bookings,
+                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
+            }); 
 
             return values;
         }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pncstaff_mobile_application/blocs/booking/booking_bloc.dart';
+import 'package:pncstaff_mobile_application/blocs/search/search_bloc.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
 import 'package:pncstaff_mobile_application/common/services/upload_service.dart';
 import 'package:pncstaff_mobile_application/models/activity_request_model.dart';
@@ -11,6 +12,7 @@ import 'package:pncstaff_mobile_application/screens/activity_screen/booking_acti
 import 'package:pncstaff_mobile_application/screens/activity_screen/components/pet_card.dart';
 import 'package:intl/intl.dart';
 import 'package:pncstaff_mobile_application/screens/home_screen/home_screen.dart';
+import 'package:pncstaff_mobile_application/screens/search_screen/search_screen.dart';
 
 class ActivityDetail extends StatefulWidget {
   const ActivityDetail(
@@ -290,9 +292,19 @@ class _ActivityDetailState extends State<ActivityDetail> {
                               String? result = await ActivityRepository()
                                   .updateActivity(activity);
                               print(result);
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => HomeScreen(),
-                              ));
+                              var state = context.read<SearchBloc>().state;
+                              if (state is SearchDone) {
+                                BlocProvider.of<SearchBloc>(context).add(
+                                    SearchByCagecode(state.cageCode,
+                                        state.booking.centerId!));
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => SearchScreen(),
+                                ));
+                              } else {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => HomeScreen(),
+                                ));
+                              }
                             }
                           : () {},
                       style: ElevatedButton.styleFrom(

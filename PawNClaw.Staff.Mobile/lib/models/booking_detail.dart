@@ -8,6 +8,7 @@ class BookingDetail {
   String? customerNote;
   String? staffNote;
   Customer? customer;
+  int? centerId;
   List<BookingDetails>? bookingDetails;
   List<ServiceOrders>? serviceOrders;
   List<SupplyOrders>? supplyOrders;
@@ -22,6 +23,7 @@ class BookingDetail {
       this.customerNote,
       this.staffNote,
       this.customer,
+      this.centerId,
       this.bookingDetails,
       this.serviceOrders,
       this.supplyOrders,
@@ -38,6 +40,7 @@ class BookingDetail {
     customer = json['customer'] != null
         ? new Customer.fromJson(json['customer'])
         : null;
+    centerId = json['centerId'];
     totalSupply = json['totalSupply'];
     totalService = json['totalService'];
     if (json['bookingDetails'] != null) {
