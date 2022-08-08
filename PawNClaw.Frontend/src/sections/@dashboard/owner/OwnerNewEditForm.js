@@ -102,6 +102,7 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
         await Promise.all([
           createOwner(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender), // create account on Backend
           register(values.email, values.password), // create account on Firebase
+          // TODO: handle avatar upload
         ]);
       } else {
         updateOwner(accountInfo.id, values.name, values.phoneNumber, values.gender);

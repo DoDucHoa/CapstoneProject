@@ -1,39 +1,23 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
-
 // @mui
-import { Button, MenuItem, TableCell, TableRow, Typography } from '@mui/material';
+import { Button, TableCell, TableRow, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 // components
-import Iconify from '../../../components/Iconify';
 import Label from '../../../components/Label';
-import { TableMoreMenu } from '../../../components/table';
 import { fVNDate } from '../../../utils/formatTime';
 
 // ----------------------------------------------------------------------
 
 BrandTableRow.propTypes = {
   row: PropTypes.object,
-  onEditRow: PropTypes.func,
-  onDeleteRow: PropTypes.func,
   onClick: PropTypes.func,
 };
 
-export default function BrandTableRow({ row, onEditRow, onDeleteRow, onClick }) {
+export default function BrandTableRow({ row, onClick }) {
   const theme = useTheme();
 
   const { id, customerName, startBooking, endBooking, status } = row;
-
-  const [openMenu, setOpenMenuActions] = useState(null);
-
-  const handleOpenMenu = (event) => {
-    setOpenMenuActions(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpenMenuActions(null);
-  };
 
   const statusColor = (statusId) => {
     let color = '';
@@ -82,37 +66,6 @@ export default function BrandTableRow({ row, onEditRow, onDeleteRow, onClick }) 
         >
           {status.name}
         </Label>
-      </TableCell>
-
-      <TableCell align="right">
-        <TableMoreMenu
-          open={openMenu}
-          onOpen={handleOpenMenu}
-          onClose={handleCloseMenu}
-          actions={
-            <>
-              <MenuItem
-                onClick={() => {
-                  onEditRow();
-                  handleCloseMenu();
-                }}
-              >
-                <Iconify icon={'eva:edit-fill'} />
-                Sửa
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  onDeleteRow();
-                  handleCloseMenu();
-                }}
-                sx={{ color: status ? 'error.main' : 'success.main' }}
-              >
-                <Iconify icon={status ? 'eva:slash-outline' : 'eva:checkmark-square-outline'} />
-                {status ? 'Khóa' : 'Mở khóa'}
-              </MenuItem>
-            </>
-          }
-        />
       </TableCell>
     </TableRow>
   );

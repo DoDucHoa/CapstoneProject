@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import { Stack, Typography, IconButton, Tooltip, Box } from '@mui/material';
 // utils
-import { fDate } from '../../../utils/formatTime';
+import { fVNMonth } from '../../../utils/formatTime';
 // components
 import Iconify from '../../../components/Iconify';
 
@@ -73,7 +73,7 @@ export default function CalendarToolbar({ date, onNextDate, onPrevDate }) {
           <Iconify icon="eva:arrow-ios-back-fill" width={20} height={20} />
         </IconButton>
 
-        <Typography variant="h5">{fDate(date)}</Typography>
+        <Typography variant="h5">Tháng {fVNMonth(date)}</Typography>
 
         <IconButton onClick={onNextDate}>
           <Iconify icon="eva:arrow-ios-forward-fill" width={20} height={20} />
