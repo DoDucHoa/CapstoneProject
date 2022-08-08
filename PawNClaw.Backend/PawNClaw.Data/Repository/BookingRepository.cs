@@ -535,7 +535,23 @@ namespace PawNClaw.Data.Repository
                     Rating = x.Rating,
                     CustomerNote = x.CustomerNote,
                     StaffNote = x.StaffNote,
-                    Center = x.Center,
+                    Center = new PetCenter() {
+                        Id = x.Center.Id,
+                        Name = x.Center.Name,
+                        Address = x.Center.Address,
+                        Phone = x.Center.Phone,
+                        Rating = x.Center.Rating,
+                        CreateDate = x.Center.CreateDate,
+                        Status = x.Center.Status,
+                        OpenTime = x.Center.OpenTime,
+                        CloseTime = x.Center.CloseTime,
+                        Description = x.Center.Description,
+                        BrandId = x.Center.BrandId,
+                        Checkin = x.Center.Checkin,
+                        Checkout = x.Center.Checkout,
+                        Bookings = (ICollection<Booking>) GetCenterReviews(x.Id),
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
+                    },
                     Status = new BookingStatus
                     {
                         Id = x.Status.Id,
