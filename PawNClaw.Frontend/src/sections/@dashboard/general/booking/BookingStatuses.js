@@ -8,7 +8,7 @@ import { getBookingCountStatus } from './useOwnerDashboardAPI';
 
 // ----------------------------------------------------------------------
 BookingStatuses.propTypes = {
-  centerId: PropTypes.number.isRequired,
+  centerId: PropTypes.number,
   from: PropTypes.any,
   to: PropTypes.any,
 };

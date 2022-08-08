@@ -17,12 +17,13 @@ const RootStyle = styled(Card)(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 BookingWidgetSummary.propTypes = {
-  icon: PropTypes.any,
   title: PropTypes.string,
   total: PropTypes.number,
+  imgSrc: PropTypes.string,
+  alt: PropTypes.string,
 };
 
-export default function BookingWidgetSummary({ title, total, icon }) {
+export default function BookingWidgetSummary({ title, total, imgSrc, alt }) {
   return (
     <RootStyle>
       <div>
@@ -40,7 +41,7 @@ export default function BookingWidgetSummary({ title, total, icon }) {
           bgcolor: 'background.neutral',
         }}
       >
-        {icon}
+        <img src={imgSrc} alt={alt} />
       </Box>
     </RootStyle>
   );

@@ -59,9 +59,9 @@ export default function CageTypePrice({ createUser }) {
                 InputLabelProps={{ shrink: true }}
                 SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
               >
-                {priceTypes.map((priceType, index) => (
+                {priceTypes.map((priceType) => (
                   <MenuItem
-                    key={index}
+                    key={priceType.code}
                     value={priceType.code}
                     sx={{
                       mx: 1,
