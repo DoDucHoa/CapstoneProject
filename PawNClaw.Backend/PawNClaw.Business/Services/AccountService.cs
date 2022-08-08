@@ -71,6 +71,47 @@ namespace PawNClaw.Business.Services
             return _accountRepository.GetAccountWithInFor(id);
         }
 
+        public PagedList<Account> GetAccountsCus(AccountRequestParameter _requestParameter, PagingParameter paging)
+        {
+            var values = _accountRepository.GetCustomerAccount();
+
+            if (_requestParameter.Id != null)
+            {
+                values = values.Where(x => x.Id == _requestParameter.Id);
+            }
+            if (!string.IsNullOrWhiteSpace(_requestParameter.UserName))
+            {
+                values = values.Where(x => x.UserName.Trim().Equals(_requestParameter.UserName));
+            }
+            if (_requestParameter.Phone != null)
+            {
+                values = values.Where(x => x.Phone.Trim().Equals(_requestParameter.Phone));
+            }
+
+            values = _requestParameter.Status switch
+            {
+                true => values.Where(x => x.Status == true),
+                false => values.Where(x => x.Status == false),
+                _ => values
+            };
+
+            if (!string.IsNullOrWhiteSpace(_requestParameter.sort))
+            {
+                switch (_requestParameter.sort)
+                {
+                    case "UserName":
+                        if (_requestParameter.dir == "asc")
+                            values = values.OrderBy(d => d.Id);
+                        else if (_requestParameter.dir == "desc")
+                            values = values.OrderByDescending(d => d.Id);
+                        break;
+                }
+            }
+
+            return PagedList<Account>.ToPagedList(values.AsQueryable(),
+            paging.PageNumber,
+            paging.PageSize);
+        }
         //Add Account
         public int Add(Account account)
         {

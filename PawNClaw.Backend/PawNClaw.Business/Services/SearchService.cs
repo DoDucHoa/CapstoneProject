@@ -613,9 +613,14 @@ namespace PawNClaw.Business.Services
             var result = await response.Content.ReadAsStringAsync();
             var cust = JObject.Parse(result);
 
+            var constraint = await ConstService.Get(Const.ProjectFirebaseId, "Const", "Config");
+
+            var limitObj = constraint["kmSearch"];
+            var limit = Convert.ToInt32(limitObj);
+
             for (int i = 0; i < values.LongCount(); i++)
             {
-                if (int.Parse(cust["rows"][0]["elements"][i]["distance"]["value"].ToString()) <= 20000)
+                if (int.Parse(cust["rows"][0]["elements"][i]["distance"]["value"].ToString()) <= (limit * 1000))
                 {
                     values[i].Distance = cust["rows"][0]["elements"][i]["distance"]["text"].ToString();
                     values[i].Duration = cust["rows"][0]["elements"][i]["duration"]["text"].ToString();

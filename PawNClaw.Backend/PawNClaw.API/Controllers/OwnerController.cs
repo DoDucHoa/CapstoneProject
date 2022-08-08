@@ -37,7 +37,6 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Mod")]
         public IActionResult GetOwnerById(int id)
         {
             var data = _OwnerService.GetOwnerById(id);

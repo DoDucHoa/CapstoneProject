@@ -42,7 +42,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Mod")]
         public IActionResult GetAdminById(int id)
         {
             var data = _adminService.GetAdminById(id);

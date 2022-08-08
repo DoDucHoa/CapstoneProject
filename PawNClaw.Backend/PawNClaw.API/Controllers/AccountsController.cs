@@ -58,6 +58,22 @@ namespace PawNClaw.API.Controllers
             return Ok(new { data, metadata });
         }
 
+        [HttpGet("customer")]
+        public IActionResult GetAccountsCustomer([FromQuery] AccountRequestParameter _requestParameter, [FromQuery] PagingParameter _paging)
+        {
+            var data = _accountService.GetAccountsCus(_requestParameter, _paging);
+            var metadata = new
+            {
+                data.TotalCount,
+                data.PageSize,
+                data.CurrentPage,
+                data.TotalPages,
+                data.HasNext,
+                data.HasPrevious
+            };
+            return Ok(new { data, metadata });
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public IActionResult Add([FromBody] Account account)
