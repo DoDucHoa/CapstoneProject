@@ -549,8 +549,7 @@ namespace PawNClaw.Data.Repository
                         BrandId = x.Center.BrandId,
                         Checkin = x.Center.Checkin,
                         Checkout = x.Center.Checkout,
-                        Bookings = (ICollection<Booking>) GetCenterReviews(x.Id),
-                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Center.Id, PhotoTypesConst.PetCenter)
                     },
                     Status = new BookingStatus
                     {
