@@ -558,7 +558,8 @@ namespace PawNClaw.Business.Services
                 Description = center.Description,
                 BrandId = center.BrandId,
                 EndBooking = center.EndBooking,
-                Photos = center.Photos
+                Photos = center.Photos,
+                Bookings = (ICollection<Booking>)_bookingRepository.GetCenterReviews(center.Id)
             });
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
