@@ -3,48 +3,30 @@ import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { useSnackbar } from 'notistack';
 import { isEmpty } from 'lodash';
-import { PDFDownloadLink, PDFViewer, BlobProvider } from '@react-pdf/renderer';
 // form
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
-import {
-  Box,
-  Button,
-  DialogActions,
-  Grid,
-  Typography,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  MenuItem,
-  Dialog,
-  Tooltip,
-  IconButton,
-} from '@mui/material';
-import { LoadingButton } from '@mui/lab';
-// redux
+// hooks
 import { useDispatch } from '../../../redux/store';
 import { updateBookingStatus, createPetHealthStatus } from '../../../redux/slices/calendar';
-// components
-import Scrollbar from '../../../components/Scrollbar';
-import { FormProvider, RHFSelect, RHFTextField } from '../../../components/hook-form';
-import { fDateTime } from '../../../utils/formatTime';
-import { fCurrency, fNumber } from '../../../utils/formatNumber';
-import { SupplyDialogForm } from './dialogs/SupplyDialogForm';
-import { ServiceDialogForm } from './dialogs/ServiceDialogForm';
-import Iconify from '../../../components/Iconify';
-import InvoicePDF from './invoice/InvoicePDF';
-// hooks
-import useAuth from '../../../hooks/useAuth';
 import useResponsive from '../../../hooks/useResponsive';
-import CageDialogForm from './dialogs/CageDialogForm';
-import { checkSize, updateInvoiceUrl } from './useCalendarAPI';
-import BookingDetail from './new-edit-form/BookingDetail';
-import CageManagement from './new-edit-form/CageManagement';
+// components
+import { FormProvider } from '../../../components/hook-form';
+import { fDateTime } from '../../../utils/formatTime';
+
+import { SupplyDialogForm, CageDialogForm, PDFInvoiceDialog, ServiceDialogForm } from './dialogs';
+
+import {
+  BookingDetail,
+  BookingStatusCombobox,
+  CageManagement,
+  FormAction,
+  PaymentDetail,
+  ServiceList,
+  SupplyList,
+} from './new-edit-form';
+
+import { checkSize } from './useCalendarAPI';
 
 // ----------------------------------------------------------------------
 
@@ -57,6 +39,16 @@ CalendarForm.propTypes = {
   petData: PropTypes.array,
   updateStatusColor: PropTypes.func,
 };
+CalendarForm.defaultProps = {
+  centerId: 0,
+  centerInfo: {},
+  selectedEvent: {},
+  onCancel: () => {},
+  bookingStatuses: [],
+  petData: [],
+  updateStatusColor: () => {},
+};
+CalendarForm.displayName = 'CalendarForm';
 
 export default function CalendarForm({
   centerId,
@@ -76,8 +68,6 @@ export default function CalendarForm({
 
   const [isSizeValid, setIsSizeValid] = useState(false);
   const [cageSearchParam, setCageSearchParam] = useState({});
-
-  const { uploadFileToFirebase } = useAuth();
 
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
@@ -287,330 +277,44 @@ export default function CalendarForm({
           handleOpenCageDialogForm={handleOpenCageDialogForm}
         />
 
-        {/* Supplies management */}
-        <Box sx={{ px: 3, pt: 5 }}>
-          <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-            <Typography paragraph variant="overline" sx={{ color: 'red' }}>
-              Đồ dùng
-            </Typography>
-            {statusId === 1 && (
-              <Button variant="contained" color="warning" onClick={handleOpenSupplyDialogForm}>
-                Chỉnh sửa
-              </Button>
-            )}
-          </Box>
+        <SupplyList
+          statusId={statusId}
+          supplyOrders={supplyOrders}
+          handleOpenSupplyDialogForm={handleOpenSupplyDialogForm}
+        />
 
-          {supplyOrders.length > 0 ? (
-            <Scrollbar>
-              <TableContainer sx={{ minWidth: 300 }}>
-                <Table>
-                  <TableHead
-                    sx={{
-                      borderBottom: (theme) => `solid 1px ${theme.palette.divider}`,
-                      '& th': { backgroundColor: 'transparent' },
-                    }}
-                  >
-                    <TableRow>
-                      <TableCell align="center" width={40}>
-                        STT
-                      </TableCell>
-                      <TableCell align="left" width={500}>
-                        Mô tả
-                      </TableCell>
-                      <TableCell align="right">Số lượng</TableCell>
-                      <TableCell align="right">Giá bán (VND)</TableCell>
-                      <TableCell align="right">Tổng cộng (VND)</TableCell>
-                    </TableRow>
-                  </TableHead>
+        <ServiceList
+          statusId={statusId}
+          serviceOrders={serviceOrders}
+          handleOpenServiceDialogForm={handleOpenServiceDialogForm}
+        />
 
-                  <TableBody>
-                    {supplyOrders.map((row, index) => (
-                      <TableRow
-                        key={index}
-                        sx={{
-                          borderBottom: (theme) => `solid 1px ${theme.palette.divider}`,
-                        }}
-                      >
-                        <TableCell align="center">{index + 1}</TableCell>
-                        <TableCell align="left">
-                          <Box sx={{ maxWidth: 560 }}>
-                            <Typography variant="subtitle2">{row.supply.name}</Typography>
-                          </Box>
-                        </TableCell>
-                        <TableCell align="right">{fNumber(row.quantity)}</TableCell>
-                        <TableCell align="right">{fCurrency(row.sellPrice)}</TableCell>
-                        <TableCell align="right">{fCurrency(row.totalPrice)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Scrollbar>
-          ) : (
-            <Typography>Không có đồ dùng nào được đặt hàng</Typography>
-          )}
-        </Box>
+        <PaymentDetail
+          statusId={statusId}
+          total={total}
+          discount={discount}
+          subTotal={subTotal}
+          totalCage={totalCage}
+          totalService={totalService}
+          totalSupply={totalSupply}
+          voucherCode={voucherCode}
+          voucherCodeNavigation={voucherCodeNavigation}
+        />
 
-        {/* Service management */}
-        <Box sx={{ px: 3, mt: 6 }}>
-          <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-            <Typography paragraph variant="overline" sx={{ color: 'blue' }}>
-              Dịch vụ
-            </Typography>
-            {statusId === 1 && (
-              <Button variant="contained" color="warning" onClick={handleOpenServiceDialogForm}>
-                Chỉnh sửa
-              </Button>
-            )}
-          </Box>
-          {serviceOrders.length > 0 ? (
-            <Scrollbar>
-              <TableContainer sx={{ minWidth: 300 }}>
-                <Table>
-                  <TableHead
-                    sx={{
-                      borderBottom: (theme) => `solid 1px ${theme.palette.divider}`,
-                      '& th': { backgroundColor: 'transparent' },
-                    }}
-                  >
-                    <TableRow>
-                      <TableCell align="center" width={40}>
-                        STT
-                      </TableCell>
-                      <TableCell align="left" width={500}>
-                        Mô tả
-                      </TableCell>
-                      <TableCell align="right">Số lượng</TableCell>
-                      <TableCell align="right">Giá bán (VND)</TableCell>
-                      <TableCell align="right">Tổng cộng (VND)</TableCell>
-                    </TableRow>
-                  </TableHead>
+        <BookingStatusCombobox statusId={statusId} bookingStatuses={bookingStatuses} />
 
-                  <TableBody>
-                    {serviceOrders.map((row, index) => (
-                      <TableRow
-                        key={index}
-                        sx={{
-                          borderBottom: (theme) => `solid 1px ${theme.palette.divider}`,
-                        }}
-                      >
-                        <TableCell align="center">{index + 1}</TableCell>
-                        <TableCell align="left">
-                          <Box sx={{ maxWidth: 560 }}>
-                            <Typography variant="subtitle2">{row.service.description}</Typography>
-                          </Box>
-                        </TableCell>
-                        <TableCell align="right">{fNumber(row.quantity)}</TableCell>
-                        <TableCell align="right">{fCurrency(row.sellPrice)}</TableCell>
-                        <TableCell align="right">{fCurrency(row.totalPrice)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Scrollbar>
-          ) : (
-            <Typography>Không có dịch vụ nào được đặt hàng</Typography>
-          )}
-        </Box>
-
-        {/* Total */}
-        <Grid container spacing={1} sx={{ p: 3, pt: 6 }}>
-          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="overline" align="right" mr={3}>
-                Tổng giá chuồng
-              </Typography>
-              <Typography variant="body1" align="right" width={130}>
-                {fCurrency(totalCage)} ₫
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="overline" align="right" mr={3}>
-                Tổng đồ dùng
-              </Typography>
-              <Typography variant="body1" align="right" width={130}>
-                {fCurrency(totalSupply)} ₫
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="overline" align="right" mr={3}>
-                Tổng dịch vụ
-              </Typography>
-              <Typography variant="body1" align="right" width={130}>
-                {fCurrency(totalService)} ₫
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="overline" align="right" mr={3}>
-                Tổng tiền
-              </Typography>
-              <Typography variant="body1" align="right" width={130}>
-                {fCurrency(subTotal)} ₫
-              </Typography>
-            </Box>
-          </Grid>
-          {voucherCodeNavigation && (
-            <>
-              <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Typography variant="overline" align="right" mr={3} color="primary">
-                  Voucher giảm giá
-                </Typography>
-                <Typography variant="overline" align="right" width={130} />
-              </Grid>
-              <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography variant="body2" align="right" mr={3} sx={{ fontWeight: 700 }}>
-                    Mã:{' '}
-                    {`${voucherCode} (${fCurrency(voucherCodeNavigation?.value)}${
-                      voucherCodeNavigation?.voucherTypeCode === '1' ? '%' : '₫'
-                    })`}
-                  </Typography>
-                  <Typography variant="body1" align="right" width={130}>
-                    -{fCurrency(discount)} ₫
-                  </Typography>
-                </Box>
-              </Grid>
-            </>
-          )}
-          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="h6" align="right" mr={3}>
-                Tổng thanh toán
-              </Typography>
-              <Typography variant="h4" align="right">
-                {fCurrency(total)} ₫
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sx={{ mt: 3 }}>
-            <RHFTextField
-              disabled={statusId === 3 || statusId === 4}
-              name="staffNote"
-              label="Ghi chú của nhân viên"
-              multiline
-              rows={3}
-            />
-          </Grid>
-        </Grid>
-
-        {/* Booking status */}
-        <Grid container spacing={3} sx={{ p: 3 }}>
-          {bookingStatuses.length > 0 && (
-            <Grid item xs={8} md={4}>
-              <RHFSelect
-                disabled={statusId === 3 || statusId === 4}
-                fullWidth
-                name="statusId"
-                label="Trạng thái Booking"
-                InputLabelProps={{ shrink: true }}
-                SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
-              >
-                {bookingStatuses.map((option) => (
-                  <MenuItem
-                    key={option.id}
-                    value={option.id}
-                    sx={{
-                      mx: 1,
-                      my: 0.5,
-                      borderRadius: 0.75,
-                      typography: 'body2',
-                      textTransform: 'capitalize',
-                    }}
-                  >
-                    {option.name}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
-            </Grid>
-          )}
-        </Grid>
-
-        {/* Buttons */}
-        <DialogActions>
-          <Box sx={{ flexGrow: 1 }} />
-          {statusId === 3 && (
-            <>
-              <PDFDownloadLink
-                document={
-                  <InvoicePDF
-                    invoice={selectedEvent}
-                    petData={petData}
-                    supplyOrders={supplyOrders}
-                    serviceOrders={serviceOrders}
-                    centerInfo={centerInfo}
-                  />
-                }
-                fileName={`${selectedEvent.id}-invoice.pdf`}
-                style={{ textDecoration: 'none' }}
-              >
-                {({ loading }) => (
-                  <LoadingButton
-                    color="info"
-                    variant="text"
-                    loading={loading}
-                    startIcon={<Iconify icon="ant-design:download-outlined" />}
-                  >
-                    Tải hóa đơn
-                  </LoadingButton>
-                )}
-              </PDFDownloadLink>
-
-              <Button
-                sx={{ ml: 2 }}
-                onClick={handleOpenPDFDialog}
-                color="inherit"
-                variant="text"
-                startIcon={<Iconify icon={'eva:eye-fill'} />}
-              >
-                Xem hóa đơn
-              </Button>
-            </>
-          )}
-
-          <Button variant="outlined" color="inherit" onClick={onCancel}>
-            {statusId !== 3 && statusId !== 4 ? 'Hủy' : 'Thoát'}
-          </Button>
-
-          {statusId !== 3 && statusId !== 4 && (
-            <>
-              {values.statusId !== 3 ? (
-                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                  Xác Nhận
-                </LoadingButton>
-              ) : (
-                <BlobProvider
-                  document={
-                    <InvoicePDF
-                      invoice={selectedEvent}
-                      petData={petData}
-                      supplyOrders={supplyOrders}
-                      serviceOrders={serviceOrders}
-                      centerInfo={centerInfo}
-                    />
-                  }
-                >
-                  {({ blob }) => {
-                    uploadFileToFirebase('invoices', blob, selectedEvent.id).then((downloadUrl) => {
-                      updateInvoiceUrl(selectedEvent.id, downloadUrl);
-                    });
-                    return (
-                      <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                        Xác Nhận
-                      </LoadingButton>
-                    );
-                  }}
-                </BlobProvider>
-              )}
-            </>
-          )}
-        </DialogActions>
+        <FormAction
+          centerInfo={centerInfo}
+          handleOpenPDFDialog={handleOpenPDFDialog}
+          isSubmitting={isSubmitting}
+          onCancel={onCancel}
+          petData={petData}
+          selectedEvent={selectedEvent}
+          serviceOrders={serviceOrders}
+          statusId={statusId}
+          supplyOrders={supplyOrders}
+          values={values}
+        />
       </FormProvider>
 
       {!isEmpty(cageSearchParam) && (
@@ -636,35 +340,15 @@ export default function CalendarForm({
         bookingId={id}
       />
 
-      <Dialog fullScreen open={openPDFDialog}>
-        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-          <DialogActions
-            sx={{
-              zIndex: 9,
-              padding: '12px !important',
-              boxShadow: (theme) => theme.customShadows.z8,
-            }}
-          >
-            <Tooltip title="Close">
-              <IconButton color="inherit" onClick={handleClosePDFDialog}>
-                <Iconify icon={'eva:close-fill'} />
-              </IconButton>
-            </Tooltip>
-          </DialogActions>
-
-          <Box sx={{ flexGrow: 1, height: '100%', overflow: 'hidden' }}>
-            <PDFViewer width="100%" height="100%" style={{ border: 'none' }}>
-              <InvoicePDF
-                invoice={selectedEvent}
-                petData={petData}
-                supplyOrders={supplyOrders}
-                serviceOrders={serviceOrders}
-                centerInfo={centerInfo}
-              />
-            </PDFViewer>
-          </Box>
-        </Box>
-      </Dialog>
+      <PDFInvoiceDialog
+        centerInfo={centerInfo}
+        handleClosePDFDialog={handleClosePDFDialog}
+        openPDFDialog={openPDFDialog}
+        petData={petData}
+        selectedEvent={selectedEvent}
+        serviceOrders={serviceOrders}
+        supplyOrders={supplyOrders}
+      />
     </>
   );
 }

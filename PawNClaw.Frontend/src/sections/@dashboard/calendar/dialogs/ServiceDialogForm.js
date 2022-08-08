@@ -26,7 +26,7 @@ ServiceDialogForm.propTypes = {
   bookingId: PropTypes.number.isRequired,
 };
 
-export function ServiceDialogForm({ open, onClose, services, bookingId }) {
+export default function ServiceDialogForm({ open, onClose, services, bookingId }) {
   // STATE
   // ----------------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();

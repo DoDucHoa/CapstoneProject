@@ -32,7 +32,6 @@ const TABLE_HEAD = [
   { id: 'startBooking', label: 'Ngày đặt', align: 'center' },
   { id: 'endBooking', label: 'Ngày kết thúc', align: 'center' },
   { id: 'status', label: 'Trạng thái', align: 'left' },
-  { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -86,6 +85,7 @@ export default function BookingList() {
     setTableData(bookingList);
     setMetadata(metadata);
   };
+
   useEffect(() => {
     getBookings();
 
@@ -104,6 +104,12 @@ export default function BookingList() {
 
   const handleCloseModal = () => {
     dispatch(closeModal());
+  };
+
+  const handelChangeBookingStatus = () => {
+    setInterval(async () => {
+      await getBookings();
+    }, 3000);
   };
 
   const isNotFound = !(metadata.totalCount ? metadata.totalCount : 0);
@@ -135,12 +141,7 @@ export default function BookingList() {
 
                 <TableBody>
                   {tableData.map((row) => (
-                    <BookingRow
-                      key={row.id}
-                      row={row}
-                      onClick={handleOpenCalendarDialog}
-                      bookingStatuses={bookingStatuses}
-                    />
+                    <BookingRow key={row.id} row={row} onClick={handleOpenCalendarDialog} />
                   ))}
 
                   <TableEmptyRows
@@ -178,7 +179,7 @@ export default function BookingList() {
             onCancel={handleCloseModal}
             bookingStatuses={bookingStatuses}
             petData={petData}
-            updateStatusColor={() => {}} // FIXME: fix update status for booking list
+            updateStatusColor={() => handelChangeBookingStatus()}
           />
         </DialogAnimate>
       </Container>

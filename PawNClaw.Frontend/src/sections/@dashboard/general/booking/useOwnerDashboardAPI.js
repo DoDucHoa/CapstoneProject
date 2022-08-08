@@ -36,6 +36,28 @@ const getTotalCage = async (centerId, from, to) => {
   return response.data;
 };
 
+const getTotalService = async (centerId, from, to) => {
+  const response = await axios.get(getUrl('total-service'), {
+    params: {
+      centerId,
+      from,
+      to,
+    },
+  });
+  return response.data;
+};
+
+const getTotalSupply = async (centerId, from, to) => {
+  const response = await axios.get(getUrl('total-supply'), {
+    params: {
+      centerId,
+      from,
+      to,
+    },
+  });
+  return response.data;
+};
+
 const getCageFreeList = async (centerId, from, to) => {
   const response = await axios.get(getUrl('cage-free-list'), {
     params: {
@@ -47,4 +69,4 @@ const getCageFreeList = async (centerId, from, to) => {
   return response.data;
 };
 
-export { getBookingCountStatus, getTotalCage, getCageFreeList, getBookingCount };
+export { getBookingCountStatus, getTotalCage, getCageFreeList, getBookingCount, getTotalService, getTotalSupply };

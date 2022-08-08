@@ -46,7 +46,7 @@ import { getAdmins, banAdmin, unbanAdmin } from './useAdminAPI';
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [
-  { key: 0, value: '', label: 'Tất cả' },
+  { key: 0, value: 'all', label: 'Tất cả' },
   { key: 1, value: 'true', label: 'Hoạt động' },
   { key: 2, value: 'false', label: 'Đã khóa' },
 ];
@@ -81,7 +81,7 @@ export default function UserList() {
     onChangeRowsPerPage,
   } = useTable();
 
-  const { currentTab: filterStatus, onChangeTab } = useTabs('');
+  const { currentTab: filterStatus, onChangeTab } = useTabs('all');
   const onChangeFilterStatus = (event, newValue) => {
     onChangeTab(event, newValue);
     setPage(0);
@@ -93,7 +93,7 @@ export default function UserList() {
 
     const admins = data.map((admin, index) => ({
       id: admin.id,
-      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`, // FIXME: update photo for moderator
+      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`, // TODO: update photo for moderator
       name: admin.name,
       email: admin.email,
       phoneNumber: admin.idNavigation.phone,
@@ -252,6 +252,7 @@ BanAdminDialog.propTypes = {
   idAdmin: PropTypes.number,
   handleBanAdmin: PropTypes.func,
 };
+BanAdminDialog.displayName = 'BanAdminDialog';
 
 function BanAdminDialog({ open, onClose, idAdmin, handleBanAdmin }) {
   const onConfirm = () => {

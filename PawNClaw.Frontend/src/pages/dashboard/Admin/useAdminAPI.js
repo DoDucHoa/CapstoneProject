@@ -13,7 +13,7 @@ const getAdmins = async (page, rowsPerPage, filterStatus, searchName) => {
       Name: searchName,
       PageSize: rowsPerPage,
       PageNumber: page,
-      Status: filterStatus,
+      Status: filterStatus === 'all' ? '' : filterStatus,
     },
   });
   return response.data;
