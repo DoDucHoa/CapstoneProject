@@ -3,6 +3,7 @@ using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -177,7 +178,7 @@ namespace PawNClaw.Business.Services
             }
             catch
             {
-                return -1;
+                throw new Exception();
             }
         }
 
