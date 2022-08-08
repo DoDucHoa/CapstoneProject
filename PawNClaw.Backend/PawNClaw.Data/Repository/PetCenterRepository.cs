@@ -256,6 +256,7 @@ namespace PawNClaw.Data.Repository
                     .Select(ser => new Service
                     {
                         Id = ser.Id,
+                        Name =ser.Name,
                         Description = ser.Description,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(ser.Id, PhotoTypesConst.Service),
                         ServicePrices = (ICollection<ServicePrice>)ser.ServicePrices
@@ -368,6 +369,7 @@ namespace PawNClaw.Data.Repository
                     {
                         Id = ser.Id,
                         Description = ser.Description,
+                        Name = ser.Name,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(ser.Id, PhotoTypesConst.Service),
                         MinPrice = ser.ServicePrices.Min(x => x.Price),
                         MaxPrice = ser.ServicePrices.Max(x => x.Price)
