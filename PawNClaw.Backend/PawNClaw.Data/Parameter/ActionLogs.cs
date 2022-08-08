@@ -1,5 +1,4 @@
-﻿using Google.Cloud.Firestore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +12,6 @@ namespace PawNClaw.Data.Parameter
         public string Target { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
-        public Timestamp Time { get; set; }
+        public DateTime Time { get; set; }
     }
 }
