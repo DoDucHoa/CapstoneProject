@@ -51,6 +51,7 @@ namespace PawNClaw.API.Controllers
             try
             {
                 var result = _OwnerService.Add(owner);
+                return Ok(result);
             }
             catch (Exception e)
             {
