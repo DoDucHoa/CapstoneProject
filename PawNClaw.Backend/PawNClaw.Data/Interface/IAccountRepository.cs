@@ -10,5 +10,7 @@ namespace PawNClaw.Data.Interface
     public interface IAccountRepository : IRepository<Account>
     {
         public Account GetAccountWithInFor(int id);
+
+        public IEnumerable<Account> GetCustomerAccount();
     }
 }
