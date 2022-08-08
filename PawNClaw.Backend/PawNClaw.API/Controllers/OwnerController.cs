@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Parameter;
+using System;
 
 namespace PawNClaw.API.Controllers
 {
@@ -47,11 +48,14 @@ namespace PawNClaw.API.Controllers
         [Authorize(Roles = "Admin,Mod")]
         public IActionResult Add([FromBody] CreateOwnerParameter owner)
         {
-            if (_OwnerService.Add(owner) != -1)
+            try
             {
-                return Ok();
+                var result = _OwnerService.Add(owner);
             }
-            return BadRequest();
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
         }
 
         [HttpPut("{id}")]

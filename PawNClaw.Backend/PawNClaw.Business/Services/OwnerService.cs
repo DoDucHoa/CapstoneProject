@@ -99,10 +99,9 @@ namespace PawNClaw.Business.Services
                 var id = ownerToDb.Id;
                 return id;
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine("This is error: " + ex.Message);
-                return -1;
+                throw new Exception();
             }
         }
 
