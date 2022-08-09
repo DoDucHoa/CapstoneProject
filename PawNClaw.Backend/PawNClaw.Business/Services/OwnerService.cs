@@ -37,6 +37,7 @@ namespace PawNClaw.Business.Services
                 {
                     Phone = x.IdNavigation.Phone,
                     UserName = x.IdNavigation.UserName,
+                    Status = x.IdNavigation.Status,
                     Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.Account)
                 }
             });
