@@ -117,7 +117,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("deactivate/{id}")]
-        public IActionResult Deactivate(int id)
+        public async Task<IActionResult> Deactivate(int id)
         {
             try
             {
