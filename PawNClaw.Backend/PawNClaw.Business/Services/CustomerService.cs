@@ -24,6 +24,26 @@ namespace PawNClaw.Business.Services
             return true;
         }
 
+        public void UpdateStatus(int id)
+        {
+            try
+            {
+                var cus = _customerRepository.GetFirstOrDefault(x => x.Id == id, includeProperties: "IdNavigation");
+                switch (cus.IdNavigation.Status)
+                {
+                    case true:
+                        cus.IdNavigation.Status = false;
+                        break;
+                    default:
+                        cus.IdNavigation.Status = false;
+                        break;
+                }
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
 
     }
 }
