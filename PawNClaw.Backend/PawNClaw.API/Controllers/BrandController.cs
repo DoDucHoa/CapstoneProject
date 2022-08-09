@@ -41,7 +41,6 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("{id:int}")]
-        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult GetBrandById(int id)
         {
             var data = _brandService.GetBrandById(id);
@@ -70,7 +69,6 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] BrandRequestParameter brand)
         {
             var brandDb = _brandService.GetBrandById(id);
