@@ -31,7 +31,7 @@ namespace PawNClaw.Business.Services
                 { "Type", data.Type},
                 { "Target", data.Target },
                 { "Name", data.Name },
-                { "time", Timestamp.FromDateTime(data.Time.ToUniversalTime()) },
+                { "Time", Timestamp.FromDateTime(data.Time.ToUniversalTime()) },
             };
             await docRef.SetAsync(log);
             // [END fs_add_data_1]

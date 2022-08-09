@@ -109,13 +109,21 @@ class BookingDetail {
 
   List<BookingDetails> getUndoneFeedingAct() {
     List<BookingDetails> undone = [];
-    this.bookingDetails!.forEach((booking) {
-      booking.bookingActivities?.forEach((element) {
-        if (element.provideTime == null) {
-          undone.add(booking);
-        }
-      });
+    this.bookingActivities!.forEach((activity) {
+      // booking.bookingActivities?.forEach((element) {
+      //   if (element.provideTime == null) {
+      //     undone.add(booking);
+      //   }
+      // });
+      if (activity.bookingDetailId != null && activity.provideTime == null) {
+        this.bookingDetails!.forEach((detail) {
+          if (detail.id == activity.bookingDetailId) {
+            undone.add(detail);
+          }
+        });
+      }
     });
+    undone.toSet().toList();
     return undone;
   }
 
@@ -382,12 +390,12 @@ class BookingDetails {
     return data;
   }
 
-  List<BookingActivities> getUndoneActivities() {
-    return this
-        .bookingActivities!
-        .where((element) => element.provideTime == null)
-        .toList();
-  }
+  // List<BookingActivities> getUndoneActivities() {
+  //   return this
+  //       .bookingActivities!
+  //       .where((element) => element.provideTime == null)
+  //       .toList();
+  // }
 }
 
 class FoodSchedules {
