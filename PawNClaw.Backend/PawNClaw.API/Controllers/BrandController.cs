@@ -61,7 +61,7 @@ namespace PawNClaw.API.Controllers
                     Type = "Create",
                     Time = DateTime.Now,
                 });
-                return Ok();
+                return Ok(_brandService.Add(brand));
             }
             catch (Exception e)
             {
