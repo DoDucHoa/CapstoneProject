@@ -306,7 +306,7 @@ namespace PawNClaw.Business.Services
         {
             try
             {
-                PetCenter center = _petCenterRepository.GetFirstOrDefault(x => x.Id == petCenter.Id);
+                PetCenter center = _petCenterRepository.Get(petCenter.Id);
                 center.OpenTime = petCenter.OpenTime;
                 center.CloseTime = petCenter.CloseTime;
                 center.Checkin = petCenter.CheckIn;
