@@ -17,5 +17,6 @@ namespace PawNClaw.Data.Parameter
         public string sort { get; set; } = null;
         public string fields { get; set; } = null;
         public string includeProperties { get; set; } = null;
+        public int ModifyUser { get; set; }
     }
 }

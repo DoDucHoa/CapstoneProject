@@ -31,14 +31,14 @@ namespace PawNClaw.Business.Services
                 { "Type", data.Type},
                 { "Target", data.Target },
                 { "Name", data.Name },
-                { "time", data.Time },
+                { "time", Timestamp.FromDateTime(data.Time.ToUniversalTime()) },
             };
             await docRef.SetAsync(log);
             // [END fs_add_data_1]
         }
 
         //get logs
-        public async Task<List<ActionLogsParameter>> GetLogs(int id, string target)
+        public async Task<List<ActionLogsParameter>> GetLogs()
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "pawnclaw-4b6ba-firebase-adminsdk-txxl7-50dcc161a7.json");
             FirestoreDb db = FirestoreDb.Create(Const.ProjectFirebaseId);
@@ -49,13 +49,14 @@ namespace PawNClaw.Business.Services
             foreach (DocumentSnapshot snapshot in querySnapshot)
             {
                 Dictionary<string, dynamic> log = snapshot.ToDictionary();
+                Timestamp timestamp = (Timestamp)log["Time"];
                 var modificationLog = new ActionLogsParameter()
                 {
                     Id = log["Id"],
                     Type = log["Type"],
                     Target = log["Target"],
                     Name = log["Name"],
-                    Time = log["Time"],
+                    Time = timestamp.ToDateTime(),
                 };
                 logs.Add(modificationLog);
             }
