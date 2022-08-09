@@ -47,6 +47,12 @@ namespace PawNClaw.Business.Services
             return value;
         }
 
+        public Brand GetBrandByIdForUpdate(int id)
+        {
+            var value = _brandRepository.Get(id);
+            return value;
+        }
+
         //Get By Owner Id
         public Brand GetBrandByOwnerId(int OwnerId)
         {

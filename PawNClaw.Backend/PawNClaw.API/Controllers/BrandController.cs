@@ -78,10 +78,9 @@ namespace PawNClaw.API.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] BrandRequestParameter brand)
         {
-            var brandDb = _brandService.GetBrandById(id);
+            var brandDb = _brandService.GetBrandByIdForUpdate(id);
             brandDb.Name = brand.Name;
             brandDb.Description = brand.Description;
-            brandDb.OwnerId = brand.OwnerId;
             brandDb.ModifyUser = brand.ModifyUser;
 
             if (_brandService.Update(brandDb))
