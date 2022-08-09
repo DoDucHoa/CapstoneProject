@@ -140,7 +140,13 @@ namespace PawNClaw.Business.Services
         public Admin GetAdminById(int id)
         {
             var admin = _adminRepository.GetAll(includeProperties: "IdNavigation").FirstOrDefault(x => x.Id == id);
-            admin.IdNavigation.Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(admin.Id, PhotoTypesConst.Account);
+
+            if (admin == null)
+            {
+                return admin;
+            }
+
+            admin.IdNavigation.Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(id, PhotoTypesConst.Account);
             return admin;
         }
 
