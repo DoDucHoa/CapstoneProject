@@ -46,12 +46,24 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                     onPressed: () {
                       showCupertinoDialog(
                           context: context,
-                          builder: (context) {
-                            return PetRequestsDialog(
-                                requests: state is UpdatePetSelected
-                                    ? state.requests
-                                    : []);
-                          });
+                          builder: (_) => BlocProvider.value(
+                                value: BlocProvider.of<SearchBloc>(context),
+                                child: PetRequestsDialog(
+                                    requests: state is UpdatePetSelected
+                                        ? state.requests
+                                        : []),
+                              )).then((value) => context
+                          .findRootAncestorStateOfType()!
+                          .setState(() {}));
+
+                      // Navigator.of(context).push(MaterialPageRoute(
+                      //     builder: (_) => BlocProvider.value(
+                      //           value: BlocProvider.of<SearchBloc>(context),
+                      //           child: PetRequestsDialog(
+                      //           requests: state is UpdatePetSelected
+                      //               ? state.requests
+                      //               : []),
+                      //         )));
                     },
                     icon: Image.asset('lib/assets/black-paw.png'
                         // color: primaryFontColor,
@@ -82,7 +94,8 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
               ),
             ],
             leading: IconButton(
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen())),
+              onPressed: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => HomeScreen())),
               icon: Icon(
                 Icons.arrow_back_ios_new,
                 color: primaryFontColor,
@@ -128,7 +141,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                       setState(() {});
                                     },
                                     child: const Text(
-                                      "Tạo chuồng",
+                                      "Tạo phòng",
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 13),
                                     ),
@@ -212,7 +225,8 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                         );
                                       },
                                     )
-                                  : const LoadingIndicator(loadingText: 'Vui lòng đợi');
+                                  : const LoadingIndicator(
+                                      loadingText: 'Vui lòng đợi');
                             },
                           ),
                         ),
@@ -272,7 +286,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
               onPressed: state is UpdatePetSelected && state.requests.isNotEmpty
                   ? () {
                       BlocProvider.of<SearchBloc>(context)
-                          .add(ConfirmRequest(state.requests,-1));
+                          .add(ConfirmRequest(state.requests, -1));
                     }
                   : () {},
               child: const Icon(

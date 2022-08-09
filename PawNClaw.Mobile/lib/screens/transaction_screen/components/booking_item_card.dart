@@ -4,6 +4,8 @@ import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/booking.dart';
 import 'package:pawnclaw_mobile_application/models/transaction_details.dart';
 
+import '../../../models/pet.dart';
+
 class BookingItemCard extends StatelessWidget {
   const BookingItemCard({
     Key? key,
@@ -21,7 +23,7 @@ class BookingItemCard extends StatelessWidget {
     var bookingSupplies = details.supplyOrders!
         .where((element) => element.petId == pet.id)
         .toList();
-    for (SupplyOrder order in details.supplyOrders!){
+    for (SupplyOrder order in details.supplyOrders!) {
       print(order.toJson());
     }
     //List<petCenter.Supplies> supplies = [];
@@ -62,9 +64,13 @@ class BookingItemCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: CircleAvatar(
-                backgroundImage: AssetImage('lib/assets/cat_avatar0.png'),
-              ),
+              child: (pet.photos!.isEmpty)
+                  ? CircleAvatar(
+                      backgroundImage: AssetImage('lib/assets/cat_avatar0.png'),
+                    )
+                  : CircleAvatar(
+                      backgroundImage: NetworkImage(pet.photos!.first.url!),
+                    ),
             ),
             SizedBox(
               height: height * 0.06,
@@ -99,41 +105,31 @@ class BookingItemCard extends StatelessWidget {
             itemCount: bookingSupplies.length,
             itemBuilder: (context, index) {
               return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                 children: [
-                  Text.rich(TextSpan(
-                      text: bookingSupplies[index].supply!.name!,
+                  Container(
+                    width: width * 0.6,
+                    child: Text(
+                      bookingSupplies[index].supply!.name!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: primaryFontColor,
                         fontWeight: FontWeight.w500,
                         fontSize: width * regularFontRate * 0.8,
                       ),
-                      children: <InlineSpan>[
-                        TextSpan(
-                          text:
-                              " x" + bookingSupplies[index].quantity.toString(),
-                          style: TextStyle(
-                            color: lightFontColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: width * regularFontRate * 0.8,
-                          ),
-                        )
-                      ])),
-                  // Text(
-                  //   supplies[index].name! +
-                  //       " x" +
-                  //       bookingSupplies
-                  //           .firstWhere((element) =>
-                  //               element.petId == pet.id &&
-                  //               element.supplyId == supplies[index].id)
-                  //           .quantity
-                  //           .toString(),
-                  //   style: TextStyle(
-                  //     color: primaryFontColor,
-                  //     fontWeight: FontWeight.w500,
-                  //     fontSize: width * regularFontRate * 0.8,
-                  //   ),
-                  // ),
+                    ),
+                  ),
+                  Text(
+                    " x" + bookingSupplies[index].quantity.toString(),
+                    style: TextStyle(
+                      color: lightFontColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: width * regularFontRate * 0.8,
+                    ),
+                  ),
+                  Expanded(child: SizedBox()),
                   Text(
                     NumberFormat.currency(
                             decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
@@ -155,40 +151,28 @@ class BookingItemCard extends StatelessWidget {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text.rich(TextSpan(
-                      text: bookingServices[index].service!.description!,
+                  Container(
+                    width: width * 0.6,
+                    child: Text(
+                      bookingServices[index].service!.description!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: primaryFontColor,
                         fontWeight: FontWeight.w500,
                         fontSize: width * regularFontRate * 0.8,
                       ),
-                      children: <InlineSpan>[
-                        TextSpan(
-                          text:
-                              " x" + bookingServices[index].quantity.toString(),
-                          style: TextStyle(
-                            color: lightFontColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: width * regularFontRate * 0.8,
-                          ),
-                        )
-                      ])),
-                  // Text(
-                  //   services[index].description!
-                  //   +
-                  //       " x" +
-                  //       bookingServices
-                  //           .firstWhere((element) =>
-                  //               element.petId == pet.id &&
-                  //               element.serviceId == services[index].id)
-                  //           .quantity
-                  //           .toString(),
-                  //   style: TextStyle(
-                  //     color: primaryFontColor,
-                  //     fontWeight: FontWeight.w500,
-                  //     fontSize: width * regularFontRate * 0.8,
-                  //   ),
-                  // ),
+                    ),
+                  ),
+                  Text(
+                    " x" + bookingServices[index].quantity.toString(),
+                    style: TextStyle(
+                      color: lightFontColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: width * regularFontRate * 0.8,
+                    ),
+                  ),
+                  Expanded(child: SizedBox()),
                   Text(
                     NumberFormat.currency(
                             decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')

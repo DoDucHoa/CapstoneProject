@@ -22,10 +22,11 @@ class PetCard extends StatelessWidget {
             MaterialPageRoute(builder: (context) => PetDetailScreen(pet: pet)));
       },
       child: Container(
+        // constraints: BoxConstraints.expand(height: height * 0.6),
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(15)),
         child: Column(
-            //mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
@@ -34,11 +35,12 @@ class PetCard extends StatelessWidget {
                 height: width * 0.15,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
+                    color: Colors.blueGrey[50],
                     image: pet.photos!.isNotEmpty
                         ? DecorationImage(
                             image: NetworkImage(pet.photos!.first.url!))
                         : DecorationImage(
-                            image: AssetImage('lib/assets/pet-0.png'))),
+                            image: AssetImage((pet.petTypeCode == 'DOG') ?'lib/assets/dog.png':'lib/assets/black-cat.png'))),
               ),
               Container(
                 width: width * (0.35),

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
 
+import '../../../blocs/search/search_bloc.dart';
+import '../../../common/components/primary_icon_button.dart';
 import 'pet_bubble.dart';
 
 class PetRequestsDialog extends StatefulWidget {
@@ -49,24 +53,52 @@ class _PetRequestsDialogState extends State<PetRequestsDialog> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Chuồng ${requestIndex + 1}', style: TextStyle(fontWeight: FontWeight.w500, color: lightFontColor),),
-                        SizedBox(
-                          width: width * 0.5,
-                          height: width * 0.25,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: const ScrollPhysics(),
-                            itemCount: widget.requests[requestIndex].length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: ((context, index) {
-                              // return Text("data");
-                              return SelectedPetBubble(
-                                  width: width,
-                                  pet: widget.requests[requestIndex][index]);
-                            }),
-                          ),
+                        Text(
+                          'Phòng ${requestIndex + 1}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: lightFontColor),
                         ),
-                        
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              width: width * 0.55,
+                              height: width * 0.25,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: const ScrollPhysics(),
+                                itemCount: widget.requests[requestIndex].length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: ((context, index) {
+                                  // return Text("data");
+                                  return Row(
+                                    // crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      SelectedPetBubble(
+                                          width: width,
+                                          pet: widget.requests[requestIndex]
+                                              [index]),
+                                    ],
+                                  );
+                                }),
+                              ),
+                            ),
+                            PrimaryIconButton(
+                                icon: Icons.delete_forever_outlined,
+                                color: Colors.red.withOpacity(0.8),
+                                onPressed: () {
+                                  BlocProvider.of<SearchBloc>(context).add(
+                                      RemovePetRequest(
+                                          widget.requests[requestIndex]));
+                                  //Navigator.pop(context);
+                                  setState(() {});
+                                  if (widget.requests.length == 1) {
+                                    Navigator.pop(context);
+                                  }
+                                }),
+                          ],
+                        ),
                       ],
                     );
                   }),

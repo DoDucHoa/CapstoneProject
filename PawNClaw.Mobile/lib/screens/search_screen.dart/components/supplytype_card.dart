@@ -26,7 +26,7 @@ class SupplyTypeCard extends StatelessWidget {
           (supply) => supply.supplyTypeCode == supplyType,
         )
         .toList();
-    return Container(
+    return (suppliesByType.isNotEmpty) ? Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
       width: size.width,
       decoration: BoxDecoration(
@@ -57,6 +57,7 @@ class SupplyTypeCard extends StatelessWidget {
                 sellPrice: supply.sellPrice!,
                 discountPrice: supply.discountPrice!,
                 id: supply.id.toString(),
+                imgURL: supply.photo?.url,
                 typeId: 1,
                 redirect: SupplyDetails(
                   supply: supply,
@@ -75,6 +76,6 @@ class SupplyTypeCard extends StatelessWidget {
           //     children: buildCageList(id)),
         ]),
       ),
-    );
+    ):Container();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:pawnclaw_mobile_application/models/pet.dart';
 import 'package:pawnclaw_mobile_application/models/transaction_details.dart';
 
 class Activity {

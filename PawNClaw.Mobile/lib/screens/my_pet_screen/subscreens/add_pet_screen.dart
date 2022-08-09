@@ -10,9 +10,11 @@ import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
 import 'package:pawnclaw_mobile_application/repositories/pet/pet_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/my_pet_screen/my_pet_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/my_pet_screen/subscreens/pet_details_screen.dart';
 
 import '../../../common/date_picker.dart';
 import '../../../common/services/upload_service.dart';
+import '../../../models/photo.dart';
 
 class AddPetScreen extends StatefulWidget {
   const AddPetScreen(
@@ -43,13 +45,9 @@ class _AddPetScreenState extends State<AddPetScreen> {
   bool breedError = false;
 
   DateTime? birthDay;
-
   @override
-  Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
+  void initState() {
     var petToUpdate = widget.pet;
-    var isEdit = widget.isEdit != null ? widget.isEdit : false;
     if (petToUpdate != null) {
       _nameController.text = petToUpdate.name!;
       _dateController.text =
@@ -57,14 +55,61 @@ class _AddPetScreenState extends State<AddPetScreen> {
       _heightController.text = petToUpdate.height!.toStringAsFixed(0);
       _weightController.text = petToUpdate.weight!.toStringAsFixed(0);
       _lengthController.text = petToUpdate.length!.toStringAsFixed(0);
-      //_breedController.text = petToUpdate.breedName!;// it makes user cannot change breed
+      _breedController.text =
+          petToUpdate.breedName!; // it makes user cannot change breed
       birthDay = petToUpdate.birth;
-      //breedType = petToUpdate.petTypeCode!;// it makes user cannot change breed2
+      breedType =
+          petToUpdate.petTypeCode!; // it makes user cannot change breed2
 
-      imgURL =
-          petToUpdate.photos!.isNotEmpty ? petToUpdate.photos!.first.url : null;
+      imgURL = null;
+      // petToUpdate.photos!.isNotEmpty ? petToUpdate.photos!.first.url : null;
       //  print(petToUpdate.photos!.length);
     }
+    super.initState();
+  }
+
+  bool isChanged() {
+    return _nameController.text != widget.pet?.name ||
+        _dateController.text !=
+            DateFormat('dd/MM/yyyy').format(widget.pet!.birth!) ||
+        _heightController.text != widget.pet!.height!.toStringAsFixed(0) ||
+        _weightController.text != widget.pet!.weight!.toStringAsFixed(0) ||
+        _lengthController.text != widget.pet!.length!.toStringAsFixed(0) ||
+        _breedController.text != widget.pet!.breedName ||
+        breedType != widget.pet?.petTypeCode ||
+        (imgURL != widget.pet?.photos?.first.url && imgURL != null);
+  }
+
+  bool isFilled() {
+    return _nameController.text != "" &&
+        _dateController.text != "" &&
+        _heightController.text != "" &&
+        _weightController.text != "" &&
+        _lengthController.text != "" &&
+        _breedController.text != "" &&
+        breedType != "" &&
+        (imgURL != null || widget.pet?.photos != null);
+  }
+
+  bool isEdited() {
+    return _nameController.text != "" ||
+        _dateController.text != "" ||
+        _heightController.text != "" ||
+        _weightController.text != "" ||
+        _lengthController.text != "" ||
+        _breedController.text != "" ||
+        //breedType != "" ||
+        breedType != null ||
+        imgURL != null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    var petToUpdate = widget.pet;
+    var isEdit = widget.isEdit != null ? widget.isEdit : false;
+
     return Scaffold(
       backgroundColor: frameColor,
       appBar: AppBar(
@@ -75,7 +120,93 @@ class _AddPetScreenState extends State<AddPetScreen> {
           actions: [
             IconButton(
                 //TO-DO: ALERT USER TO SAVE THE PROCESS
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () {
+                  if (isEdit!) {
+                    if (isChanged()) {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              title: Text('Hủy thay đổi'),
+                              content:
+                                  Text('Bạn có chắc chắn muốn hủy thay đổi?'),
+                              actions: <Widget>[
+                                ElevatedButton(
+                                  child: Text('Không'),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.grey[50],
+                                    onPrimary: Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(7)),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                ElevatedButton(
+                                  child: Text('Có'),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.red,
+                                    onPrimary: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(7)),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          });
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  } else if (isEdited()) {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            title: Text('Hủy thay đổi'),
+                            content:
+                                Text('Bạn có chắc chắn muốn hủy thay đổi?'),
+                            actions: <Widget>[
+                              ElevatedButton(
+                                child: Text('Không'),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.grey[50],
+                                  onPrimary: Colors.black,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(7)),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              ElevatedButton(
+                                child: Text('Có'),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.red,
+                                  onPrimary: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(7)),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                  } else {
+                    Navigator.of(context).pop();
+                  }
+                },
                 icon: const Icon(
                   Iconsax.close_square,
                   color: lightFontColor,
@@ -92,10 +223,14 @@ class _AddPetScreenState extends State<AddPetScreen> {
                 onTap: () async {
                   var resultUrl = await FirebaseUpload()
                       .pickFile("customers/pet/${widget.customerId}", false);
-                  print(resultUrl);
-                  setState(() {
-                    imgURL = resultUrl;
-                  });
+                  if (resultUrl == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Uploading..."),
+                    ));
+                  } else
+                    setState(() {
+                      imgURL = resultUrl;
+                    });
                 },
                 child: Center(
                   child: Container(
@@ -108,14 +243,21 @@ class _AddPetScreenState extends State<AddPetScreen> {
                         border: Border.all(width: 5, color: Colors.white),
                         image: (imgURL != null)
                             ? DecorationImage(image: NetworkImage(imgURL!))
-                            : null),
+                            : ((petToUpdate != null &&
+                                    petToUpdate.photos!.isNotEmpty)
+                                ? DecorationImage(
+                                    image: NetworkImage(
+                                        petToUpdate.photos!.first.url!))
+                                : null)),
                     child: (imgURL == null)
-                        ? const Center(
-                            child: Icon(
-                            Iconsax.image4,
-                            color: Colors.white,
-                            size: 35,
-                          ))
+                        ? (petToUpdate != null && petToUpdate.photos!.isEmpty)
+                            ? const Center(
+                                child: Icon(
+                                Iconsax.image4,
+                                color: Colors.white,
+                                size: 35,
+                              ))
+                            : null
                         : null,
                   ),
                 ),
@@ -266,25 +408,24 @@ class _AddPetScreenState extends State<AddPetScreen> {
                         fontWeight: FontWeight.w500,
                         fontSize: width * regularFontRate),
                     decoration: InputDecoration(
-                      hintText: "Tên loài " +
-                          ((breedType != null && breedType!.contains('DOG'))
-                              ? 'chó'
-                              : 'mèo'),
-                      hintStyle: const TextStyle(
-                        color: lightFontColor,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15,
-                        height: 1.4,
-                      ),
-                      border: InputBorder.none,
-                      suffixIcon: IconButton(
+                        hintText: "Tên loài " +
+                            ((breedType != null && breedType!.contains('DOG'))
+                                ? 'chó'
+                                : 'mèo'),
+                        hintStyle: const TextStyle(
+                          color: lightFontColor,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                          height: 1.4,
+                        ),
+                        border: InputBorder.none,
+                        suffixIcon: IconButton(
                           icon: const Icon(
                             Icons.close_rounded,
                             color: lightFontColor,
                           ),
                           onPressed: () => _breedController.clear(),
-                        )
-                    ),
+                        )),
                   ),
                 ),
               ),
@@ -380,14 +521,14 @@ class _AddPetScreenState extends State<AddPetScreen> {
                           focusColor: primaryBackgroundColor,
                           border: InputBorder.none,
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(color: Colors.white, width: 1.5)
-                          ),
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide:
+                                  BorderSide(color: Colors.white, width: 1.5)),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(color: primaryBackgroundColor, width: 1.5)
-                          ),
-                          suffix:const Text(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide(
+                                  color: primaryBackgroundColor, width: 1.5)),
+                          suffix: const Text(
                             'cm',
                             style: TextStyle(
                               color: lightFontColor,
@@ -395,8 +536,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
                               fontSize: 15,
                               height: 1.4,
                             ),
-                          )
-                          ),
+                          )),
                     ),
                   ),
                   Container(
@@ -410,7 +550,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
                     child: TextField(
                       controller: _lengthController,
                       keyboardType: TextInputType.number,
-                      style:TextStyle(
+                      style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: width * regularFontRate),
                       decoration: InputDecoration(
@@ -428,14 +568,14 @@ class _AddPetScreenState extends State<AddPetScreen> {
                           focusColor: primaryBackgroundColor,
                           border: InputBorder.none,
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(color: Colors.white, width: 1.5)
-                          ),
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide:
+                                  BorderSide(color: Colors.white, width: 1.5)),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(color: primaryBackgroundColor, width: 1.5)
-                          ),
-                          suffix:const Text(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide(
+                                  color: primaryBackgroundColor, width: 1.5)),
+                          suffix: const Text(
                             'cm',
                             style: TextStyle(
                               color: lightFontColor,
@@ -443,8 +583,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
                               fontSize: 15,
                               height: 1.4,
                             ),
-                          )
-                          ),
+                          )),
                     ),
                   ),
                 ],
@@ -461,89 +600,132 @@ class _AddPetScreenState extends State<AddPetScreen> {
                   controller: _weightController,
                   keyboardType: TextInputType.number,
                   style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: width * regularFontRate),
+                  decoration: InputDecoration(
+                      labelText: "Cân nặng",
+                      labelStyle: TextStyle(
+                        color: lightFontColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15,
+                        height: 1.4,
+                      ),
+                      //floatingLabelStyle: TextStyle(color: lightPrimaryColor),
+                      // border: InputBorder.none,
+                      fillColor: Colors.white54,
+                      filled: true,
+                      focusColor: primaryBackgroundColor,
+                      border: InputBorder.none,
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide:
+                              BorderSide(color: Colors.white, width: 1.5)),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                              color: primaryBackgroundColor, width: 1.5)),
+                      suffix: const Text(
+                        'kg',
+                        style: TextStyle(
+                          color: lightFontColor,
                           fontWeight: FontWeight.w500,
-                          fontSize: width * regularFontRate),
-                      decoration: InputDecoration(
-                          labelText: "Cân nặng",
-                          labelStyle: TextStyle(
-                            color: lightFontColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 15,
-                            height: 1.4,
-                          ),
-                          //floatingLabelStyle: TextStyle(color: lightPrimaryColor),
-                          // border: InputBorder.none,
-                          fillColor: Colors.white54,
-                          filled: true,
-                          focusColor: primaryBackgroundColor,
-                          border: InputBorder.none,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(color: Colors.white, width: 1.5)
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(color: primaryBackgroundColor, width: 1.5)
-                          ),
-                          suffix:const Text(
-                            'kg',
-                            style: TextStyle(
-                              color: lightFontColor,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15,
-                              height: 1.4,
-                            ),
-                          )
-                          ),
-                    ),
-                  ),
+                          fontSize: 15,
+                          height: 1.4,
+                        ),
+                      )),
+                ),
+              ),
               buildSpacing(
                 width * 6,
               )
             ]),
       ),
       floatingActionButton: Opacity(
-        opacity: (isEdit == true || imgURL != null) ? 1 : 0.3,
+        opacity: (isFilled()) ? 1 : 0.3,
         child: ElevatedButton(
             onPressed: () async {
-              Pet pet = Pet(
-                  weight: double.parse(_weightController.text),
-                  height: double.parse(_heightController.text),
-                  length: double.parse(_lengthController.text),
-                  name: _nameController.text,
-                  birth: birthDay,
-                  breedName: _breedController.text,
-                  petTypeCode: breedType,
-                  customerId: widget.customerId,
-                  status: true,
-                  photoUrl: imgURL
-                  // photoUrl:
-                  //     "https://l.messenger.com/l.php?u=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fpawnclaw-4b6ba.appspot.com%2Fo%2Fcustomers%252Fpet%252F11%252Fimage_picker8213551932780256987.png%3Falt%3Dmedia%26token%3D47defa75-e9c3-49d2-b146-8d32fe6b7347%2522%252C%2522customerId%2522%253A11&h=AT3b_QVqMDqliuVR38NtkE90KqB-QZLAePI77YZyRlmrK7H_esyrjHOZwLw3XsOhdvA8jka-XcFVWLxQ0nQDGCN_bgq0FtM8ok6btM593G1LLHfR367JehWZ6XHpM830-sGiLA"
-                  );
-              if (isEdit == false) {
-                bool createPet = await PetRepository().createPet(pet);
-                if (createPet) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Thêm thú cưng thành công!')));
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyPetScreen()));
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                          'Thêm thú cưng không thành công! Vui lòng thử lại sau.')));
-                }
+              if (!isFilled()) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    "Vui lòng nhập đầy đủ thông tin",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Colors.red,
+                ));
+              } else if(isEdit! && !isChanged()){
+                Navigator.pop(context);
+
               } else {
-                pet.id = petToUpdate!.id;
-                bool updatePet = await PetRepository().update(pet);
-                if (updatePet) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Thêm thú cưng thành công!')));
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyPetScreen()));
+                Pet pet = Pet(
+                    weight: double.parse(_weightController.text),
+                    height: double.parse(_heightController.text),
+                    length: double.parse(_lengthController.text),
+                    name: _nameController.text,
+                    birth: birthDay,
+                    breedName: _breedController.text,
+                    petTypeCode: breedType,
+                    customerId: widget.customerId,
+                    status: true,
+                    photoUrl: imgURL
+                    // photoUrl:
+                    //     "https://l.messenger.com/l.php?u=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fpawnclaw-4b6ba.appspot.com%2Fo%2Fcustomers%252Fpet%252F11%252Fimage_picker8213551932780256987.png%3Falt%3Dmedia%26token%3D47defa75-e9c3-49d2-b146-8d32fe6b7347%2522%252C%2522customerId%2522%253A11&h=AT3b_QVqMDqliuVR38NtkE90KqB-QZLAePI77YZyRlmrK7H_esyrjHOZwLw3XsOhdvA8jka-XcFVWLxQ0nQDGCN_bgq0FtM8ok6btM593G1LLHfR367JehWZ6XHpM830-sGiLA"
+                    );
+                if (isEdit == false) {
+                  bool createPet = await PetRepository().createPet(pet);
+                  if (createPet) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Thêm thú cưng thành công!')));
+                    // Navigator.of(context).push(
+                    //     MaterialPageRoute(builder: (context) => MyPetScreen()));
+                    Navigator.pop(context);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                            'Thêm thú cưng không thành công! Vui lòng thử lại sau.')));
+                  }
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                          'Cập nhật thú cưng không thành công! Vui lòng thử lại sau.')));
+                  pet.id = petToUpdate!.id;
+                  if (imgURL != null) {
+                    var photo = Photo(
+                        idActor: petToUpdate.id,
+                        url: imgURL,
+                        photoTypeId: 7,
+                        isThumbnail: false,
+                        status: true);
+                    bool updateImage =
+                        await PetRepository().updateAvatar(photo);
+                    pet.photoUrl = imgURL;
+                    if (updateImage) {
+                      pet.photoUrl = imgURL;
+                      pet.photos = [photo];
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Cập nhật ảnh thành công!')));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              'Cập nhật ảnh không thành công! Vui lòng thử lại sau.')));
+                    }
+                  }
+                  bool updatePet = await PetRepository().update(pet);
+
+                  if (updatePet) {
+
+                    pet.petHealthHistories = petToUpdate.petHealthHistories;
+                    if(pet.photos == null){
+                      pet.photos = petToUpdate.photos;
+                    }
+                    // print(pet.toJson());
+                    // print('photourl ${pet.photoUrl}');
+                    // print('photos ${pet.photos}');
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Cập nhật thú cưng thành công!')));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => PetDetailScreen(pet: pet)));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                            'Cập nhật thú cưng không thành công! Vui lòng thử lại sau.')));
+                  }
                 }
               }
             },

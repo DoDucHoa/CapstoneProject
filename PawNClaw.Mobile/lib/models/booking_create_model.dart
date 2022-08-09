@@ -86,10 +86,10 @@ class BookingRequestModel {
   }
 
   int isCageSelected(BookingDetailCreateParameters bookingDetails) {
-    if (this.bookingDetailCreateParameters == null ||
-        this.bookingDetailCreateParameters!.isEmpty) return -1;
-    for (int i = 0; i < this.bookingDetailCreateParameters!.length; i++) {
-      for (var petId in this.bookingDetailCreateParameters![i].petId!) {
+    if (bookingDetailCreateParameters == null ||
+        bookingDetailCreateParameters!.isEmpty) return -1;
+    for (int i = 0; i < bookingDetailCreateParameters!.length; i++) {
+      for (var petId in bookingDetailCreateParameters![i].petId!) {
         if (bookingDetails.petId!.first == petId) {
           return i;
         }

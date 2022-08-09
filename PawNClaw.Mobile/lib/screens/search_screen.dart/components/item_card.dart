@@ -17,6 +17,7 @@ class ItemCard extends StatelessWidget {
   final Widget redirect;
   final int typeId;
   final String id;
+  final String? imgURL;
 
   const ItemCard(
       {Key? key,
@@ -25,7 +26,8 @@ class ItemCard extends StatelessWidget {
       required this.discountPrice,
       required this.redirect,
       required this.typeId,
-      required this.id})
+      required this.id,
+      required this.imgURL})
       : super(key: key);
 
   @override
@@ -58,15 +60,14 @@ class ItemCard extends StatelessWidget {
                 //         fontSize: 15, fontWeight: FontWeight.w600),
                 //   ):
                 Container(
-                  width: width*0.6,
+                  width: width * 0.6,
                   child: Text(
                     name,
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                )
-                ,
+                ),
                 SizedBox(
                   height: 10,
                 ),
@@ -128,9 +129,12 @@ class ItemCard extends StatelessWidget {
                 width: 65,
                 height: 65,
                 decoration: BoxDecoration(
-                  image: const DecorationImage(
-                      image: AssetImage('lib/assets/cage.png'),
-                      fit: BoxFit.cover),
+                  image: (imgURL == null)
+                      ? DecorationImage(
+                          image: AssetImage('lib/assets/cage.png'),
+                          fit: BoxFit.cover)
+                      : DecorationImage(
+                          image: NetworkImage(imgURL!), fit: BoxFit.cover),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),

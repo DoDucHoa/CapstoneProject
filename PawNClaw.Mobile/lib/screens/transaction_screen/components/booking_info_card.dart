@@ -140,7 +140,9 @@ class BookingInfoCard extends StatelessWidget {
                                 Text(
                                   DateFormat('HH:mm, dd/MM/yyyy').format(
                                       DateTime.parse(
-                                          booking.startBooking!.toString())),
+                                        booking.checkIn == null ?
+                                          booking.startBooking!.toString()
+                                          : booking.checkIn.toString(),)),
                                   style: TextStyle(
                                     color: primaryFontColor,
                                     fontWeight: FontWeight.w500,
@@ -166,7 +168,9 @@ class BookingInfoCard extends StatelessWidget {
                                 Text(
                                   DateFormat('HH:mm, dd/MM/yyyy').format(
                                       DateTime.parse(
-                                          booking.endBooking!.toString())),
+                                        booking.checkOut == null ?
+                                          booking.endBooking!.toString()
+                                          : booking.checkOut.toString(),)),
                                   style: TextStyle(
                                     color: primaryFontColor,
                                     fontWeight: FontWeight.w500,

@@ -6,7 +6,10 @@ import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart'
 import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
+import 'package:pawnclaw_mobile_application/repositories/pet/pet_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/my_pet_screen/subscreens/add_pet_screen.dart';
+
+import '../my_pet_screen.dart';
 
 class PetDetailScreen extends StatefulWidget {
   PetDetailScreen({required this.pet, Key? key}) : super(key: key);
@@ -26,7 +29,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
 
     Pet pet = widget.pet;
 
-    return Scaffold(
+    return  Scaffold(
       backgroundColor: frameColor,
       body: NestedScrollView(
         headerSliverBuilder: ((context, value) {
@@ -40,7 +43,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
               backgroundColor: lightPrimaryColor,
               leading: IconButton(
                 icon: Icon(Icons.arrow_back_ios_new_rounded),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyPetScreen())),
               ),
               flexibleSpace: FlexibleSpaceBar(
                 collapseMode: CollapseMode.pin,
@@ -53,7 +56,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                             fit: BoxFit.cover,
                           )
                         : Image.asset(
-                            'lib/assets/pet-0.png',
+                            (pet.petTypeCode == 'DOG') ?'lib/assets/dog.png':'lib/assets/black-cat.png',
                             fit: BoxFit.cover,
                           ),
                     //child: FadeInImage.assetNetwork(placeholder: 'lib/assets/new-paw.gif', image:pet.photo),
@@ -137,20 +140,49 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                     color: Colors.red),
                                 child: IconButton(
                                     onPressed: () {
-                                      //update pet
-                                      var customer = (context
-                                              .read<AuthBloc>()
-                                              .state as Authenticated)
-                                          .user;
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => AddPetScreen(
-                                            customerId: customer.id!,
-                                            pet: pet,
-                                            isEdit: true,
+                                      showDialog(context: context, builder: (context) => AlertDialog(
+                                        title: Text('Xóa Pet Profile'),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10)),
+                                        content: Text('Bạn có chắc chắn muốn xóa pet profile này không?'),
+                                        actions: <Widget>[
+                                          ElevatedButton(
+                                            child: Text('Hủy'),
+                                            style: ElevatedButton.styleFrom(
+                                                primary: Colors.grey[200],
+                                                onPrimary: Colors.black,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            7)),
+                                                ),
+                                            onPressed: () => Navigator.of(context).pop(),
                                           ),
-                                        ),
-                                      );
+                                          ElevatedButton(
+                                            child: Text('Xóa'),
+                                            style: ElevatedButton.styleFrom(
+                                                primary: Colors.red,
+                                                onPrimary: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            7)),
+                                                ),
+                                            onPressed: () async {
+                                              var isdeleted =  await PetRepository().delete(pet);
+                                              if(isdeleted) {
+                                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Pet profile deleted successfully')));
+                                                Navigator.of(context).pop();
+                                                Navigator.of(context).pop();
+                                              }
+                                              else{
+                                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Pet profile not deleted')));
+                                                Navigator.of(context).pop();
+                                              }
+                                            },
+                                          )
+                                        ],
+                                      ));
                                     },
                                     icon: Icon(
                                       Iconsax.profile_delete,

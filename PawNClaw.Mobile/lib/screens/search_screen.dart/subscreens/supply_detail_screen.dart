@@ -2,8 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:pawnclaw_mobile_application/blocs/booking/booking_bloc.dart';
+import 'package:pawnclaw_mobile_application/common/components/primary_icon_button.dart';
+import 'package:pawnclaw_mobile_application/common/components/secondary_icon_button.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/models/pet.dart';
@@ -15,7 +18,16 @@ import '../../../models/fake_data.dart';
 
 class SupplyDetails extends StatefulWidget {
   final petCenter.Supplies supply;
-  const SupplyDetails({required this.supply, Key? key}) : super(key: key);
+  final bool? isUpdate;
+  final int? quantity;
+  final int? petId;
+  const SupplyDetails(
+      {required this.supply,
+      this.isUpdate,
+      this.quantity,
+      this.petId,
+      Key? key})
+      : super(key: key);
 
   @override
   State<SupplyDetails> createState() => _SupplyDetailsState();
@@ -24,7 +36,14 @@ class SupplyDetails extends StatefulWidget {
 class _SupplyDetailsState extends State<SupplyDetails> {
   int activeIndex = 0;
   int selectedIndex = 0;
+  int quantity = 1;
   // late Pet pet;
+
+  @override
+  void initState() {
+    quantity = widget.quantity ?? 1;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,14 +81,19 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                       children: [
                         //campaign image
                         CarouselSlider.builder(
-                            itemCount: CAGE_PHOTOS.length,
+                            itemCount: 1,
                             itemBuilder: (context, index, realIndex) {
                               return Container(
                                   width: size.width,
-                                  child: Image.asset(
-                                    CAGE_PHOTOS[index],
-                                    fit: BoxFit.cover,
-                                  ));
+                                  child: (supply.photo?.url == null)
+                                      ? Image.asset(
+                                          CAGE_PHOTOS[index],
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Image.network(
+                                          supply.photo!.url!,
+                                          fit: BoxFit.cover,
+                                        ));
                             },
                             options: CarouselOptions(
                                 height: appbarSize,
@@ -78,13 +102,29 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                                 onPageChanged: ((index, reason) {
                                   setState(() => activeIndex = index);
                                 }))),
-                        Positioned(
-                            left: size.width / 3 + 15,
-                            top: appbarSize * (1 - 0.2),
-                            child: Center(
-                              child: buildIndicator(),
-                            )),
-
+                        // Positioned(
+                        //     left: size.width / 3 + 15,
+                        //     top: appbarSize * (1 - 0.2),
+                        //     child: Center(
+                        //       child: buildIndicator(),
+                        //     )),
+                        Container(
+                          height: appbarSize,
+                          decoration: const BoxDecoration(
+                            // borderRadius:
+                            //     BorderRadius.only(bottomLeft: Radius.circular(60)),
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.black12,
+                                Colors.black26,
+                                Colors.black38,
+                                Colors.black54,
+                              ],
+                            ),
+                          ),
+                        ),
                         Positioned(
                             bottom: 0,
                             left: 0,
@@ -184,50 +224,110 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                         //   children: [
                         ListView.separated(
                       itemBuilder: (context, index) {
-                        return InkWell(
-                            onTap: () {
-                              setState(() {
-                                selectedIndex = index;
-                                // pet = pets[index];
-                                // print('pet id at choose ${pet.id}');
-                                // print(pets[index].id.toString());
-                              });
-                            },
-                            child: Stack(
-                                alignment: AlignmentDirectional.topCenter,
-                                children: [
-                                  selectedIndex == index
-                                      ? Positioned(
-                                          child: Icon(Icons.check_circle,
-                                              color: primaryColor, size: 20),
-                                          top: 5,
-                                          right: 5)
-                                      : Container(),
-                                  Container(
-                                    height: width * 0.32,
-                                    width: width * 0.3,
-                                    decoration: BoxDecoration(
-                                        color: index == selectedIndex
-                                            ? primaryColor.withOpacity(0.15)
-                                            : frameColor,
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                    child: PetCard(pets[index], context),
-                                  ),
-                                  Positioned(
-                                    bottom: width * regularPadRate,
-                                    //   left: width * 0.3 / 5,
-                                    child: Center(
-                                      child: Text(pets[index].name!,
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w700,
-                                              color: index == selectedIndex
-                                                  ? primaryColor
-                                                  : lightFontColor)),
-                                    ),
-                                  )
-                                ]));
+                        if ((widget.isUpdate != null && widget.isUpdate!) &&
+                            pets[index].id == widget.petId) {
+                          selectedIndex = index;
+                        }
+                        ;
+                        return (widget.isUpdate == null)
+                            ? InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    selectedIndex = index;
+                                    // pet = pets[index];
+                                    // print('pet id at choose ${pet.id}');
+                                    // print(pets[index].id.toString());
+                                  });
+                                },
+                                child: Stack(
+                                    alignment: AlignmentDirectional.topCenter,
+                                    children: [
+                                      selectedIndex == index
+                                          ? Positioned(
+                                              child: Icon(Icons.check_circle,
+                                                  color: primaryColor,
+                                                  size: 20),
+                                              top: 5,
+                                              right: 5)
+                                          : Container(),
+                                      Container(
+                                        height: width * 0.32,
+                                        width: width * 0.3,
+                                        decoration: BoxDecoration(
+                                            color: index == selectedIndex
+                                                ? primaryColor.withOpacity(0.15)
+                                                : frameColor,
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                        child: PetCard(pets[index], context),
+                                      ),
+                                      Positioned(
+                                        bottom: width * regularPadRate,
+                                        //   left: width * 0.3 / 5,
+                                        child: Center(
+                                          child: Text(pets[index].name!,
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: index == selectedIndex
+                                                      ? primaryColor
+                                                      : lightFontColor)),
+                                        ),
+                                      )
+                                    ]))
+                            : (pets[index].id != widget.petId)
+                                ? Container()
+                                : InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedIndex = index;
+                                        // pet = pets[index];
+                                        // print('pet id at choose ${pet.id}');
+                                        // print(pets[index].id.toString());
+                                      });
+                                    },
+                                    child: Stack(
+                                        alignment:
+                                            AlignmentDirectional.topCenter,
+                                        children: [
+                                          selectedIndex == index
+                                              ? Positioned(
+                                                  child: Icon(
+                                                      Icons.check_circle,
+                                                      color: primaryColor,
+                                                      size: 20),
+                                                  top: 5,
+                                                  right: 5)
+                                              : Container(),
+                                          Container(
+                                            height: width * 0.32,
+                                            width: width * 0.3,
+                                            decoration: BoxDecoration(
+                                                color: index == selectedIndex
+                                                    ? primaryColor
+                                                        .withOpacity(0.15)
+                                                    : frameColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(15)),
+                                            child:
+                                                PetCard(pets[index], context),
+                                          ),
+                                          Positioned(
+                                            bottom: width * regularPadRate,
+                                            //   left: width * 0.3 / 5,
+                                            child: Center(
+                                              child: Text(pets[index].name!,
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: index ==
+                                                              selectedIndex
+                                                          ? primaryColor
+                                                          : lightFontColor)),
+                                            ),
+                                          )
+                                        ]));
                       },
                       separatorBuilder: (context, index) => SizedBox(
                         width: 12,
@@ -282,6 +382,48 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                         )
                       ],
                     )),
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SecondaryIconButton(
+                          icon: Iconsax.minus_square,
+                          color: primaryColor,
+                          onPressed: () {
+                            if (widget.isUpdate != null && widget.isUpdate!) {
+                              if (quantity > 0) {
+                                setState(() {
+                                  quantity = quantity - 1;
+                                });
+                              }
+                            } else if (quantity > 1) {
+                              setState(() {
+                                quantity = quantity - 1;
+                              });
+                            }
+                          }),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(quantity.toString(),
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              height: 1.5)),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      SecondaryIconButton(
+                          icon: Iconsax.add_square,
+                          color: primaryColor,
+                          onPressed: () {
+                            setState(() {
+                              quantity = quantity + 1;
+                            });
+                          }),
+                    ],
+                  ),
+                )
 
                 // Container(
                 //     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
@@ -333,13 +475,17 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                 print('pet id:' + pets[selectedIndex].id!.toString());
                 BlocProvider.of<BookingBloc>(context).add(SelectSupply(
                         sellPrice: supply.sellPrice!,
+                        quantity: quantity,
                         supplyId: supply.id!,
+                        isUpdate: widget.isUpdate ?? false,
                         petId: pets[selectedIndex]
                             .id!) //: (state as BookingUpdated).selectedPet!.id!),
                     );
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Thêm sản phẩm thành công.")));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        ((widget.isUpdate == null) ? 'Thêm vào' : 'Cập nhật') +
+                            " sản phẩm thành công.")));
                 Navigator.of(context).pop();
               },
               child: Row(children: [
@@ -348,17 +494,23 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                   height: 45,
                 )),
                 Text(
-                  'Thêm vào giỏ hàng - ' +
-                      NumberFormat.currency(
-                              decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
-                          .format(supply.discountPrice == 0
-                              ? supply.sellPrice
-                              : supply.discountPrice),
+                  (quantity == 0)
+                      ? 'Xóa sản phẩm'
+                      : ((widget.isUpdate == null) ? 'Thêm vào' : 'Cập nhật') +
+                          ' giỏ hàng - ' +
+                          NumberFormat.currency(
+                                  decimalDigits: 0,
+                                  symbol: 'đ',
+                                  locale: 'vi_vn')
+                              .format(supply.discountPrice == 0
+                                  ? supply.sellPrice! * quantity
+                                  : supply.discountPrice! * quantity),
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
                 Expanded(child: SizedBox(height: 45)),
               ]),
               style: ElevatedButton.styleFrom(
+                  primary: (quantity > 0) ? primaryColor : Colors.red,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15))),
             )));
@@ -378,17 +530,25 @@ Widget PetCard(Pet pet, BuildContext context) {
 
   return Center(
     child: Container(
-        height: height * 0.05,
-        width: height * 0.05,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(height),
-            border: Border.all(
-                color: Colors.white,
-                width: 3,
-                strokeAlign: StrokeAlign.outside)),
-        child: CircleAvatar(
-          backgroundImage: AssetImage('lib/assets/cat_avatar0.png'),
-        )),
+      height: height * 0.05,
+      width: height * 0.05,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(height),
+          image: (pet.photos!.isNotEmpty)
+              ? DecorationImage(
+                  image: NetworkImage(pet.photos!.first.url!),
+                  fit: BoxFit.contain)
+              : null,
+          border: Border.all(
+              color: Colors.white, width: 3, strokeAlign: StrokeAlign.outside)),
+      child: (pet.photos!.isEmpty)
+          ? CircleAvatar(
+              backgroundImage: AssetImage((pet.petTypeCode == 'DOG')
+                  ? 'lib/assets/dog.png'
+                  : 'lib/assets/black-cat.png'),
+            )
+          : null,
+    ),
   );
 }
 

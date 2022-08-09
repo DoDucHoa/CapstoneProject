@@ -70,7 +70,7 @@ class _ShowAvailableCenterState extends State<AvailableCenterScreen> {
                 ListView.builder(
                   itemCount: state.centers.length,//(state as LoadedCenters).centers.length,
                   itemBuilder: ((context, index) {
-                     print(state.centers[index].toJson());
+                     //print(state.centers[index].toJson());
                     return CenterCard(
                       center: state.centers[index],
                     );

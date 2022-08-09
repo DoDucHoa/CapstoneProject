@@ -64,24 +64,28 @@ class SelectSupply extends BookingEvent {
   final double sellPrice;
   final int supplyId;
   final int petId;
+  final int quantity;
+  final bool? isUpdate;
 
   const SelectSupply(
-      {required this.sellPrice, required this.supplyId, required this.petId});
+      {required this.sellPrice, required this.supplyId, required this.petId, required this.quantity, this.isUpdate});
 
   @override
   // TODO: implement props
-  List<Object> get props => [sellPrice, supplyId, petId];
+  List<Object> get props => [sellPrice, supplyId, petId, quantity];
 }
 
 class SelectService extends BookingEvent {
   final List<ServicePrices> prices;
   final int serviceId;
   final int petId;
+  final int quantity;
+  final bool? isUpdate;
 
   const SelectService(
-      {required this.prices, required this.serviceId, required this.petId});
+      {required this.prices, required this.serviceId, required this.petId, required this.quantity, this.isUpdate});
 
   @override
   // TODO: implement props
-  List<Object> get props => [prices, serviceId, petId];
+  List<Object> get props => [prices, serviceId, petId, quantity];
 }

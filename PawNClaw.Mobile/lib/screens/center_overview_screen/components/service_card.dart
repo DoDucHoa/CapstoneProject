@@ -22,7 +22,8 @@ class _ServiceCardState extends State<ServiceCard> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return InkWell(
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => redirect)),
+        onTap: () => Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => redirect)),
         child: Container(
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(15)),
@@ -32,14 +33,13 @@ class _ServiceCardState extends State<ServiceCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: width*0.6,
+                  width: width * 0.6,
                   child: Text(
-                    service.description ?? "",
+                    service.name ?? service.description?? '',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  
                 ),
                 SizedBox(
                   height: 10,
@@ -52,7 +52,9 @@ class _ServiceCardState extends State<ServiceCard> {
                               .format(service.minPrice) +
                           " ~ " +
                           NumberFormat.currency(
-                                  decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+                                  decimalDigits: 0,
+                                  symbol: 'đ',
+                                  locale: 'vi_vn')
                               .format(service.maxPrice),
                       //double.parse(cage.price.toStringAsFixed(0)).toStringAsExponential(),
                       style: TextStyle(fontSize: 13),
@@ -105,9 +107,14 @@ class _ServiceCardState extends State<ServiceCard> {
                 width: 65,
                 height: 65,
                 decoration: BoxDecoration(
-                  image: const DecorationImage(
-                      image: AssetImage('lib/assets/cage.png'),
-                      fit: BoxFit.cover),
+                  color: frameColor,
+                  image: (service.photo?.url == null)
+                      ? DecorationImage(
+                          image: AssetImage('lib/assets/service.png'),
+                          fit: BoxFit.cover)
+                      : DecorationImage(
+                          image: NetworkImage(service.photo!.url!),
+                          fit: BoxFit.cover),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),

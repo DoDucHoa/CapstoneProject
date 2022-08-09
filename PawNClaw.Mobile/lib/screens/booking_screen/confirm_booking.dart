@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pawnclaw_mobile_application/blocs/booking/booking_bloc.dart';
+import 'package:pawnclaw_mobile_application/common/components/primary_button.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/models/fake_data.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
+import 'package:pawnclaw_mobile_application/models/photo.dart';
 import 'package:pawnclaw_mobile_application/repositories/booking/booking_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/booking_screen/components/booking_item_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/booking_success_screen.dart';
@@ -29,6 +31,13 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
   void initState() {
     // TODO: implement initState
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    
+    super.didChangeDependencies();
+    
   }
 
   @override
@@ -55,6 +64,16 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
           if (state.booking.bookingCreateParameter!.voucherCode != null) {
             haveDiscount = true;
           }
+
+          // Photo? thumbnail;
+          // if (center.photos != null && center.photos!.isNotEmpty) {
+          //   center.photos!.forEach((photo) {
+          //     if (photo.isThumbnail!) {
+          //       thumbnail = photo;
+          //       return;
+          //     }
+          //   });
+          // }
 
           return Scaffold(
             backgroundColor: backgroundColor,
@@ -94,10 +113,21 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        CircleAvatar(
-                          radius: height * 0.04,
-                          backgroundColor: lightPrimaryColor,
-                          backgroundImage: AssetImage('lib/assets/center0.jpg'),
+                        Container(
+                          height: height * 0.08,
+                          width: height * 0.08,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(width),
+                            image: (center.getThumbnail() == null)
+                                ? DecorationImage(
+                                    image:
+                                        AssetImage('/lib/assets/center0.jpg'),
+                                    fit: BoxFit.cover)
+                                : DecorationImage(
+                                    image: NetworkImage(center.getThumbnail()!.url!),
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.all(width * smallPadRate),
@@ -643,7 +673,9 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                                 decimalDigits: 0,
                                                 symbol: 'đ',
                                                 locale: 'vi_vn')
-                                            .format(state.booking.getTotalDiscount(widget.vouchers!)),
+                                            .format(state.booking
+                                                .getTotalDiscount(
+                                                    widget.vouchers!)),
                                     style: TextStyle(
                                       color: primaryFontColor,
                                       fontWeight: FontWeight.w500,
@@ -678,12 +710,11 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                           decimalDigits: 0,
                                           symbol: 'đ',
                                           locale: 'vi_vn')
-                                      .format(
-                                        (haveDiscount)
+                                      .format((haveDiscount)
                                           ? (state.booking.getTotal() -
-                                              state.booking.getTotalDiscount(widget.vouchers!))
-                                          : 
-                                          state.booking.getTotal()),
+                                              state.booking.getTotalDiscount(
+                                                  widget.vouchers!))
+                                          : state.booking.getTotal()),
                                   style: TextStyle(
                                     color: primaryFontColor,
                                     fontWeight: FontWeight.w800,
@@ -696,43 +727,96 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: width * mediumPadRate,
-                      vertical: width * smallPadRate,
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        var state = BlocProvider.of<BookingBloc>(context).state;
-                        BookingRequestModel request =
-                            (state as BookingUpdated).booking;
-                        request.bookingCreateParameter!.total =
-                            request.getTotal();
-                        print(request.bookingCreateParameter!.total);
-                        var result =
-                            await BookingRepository().createBooking(request);
-                        print(result);
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => BookingSuccess(
-                                  center: widget.center,
-                                  booking: state.booking,
-                                )));
-                        //booking button
-                      },
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: width * mediumPadRate,
+                        vertical: width * smallPadRate,
                       ),
-                      child: Center(
-                        child: Text(
-                          "ĐẶT LỊCH",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  )
+                      //   child: ElevatedButton(
+                      //     onPressed: () async {
+                      //       var state = BlocProvider.of<BookingBloc>(context).state;
+                      //       BookingRequestModel request =
+                      //           (state as BookingUpdated).booking;
+                      //       request.bookingCreateParameter!.total =
+                      //           request.getTotal();
+                      //       print(request.bookingCreateParameter!.total);
+                      //       var result =
+                      //           await BookingRepository().createBooking(request);
+                      //       print(result);
+                      //       Navigator.of(context).push(MaterialPageRoute(
+                      //           builder: (context) => BookingSuccess(
+                      //                 center: widget.center,
+                      //                 booking: state.booking,
+                      //               )));
+                      //       //booking button
+                      //     },
+                      //     style: ButtonStyle(
+                      //       shape: MaterialStateProperty.all(
+                      //         RoundedRectangleBorder(
+                      //           borderRadius: BorderRadius.circular(15),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     child: Center(
+                      //       child: Text(
+                      //         "ĐẶT LỊCH",
+                      //         style: TextStyle(color: Colors.white),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // )
+                      child: PrimaryButton(
+                          text: 'Đặt lịch',
+                          onPressed: () async {
+                            var state =
+                                BlocProvider.of<BookingBloc>(context).state;
+                            BookingRequestModel request =
+                                (state as BookingUpdated).booking;
+                            request.bookingCreateParameter!.total =
+                                request.getTotal();
+                            print(request.bookingCreateParameter!.total);
+                            var isCreated = await BookingRepository()
+                                .createBooking(request);
+                            // isCreated = false;
+                            
+                            if (isCreated == '200') {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => BookingSuccess(
+                                        center: widget.center,
+                                        booking: state.booking,
+                                      )));
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                        title: Text('Lỗi'),
+                                        content: Text(
+                                            'Đã có lỗi xảy ra. $isCreated. Vui lòng thử lại.'),
+                                        actions: <Widget>[
+                                          ElevatedButton(
+                                            child: Text('OK'),
+                                            style: ElevatedButton.styleFrom(
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10))),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          )
+                                        ],
+                                      ));
+                            }
+                            // Navigator.of(context).push(MaterialPageRoute(
+                            //     builder: (context) => BookingSuccess(
+                            //           center: widget.center,
+                            //           booking: state.booking,
+                            //         )));
+                            //booking button
+                          },
+                          contextWidth: width))
                 ],
               ),
             ),
