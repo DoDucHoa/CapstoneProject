@@ -4,6 +4,7 @@ using PawNClaw.Business.Services;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Parameter;
 using System;
+using System.Threading.Tasks;
 
 namespace PawNClaw.API.Controllers
 {
@@ -13,10 +14,14 @@ namespace PawNClaw.API.Controllers
     public class OwnerController : ControllerBase
     {
         private readonly OwnerService _OwnerService;
+        private LogsService _logService;
+        private AccountService _accountService;
 
-        public OwnerController(OwnerService OwnerService)
+        public OwnerController(OwnerService OwnerService, LogsService logsService, AccountService accountService)
         {
             _OwnerService = OwnerService;
+            _logService = logsService;
+            _accountService = accountService;
         }
 
         [HttpGet]
@@ -45,11 +50,19 @@ namespace PawNClaw.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Add([FromBody] CreateOwnerParameter owner)
+        public async Task<IActionResult> Add([FromBody] CreateOwnerParameter owner)
         {
             try
             {
                 var result = _OwnerService.Add(owner);
+                await _logService.AddLog(new ActionLogsParameter()
+                {
+                    Id = owner.CreatedUser,
+                    Name = _accountService.GetAccountById(owner.CreatedUser).Admin.Name,
+                    Target = "Owner " + owner.Name,
+                    Type = "Create",
+                    Time = DateTime.Now,
+                });
                 return Ok(result);
             }
             catch (Exception e)
@@ -60,7 +73,7 @@ namespace PawNClaw.API.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Update(int id, [FromBody] OwnerRequestParameter owner)
+        public async Task<IActionResult> Update(int id, [FromBody] OwnerRequestParameter owner)
         {
             var ownerDb = _OwnerService.GetOwnerById(id);
             ownerDb.Email = owner.Email;
@@ -68,6 +81,14 @@ namespace PawNClaw.API.Controllers
 
             if (_OwnerService.Update(ownerDb, owner.Phone))
             {
+                await _logService.AddLog(new ActionLogsParameter()
+                {
+                    Id = (long) owner.Id,
+                    Name = _accountService.GetAccountById(owner.ModifyUser).Admin.Name,
+                    Target = "Owner " + owner.Name,
+                    Type = "Update",
+                    Time = DateTime.Now,
+                });
                 return Ok();
             }
             return BadRequest();
