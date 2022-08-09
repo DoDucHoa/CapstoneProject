@@ -22,6 +22,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> getLogs()
         {
             try

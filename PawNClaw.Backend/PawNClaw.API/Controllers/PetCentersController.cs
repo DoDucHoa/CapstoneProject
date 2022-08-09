@@ -189,7 +189,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Create([FromBody] CreatePetCenterParameter parameter)
         {
             var petCenter = new PetCenter
@@ -279,7 +279,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult Delete(int id)
         {
             if (_petCenterService.Delete(id))
@@ -288,7 +288,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("restore/{id}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult Restore(int id)
         {
             if (_petCenterService.Restore(id))

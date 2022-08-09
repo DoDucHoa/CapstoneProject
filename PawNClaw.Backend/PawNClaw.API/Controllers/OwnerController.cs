@@ -25,7 +25,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult GetOwners([FromQuery] string Name, [FromQuery] bool? Status, [FromQuery] string dir, [FromQuery] string sort, [FromQuery] PagingParameter _paging)
         {
             var data = _OwnerService.GetOwners(Name, Status, dir, sort, _paging);
@@ -49,7 +49,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Add([FromBody] CreateOwnerParameter owner)
         {
             try
@@ -72,7 +72,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Update(int id, [FromBody] OwnerRequestParameter owner)
         {
             var ownerDb = _OwnerService.GetOwnerById(id);
@@ -95,7 +95,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult Delete(int id)
         {
             if (_OwnerService.Delete(id))
@@ -106,7 +106,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("restore/{id}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult Restore(int id)
         {
             if (_OwnerService.Restore(id))

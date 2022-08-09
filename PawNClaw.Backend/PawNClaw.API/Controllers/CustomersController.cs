@@ -22,7 +22,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("update-status")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult updateStatus(int id)
         {
             try
