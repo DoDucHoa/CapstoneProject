@@ -24,11 +24,12 @@ namespace PawNClaw.Business.Services
         IPetBookingDetailRepository _petBookingDetailRepository;
         IDistrictRepository _districtRepository;
         ICityRepository _cityRepository;
+        IPhotoRepository _photoRepository;
 
         public SearchService(IPetCenterRepository petCenterRepository, ILocationRepository locationRepository,
             IBookingRepository bookingRepository, IBookingDetailRepository bookingDetailRepository,
             ICageRepository cageRepository, IPetBookingDetailRepository petBookingDetailRepository,
-            IDistrictRepository districtRepository, ICityRepository cityRepository)
+            IDistrictRepository districtRepository, ICityRepository cityRepository, IPhotoRepository photoRepository)
         {
             _petCenterRepository = petCenterRepository;
             _locationRepository = locationRepository;
@@ -38,6 +39,7 @@ namespace PawNClaw.Business.Services
             _petBookingDetailRepository = petBookingDetailRepository;
             _districtRepository = districtRepository;
             _cityRepository = cityRepository;
+            _photoRepository = photoRepository;
         }
 
 
@@ -556,7 +558,8 @@ namespace PawNClaw.Business.Services
                 Description = center.Description,
                 BrandId = center.BrandId,
                 EndBooking = center.EndBooking,
-                Photos = center.Photos
+                Photos = center.Photos,
+                Bookings = (ICollection<Booking>)_bookingRepository.GetCenterReviews(center.Id)
             });
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
@@ -610,9 +613,14 @@ namespace PawNClaw.Business.Services
             var result = await response.Content.ReadAsStringAsync();
             var cust = JObject.Parse(result);
 
+            var constraint = await ConstService.Get(Const.ProjectFirebaseId, "Const", "Config");
+
+            var limitObj = constraint["kmSearch"];
+            var limit = Convert.ToInt32(limitObj);
+
             for (int i = 0; i < values.LongCount(); i++)
             {
-                if (int.Parse(cust["rows"][0]["elements"][i]["distance"]["value"].ToString()) <= 20000)
+                if (int.Parse(cust["rows"][0]["elements"][i]["distance"]["value"].ToString()) <= (limit * 1000))
                 {
                     values[i].Distance = cust["rows"][0]["elements"][i]["distance"]["text"].ToString();
                     values[i].Duration = cust["rows"][0]["elements"][i]["duration"]["text"].ToString();
@@ -706,7 +714,22 @@ namespace PawNClaw.Business.Services
         //Search Center By Name
         public PagedList<PetCenter> SearchCenterByName(string Name, PagingParameter paging)
         {
-            var values = _petCenterRepository.GetAll(x => x.Name.Contains(Name) && x.Status == true,includeProperties: "Bookings");
+            var values = _petCenterRepository.GetAll(x => x.Name.Contains(Name) && x.Status == true,includeProperties: "Bookings").Select(x => new PetCenter()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Address = x.Address,
+                Phone = x.Phone,
+                Rating = x.Rating,
+                CreateDate = x.CreateDate,
+                Status = x.Status,
+                OpenTime = x.OpenTime,
+                CloseTime = x.CloseTime,
+                Description = x.Description,
+                BrandId = x.BrandId,
+                Bookings = x.Bookings,
+                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
+            });
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
@@ -1023,7 +1046,22 @@ namespace PawNClaw.Business.Services
             List<PetCenter> petcenters = new List<PetCenter>();
             foreach (var item in centerdistance)
             {
-                var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == item.Key.Id,includeProperties: "Bookings");
+                var value = _petCenterRepository.GetAll(x => x.Id == item.Key.Id, includeProperties: "Bookings").Select(x => new PetCenter()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Address = x.Address,
+                    Phone = x.Phone,
+                    Rating = x.Rating,
+                    CreateDate = x.CreateDate,
+                    Status = x.Status,
+                    OpenTime = x.OpenTime,
+                    CloseTime = x.CloseTime,
+                    Description = x.Description,
+                    BrandId = x.BrandId,
+                    Bookings = x.Bookings,
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
+                }).FirstOrDefault(); 
 
                 string petCenterOpenTime = _petCenterRepository.GetFirstOrDefault(x => x.Id == value.Id).OpenTime;
                 string petCenterCloseTime = _petCenterRepository.GetFirstOrDefault(x => x.Id == value.Id).CloseTime;

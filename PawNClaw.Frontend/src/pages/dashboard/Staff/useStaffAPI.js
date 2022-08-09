@@ -12,7 +12,7 @@ const getStaffs = async (centerId, page, rowsPerPage, filterStatus, searchName) 
     params: {
       centerId,
       name: searchName,
-      status: filterStatus,
+      status: filterStatus === 'all' ? null : filterStatus,
       PageSize: rowsPerPage,
       PageNumber: page,
     },

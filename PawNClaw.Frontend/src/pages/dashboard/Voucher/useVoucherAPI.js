@@ -7,10 +7,11 @@ const getVoucher = async (codeVoucher) => {
   return response.data;
 };
 
-const getVouchers = async (page, rowsPerPage, centerId) => {
+const getVouchers = async (page, rowsPerPage, code, centerId) => {
   const response = await axios.get(`${URL}/for-staff/center`, {
     params: {
       centerId,
+      code,
       PageSize: rowsPerPage,
       PageNumber: page,
       Status: true,

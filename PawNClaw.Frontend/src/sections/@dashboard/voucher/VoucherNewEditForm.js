@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 // @mui
 import { LoadingButton } from '@mui/lab';
-import { Box, Button, Card, Grid, MenuItem, Stack } from '@mui/material';
+import { Button, Card, Grid, MenuItem, Stack } from '@mui/material';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
@@ -37,7 +37,22 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
       .required('Bắt buộc nhập')
       .typeError('Bắt buộc nhập')
       .min(0, 'Giá trị không được nhỏ hơn 0'),
-    value: Yup.number().required('Bắt buộc nhập').typeError('Bắt buộc nhập').moreThan(0, 'Giá trị phải lớn hơn 0'),
+    value: Yup.number()
+      .required('Bắt buộc nhập')
+      .typeError('Bắt buộc nhập')
+      .moreThan(0, 'Giá trị phải lớn hơn 0')
+      .when('voucherTypeCode', {
+        is: '1',
+        then: Yup.number()
+          .required('Bắt buộc nhập')
+          .typeError('Bắt buộc nhập')
+          .moreThan(0, 'Giá trị phải lớn hơn 0')
+          .max(100, 'Giá trị không được lớn hơn 100'),
+      }),
+    releaseAmount: Yup.number()
+      .required('Bắt buộc nhập')
+      .typeError('Bắt buộc nhập')
+      .moreThan(0, 'Giá trị phải lớn hơn 0'),
     voucherTypeCode: Yup.string().required('Bắt buộc nhập'),
     description: Yup.string(),
   });
@@ -49,6 +64,7 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
       value: voucherData.value || 0,
       voucherTypeCode: voucherData.voucherTypeCode || '1',
       description: voucherData.description || '',
+      releaseAmount: voucherData.releaseAmount || 0,
 
       createDate: voucherData.createDate || new Date(),
       modifyDate: new Date(),
@@ -113,51 +129,64 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
       <Grid container spacing={3}>
         <Grid item xs={12} md={8}>
           <Card sx={{ p: 3 }}>
-            <Box
-              sx={{
-                display: 'grid',
-                columnGap: 2,
-                rowGap: 3,
-                gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(1, 1fr)' },
-              }}
-            >
-              <RHFTextField name="code" label="Mã voucher" disabled={isEdit} />
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <RHFTextField name="code" label="Mã voucher" disabled={isEdit} />
+              </Grid>
 
-              <RHFSelect
-                disabled={isEdit}
-                name="voucherTypeCode"
-                label="Loại giảm giá"
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-                SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
-              >
-                {voucherType.map((type) => (
-                  <MenuItem
-                    key={type.code}
-                    value={type.code}
-                    sx={{
-                      mx: 1,
-                      my: 0.5,
-                      borderRadius: 0.75,
-                      typography: 'body2',
-                      textTransform: 'capitalize',
-                    }}
-                  >
-                    {type.name}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
+              <Grid item xs={12} sm={6}>
+                <RHFSelect
+                  disabled={isEdit}
+                  name="voucherTypeCode"
+                  label="Loại giảm giá"
+                  fullWidth
+                  InputLabelProps={{ shrink: true }}
+                  SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
+                >
+                  {voucherType.map((type) => (
+                    <MenuItem
+                      key={type.code}
+                      value={type.code}
+                      sx={{
+                        mx: 1,
+                        my: 0.5,
+                        borderRadius: 0.75,
+                        typography: 'body2',
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      {type.name}
+                    </MenuItem>
+                  ))}
+                </RHFSelect>
+              </Grid>
 
-              <RHFTextField
-                disabled={isEdit}
-                name="value"
-                label={values?.voucherTypeCode === '1' ? 'Giá trị giảm (%)' : 'Giá trị giảm (VND)'}
-              />
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  disabled={isEdit}
+                  name="value"
+                  type="number"
+                  label={values?.voucherTypeCode === '1' ? 'Giá trị giảm (%)' : 'Giá trị giảm (VND)'}
+                />
+              </Grid>
 
-              <RHFTextField name="minCondition" label="Điều kiện đơn hàng tối thiểu" disabled={isEdit} />
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  name="minCondition"
+                  label="Điều kiện đơn hàng tối thiểu"
+                  disabled={isEdit}
+                  type="number"
+                />
+              </Grid>
 
-              <RHFTextField name="description" label="Mô tả điều kiện" multiline rows={5} />
-            </Box>
+              <Grid item xs={12} sm={6}>
+                <RHFTextField name="releaseAmount" label="Số lượng phát hành" disabled={isEdit} type="number" />
+              </Grid>
+
+              <Grid item xs={12}>
+                <RHFTextField name="description" label="Mô tả điều kiện" multiline rows={5} />
+              </Grid>
+            </Grid>
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
               <Button to={PATH_DASHBOARD.voucher.list} color="error" variant="contained" component={RouterLink}>

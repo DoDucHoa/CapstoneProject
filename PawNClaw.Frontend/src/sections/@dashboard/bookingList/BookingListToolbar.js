@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 // @mui
 import DatePicker from '@mui/lab/DatePicker';
-import { Button, Card, Grid, MenuItem, TextField } from '@mui/material';
+import { Card, Grid, MenuItem, TextField } from '@mui/material';
 
 // config
 import { BOOKING_STATUS } from '../../../config';
@@ -28,7 +28,7 @@ export default function BookingListToolbar({
   return (
     <Card sx={{ p: 3 }}>
       <Grid container spacing={3}>
-        <Grid item md={3}>
+        <Grid item md={4}>
           <DatePicker
             label="Từ ngày"
             value={fromDate}
@@ -38,7 +38,8 @@ export default function BookingListToolbar({
             renderInput={(params) => <TextField {...params} fullWidth />}
           />
         </Grid>
-        <Grid item md={3}>
+
+        <Grid item md={4}>
           <DatePicker
             label="Đến ngày"
             value={toDate}
@@ -48,8 +49,9 @@ export default function BookingListToolbar({
             renderInput={(params) => <TextField {...params} fullWidth />}
           />
         </Grid>
+
         {BOOKING_STATUS.length > 0 && (
-          <Grid item xs={8} md={3}>
+          <Grid item xs={8} md={4}>
             <TextField
               label="Trạng thái booking"
               value={bookingStatus}
@@ -90,11 +92,6 @@ export default function BookingListToolbar({
             </TextField>
           </Grid>
         )}
-        <Grid item md={3} sx={{ alignSelf: 'center' }}>
-          <Button variant="contained" size="large" fullWidth>
-            Tìm kiếm
-          </Button>
-        </Grid>
       </Grid>
     </Card>
   );

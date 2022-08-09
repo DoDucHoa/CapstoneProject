@@ -5,6 +5,7 @@ using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
+using PawNClaw.Data.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,22 +21,39 @@ namespace PawNClaw.Business.Services
         IPetCenterRepository _petCenterRepository;
         IStaffRepository _staffRepository;
         ILocationRepository _locationRepository;
+        IPhotoRepository _photoRepository;
 
         private readonly ApplicationDbContext _db;
 
         public PetCenterService(IPetCenterRepository petCenterRepository, IStaffRepository staffRepository,
-            ILocationRepository locationRepository, ApplicationDbContext db)
+            ILocationRepository locationRepository, IPhotoRepository photoRepository, ApplicationDbContext db)
         {
             _petCenterRepository = petCenterRepository;
             _staffRepository = staffRepository;
             _locationRepository = locationRepository;
+            _photoRepository = photoRepository;
             _db = db;
         }
 
         //Get All
         public PagedList<PetCenter> GetAll(string includeProperties, PagingParameter paging)
         {
-            var values = _petCenterRepository.GetAll(includeProperties: "Brand,Bookings");
+            var values = _petCenterRepository.GetAll(includeProperties: "Brand,Bookings").Select(x => new PetCenter()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Address = x.Address,
+                Phone = x.Phone,
+                Rating = x.Rating,
+                CreateDate = x.CreateDate,
+                Status = x.Status,
+                OpenTime = x.OpenTime,
+                CloseTime = x.CloseTime,
+                Description = x.Description,
+                BrandId = x.BrandId,
+                Bookings = x.Bookings,
+                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
+            });
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
@@ -143,7 +161,22 @@ namespace PawNClaw.Business.Services
         //Get By Brand Id
         public IEnumerable<PetCenter> GetByBrand(int id)
         {
-            var values = _petCenterRepository.GetAll(x => x.BrandId == id,includeProperties:"Bookings");
+            var values = _petCenterRepository.GetAll(x => x.BrandId == id,includeProperties:"Bookings").Select(x => new PetCenter()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Address = x.Address,
+                Phone = x.Phone,
+                Rating = x.Rating,
+                CreateDate = x.CreateDate,
+                Status = x.Status,
+                OpenTime = x.OpenTime,
+                CloseTime = x.CloseTime,
+                Description = x.Description,
+                BrandId = x.BrandId,
+                Bookings = x.Bookings,
+                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
+            }); 
 
             return values;
         }
@@ -152,7 +185,7 @@ namespace PawNClaw.Business.Services
         public PetCenter GetByStaffId(int id)
         {
             var staff = _staffRepository.GetFirstOrDefault(x => x.Id == id);
-            var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == staff.CenterId, includeProperties: "Bookings");
+            var value = _petCenterRepository.GetPetCenterByIdAfterSearchName(staff.CenterId);
             return value;
         }
 
@@ -213,41 +246,58 @@ namespace PawNClaw.Business.Services
         //Update full for admin
         public async Task<bool> UpdateForAdminAsync(UpdatePetCenterForAdminParam petCenterRequestParameter)
         {
-            try
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                PetCenter petCenter = _petCenterRepository.GetPetCenterWithLocation(petCenterRequestParameter.Id);
-                petCenter.Address = petCenterRequestParameter.Address;
-                petCenter.Phone = petCenterRequestParameter.Phone;
-                petCenter.ModifyDate = DateTime.Now;
-                petCenter.ModifyUser = petCenterRequestParameter.ModifyUser;
-                petCenter.OpenTime = petCenterRequestParameter.OpenTime;
-                petCenter.CloseTime = petCenterRequestParameter.CloseTime;
-                petCenter.Checkin = petCenterRequestParameter.CheckIn;
-                petCenter.Checkout = petCenterRequestParameter.CheckOut;
+                try
+                {
+                    PetCenter petCenter = _petCenterRepository.GetPetCenterWithLocation(petCenterRequestParameter.Id);
+                    petCenter.Address = petCenterRequestParameter.Address;
+                    petCenter.Phone = petCenterRequestParameter.Phone;
+                    petCenter.ModifyDate = DateTime.Now;
+                    petCenter.ModifyUser = petCenterRequestParameter.ModifyUser;
+                    petCenter.OpenTime = petCenterRequestParameter.OpenTime;
+                    petCenter.CloseTime = petCenterRequestParameter.CloseTime;
+                    petCenter.Checkin = petCenterRequestParameter.CheckIn;
+                    petCenter.Checkout = petCenterRequestParameter.CheckOut;
+                    petCenter.Description = petCenterRequestParameter.Description;
 
-                var client = new HttpClient();
-                string url = "https://rsapi.goong.io/geocode?address=" + HttpUtility.UrlEncode(petCenter.Address) +SearchConst.GoongAPIKey;
-                Console.WriteLine(url);
-                HttpResponseMessage response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode();
+                    petCenter.Location.CityCode = petCenterRequestParameter.CityCode;
+                    petCenter.Location.DistrictCode = petCenterRequestParameter.DistrictCode;
+                    petCenter.Location.WardCode = petCenterRequestParameter.WardCode;
 
-                var result = await response.Content.ReadAsStringAsync();
-                var cust = JObject.Parse(result);
+                    _petCenterRepository.Update(petCenter);
+                    await _petCenterRepository.SaveDbChangeAsync();
 
-                petCenter.Location.Latitude = cust["results"][0]["geometry"]["location"]["lat"].ToString();
-                petCenter.Location.Longtitude = cust["results"][0]["geometry"]["location"]["lng"].ToString();
-                petCenter.Location.CityCode = petCenterRequestParameter.CityCode;
-                petCenter.Location.DistrictCode = petCenterRequestParameter.DistrictCode;
-                petCenter.Location.WardCode = petCenterRequestParameter.WardCode;
+                    Location location = _locationRepository.Get(petCenter.Id);
+                    location.CityCode = petCenterRequestParameter.CityCode;
+                    location.DistrictCode = petCenterRequestParameter.DistrictCode;
+                    location.WardCode = petCenterRequestParameter.WardCode;
 
-                _petCenterRepository.Update(petCenter);
-                _petCenterRepository.SaveDbChange();
+                    var client = new HttpClient();
+                    string url = "https://rsapi.goong.io/geocode?address=" + HttpUtility.UrlEncode(petCenterRequestParameter.FullAddress) + SearchConst.GoongAPIKey;
+                    Console.WriteLine(url);
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
 
-                return true;
-            }
-            catch
-            {
-                throw new Exception();
+                    var result = await response.Content.ReadAsStringAsync();
+
+                    var cust = JObject.Parse(result);
+
+                    location.Latitude = cust["results"][0]["geometry"]["location"]["lat"].ToString();
+                    location.Longtitude = cust["results"][0]["geometry"]["location"]["lng"].ToString();
+
+                    _locationRepository.Update(location);
+                    await _locationRepository.SaveDbChangeAsync();
+
+                    transaction.Commit();
+
+                    return true;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw new Exception();
+                }
             }
         }
 
@@ -256,7 +306,7 @@ namespace PawNClaw.Business.Services
         {
             try
             {
-                PetCenter center = _petCenterRepository.GetFirstOrDefault(x => x.Id == petCenter.Id);
+                PetCenter center = _petCenterRepository.Get(petCenter.Id);
                 center.OpenTime = petCenter.OpenTime;
                 center.CloseTime = petCenter.CloseTime;
                 center.Checkin = petCenter.CheckIn;

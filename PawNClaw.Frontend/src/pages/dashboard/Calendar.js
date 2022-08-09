@@ -26,6 +26,7 @@ import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import { CalendarForm, CalendarStyle, CalendarToolbar } from '../../sections/@dashboard/calendar';
 // config
 import { BOOKING_STATUS_COLOR } from '../../config';
+
 // ----------------------------------------------------------------------
 
 export default function Calendar() {
@@ -104,7 +105,7 @@ export default function Calendar() {
   };
 
   return (
-    <Page title="Calendar">
+    <Page title="Lịch đặt">
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <HeaderBreadcrumbs
           heading="Lịch đặt"

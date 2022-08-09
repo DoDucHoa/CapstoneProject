@@ -47,7 +47,7 @@ import { getSupplies, deleteSupply } from './useSupplyAPI';
 // ----------------------------------------------------------------------
 
 const SUPPLY_TYPES = [
-  { key: 0, value: '', label: 'Tất cả' },
+  { key: 0, value: 'all', label: 'Tất cả' },
   { key: 1, value: 'FOOD', label: 'Đồ ăn' },
   { key: 2, value: 'DRINK', label: 'Thức uống' },
   { key: 3, value: 'MED', label: 'Thuốc men' },
@@ -84,14 +84,14 @@ export default function SupplyList() {
   } = useTable();
 
   const { centerId } = useAuth();
-  const { currentTab: filterStatus, onChangeTab } = useTabs('');
+  const { currentTab: filterSupplyType, onChangeTab } = useTabs('all');
   const onChangeFilterStatus = (event, newValue) => {
     onChangeTab(event, newValue);
     setPage(0);
   };
 
   const getSupplyData = async () => {
-    const response = await getSupplies(centerId, page, rowsPerPage, filterStatus, searchRequest);
+    const response = await getSupplies(centerId, page, rowsPerPage, filterSupplyType, searchRequest);
 
     const { data, metadata } = response;
 
@@ -111,7 +111,7 @@ export default function SupplyList() {
   useEffect(() => {
     getSupplyData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [centerId, page, rowsPerPage, filterStatus, searchRequest]);
+  }, [centerId, page, rowsPerPage, filterSupplyType, searchRequest]);
 
   const { themeStretch } = useSettings();
 
@@ -148,7 +148,7 @@ export default function SupplyList() {
 
   const isNotFound =
     (!(metadata.totalCount ? metadata.totalCount : 0) && !!filterName) ||
-    (!(metadata.totalCount ? metadata.totalCount : 0) && !!filterStatus);
+    (!(metadata.totalCount ? metadata.totalCount : 0) && !!filterSupplyType);
 
   return (
     <>
@@ -174,7 +174,7 @@ export default function SupplyList() {
               allowScrollButtonsMobile
               variant="scrollable"
               scrollButtons="auto"
-              value={filterStatus}
+              value={filterSupplyType}
               onChange={onChangeFilterStatus}
               sx={{ px: 2, bgcolor: 'background.neutral' }}
             >

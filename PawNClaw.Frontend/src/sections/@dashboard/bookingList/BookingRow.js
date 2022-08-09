@@ -1,95 +1,71 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
-
 // @mui
+import { Button, TableCell, TableRow, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { Avatar, TableRow, TableCell, Typography, MenuItem } from '@mui/material';
 
 // components
 import Label from '../../../components/Label';
-import Iconify from '../../../components/Iconify';
-import { TableMoreMenu } from '../../../components/table';
+import { fVNDate } from '../../../utils/formatTime';
 
 // ----------------------------------------------------------------------
 
 BrandTableRow.propTypes = {
   row: PropTypes.object,
-  onEditRow: PropTypes.func,
-  onDeleteRow: PropTypes.func,
+  onClick: PropTypes.func,
 };
 
-export default function BrandTableRow({ row, onEditRow, onDeleteRow }) {
+export default function BrandTableRow({ row, onClick }) {
   const theme = useTheme();
 
-  const { name, avatarUrl, ownerName, description, status } = row;
+  const { id, customerName, startBooking, endBooking, status } = row;
 
-  const [openMenu, setOpenMenuActions] = useState(null);
+  const statusColor = (statusId) => {
+    let color = '';
+    switch (statusId) {
+      case 1:
+        color = 'warning';
+        break;
+      case 2:
+        color = 'info';
+        break;
+      case 3:
+        color = 'success';
+        break;
+      case 4:
+        color = 'error';
+        break;
+      default:
+        color = 'default';
+        break;
+    }
 
-  const handleOpenMenu = (event) => {
-    setOpenMenuActions(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpenMenuActions(null);
+    return color;
   };
 
   return (
     <TableRow hover>
-      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
-        <Typography variant="subtitle2" noWrap>
-          {name}
-        </Typography>
+      <TableCell>
+        <Button variant="text" color="inherit" onClick={() => onClick(id)}>
+          <Typography variant="subtitle2" noWrap>
+            {id}
+          </Typography>
+        </Button>
       </TableCell>
 
-      <TableCell
-        sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: 300 }}
-        align="left"
-      >
-        {description}
-      </TableCell>
+      <TableCell align="left">{customerName}</TableCell>
 
-      <TableCell align="left">{ownerName}</TableCell>
+      <TableCell align="center">{fVNDate(startBooking)}</TableCell>
+
+      <TableCell align="center">{fVNDate(endBooking)}</TableCell>
 
       <TableCell align="left">
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-          color={(status === false && 'error') || 'success'}
+          color={statusColor(status.id)}
           sx={{ textTransform: 'capitalize' }}
         >
-          {status ? 'Hoạt động' : 'Đã khóa'}
+          {status.name}
         </Label>
-      </TableCell>
-
-      <TableCell align="right">
-        <TableMoreMenu
-          open={openMenu}
-          onOpen={handleOpenMenu}
-          onClose={handleCloseMenu}
-          actions={
-            <>
-              <MenuItem
-                onClick={() => {
-                  onEditRow();
-                  handleCloseMenu();
-                }}
-              >
-                <Iconify icon={'eva:edit-fill'} />
-                Sửa
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  onDeleteRow();
-                  handleCloseMenu();
-                }}
-                sx={{ color: status ? 'error.main' : 'success.main' }}
-              >
-                <Iconify icon={status ? 'eva:slash-outline' : 'eva:checkmark-square-outline'} />
-                {status ? 'Khóa' : 'Mở khóa'}
-              </MenuItem>
-            </>
-          }
-        />
       </TableCell>
     </TableRow>
   );

@@ -26,7 +26,7 @@ SupplyDialogForm.propTypes = {
   bookingId: PropTypes.number.isRequired,
 };
 
-export function SupplyDialogForm({ open, onClose, supplies, bookingId }) {
+export default function SupplyDialogForm({ open, onClose, supplies, bookingId }) {
   // STATE
   // ----------------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
@@ -90,6 +90,7 @@ export function SupplyDialogForm({ open, onClose, supplies, bookingId }) {
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <DialogTitle>Chỉnh sửa đồ dùng</DialogTitle>
+
         <Grid container sx={{ p: 3, alignItems: 'center' }} spacing={2}>
           <Grid item xs={5}>
             <Typography variant="h6">Mô tả</Typography>
@@ -104,6 +105,7 @@ export function SupplyDialogForm({ open, onClose, supplies, bookingId }) {
             <Typography variant="h6">Tổng cộng</Typography>
           </Grid>
         </Grid>
+
         {fields.map((supply, index) => (
           <Grid container sx={{ px: 3, py: 2, alignItems: 'center' }} spacing={2} key={index}>
             <Grid item xs={5}>

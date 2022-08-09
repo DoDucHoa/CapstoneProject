@@ -14,7 +14,7 @@ namespace PawNClaw.API.Controllers
 {
     [Route("api/bookings")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class BookingsController : ControllerBase
     {
         BookingService _bookingService;
@@ -102,7 +102,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Owner,Staff")]
+        //[Authorize(Roles = "Owner,Staff")]
         public IActionResult GetBookingForStaff([FromQuery] BookingRequestParameter bookingRequestParameter)
         {
             var data = _bookingService.GetBookings(bookingRequestParameter);
@@ -158,7 +158,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("for-staff/{id}")]
-        [Authorize(Roles = "Owner,Staff")]
+        //[Authorize(Roles = "Owner,Staff")]
         public IActionResult GetBookingByIdForStaff(int id)
         {
             var data = _bookingService.GetBookingByIdForStaff(id);
@@ -166,7 +166,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("center/{staffId}")]
-        [Authorize(Roles = "Owner,Staff")]
+        //[Authorize(Roles = "Owner,Staff")]
         public IActionResult GetBookingByCenterIdForStaff(int staffId, int? statusId)
         {
             var data = _bookingService.GetBookingsForStaffMobile(staffId, statusId);

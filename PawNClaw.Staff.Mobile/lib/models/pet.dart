@@ -1,3 +1,6 @@
+import 'package:pncstaff_mobile_application/models/photo.dart';
+import 'package:pncstaff_mobile_application/models/user_profile.dart';
+
 class Pet {
   int? _id;
   double? _weight;
@@ -8,24 +11,26 @@ class Pet {
   bool? _status;
   String? _petTypeCode;
   String? _breedName;
+  List<Photos>? _photos;
   // Null? _petTypeCodeNavigation;
   // List<Null>? _petSearchDetails;
   // List<Null>? _petHealthHistories;
 
-  Pet({
-    int? id,
-    double? weight,
-    double? length,
-    double? height,
-    String? name,
-    DateTime? birth,
-    bool? status,
-    String? petTypeCode,
-    String? breedName,
-    // Null? petTypeCodeNavigation,
-    // List<Null>? petSearchDetails,
-    // List<Null>? petHealthHistories
-  }) {
+  Pet(
+      {int? id,
+      double? weight,
+      double? length,
+      double? height,
+      String? name,
+      DateTime? birth,
+      bool? status,
+      String? petTypeCode,
+      String? breedName,
+      List<Photos>? photos
+      // Null? petTypeCodeNavigation,
+      // List<Null>? petSearchDetails,
+      // List<Null>? petHealthHistories
+      }) {
     if (id != null) {
       this._id = id;
     }
@@ -52,6 +57,9 @@ class Pet {
     }
     if (breedName != null) {
       this._breedName = breedName;
+    }
+    if (photos != null) {
+      this._photos = photos;
     }
     // if (petTypeCodeNavigation != null) {
     //   this._petTypeCodeNavigation = petTypeCodeNavigation;
@@ -82,6 +90,8 @@ class Pet {
   set petTypeCode(String? petTypeCode) => _petTypeCode = petTypeCode;
   String? get breedName => _breedName;
   set breedName(String? breedName) => _breedName = breedName;
+  List<Photos>? get photos => _photos;
+  set photos(List<Photos>? photos) => _photos = photos;
   // Null? get petTypeCodeNavigation => _petTypeCodeNavigation;
   // set petTypeCodeNavigation(Null? petTypeCodeNavigation) =>
   //     _petTypeCodeNavigation = petTypeCodeNavigation;
@@ -102,6 +112,12 @@ class Pet {
     _status = json['status'];
     _petTypeCode = json['petTypeCode'];
     _breedName = json['breedName'];
+    if (json['photos'] != null) {
+      _photos = <Photos>[];
+      json['photos'].forEach((v) {
+        _photos!.add(new Photos.fromJson(v));
+      });
+    }
     // _petTypeCodeNavigation = json['petTypeCodeNavigation'];
     // if (json['petSearchDetails'] != null) {
     //   _petSearchDetails = <Null>[];

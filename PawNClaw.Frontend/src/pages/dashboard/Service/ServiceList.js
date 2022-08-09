@@ -131,7 +131,7 @@ export default function ServiceList() {
 
   const denseHeight = 72;
 
-  const isNotFound = !metadata?.totalCount && !!filterName;
+  const isNotFound = !metadata?.totalCount;
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { format, getTime, formatDistanceToNow, add } from 'date-fns';
+import { format, getTime, formatDistanceToNow, add, isValid } from 'date-fns';
 
 // ----------------------------------------------------------------------
 
@@ -8,6 +8,10 @@ export function fDate(date) {
 
 export function fVNDate(date) {
   return format(new Date(date), 'dd/MM/yyyy');
+}
+
+export function fVNMonth(date) {
+  return format(new Date(date), 'MM/yyyy');
 }
 
 export function fDateTime(date) {
@@ -32,9 +36,7 @@ export function addTime(date) {
   return add(new Date(date), { hours: 7 });
 }
 
-export function changeTime(time) {
-  const currentDate = new Date();
-  const result = currentDate.setHours(time.split(':')[0], time.split(':')[1], 0);
-
-  return new Date(result);
+export function formatTime(date) {
+  if (!isValid(new Date(date))) return '';
+  return format(new Date(date), 'HH:mm');
 }

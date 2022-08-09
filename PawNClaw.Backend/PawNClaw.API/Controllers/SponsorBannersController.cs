@@ -19,10 +19,14 @@ namespace PawNClaw.API.Controllers
     public class SponsorBannersController : ControllerBase
     {
         SponsorBannerService _sponsorBannerService;
+        LogsService _logService;
+        AccountService _accountService;
 
-        public SponsorBannersController(SponsorBannerService sponsorBannerService)
+        public SponsorBannersController(SponsorBannerService sponsorBannerService, LogsService logsService, AccountService accountService)
         {
             _sponsorBannerService = sponsorBannerService;
+            _logService = logsService;
+            _accountService = accountService;
         }
 
         [HttpGet]
@@ -75,6 +79,14 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
+                await _logService.AddLog(new ActionLogsParameter()
+                {
+                    Id = (long)sponsorBanner.CreateUser,
+                    Name = _accountService.GetAccountById((int)sponsorBanner.CreateUser).Admin.Name,
+                    Target = "Sponsor của trung tâm thuộc thương hiệu " + sponsorBanner.BrandId,
+                    Type = "Create",
+                    Time = DateTime.Now,
+                });
                 return Ok(await _sponsorBannerService.Create(sponsorBanner));
             }
             catch (Exception ex)
@@ -84,10 +96,18 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        public IActionResult Update(UpdateSponsorBanner sponsorBanner)
+        public async Task<IActionResult> Update(UpdateSponsorBanner sponsorBanner)
         {
             try
             {
+                await _logService.AddLog(new ActionLogsParameter()
+                {
+                    Id = (long)sponsorBanner.ModifyUser,
+                    Name = _accountService.GetAccountById((int)sponsorBanner.ModifyUser).Admin.Name,
+                    Target = "Sponsor của trung tâm thuộc thương hiệu " + sponsorBanner.BrandId,
+                    Type = "Update",
+                    Time = DateTime.Now,
+                });
                 return Ok(_sponsorBannerService.Update(sponsorBanner));
             }
             catch (Exception ex)
@@ -97,7 +117,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("deactivate/{id}")]
-        public IActionResult Deactivate(int id)
+        public async Task<IActionResult> Deactivate(int id)
         {
             try
             {

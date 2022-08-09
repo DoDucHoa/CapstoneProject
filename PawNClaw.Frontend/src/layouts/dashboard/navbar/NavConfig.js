@@ -100,13 +100,6 @@ const navConfig = [
 ];
 
 export const navConfigForStaff = [
-  // GENERAL
-  // ----------------------------------------------------------------------
-  {
-    subheader: 'Báo cáo',
-    items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
-  },
-
   // BOOKING
   // ----------------------------------------------------------------------
   {
