@@ -43,8 +43,15 @@ namespace PawNClaw.API.Controllers
         [HttpGet("{id:int}")]
         public IActionResult GetBrandById(int id)
         {
-            var data = _brandService.GetBrandById(id);
-            return Ok(data);
+            try
+            {
+                var data = _brandService.GetBrandById(id);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpPost]
