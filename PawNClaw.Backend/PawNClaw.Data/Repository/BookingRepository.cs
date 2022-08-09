@@ -340,7 +340,12 @@ namespace PawNClaw.Data.Repository
                         TotalPrice = supplyorder.TotalPrice,
                         Note = supplyorder.Note,
                         PetId = supplyorder.PetId,
-                        Supply = supplyorder.Supply,
+                        Supply = new Supply()
+                        {
+                            Id = supplyorder.Supply.Id,
+                            Name = supplyorder.Supply.Name,
+                            Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(supplyorder.SupplyId, PhotoTypesConst.Supply),
+                        },
                         /*Pet = new Pet
                         {
                             Name = supplyorder.Pet.Name,
@@ -356,7 +361,12 @@ namespace PawNClaw.Data.Repository
                         TotalPrice = serviceorder.TotalPrice,
                         Note = serviceorder.Note,
                         PetId = serviceorder.PetId,
-                        Service = serviceorder.Service,
+                        Service = new Service() { 
+                            Id = serviceorder.Service.Id,
+                            Name = serviceorder.Service.Name,
+                            Description = serviceorder.Service.Description,
+                            Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(serviceorder.ServiceId, PhotoTypesConst.Service),
+                        },
                         /*Pet = new Pet
                         {
                             Name = serviceorder.Pet.Name,
@@ -368,7 +378,7 @@ namespace PawNClaw.Data.Repository
                         IdNavigation = new Account
                         {
                             Phone = x.Customer.IdNavigation.Phone,
-                            Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Customer.Id,)
+                            Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Customer.Id,PhotoTypesConst.Account)
                         }
                     },
                     Status = new BookingStatus
