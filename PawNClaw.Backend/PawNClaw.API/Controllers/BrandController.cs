@@ -24,7 +24,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult GetBrands([FromQuery] string Name, [FromQuery] bool? Status, [FromQuery] string dir, [FromQuery] PagingParameter _paging)
         {
             var data = _brandService.GetBrands(Name, Status, dir, _paging);
@@ -41,7 +41,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("{id:int}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult GetBrandById(int id)
         {
             var data = _brandService.GetBrandById(id);
@@ -49,7 +49,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Add([FromBody] CreateBrandParameter brand)
         {
             try
@@ -70,7 +70,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] BrandRequestParameter brand)
         {
             var brandDb = _brandService.GetBrandById(id);
@@ -95,7 +95,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult Delete(int id)
         {
             if (_brandService.Delete(id))
@@ -106,7 +106,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("restore/{id:int}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult Restore(int id)
         {
             if (_brandService.Restore(id))
@@ -117,7 +117,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("owner/{id:int}")]
-        [Authorize(Roles = "Admin,Mod,Owner")]
+        [Authorize(Roles = "Admin,Moderator,Owner")]
         public IActionResult GetBrandByOwnerId(int id)
         {
             try
