@@ -44,7 +44,7 @@ class _ServiceCardState extends State<ServiceCard> {
                 Container(
                   width: width*0.6,
                   child: Text(
-                    service.description ?? "",
+                    service.name ?? service.description ?? "",
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -119,9 +119,11 @@ class _ServiceCardState extends State<ServiceCard> {
                 width: 65,
                 height: 65,
                 decoration: BoxDecoration(
-                  image: const DecorationImage(
+                  image: (service.photo?.url == null)? DecorationImage(
                       image: AssetImage('lib/assets/cage.png'),
-                      fit: BoxFit.cover),
+                      fit: BoxFit.cover): DecorationImage(
+                          image: NetworkImage(service.photo!.url!),
+                          fit: BoxFit.cover),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),

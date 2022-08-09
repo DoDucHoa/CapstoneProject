@@ -96,6 +96,7 @@ class CenterRepository implements BaseCenterRepository {
       };
       var requestBody = {
         "id": centerId,
+        "customerId": requests[0][0].customerId,
         "_petRequests": [
           for (var items in requests) [for (var item in items) item.toJson()]
         ],
@@ -196,6 +197,7 @@ class CenterRepository implements BaseCenterRepository {
       // final center = Center.fromJson(response.data);
       print('[repo]Center overview:');
       Center center = Center.fromJson(response.data);
+      print("bookings");
       if (response.data['bookings'] != null) {
         var bookings = response.data["bookings"];
         List<Review> reviews = [];

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:dotted_line/dotted_line.dart';
-import 'package:pawnclaw_mobile_application/models/center.dart';
+import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter; 
 import 'package:pawnclaw_mobile_application/screens/center_overview_screen/components/item_card.dart';
 import 'package:pawnclaw_mobile_application/screens/center_overview_screen/subscreens/supply_detail_screen.dart';
 
 class SupplyTypeCard extends StatelessWidget {
   final String supplyType;
   final Size size;
-  final List<Supplies> supplies;
+  final List<petCenter.Supplies> supplies;
   const SupplyTypeCard(
       {Key? key,
       required this.supplyType,
@@ -18,12 +18,12 @@ class SupplyTypeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Supplies> suppliesByType = supplies
+    List<petCenter.Supplies> suppliesByType = supplies
         .where(
           (supply) => supply.supplyTypeCode == supplyType,
         )
         .toList();
-    return Container(
+    return (suppliesByType.isNotEmpty) ? Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
       width: size.width,
       decoration: BoxDecoration(
@@ -55,6 +55,7 @@ class SupplyTypeCard extends StatelessWidget {
                 discountPrice: supply.discountPrice!,
                 id: supply.id.toString(),
                 typeId: 1,
+                imgURL: supply.photo?.url,
                 redirect: SupplyDetails(
                   supply: supply,
                 ),
@@ -72,6 +73,6 @@ class SupplyTypeCard extends StatelessWidget {
           //     children: buildCageList(id)),
         ]),
       ),
-    );
+    ):Container();
   }
 }

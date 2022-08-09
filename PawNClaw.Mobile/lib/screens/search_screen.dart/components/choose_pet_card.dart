@@ -118,17 +118,27 @@ class _ChoosePetCardState extends State<ChoosePetCard> {
 
     return Center(
       child: Container(
-          height: height * 0.05,
-          width: height * 0.05,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(height),
-              border: Border.all(
-                  color: Colors.white,
-                  width: 3,
-                  strokeAlign: StrokeAlign.outside)),
-          child: CircleAvatar(
-            backgroundImage: AssetImage('lib/assets/cat_avatar0.png'),
-          )),
+        height: height * 0.05,
+        width: height * 0.05,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(height),
+            image: (pet.photos!.isNotEmpty)
+                ? DecorationImage(
+                    image: NetworkImage(pet.photos!.first.url!),
+                    fit: BoxFit.contain)
+                : null,
+            border: Border.all(
+                color: Colors.white,
+                width: 3,
+                strokeAlign: StrokeAlign.outside)),
+        child: (pet.photos!.isEmpty)
+            ? CircleAvatar(
+                backgroundImage: AssetImage((pet.petTypeCode == 'DOG')
+                    ? 'lib/assets/dog.png'
+                    : 'lib/assets/black-cat.png'),
+              )
+            : null,
+      ),
     );
   }
 }

@@ -104,6 +104,8 @@ class Pet {
   set photoUrl(String? photoUrl) => _photoUrl = photoUrl;
   List<Photo>? get photos => _photos;
   set photos(List<Photo>? photos) => _photos = photos;
+  int? get customerId => _customerId;
+  set customerId(int? customerId) => _customerId = customerId;
   // Null? get petTypeCodeNavigation => _petTypeCodeNavigation;
   // set petTypeCodeNavigation(Null? petTypeCodeNavigation) =>
   //     _petTypeCodeNavigation = petTypeCodeNavigation;

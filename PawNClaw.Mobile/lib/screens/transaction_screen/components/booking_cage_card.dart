@@ -25,7 +25,7 @@ class BookingCageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<int> petsId = [];
-   //CageTypes cageType = center.cageTypes!.firstWhere((e) => e.typeName == bookingDetails.cageCode);
+    //CageTypes cageType = center.cageTypes!.firstWhere((e) => e.typeName == bookingDetails.cageCode);
     //Cages cage = cageType.cages!.first;
     // request.forEach(((element) => petsId.add(element.id!)));
     print("petsid : " + petsId.toString());
@@ -69,16 +69,15 @@ class BookingCageCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: width/3
-                    ,child:
-                  Text(
-                     bookingDetails.cage!.name!,
-                    style: TextStyle(
-                      color: primaryFontColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: width * regularFontRate,
-                    ),
-                  )),
+                      width: width / 3,
+                      child: Text(
+                        bookingDetails.cage!.name!,
+                        style: TextStyle(
+                          color: primaryFontColor,
+                          fontWeight: FontWeight.w500,
+                          fontSize: width * regularFontRate,
+                        ),
+                      )),
                   Text(
                     bookingDetails.petBookingDetails!.fold(
                         "",
@@ -95,22 +94,26 @@ class BookingCageCard extends StatelessWidget {
             ),
             Expanded(child: SizedBox()),
             Container(
-              margin: EdgeInsets.only(
-                  bottom: width * extraSmallPadRate,
-                  top: width * mediumPadRate,
-                  right: 0,
-                  left: width * extraSmallPadRate),
-              padding: EdgeInsets.all(width * smallPadRate * 0.25),
-              height: height * 0.12,
-              width: height * 0.12,
-              decoration: BoxDecoration(
-                //color: primaryColor.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(15),
-                image:const DecorationImage(
-                      image: AssetImage('lib/assets/cage.png'),
-                      fit: BoxFit.cover),),
-              
-            )
+                margin: EdgeInsets.only(
+                    bottom: width * extraSmallPadRate,
+                    top: width * mediumPadRate,
+                    right: 0,
+                    left: width * extraSmallPadRate),
+                padding: EdgeInsets.all(width * smallPadRate * 0.25),
+                height: height * 0.12,
+                width: height * 0.12,
+                decoration: BoxDecoration(
+                  //color: primaryColor.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(15),
+                  image: (bookingDetails.cage!.cageType!.photo == null)
+                      ? DecorationImage(
+                          image: AssetImage('lib/assets/cage.png'),
+                          fit: BoxFit.cover)
+                      : DecorationImage(
+                          image: NetworkImage(
+                              bookingDetails.cage!.cageType!.photo!.url!),
+                          fit: BoxFit.cover),
+                ))
           ],
         ),
         Row(
@@ -129,10 +132,8 @@ class BookingCageCard extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: NumberFormat.currency(
-                                  decimalDigits: 0,
-                                  symbol: 'đ',
-                                  locale: 'vi_vn')
-                              .format(bookingDetails.price) ,
+                            decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+                        .format(bookingDetails.price),
                     style: TextStyle(
                       fontSize: width * regularFontRate * 0.8 * 0.8,
                       color: primaryFontColor,
@@ -140,7 +141,8 @@ class BookingCageCard extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: " (${bookingDetails.duration!.toInt().toString()} ngày)",
+                    text:
+                        " (${bookingDetails.duration!.toInt().toString()} ngày)",
                     style: TextStyle(
                       color: lightFontColor,
                       fontWeight: FontWeight.w500,

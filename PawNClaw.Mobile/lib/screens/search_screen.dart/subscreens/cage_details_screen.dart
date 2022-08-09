@@ -42,7 +42,7 @@ class _CageDetailsState extends State<CageDetails> {
 
   @override
   void initState() {
-var state = BlocProvider.of<BookingBloc>(context).state;
+    var state = BlocProvider.of<BookingBloc>(context).state;
     requests = (state as BookingUpdated).requests!;
     haveAvailableRequests = false;
     for (var element in requests) {
@@ -60,14 +60,15 @@ var state = BlocProvider.of<BookingBloc>(context).state;
 
   @override
   Widget build(BuildContext context) {
-var state = BlocProvider.of<BookingBloc>(context).state as BookingUpdated;
-
-    
+    var state = BlocProvider.of<BookingBloc>(context).state as BookingUpdated;
 
     Size size = MediaQuery.of(context).size;
     double appbarSize = size.height * 0.35;
     CageTypes cageType = widget.cageType;
     Cages cage = widget.cage;
+    // print('ready to build cage details');
+    // print(state.booking.selectedPetsIds?? 'null');
+    // print(selectedPetIds);
 
     return Scaffold(
         body: NestedScrollView(
@@ -86,12 +87,16 @@ var state = BlocProvider.of<BookingBloc>(context).state as BookingUpdated;
                       children: [
                         //campaign image
                         CarouselSlider.builder(
-                            itemCount: CAGE_PHOTOS.length,
+                            itemCount: 1,
                             itemBuilder: (context, index, realIndex) {
                               return Container(
                                   width: size.width,
-                                  child: Image.asset(
+                                  child:(cageType.photo?.url == null)? Image.asset(
                                     CAGE_PHOTOS[index],
+                                    fit: BoxFit.cover,
+                                  ):
+                                  Image.network(
+                                    cageType.photo!.url!,
                                     fit: BoxFit.cover,
                                   ));
                             },
@@ -102,13 +107,29 @@ var state = BlocProvider.of<BookingBloc>(context).state as BookingUpdated;
                                 onPageChanged: ((index, reason) {
                                   setState(() => activeIndex = index);
                                 }))),
-                        Positioned(
-                            left: size.width / 3 + 15,
-                            top: appbarSize * (1 - 0.2),
-                            child: Center(
-                              child: buildIndicator(),
-                            )),
-
+                        // Positioned(
+                        //     left: size.width / 3 + 15,
+                        //     top: appbarSize * (1 - 0.2),
+                        //     child: Center(
+                        //       child: buildIndicator(),
+                        //     )),
+                        Container(
+                          height: appbarSize,
+                          decoration: const BoxDecoration(
+                            // borderRadius:
+                            //     BorderRadius.only(bottomLeft: Radius.circular(60)),
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.black12,
+                                Colors.black26,
+                                Colors.black38,
+                                Colors.black54,
+                              ],
+                            ),
+                          ),
+                        ),
                         Positioned(
                             bottom: 0,
                             left: 0,
@@ -138,7 +159,7 @@ var state = BlocProvider.of<BookingBloc>(context).state as BookingUpdated;
               onPressed: (selectedPetIds != null)
                   ? () {
                       // print(context.read<BookingBloc>().state);
-                      // print(state.booking.selectedPetsIds);
+                      //print(state.booking.selectedPetsIds);
                       // print(selectedPetIds);
                       BlocProvider.of<BookingBloc>(context).add(SelectCage(
                         price: cageType.totalPrice!,

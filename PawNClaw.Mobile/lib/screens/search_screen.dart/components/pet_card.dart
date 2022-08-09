@@ -28,21 +28,47 @@ class _PetCardState extends State<PetCard> {
     super.initState();
   }
 
+  bool isExistInRequests(List<List<Pet>> requests, Pet pet) {
+    for (var pets in requests) {
+      if (pets.contains(pet)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     var state = BlocProvider.of<SearchBloc>(context).state;
-    if (state is UpdatePetSelected && state.requests.isNotEmpty) {
-      for (var pets in state.requests) {
-        for (var pet in pets) {
-          if (pet.id == widget.pet.id) {
-            isLock = true;
-            break;
+    bool isUpdate = false;
+    if (state is UpdatePetSelected) {
+      //for back (save process)
+      if (state.requests.isNotEmpty) {
+        if (isExistInRequests(state.requests, widget.pet)) {
+          isLock = true;
+        } else {
+          isLock = false;
+          if (!isExistInRequests([state.pets], widget.pet)) {
+            isSelected = false;
+          } else {
+            isSelected = true;
           }
+        }
+      } else {
+        isLock = false;
+        if (!isExistInRequests([state.pets], widget.pet)) {
+          isSelected = false;
         }
       }
     }
+
+    // print('pet name ${widget.pet.name}');
+    // print(state);
+    // print('lock: $isLock');
+    // print('selected: $isSelected');
+    // print('----------------------------------------------------');
     return Stack(
       children: [
         // SizedBox(
@@ -172,10 +198,16 @@ class _PetCardState extends State<PetCard> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(width * 0.2),
               color: Colors.white,
-              image: DecorationImage(
-                image: AssetImage('lib/assets/cat_avatar0.png'),
-                fit: BoxFit.fitHeight,
-              ),
+              image: (widget.pet.photos!.isEmpty)
+                  ? DecorationImage(
+                      image: AssetImage((widget.pet.petTypeCode == 'DOG')
+                          ? 'lib/assets/dog.png'
+                          : 'lib/assets/black-cat.png'),
+                      fit: BoxFit.fitHeight,
+                    )
+                  : DecorationImage(
+                      image: NetworkImage(widget.pet.photos!.first.url!),
+                      fit: BoxFit.fitHeight),
             ),
           ),
         ),
@@ -259,56 +291,73 @@ class _PetCardState extends State<PetCard> {
                 )),
               ),
               onPressed: isSelected
-                  ? () {
-                      var state = BlocProvider.of<SearchBloc>(context).state;
-                      if (state is UpdatePetSelected &&
-                          state.requests.isNotEmpty) {
-                        for (var pets in state.requests) {
-                          for (var pet in pets) {
-                            if (pet.id == widget.pet.id) {
-                              setState(() {
-                                isLock = true;
-                              });
-                              break;
+                  ? (isLock)
+                      ? () {}
+                      : () {
+                          var state =
+                              BlocProvider.of<SearchBloc>(context).state;
+                          if (state is UpdatePetSelected &&
+                              state.requests.isNotEmpty) {
+                            for (var pets in state.requests) {
+                              for (var pet in pets) {
+                                if (pet.id == widget.pet.id) {
+                                  setState(() {
+                                    isLock = true;
+                                  });
+                                  break;
+                                }
+                              }
                             }
                           }
-                        }
-                      }
-                      if (!isLock) {
-                        setState(() {
-                          isSelected = false;
-                        });
-                        widget.onPressed();
-                      }
-                    }
-                  : () {
-                      var state = BlocProvider.of<SearchBloc>(context).state;
-                      if (state is UpdatePetSelected && state.pets.isNotEmpty) {
-                        for (var pet in state.pets) {
-                          if (pet.petTypeCode != widget.pet.petTypeCode) {
+                          if (!isLock) {
                             setState(() {
-                              isValid = false;
+                              isSelected = false;
                             });
-                            break;
+                            widget.onPressed();
                           }
                         }
-                      } else if (state is UpdatePetSelected &&
-                          state.pets.isEmpty) {
-                        setState(() {
-                          isValid = true;
-                        });
-                      }
-                      if (isValid) {
-                        widget.onPressed();
-                        setState(() {
-                          isSelected = true;
-                        });
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(
-                                "Không thể chọn 2 thú cưng khác loài trong cùng một yêu cầu.")));
-                      }
-                    },
+                  : (isLock)
+                      ? () {}
+                      : () {
+                          var state =
+                              BlocProvider.of<SearchBloc>(context).state;
+                          if (isExistInRequests(
+                              (state as UpdatePetSelected).requests,
+                              widget.pet)) {
+                            setState(() {
+                              isLock = true;
+                            });
+                          } else {
+                            if (state is UpdatePetSelected &&
+                                state.pets.isNotEmpty) {
+                              for (var pet in state.pets) {
+                                if (pet.petTypeCode != widget.pet.petTypeCode) {
+                                  setState(() {
+                                    isValid = false;
+                                  });
+                                  break;
+                                }
+                              }
+                            } else if (state is UpdatePetSelected &&
+                                state.pets.isEmpty) {
+                              setState(() {
+                                isValid = true;
+                              });
+                            }
+                            if (isValid) {
+                              print('add' + widget.pet.id.toString());
+                              widget.onPressed();
+                              setState(() {
+                                isSelected = true;
+                              });
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  content: Text(
+                                      "Không thể chọn 2 thú cưng khác loài trong cùng một yêu cầu.")));
+                            }
+                          }
+                          //  state = BlocProvider.of<SearchBloc>(context).state;
+                        },
               child: const Icon(
                 Icons.send,
                 color: Colors.white,

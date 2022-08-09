@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
@@ -63,7 +64,12 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
               ),
             ),
             leading: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                BlocProvider.of<SearchBloc>(context)
+                  ..add(BackToPetSelection(
+                      (state as FillingInformation).requests));
+              },
+              // => Navigator.of(context).pop(),
               icon: Icon(
                 Icons.arrow_back_ios_new,
                 color: primaryFontColor,
@@ -231,7 +237,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                                   color: primaryBackgroundColor,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Icon(
-                                Icons.access_time_filled,
+                                Iconsax.calendar5,
                                 color: primaryColor,
                                 size: 20,
                               )),

@@ -76,12 +76,15 @@ class _CageDetailsState extends State<CageDetails> {
                       children: [
                         //campaign image
                         CarouselSlider.builder(
-                            itemCount: CAGE_PHOTOS.length,
+                            itemCount: 1,
                             itemBuilder: (context, index, realIndex) {
                               return Container(
                                   width: size.width,
-                                  child: Image.asset(
+                                  child: (cageType.photo?.url == null) ? Image.asset(
                                     CAGE_PHOTOS[index],
+                                    fit: BoxFit.cover,
+                                  ): Image.network(
+                                    cageType.photo!.url!,
                                     fit: BoxFit.cover,
                                   ));
                             },
@@ -92,13 +95,29 @@ class _CageDetailsState extends State<CageDetails> {
                                 onPageChanged: ((index, reason) {
                                   setState(() => activeIndex = index);
                                 }))),
-                        Positioned(
-                            left: size.width / 3 + 15,
-                            top: appbarSize * (1 - 0.2),
-                            child: Center(
-                              child: buildIndicator(),
-                            )),
-
+                        // Positioned(
+                        //     left: size.width / 3 + 15,
+                        //     top: appbarSize * (1 - 0.2),
+                        //     child: Center(
+                        //       child: buildIndicator(),
+                        //     )),
+                      Container(
+                                  height: appbarSize,
+                                  decoration: const BoxDecoration(
+                                    // borderRadius:
+                                    //     BorderRadius.only(bottomLeft: Radius.circular(60)),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.black12,
+                                        Colors.black26,
+                                        Colors.black38,
+                                        Colors.black54,
+                                      ],
+                                    ),
+                                  ),
+                                ),
                         Positioned(
                             bottom: 0,
                             left: 0,
@@ -183,7 +202,7 @@ class _CageDetailsState extends State<CageDetails> {
 
   Widget buildIndicator() => AnimatedSmoothIndicator(
         activeIndex: activeIndex,
-        count: CAGE_PHOTOS.length,
+        count: 1,
         effect: ScrollingDotsEffect(
             activeDotColor: lightFontColor, dotHeight: 10, dotWidth: 10),
       );

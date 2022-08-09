@@ -114,7 +114,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                               ? DecorationImage(
                                   image: NetworkImage(user.photoUrl!))
                               : DecorationImage(
-                                  image: AssetImage((customer.gender! > -1)
+                                  image: AssetImage((customer.gender! < 2)
                               ? 'lib/assets/cus-${customer.gender}.png'
                               : 'lib/assets/cus-2.png')),
                     ),
@@ -289,7 +289,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               Row(
                 children: [
                   Radio(
-                      value: -1,
+                      value: 2,
                       groupValue: gender,
                       onChanged: ((value) {
                         setState(() {

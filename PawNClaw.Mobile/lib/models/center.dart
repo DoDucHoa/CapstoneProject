@@ -1,8 +1,9 @@
+import 'package:pawnclaw_mobile_application/models/photo.dart';
 import 'package:pawnclaw_mobile_application/models/review.dart';
 import 'package:pawnclaw_mobile_application/models/voucher.dart';
 
 import 'cage_type.dart';
-import  'dart:convert';
+import 'dart:convert';
 
 class Center {
   int? _id;
@@ -22,6 +23,7 @@ class Center {
   String? _endBooking;
   List<Voucher>? _vouchers;
   List<Review>? _reviews;
+  List<Photo>? _photos;
 
   Center(
       {int? id,
@@ -40,7 +42,8 @@ class Center {
       List<Supplies>? supplies,
       String? endBooking,
       List<Voucher>? vouchers,
-      List<Review>? reviews}) {
+      List<Review>? reviews,
+      List<Photo>? photos}) {
     if (id != null) {
       this._id = id;
     }
@@ -92,6 +95,9 @@ class Center {
     if (reviews != null) {
       this._reviews = reviews;
     }
+    if (photos != null) {
+      this._photos = photos;
+    }
   }
 
   int? get id => _id;
@@ -126,6 +132,8 @@ class Center {
   List<Voucher>? get vouchers => _vouchers;
   List<Review>? get reviews => _reviews;
   set reviews(List<Review>? reviews) => _reviews = reviews;
+  List<Photo>? get photos => _photos;
+  set photos(List<Photo>? photos) => _photos = photos;
 
   Center.fromJson(Map<String, dynamic> json) {
     _id = json['id'];
@@ -142,27 +150,33 @@ class Center {
     if (json['cageTypes'] != null) {
       _cageTypes = <CageTypes>[];
       json['cageTypes'].forEach((v) {
-        _cageTypes!.add(new CageTypes.fromJson(v));
+        _cageTypes!.add(CageTypes.fromJson(v));
       });
     }
     if (json['services'] != null) {
       _services = <Services>[];
       json['services'].forEach((v) {
-        _services!.add(new Services.fromJson(v));
+        _services!.add(Services.fromJson(v));
       });
     }
     if (json['supplies'] != null) {
       _supplies = <Supplies>[];
       json['supplies'].forEach((v) {
-        _supplies!.add(new Supplies.fromJson(v));
+        _supplies!.add(Supplies.fromJson(v));
       });
     }
     _endBooking = json['endBooking'];
 
-    if(json['vouchers'] != null){
+    if (json['vouchers'] != null) {
       _vouchers = <Voucher>[];
       json['vouchers'].forEach((v) {
-        _vouchers!.add(new Voucher.fromJson(v));
+        _vouchers!.add(Voucher.fromJson(v));
+      });
+    }
+    if (json["photos"] != null) {
+      _photos = <Photo>[];
+      json["photos"].forEach((v) {
+        _photos!.add(Photo.fromJson(v));
       });
     }
   }
@@ -193,6 +207,9 @@ class Center {
     if (this._vouchers != null) {
       data['vouchers'] = this._vouchers!.map((v) => v.toJson()).toList();
     }
+    if (this._photos != null) {
+      data['photos'] = this._photos!.map((v) => v.toJson()).toList();
+    }
 
     return data;
   }
@@ -201,19 +218,51 @@ class Center {
     var splited = this.address!.split(",");
     if (splited.length > 1) {
       return splited[0] + "," + splited[1];
-    } 
-      return this.address!;
-    
+    }
+    return this.address!;
+  }
+
+  Photo? getThumbnail() {
+    var photo;
+    this._photos!.forEach((element) {
+      if (element.isThumbnail!) {
+        photo = element;
+        return;
+      }
+    });
+    return photo;
+  }
+  Photo? getBackGround() {
+    var photo;
+    this._photos!.forEach((element) {
+      if (!element.isThumbnail!) {
+        photo = element;
+        return;
+      }
+    });
+    return photo;
+  }
+  List<Photo>? getFacilities() {
+    List<Photo> photos = [];
+    this._photos!.forEach((element) {
+      if (!element.isThumbnail!) {
+        photos.add(element);
+        // return;
+      }
+    });
+    return photos;
   }
 }
 
 class Services {
   int? id;
+  String? name;
   String? description;
   double? discountPrice;
   List<ServicePrices>? servicePrices;
   double? minPrice;
   double? maxPrice;
+  Photo? photo;
 
   Services(
       {this.id,
@@ -221,10 +270,13 @@ class Services {
       this.discountPrice,
       this.servicePrices,
       this.minPrice,
-      this.maxPrice});
+      this.maxPrice,
+      this.photo,
+      this.name});
 
   Services.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    name = json['name'];
     description = json['description'];
     discountPrice = json['discountPrice'];
     if (json['servicePrices'] != null) {
@@ -238,11 +290,19 @@ class Services {
         maxPrice = json['maxPrice'].toDouble();
       }
     }
+    if (json['photos'] != null) {
+      var photos = <Photo>[];
+      json['photos'].forEach((v) {
+        photos.add(Photo.fromJson(v));
+      });
+      if (photos.isNotEmpty) photo = photos.first;
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['name'] = this.name;
     data['description'] = this.description;
     data['discountPrice'] = this.discountPrice;
     if (this.servicePrices != null) {
@@ -251,6 +311,9 @@ class Services {
     } else {
       data['minPrice'] = this.minPrice;
       data['maxPrice'] = this.maxPrice;
+    }
+    if (this.photo != null) {
+      data['photos'] = this.photo!.toJson();
     }
     return data;
   }
@@ -289,6 +352,7 @@ class Supplies {
   int? quantity;
   bool? status;
   String? supplyTypeCode;
+  Photo? photo;
 
   Supplies({
     this.id,
@@ -298,6 +362,7 @@ class Supplies {
     this.quantity,
     this.status,
     this.supplyTypeCode,
+    this.photo,
   });
 
   Supplies.fromJson(Map<String, dynamic> json) {
@@ -308,6 +373,13 @@ class Supplies {
     quantity = json['quantity'];
     status = json['status'];
     supplyTypeCode = json['supplyTypeCode'];
+    if (json['photos'] != null) {
+      var photos = <Photo>[];
+      json['photos'].forEach((v) {
+        photos.add(Photo.fromJson(v));
+      });
+      if (photos.isNotEmpty) photo = photos.first;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -319,6 +391,9 @@ class Supplies {
     data['quantity'] = this.quantity;
     data['status'] = this.status;
     data['supplyTypeCode'] = this.supplyTypeCode;
+    if (this.photo != null) {
+      data['photos'] = this.photo!.toJson();
+    }
     return data;
   }
 }
@@ -346,33 +421,35 @@ class SearchResponseModel {
 }
 
 class LocationResponseModel {
-    LocationResponseModel({
-        this.id,
-        this.longtitude,
-        this.latitude,
-        this.cityCode,
-        this.districtCode,
-        this.wardCode,
-        this.center,
-        this.distance,
-        this.duration,
-    });
+  LocationResponseModel({
+    this.id,
+    this.longtitude,
+    this.latitude,
+    this.cityCode,
+    this.districtCode,
+    this.wardCode,
+    this.center,
+    this.distance,
+    this.duration,
+  });
 
-    int? id;
-    String? longtitude;
-    String? latitude;
-    int? cityCode;
-    int? districtCode;
-    int? wardCode;
-    Center? center;
-    String? distance;
-    String? duration;
+  int? id;
+  String? longtitude;
+  String? latitude;
+  int? cityCode;
+  int? districtCode;
+  int? wardCode;
+  Center? center;
+  String? distance;
+  String? duration;
 
-    factory LocationResponseModel.fromRawJson(String str) => LocationResponseModel.fromJson(json.decode(str));
+  factory LocationResponseModel.fromRawJson(String str) =>
+      LocationResponseModel.fromJson(json.decode(str));
 
-    String toRawJson() => json.encode(toJson());
+  String toRawJson() => json.encode(toJson());
 
-    factory LocationResponseModel.fromJson(Map<String, dynamic> json) => LocationResponseModel(
+  factory LocationResponseModel.fromJson(Map<String, dynamic> json) =>
+      LocationResponseModel(
         id: json["id"],
         longtitude: json["longtitude"],
         latitude: json["latitude"],
@@ -382,9 +459,9 @@ class LocationResponseModel {
         center: Center.fromJson(json["idNavigation"]),
         distance: json["distance"],
         duration: json["duration"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "longtitude": longtitude,
         "latitude": latitude,
@@ -394,5 +471,5 @@ class LocationResponseModel {
         "idNavigation": center!.toJson(),
         "distance": distance,
         "duration": duration,
-    };
+      };
 }

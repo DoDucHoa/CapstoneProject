@@ -5,7 +5,7 @@ class PetCenter {
   String? name;
   String? address;
   String? phone;
-  int? rating;
+  double? rating;
   String? createDate;
   String? modifyDate;
   int? createUser;
@@ -20,6 +20,7 @@ class PetCenter {
   int? ratingCount;
   String? endBooking;
   Photo? photos;
+
 
   PetCenter(
       {this.id,
@@ -40,14 +41,15 @@ class PetCenter {
       this.checkout,
       this.ratingCount,
       this.endBooking,
-      this.photos});
+      //this.photos
+      });
 
   PetCenter.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     address = json['address'];
     phone = json['phone'];
-    rating = json['rating'];
+    rating = json['ratingPoint'];
     createDate = json['createDate'];
     modifyDate = json['modifyDate'];
     createUser = json['createUser'];
@@ -61,7 +63,9 @@ class PetCenter {
     checkout = json['checkout'];
     ratingCount = json['ratingCount'];
     endBooking = json['endBooking'];
+
     photos = Photo.fromJson(json['photos']);
+
   }
 
   Map<String, dynamic> toJson() {
@@ -70,7 +74,7 @@ class PetCenter {
     data['name'] = this.name;
     data['address'] = this.address;
     data['phone'] = this.phone;
-    data['rating'] = this.rating;
+    data['ratingPoint'] = this.rating!.toDouble();
     data['createDate'] = this.createDate;
     data['modifyDate'] = this.modifyDate;
     data['createUser'] = this.createUser;

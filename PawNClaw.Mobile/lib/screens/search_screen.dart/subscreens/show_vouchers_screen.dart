@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
+import '../../../common/components/voucher_dialog.dart';
 import '../../../common/constants.dart';
 import '../../../models/voucher.dart';
 
@@ -30,7 +31,20 @@ class ShowVouchers extends StatelessWidget {
             padding: EdgeInsets.all(15),
             child: ListView.separated(
               itemBuilder: ((context, index) {
-                return VoucherCard(vouchers[index], 180, size);
+                return InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                        backgroundColor: Colors.black.withOpacity(0.03),
+                          context: context,
+                          builder: (context) => VoucherDialog(
+                                voucher: vouchers[index],
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                isEnabled: false,
+                              ));
+                    },
+                    child: VoucherCard(vouchers[index], 180, size));
               }),
               itemCount: vouchers.length,
               separatorBuilder: (context, index) => const SizedBox(
@@ -65,7 +79,9 @@ class ShowVouchers extends StatelessWidget {
                           NumberFormat.currency(
                                   decimalDigits: 0,
                                   symbol:
-                                      (voucher.voucherTypeCode!.contains('2')) ? 'đ' : '%',
+                                      (voucher.voucherTypeCode!.contains('2'))
+                                          ? 'đ'
+                                          : '%',
                                   locale: 'vi_vn')
                               .format((voucher.value)) +
                           ' đơn hàng',
@@ -95,7 +111,7 @@ class ShowVouchers extends StatelessWidget {
                 width: 10,
                 child: DecoratedBox(
                     decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.3),
+                        color: frameColor,
                         borderRadius: BorderRadius.only(
                             topRight: Radius.circular(15),
                             bottomRight: Radius.circular(15)))),
@@ -109,7 +125,7 @@ class ShowVouchers extends StatelessWidget {
                     children: List.generate(
                         (constraints.constrainWidth() / 10).floor(),
                         (index) => SizedBox(
-                              height: 1,
+                              height: 1.5,
                               width: 5,
                               child: DecoratedBox(
                                   decoration: BoxDecoration(
@@ -123,7 +139,7 @@ class ShowVouchers extends StatelessWidget {
                 width: 10,
                 child: DecoratedBox(
                     decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.3),
+                        color: frameColor,
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(15),
                             bottomLeft: Radius.circular(15)))),

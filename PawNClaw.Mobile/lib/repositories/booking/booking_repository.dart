@@ -24,7 +24,9 @@ class BookingRepository implements BaseBookingRepository {
       return result.toString();
       // return '';
     } on DioError catch (e) {
-      throw Exception(e.response!.data['Message']);
+      //throw Exception(e.response!.data);
+      print(e);
+      return e.response!.data["Message"];
     }
   }
 }

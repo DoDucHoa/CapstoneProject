@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:pawnclaw_mobile_application/models/activity.dart';
+import 'package:pawnclaw_mobile_application/models/pet.dart';
 import 'package:pawnclaw_mobile_application/models/review.dart';
 
 class TransactionDetails {
@@ -297,28 +298,33 @@ class Cage {
 }
 
 class CageType {
-  CageType({this.id, this.typeName});
+  CageType({this.id, this.typeName, this.photo});
 
   int? id;
   String? typeName;
+  Photo? photo;
   factory CageType.fromRawJson(String str) =>
       CageType.fromJson(json.decode(str));
 
-  factory CageType.fromJson(Map<String, dynamic> json) =>
-      CageType(id: json["id"], typeName: json["typeName"]);
+  factory CageType.fromJson(Map<String, dynamic> json) => CageType(
+      id: json["id"],
+      typeName: json["typeName"],
+      photo: json["photos"].first != null
+          ? Photo.fromJson(json["photos"].first)
+          : null);
 
-  Map<String, dynamic> toJson() => {"id": id, "typeName": typeName};
+  Map<String, dynamic> toJson() => {"id": id, "typeName": typeName, "photos": [photo!.toJson()]};
 
   String toRawJson() => json.encode(toJson());
 }
 
 class PetBookingDetail {
   PetBookingDetail({
-    this.line,
+    this.bookingDetailId,
     this.pet,
   });
 
-  int? line;
+  int? bookingDetailId;
   Pet? pet;
 
   factory PetBookingDetail.fromRawJson(String str) =>
@@ -328,51 +334,13 @@ class PetBookingDetail {
 
   factory PetBookingDetail.fromJson(Map<String, dynamic> json) =>
       PetBookingDetail(
-        line: json["line"],
+        bookingDetailId: json["bookingDetailId"],
         pet: Pet.fromJson(json["pet"]),
       );
 
   Map<String, dynamic> toJson() => {
-        "line": line,
+        "bookingDetailId": bookingDetailId,
         "pet": pet!.toJson(),
-      };
-}
-
-class Pet {
-  Pet(
-      {this.id,
-      this.name,
-      this.weight,
-      this.height,
-      this.length,
-      this.breedName});
-
-  int? id;
-  String? name;
-  double? weight;
-  double? length;
-  double? height;
-  String? breedName;
-
-  factory Pet.fromRawJson(String str) => Pet.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
-
-  factory Pet.fromJson(Map<String, dynamic> json) => Pet(
-      id: json["id"],
-      name: json["name"],
-      weight: json["weight"].toDouble(),
-      height: json["height"].toDouble(),
-      length: json["length"].toDouble(),
-      breedName: json["breedName"]);
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-        "weight": weight,
-        "height": height,
-        "length": length,
-        "breedName": breedName
       };
 }
 

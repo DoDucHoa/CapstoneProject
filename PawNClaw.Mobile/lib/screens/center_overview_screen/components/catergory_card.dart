@@ -53,6 +53,7 @@ class CatergoryCard extends StatelessWidget {
                 discountPrice: 0,
                 id: cage!.code!,
                 typeId: 0,
+                imgURL: cageType.photo?.url?? null,
                 redirect: CageDetails(
                   cageType: cageType,
                   cage: cage!,

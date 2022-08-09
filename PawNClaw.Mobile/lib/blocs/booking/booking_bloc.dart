@@ -38,16 +38,22 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         petId: event.petId,
         duration: booking.bookingCreateParameter!.due,
       );
+      print('ready $event');
       int detectedIndex = booking.isCageSelected(details);
       if (detectedIndex != -1) {
         print('change cage');
-        booking.bookingDetailCreateParameters!.removeAt(detectedIndex);
+        //booking.bookingDetailCreateParameters!.removeAt(detectedIndex);
+        //booking.bookingDetailCreateParameters!.forEach((element) {print(element.petId);});
+        booking.bookingDetailCreateParameters!.removeWhere(
+            (element) => element.petId.toString() == event.petId.toString());
+
         booking.bookingDetailCreateParameters!.add(details);
       } else {
         print('new cage');
         booking.bookingDetailCreateParameters!.add(details);
       }
-      print(booking.bookingDetailCreateParameters!.last.toJson());
+      //print(booking.bookingDetailCreateParameters!.last.toJson());
+      booking.selectedPetsIds = null;
       emit(BookingUpdated(booking: booking));
     });
     on<SelectSupply>(
@@ -57,23 +63,42 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
             new SupplyOrderCreateParameters(
                 petId: event.petId,
                 sellPrice: event.sellPrice,
-                totalPrice: event.sellPrice,
+                totalPrice: event.sellPrice * event.quantity,
                 supplyId: event.supplyId,
-                quantity: 1);
-        bool isExisted = false;
-        for (var element in booking.supplyOrderCreateParameters!) {
-          if (element.supplyId == supplyOrder.supplyId &&
-              element.petId == supplyOrder.petId) {
-            element.quantity = element.quantity! + 1;
-            element.totalPrice = element.totalPrice! + element.sellPrice!;
-            isExisted = true;
-            print("Updated");
+                quantity: event.quantity);
+        if (event.isUpdate != null && event.isUpdate == true) {
+          if (event.quantity == 0) {
+            booking.supplyOrderCreateParameters!.removeWhere((element) =>
+                element.supplyId == event.supplyId &&
+                element.petId == event.petId);
+          } else {
+            booking.supplyOrderCreateParameters!
+                .where((element) =>
+                    element.petId == event.petId &&
+                    element.supplyId == event.supplyId)
+                .forEach((element) {
+              element.quantity = event.quantity;
+              element.totalPrice = event.sellPrice * event.quantity;
+            });
+          }
+        } else {
+          bool isExisted = false;
+          for (var element in booking.supplyOrderCreateParameters!) {
+            if (element.supplyId == supplyOrder.supplyId &&
+                element.petId == supplyOrder.petId) {
+              element.quantity = element.quantity! + event.quantity;
+              element.totalPrice =
+                  element.totalPrice! + supplyOrder.totalPrice!;
+              isExisted = true;
+              print("Updated");
+            }
+          }
+          if (isExisted == false) {
+            booking.supplyOrderCreateParameters!.add(supplyOrder);
+            print("Added");
           }
         }
-        if (isExisted == false) {
-          booking.supplyOrderCreateParameters!.add(supplyOrder);
-          print("Added");
-        }
+
         emit(BookingUpdated(booking: booking));
       },
     );
@@ -98,25 +123,44 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         ServiceOrderCreateParameters serviceOrder =
             new ServiceOrderCreateParameters(
                 sellPrice: price,
-                totalPrice: price,
+                totalPrice: price * event.quantity,
                 petId: event.petId,
                 serviceId: event.serviceId,
-                quantity: 1);
-        bool isExisted = false;
-        for (var element in booking.serviceOrderCreateParameters!) {
-          if (element.serviceId == serviceOrder.serviceId &&
-              element.petId == serviceOrder.petId) {
-            element.quantity = element.quantity! + 1;
-            element.sellPrice = price;
-            element.totalPrice = element.totalPrice! + price;
-            isExisted = true;
-            print("Updated");
+                quantity: event.quantity);
+        if (event.isUpdate != null && event.isUpdate == true) {
+          if (event.quantity == 0) {
+            booking.serviceOrderCreateParameters!.removeWhere((element) =>
+                element.serviceId == event.serviceId &&
+                element.petId == event.petId);
+          } else {
+            booking.serviceOrderCreateParameters!
+                .where((element) =>
+                    element.petId == event.petId &&
+                    element.serviceId == event.serviceId)
+                .forEach((element) {
+              element.quantity = event.quantity;
+              element.totalPrice = price * event.quantity;
+            });
+          }
+        } else {
+          bool isExisted = false;
+          for (var element in booking.serviceOrderCreateParameters!) {
+            if (element.serviceId == serviceOrder.serviceId &&
+                element.petId == serviceOrder.petId) {
+              element.quantity = element.quantity! + event.quantity;
+              element.sellPrice = price;
+              element.totalPrice =
+                  element.totalPrice! + serviceOrder.totalPrice!;
+              isExisted = true;
+              print("Updated");
+            }
+          }
+          if (isExisted == false) {
+            booking.serviceOrderCreateParameters!.add(serviceOrder);
+            print("Added");
           }
         }
-        if (isExisted == false) {
-          booking.serviceOrderCreateParameters!.add(serviceOrder);
-          print("Added");
-        }
+
         emit(BookingUpdated(booking: booking));
       },
     );
@@ -125,8 +169,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       BookingRequestModel booking = (state as BookingUpdated).booking;
       booking.selectedPetsIds = event.petId;
       emit(BookingUpdated(booking: booking));
-      print("petid : " +
-          (state as BookingUpdated).booking.selectedPetsIds.toString());
+      // print("petid : " +
+      //     (state as BookingUpdated).booking.selectedPetsIds.toString());
     });
 
     on<AddVoucher>((event, emit) {
