@@ -46,6 +46,8 @@ namespace PawNClaw.API
             services.AddTransient<NotificationService, NotificationService>();
             services.AddTransient<SearchService, SearchService>();
 
+            services.AddTransient<LogsService, LogsService>();
+
             services.AddTransient<IRoleRepository, RoleRepository>();
 
             services.AddTransient<IAccountRepository, AccountRepository>();

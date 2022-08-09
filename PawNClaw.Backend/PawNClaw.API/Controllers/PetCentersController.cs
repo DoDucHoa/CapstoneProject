@@ -17,11 +17,15 @@ namespace PawNClaw.API.Controllers
     {
         private readonly PetCenterService _petCenterService;
         private readonly SearchService _searchService;
+        private LogsService _logService;
+        private AccountService _accountService;
 
-        public PetCentersController(SearchService searchService, PetCenterService petCenterService)
+        public PetCentersController(SearchService searchService, PetCenterService petCenterService, LogsService logsService, AccountService accountService)
         {
             _searchService = searchService;
             _petCenterService = petCenterService;
+            _logService = logsService;
+            _accountService = accountService;
         }
 
         [HttpPost]
@@ -185,7 +189,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Create([FromBody] CreatePetCenterParameter parameter)
         {
             var petCenter = new PetCenter
@@ -217,6 +221,14 @@ namespace PawNClaw.API.Controllers
             try
             {
                 var id = await _petCenterService.Add(petCenter, location, parameter.FullAddress);
+                await _logService.AddLog(new ActionLogsParameter()
+                {
+                    Id = (long) parameter.CreateUser,
+                    Name = _accountService.GetAccountById((int) parameter.CreateUser).Admin.Name,
+                    Target = "Center " + parameter.Name,
+                    Type = "Create",
+                    Time = DateTime.Now,
+                });
 
                 return Ok(id);
             }
@@ -233,7 +245,14 @@ namespace PawNClaw.API.Controllers
             {
 
                 await _petCenterService.UpdateForAdminAsync(petCenterRequestParameter);
-
+                await _logService.AddLog(new ActionLogsParameter()
+                {
+                    Id = petCenterRequestParameter.ModifyUser,
+                    Name = _accountService.GetAccountById(petCenterRequestParameter.ModifyUser).Admin.Name,
+                    Target = "Center " + _petCenterService.GetById(petCenterRequestParameter.Id).Name,
+                    Type = "Update",
+                    Time = DateTime.Now,
+                });
                 return Ok();
             }
             catch(Exception e)
@@ -260,7 +279,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult Delete(int id)
         {
             if (_petCenterService.Delete(id))
@@ -269,7 +288,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("restore/{id}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult Restore(int id)
         {
             if (_petCenterService.Restore(id))

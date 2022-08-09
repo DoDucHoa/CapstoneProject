@@ -38,7 +38,22 @@ namespace PawNClaw.Business.Services
         //Get All
         public PagedList<PetCenter> GetAll(string includeProperties, PagingParameter paging)
         {
-            var values = _petCenterRepository.GetAll(includeProperties: "Brand,Bookings");
+            var values = _petCenterRepository.GetAll(includeProperties: "Brand,Bookings").Select(x => new PetCenter()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Address = x.Address,
+                Phone = x.Phone,
+                Rating = x.Rating,
+                CreateDate = x.CreateDate,
+                Status = x.Status,
+                OpenTime = x.OpenTime,
+                CloseTime = x.CloseTime,
+                Description = x.Description,
+                BrandId = x.BrandId,
+                Bookings = x.Bookings,
+                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
+            });
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
