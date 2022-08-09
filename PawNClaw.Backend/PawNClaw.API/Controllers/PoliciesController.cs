@@ -30,7 +30,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdatePolicy(string newPolicy)
+        public async Task<IActionResult> UpdatePolicy([FromBody] string newPolicy)
         {
             try
             {
