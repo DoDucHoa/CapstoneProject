@@ -18,5 +18,20 @@ namespace PawNClaw.API.Controllers
         {
             this.customerService = customerService;
         }
+
+        [HttpPut("update-status")]
+        public IActionResult updateStatus(int id)
+        {
+            try
+            {
+                customerService.UpdateStatus(id);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
     }
 }
