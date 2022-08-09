@@ -185,7 +185,7 @@ namespace PawNClaw.Business.Services
         public PetCenter GetByStaffId(int id)
         {
             var staff = _staffRepository.GetFirstOrDefault(x => x.Id == id);
-            var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == staff.CenterId, includeProperties: "Bookings");
+            var value = _petCenterRepository.GetPetCenterByIdAfterSearchName(staff.CenterId);
             return value;
         }
 

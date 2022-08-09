@@ -1,3 +1,5 @@
+import 'package:pncstaff_mobile_application/models/photo.dart';
+
 class PetCenter {
   int? id;
   String? name;
@@ -17,7 +19,7 @@ class PetCenter {
   String? checkout;
   int? ratingCount;
   String? endBooking;
-  Null? photos;
+  Photo? photos;
 
   PetCenter(
       {this.id,
@@ -59,7 +61,7 @@ class PetCenter {
     checkout = json['checkout'];
     ratingCount = json['ratingCount'];
     endBooking = json['endBooking'];
-    photos = json['photos'];
+    photos = Photo.fromJson(json['photos']);
   }
 
   Map<String, dynamic> toJson() {
@@ -82,7 +84,7 @@ class PetCenter {
     data['checkout'] = this.checkout;
     data['ratingCount'] = this.ratingCount;
     data['endBooking'] = this.endBooking;
-    data['photos'] = this.photos;
+    data['photos'] = this.photos?.toJson();
     return data;
   }
 }

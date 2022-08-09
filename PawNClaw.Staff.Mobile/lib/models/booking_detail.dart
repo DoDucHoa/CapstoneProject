@@ -312,7 +312,7 @@ class BookingDetails {
   double? duration;
   // Null? note;
   // Null? booking;
-  // Null? c;
+  // Cage? c;
   List<BookingActivities>? bookingActivities;
   List<PetBookingDetails>? petBookingDetails;
   List<FoodSchedules>? foodSchedules;

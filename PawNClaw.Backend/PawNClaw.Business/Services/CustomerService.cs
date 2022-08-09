@@ -38,6 +38,8 @@ namespace PawNClaw.Business.Services
                         cus.IdNavigation.Status = false;
                         break;
                 }
+                _customerRepository.Update(cus);
+                _customerRepository.SaveDbChange();
             }
             catch
             {
