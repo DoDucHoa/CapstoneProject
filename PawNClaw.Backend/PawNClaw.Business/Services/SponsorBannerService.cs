@@ -28,7 +28,7 @@ namespace PawNClaw.Business.Services
 
         public IEnumerable<SponsorBanner> GetBanners()
         {
-            var values = _sponsorBannerRepository.GetSponsorBanners();
+            var values = _sponsorBannerRepository.GetSponsorBanners().OrderByDescending(x => x.EndDate);
 
             return values;
         }
