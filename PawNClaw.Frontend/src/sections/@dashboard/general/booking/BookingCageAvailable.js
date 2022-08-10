@@ -14,7 +14,7 @@ import { getTotalCage } from './useOwnerDashboardAPI';
 
 // ----------------------------------------------------------------------
 BookingCageAvailable.propTypes = {
-  centerId: PropTypes.number,
+  centerId: PropTypes.any,
   from: PropTypes.any,
   to: PropTypes.any,
 };

@@ -18,7 +18,6 @@ import useAuth from '../../../hooks/useAuth';
 // components
 import { FormProvider, RHFSelect, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
 import Iconify from '../../../components/Iconify';
-import Label from '../../../components/Label';
 import { createAdmin, updateAdmin } from '../../../pages/dashboard/Admin/useAdminAPI';
 
 // ----------------------------------------------------------------------
@@ -55,7 +54,7 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
     confirmPassword: Yup.string()
       .required('Bắt buộc nhập')
       .oneOf([Yup.ref('password'), null], 'Mật khẩu không khớp'),
-    phoneNumber: Yup.string(),
+    phone: Yup.string(),
     createdUser: Yup.number().required(),
     gender: Yup.number().required(),
     avatarUrl: Yup.mixed(),
@@ -67,10 +66,10 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
       email: adminData?.email || '',
       password: isEdit ? specialString : '',
       confirmPassword: isEdit ? specialString : '',
-      phoneNumber: adminData?.phone || '',
+      phone: adminData?.idNavigation?.phone || '',
       createdUser: adminData?.createdUser || 0,
       gender: adminData?.gender || 1,
-      avatarUrl: adminData?.avatarUrl || '',
+      avatarUrl: adminData?.idNavigation?.photos.length > 0 ? adminData?.idNavigation?.photos[0].url : '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [adminData]
@@ -105,17 +104,15 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
     try {
       if (!isEdit) {
         await Promise.all([
-          createAdmin(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender).then(
-            (accountId) => {
-              if (values.avatarUrl) {
-                uploadPhotoToFirebase('moderators', values.avatarUrl, accountId, 'account');
-              }
+          createAdmin(values.email, accountInfo.id, values.phone, values.name, values.gender).then((accountId) => {
+            if (values.avatarUrl) {
+              uploadPhotoToFirebase('moderators', values.avatarUrl, accountId, 'account');
             }
-          ), // create account on Backend
+          }), // create account on Backend
           register(values.email, values.password), // create account on Firebase
         ]);
       } else {
-        updateAdmin(accountInfo.id, values.name, values.phoneNumber, values.gender);
+        updateAdmin(accountInfo.id, values.name, values.phone, values.gender);
 
         // change password on Firebase
         // if (values.password !== specialString) {
@@ -152,15 +149,6 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
           <Card sx={{ py: 10, px: 3 }}>
-            {isEdit && (
-              <Label
-                color={adminData.status !== 'true' ? 'error' : 'success'}
-                sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
-              >
-                {adminData.status !== 'true' ? 'Đã khóa' : 'Hoạt động'}
-              </Label>
-            )}
-
             <Box sx={{ mb: 5 }}>
               <RHFUploadAvatar
                 name="avatarUrl"
@@ -201,7 +189,7 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
 
               <RHFTextField name="email" label="Email" disabled={isEdit} />
 
-              <RHFTextField name="phoneNumber" label="Số điện thoại" />
+              <RHFTextField name="phone" label="Số điện thoại" />
 
               <RHFSelect
                 name="gender"

@@ -91,9 +91,9 @@ export default function UserList() {
     const response = await getCustomers(page, rowsPerPage, filterStatus, searchRequest);
     const { data, metadata } = response;
 
-    const customers = data.map((customer, index) => ({
+    const customers = data.map((customer) => ({
       id: customer.id,
-      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`,
+      avatarUrl: customer?.idNavigation?.photos?.length > 0 ? customer?.idNavigation?.photos[0].url : '',
       name: customer.customer.name,
       gender: customer.customer.gender,
       birth: customer.customer.birth,

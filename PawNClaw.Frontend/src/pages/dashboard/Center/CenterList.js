@@ -64,7 +64,9 @@ const TABLE_HEAD = [
 export default function CenterList() {
   const [tableData, setTableData] = useState([]);
   const [metadata, setMetadata] = useState({});
+
   const [filterName, setFilterName] = useState('');
+  const [filterBrandName, setFilterBrandName] = useState('');
 
   const [searchRequest, setSearchRequest] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
@@ -89,7 +91,7 @@ export default function CenterList() {
   };
 
   const getCenterData = async () => {
-    const response = await getCenters(page, rowsPerPage, filterStatus, searchRequest);
+    const response = await getCenters(page, rowsPerPage, filterStatus, searchRequest, filterBrandName);
     const { data, metadata } = response;
 
     const centers = data.map((center) => ({
@@ -111,7 +113,7 @@ export default function CenterList() {
       setMetadata({});
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, rowsPerPage, filterStatus, searchRequest]);
+  }, [page, rowsPerPage, filterStatus, searchRequest, filterBrandName, filterName]);
 
   const { themeStretch } = useSettings();
 
@@ -121,8 +123,17 @@ export default function CenterList() {
     setFilterName(filterName);
   };
 
+  const handleFilterBrandName = (filterBrandName) => {
+    setFilterBrandName(filterBrandName);
+  };
+
   const handleSearchRequest = (name) => {
     setSearchRequest(name);
+    setPage(0);
+  };
+
+  const handleSearchBrandName = (name) => {
+    setFilterBrandName(name);
     setPage(0);
   };
 
@@ -152,6 +163,7 @@ export default function CenterList() {
 
   const isNotFound =
     (!(metadata.totalCount ? metadata.totalCount : 0) && !!filterName) ||
+    (!(metadata.totalCount ? metadata.totalCount : 0) && !!filterBrandName) ||
     (!(metadata.totalCount ? metadata.totalCount : 0) && !!filterStatus);
 
   return (
@@ -192,8 +204,11 @@ export default function CenterList() {
             {/* Filter dữ liệu */}
             <CenterTableToolbar
               filterName={filterName}
+              filterBrandName={filterBrandName}
               onFilterName={handleFilterName}
               onEnterPress={handleSearchRequest}
+              onFilterBrandName={handleFilterBrandName}
+              onEnterPressBrandName={handleSearchBrandName}
             />
 
             {/* Scrollbar dùng để tạo scroll ngang cho giao diện điện thoại */}

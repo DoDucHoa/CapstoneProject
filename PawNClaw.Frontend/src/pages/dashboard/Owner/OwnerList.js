@@ -55,6 +55,7 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Họ Tên', align: 'left' },
   { id: 'email', label: 'Email', align: 'left' },
   { id: 'phone', label: 'Số điện thoại', align: 'left' },
+  { id: 'brandName', label: 'Thương hiệu', align: 'left' },
   { id: 'status', label: 'Trạng thái', align: 'left' },
   { id: '' },
 ];
@@ -91,13 +92,14 @@ export default function UserList() {
     const response = await getOwners(page, rowsPerPage, filterStatus, searchRequest);
     const { data, metadata } = response;
 
-    const owners = data.map((owner, index) => ({
+    const owners = data.map((owner) => ({
       id: owner.id,
-      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`, // TODO: update photo for owner list
+      avatarUrl: owner?.idNavigation?.photos?.length > 0 ? owner?.idNavigation?.photos[0].url : '',
       name: owner.name,
       email: owner.email,
       phoneNumber: owner.idNavigation.phone,
       status: owner.idNavigation.status,
+      brandName: owner?.brands?.length > 0 ? owner?.brands[0].name : 'Chưa có',
     }));
     setTableData(owners);
     setMetadata(metadata);
@@ -122,7 +124,7 @@ export default function UserList() {
   };
 
   const handleEditRow = (id) => {
-    navigate(PATH_DASHBOARD.admin.edit(id));
+    navigate(PATH_DASHBOARD.owner.edit(id));
   };
 
   const handleBanAdmin = async (id) => {
