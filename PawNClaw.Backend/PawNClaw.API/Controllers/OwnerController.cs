@@ -72,18 +72,17 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin,Moderator")]
+        //[Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Update(int id, [FromBody] OwnerRequestParameter owner)
         {
             var ownerDb = _OwnerService.GetOwnerByIdForUpdate(id);
-            ownerDb.Email = owner.Email;
             ownerDb.Name = owner.Name;
 
             if (_OwnerService.Update(ownerDb, owner.Phone))
             {
                 await _logService.AddLog(new ActionLogsParameter()
                 {
-                    Id = (long) owner.Id,
+                    Id = (long)owner.Id,
                     Name = _accountService.GetAccountById(owner.ModifyUser).Admin.Name,
                     Target = "Owner " + owner.Name,
                     Type = "Update",
