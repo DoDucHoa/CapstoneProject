@@ -189,13 +189,13 @@ namespace PawNClaw.API.Controllers
                 else
                 {
                     //get all staff of center
-                    var staffs = _staffServices.GetAllByCenterId(data.CenterId);
+                    //var staffs = _staffServices.GetAllByCenterId(data.CenterId);
                     //get registrationtokens
-                    List<string> registrationTokens = new List<string>();
+                    /*List<string> registrationTokens = new List<string>();
                     foreach (Staff staff in staffs)
                     {
                         registrationTokens.Add(staff.IdNavigation.DeviceId);
-                    }
+                    }*/
                     //insert data to message
                     var noti = new Dictionary<string, string>() {
                         { "Type", "Booking" },
@@ -203,9 +203,9 @@ namespace PawNClaw.API.Controllers
                     var title = "Đơn hàng mới";
                     var content = "Trung tâm của bạn vừa có một đơn hàng mới";
                     //send notification
-                    _notificationService.SendNoti(registrationTokens, noti, title, content);
+                    //_notificationService.SendNoti(registrationTokens, noti, title, content);
                     //add notification to firebase
-                    NotificationParameter notification = new NotificationParameter()
+                    /*NotificationParameter notification = new NotificationParameter()
                     {
                         actorId = data.Id,
                         actorType = "Booking",
@@ -214,7 +214,7 @@ namespace PawNClaw.API.Controllers
                         title = title,
                         content = content,
                         time = DateTime.Now
-                    };
+                    };*/
                     //await _notificationService.AddNotification(notification);
                 }
                 return Ok(data);

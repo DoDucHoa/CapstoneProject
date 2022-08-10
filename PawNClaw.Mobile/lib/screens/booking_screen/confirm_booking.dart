@@ -774,9 +774,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                             request.bookingCreateParameter!.total =
                                 request.getTotal();
                             print(request.bookingCreateParameter!.total);
-                            // BlocProvider.of<BookingBloc>(context).add(
-                            //     ConfirmBookingRequest(
-                            //         state.booking, widget.center));
+                            // 3//         state.booking, widget.center));
                             await BookingRepository().createBooking(request);
                             // // isCreated = false;
                             // if (isCreated == '200') {
