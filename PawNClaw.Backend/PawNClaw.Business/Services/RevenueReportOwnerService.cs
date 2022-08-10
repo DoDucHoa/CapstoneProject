@@ -31,7 +31,9 @@ namespace PawNClaw.Business.Services
 
             if (from != null && to != null)
             {
-                booking = booking.Where(x => (x.StartBooking >= from && x.StartBooking <= to) || (x.EndBooking >= from && x.EndBooking <= to));
+                booking = booking.Where(x => (((DateTime)x.StartBooking).Date >= ((DateTime)from).Date && ((DateTime)x.StartBooking).Date <= ((DateTime)to).Date) 
+                                                || (((DateTime)x.StartBooking).Date <= ((DateTime)from).Date && ((DateTime)x.EndBooking).Date >= ((DateTime)from).Date) 
+                                                || (((DateTime)x.StartBooking).Date <= ((DateTime)to).Date && ((DateTime)x.EndBooking).Date >= ((DateTime)to).Date));
             }
 
             BookingCount bookingCount = new BookingCount()
@@ -47,7 +49,9 @@ namespace PawNClaw.Business.Services
 
             if (from != null && to != null)
             {
-                bookings = bookings.Where(x => (x.StartBooking >= from && x.StartBooking <= to) || (x.EndBooking >= from && x.EndBooking <= to));
+                bookings = bookings.Where(x => (((DateTime)x.StartBooking).Date >= ((DateTime)from).Date && ((DateTime)x.StartBooking).Date <= ((DateTime)to).Date)
+                                                || (((DateTime)x.StartBooking).Date <= ((DateTime)from).Date && ((DateTime)x.EndBooking).Date >= ((DateTime)from).Date)
+                                                || (((DateTime)x.StartBooking).Date <= ((DateTime)to).Date && ((DateTime)x.EndBooking).Date >= ((DateTime)to).Date)); ;
             }
 
             BookingCountWithStatus bookingCount = new BookingCountWithStatus()
