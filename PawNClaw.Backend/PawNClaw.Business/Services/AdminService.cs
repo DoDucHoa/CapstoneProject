@@ -36,7 +36,7 @@ namespace PawNClaw.Business.Services
             }
             if (!string.IsNullOrWhiteSpace(_requestParameter.Name))
             {
-                values = values.Where(x => x.Name.Trim().Equals(_requestParameter.Name));
+                values = values.Where(x => x.Name.Trim().Contains(_requestParameter.Name));
             }
             if (!string.IsNullOrEmpty(_requestParameter.Email))
             {
