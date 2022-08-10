@@ -26,13 +26,13 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    password: Yup.string().required('Password is required'),
+    email: Yup.string().email('Email không hợp lệ').required('Bắt buộc nhập'),
+    password: Yup.string().required('Bắt buộc nhập'),
   });
 
   const defaultValues = {
-    email: 'pawnclaw.ad@gmail.com',
-    password: 'pawnclaw@09/05/2022',
+    email: '',
+    password: '',
     remember: true,
   };
 

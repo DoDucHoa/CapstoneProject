@@ -7,7 +7,7 @@ import { MenuItem, TableCell, TableRow, Typography } from '@mui/material';
 // components
 import Iconify from '../../../../components/Iconify';
 import { TableMoreMenu } from '../../../../components/table';
-import { fVNDate } from '../../../../utils/formatTime';
+import { fVNMonth } from '../../../../utils/formatTime';
 import Image from '../../../../components/Image';
 
 // ----------------------------------------------------------------------
@@ -49,7 +49,7 @@ export default function SponsorTableRow({ row, onEditRow, onDeleteRow }) {
 
       <TableCell align="left">{brandName}</TableCell>
 
-      <TableCell align="center">{fVNDate(endDate)}</TableCell>
+      <TableCell align="center">{fVNMonth(endDate)}</TableCell>
 
       <TableCell align="right">
         <TableMoreMenu

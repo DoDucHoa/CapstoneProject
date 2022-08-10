@@ -71,6 +71,7 @@ export default function OwnerProfile() {
       name: profileData?.name || '',
       email: profileData?.email || '',
       gender: profileData?.gender || 1,
+      modifyUser: accountInfo.id,
       phone: profileData?.idNavigation?.phone || '',
       avatarUrl: profileData?.idNavigation?.avatarUrl || null,
       password: '',
@@ -112,6 +113,7 @@ export default function OwnerProfile() {
         gender: data.gender,
         phone: data.idNavigation.phone,
         avatarUrl: data.idNavigation.avatarUrl,
+        modifyUser: accountInfo.id,
       };
       setProfileData(profile);
       reset(profile);
@@ -298,5 +300,6 @@ async function updateOwnerProfile(profileId, values) {
     id: profileId,
     name: values.name,
     phone: values.phone,
+    modifyUser: values.modifyUser,
   });
 }

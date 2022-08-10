@@ -45,7 +45,7 @@ const TABLE_HEAD = [
   { id: 'title', label: 'Tiêu đề', align: 'left' },
   { id: 'content', label: 'Nội dung', align: 'left' },
   { id: 'brandName', label: 'Thương hiệu', align: 'left' },
-  { id: 'endDate', label: 'Ngày kết thúc', align: 'center' },
+  { id: 'endDate', label: 'Tháng', align: 'center' },
   { id: '' },
 ];
 

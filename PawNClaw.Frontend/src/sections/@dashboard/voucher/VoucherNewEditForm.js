@@ -1,5 +1,6 @@
 import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
+import { sub } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -14,7 +15,7 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
 import useAuth from '../../../hooks/useAuth';
 // components
-import { FormProvider, RHFSelect, RHFTextField } from '../../../components/hook-form';
+import { FormProvider, RHFSelect, RHFTextField, RHFDatePicker } from '../../../components/hook-form';
 import { createVoucher, getVoucherType, updateVoucher } from '../../../pages/dashboard/Voucher/useVoucherAPI';
 
 // ----------------------------------------------------------------------
@@ -30,6 +31,8 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
   const { enqueueSnackbar } = useSnackbar();
 
   const [voucherType, setVoucherType] = useState([]);
+  const [oldReleaseAmount, setOldReleaseAmount] = useState(0);
+  const [oldExpireDate, setOldExpireDate] = useState(null);
 
   const NewUserSchema = Yup.object().shape({
     code: Yup.string().required('Bắt buộc nhập'),
@@ -52,9 +55,47 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
     releaseAmount: Yup.number()
       .required('Bắt buộc nhập')
       .typeError('Bắt buộc nhập')
-      .moreThan(0, 'Giá trị phải lớn hơn 0'),
+      .moreThan(0, 'Giá trị phải lớn hơn 0')
+      .test({
+        name: 'releaseAmount',
+        params: { oldReleaseAmount },
+        test: (value) => value >= oldReleaseAmount,
+        message: 'Giá trị không được nhỏ hơn giá trị cũ',
+      }),
     voucherTypeCode: Yup.string().required('Bắt buộc nhập'),
     description: Yup.string(),
+    startDate: Yup.date()
+      .required('Bắt buộc nhập')
+      .typeError('Bắt buộc nhập')
+      .test({
+        name: 'is-after-current-date',
+        params: { isEdit },
+        test: (value) => {
+          if (!isEdit) {
+            if (value) {
+              return value > sub(new Date(), { days: 1 });
+            }
+          }
+          return true;
+        },
+        message: 'Ngày bắt đầu không được nhỏ hơn ngày hiện tại',
+      }),
+    expireDate: Yup.date()
+      .required('Bắt buộc nhập')
+      .typeError('Bắt buộc nhập')
+      .min(Yup.ref('startDate'), 'Ngày hết hạn phải lớn hơn ngày bắt đầu')
+      .test({
+        name: 'expireDate',
+        params: { oldExpireDate },
+        test: (value) => {
+          const expireDate = new Date(oldExpireDate).setHours(0, 0, 0, 0);
+          if (value < new Date(expireDate)) {
+            return false;
+          }
+          return true;
+        },
+        message: 'Ngày hết hạn không được nhỏ hơn ngày hết hạn cũ',
+      }),
   });
 
   const defaultValues = useMemo(
@@ -65,6 +106,8 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
       voucherTypeCode: voucherData.voucherTypeCode || '1',
       description: voucherData.description || '',
       releaseAmount: voucherData.releaseAmount || 0,
+      startDate: voucherData.startDate || new Date(),
+      expireDate: voucherData.expireDate || '',
 
       createDate: voucherData.createDate || new Date(),
       modifyDate: new Date(),
@@ -107,6 +150,13 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
       setVoucherType(res);
     });
   }, []);
+
+  useEffect(() => {
+    if (isEdit && voucherData) {
+      setOldReleaseAmount(voucherData.releaseAmount);
+      setOldExpireDate(voucherData.expireDate);
+    }
+  }, [isEdit, voucherData]);
 
   const onSubmit = async () => {
     try {
@@ -180,7 +230,15 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <RHFTextField name="releaseAmount" label="Số lượng phát hành" disabled={isEdit} type="number" />
+                <RHFTextField name="releaseAmount" label="Số lượng phát hành" type="number" />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <RHFDatePicker name="startDate" label="Ngày bắt đầu" disabled={isEdit} />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <RHFDatePicker name="expireDate" label="Ngày hết hạn" />
               </Grid>
 
               <Grid item xs={12}>
