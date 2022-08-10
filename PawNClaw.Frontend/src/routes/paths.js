@@ -49,6 +49,12 @@ export const PATH_DASHBOARD = {
     new: path(ROOTS_DASHBOARD, '/owner/new'),
     edit: (id) => path(ROOTS_DASHBOARD, `/owner/${id}/edit`),
   },
+  customer: {
+    root: path(ROOTS_DASHBOARD, '/customer'),
+    list: path(ROOTS_DASHBOARD, '/customer/list'),
+    new: path(ROOTS_DASHBOARD, '/customer/new'),
+    edit: (id) => path(ROOTS_DASHBOARD, `/customer/${id}/edit`),
+  },
   user: {
     root: path(ROOTS_DASHBOARD, '/user'),
     new: path(ROOTS_DASHBOARD, '/user/new'),
@@ -127,6 +133,12 @@ export const PATH_DASHBOARD = {
   setting: {
     root: path(ROOTS_DASHBOARD, '/setting'),
     list: path(ROOTS_DASHBOARD, '/setting/list'),
+  },
+  policy: {
+    root: path(ROOTS_DASHBOARD, '/policy'),
+  },
+  logAction: {
+    root: path(ROOTS_DASHBOARD, '/log-action'),
   },
   sponsor: {
     root: path(ROOTS_DASHBOARD, '/sponsor'),

@@ -25,6 +25,7 @@ import {
   getDistricts,
   getWards,
   updateCenter,
+  updateCenterForOwner,
 } from '../../../pages/dashboard/Center/useCenterAPI';
 import BrandDialog from './BrandDialog';
 import Iconify from '../../../components/Iconify';
@@ -46,11 +47,12 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
 
   // * ----------------------------------------------------------------------
   // HOOKS
-  const { accountInfo, uploadPhotoToFirebase } = useAuth();
+  const { accountInfo, uploadPhotoToFirebase, centerId } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
   // * ----------------------------------------------------------------------
   // FORM
+  // TODO: validate lại thời gian chưa xài reset() do xài onChange
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Bắt buộc nhập'),
     address: Yup.string().required('Bắt buộc nhập'),
@@ -69,6 +71,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
 
   const defaultValues = useMemo(
     () => ({
+      id: centerData?.id || null,
       name: centerData?.name || '',
       address: centerData?.address || '',
       phone: centerData?.phone || '',
@@ -144,13 +147,15 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
       if (!isEdit) {
         const centerId = await createCenter(values);
         await uploadPhotoToFirebase('petCenters', values.avatarUrl, centerId, 'petcenter');
+      } else if (centerId) {
+        await updateCenterForOwner(values);
       } else {
         await updateCenter(values);
       }
 
       reset();
       enqueueSnackbar(!isEdit ? 'Tạo mới thành công' : 'Cập nhật thành công');
-      navigate(PATH_DASHBOARD.center.list);
+      if (!centerId) navigate(PATH_DASHBOARD.center.list);
     } catch (error) {
       console.error(error);
     }
@@ -243,7 +248,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
           <Card sx={{ p: 3 }}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
-                <RHFTextField name="name" label="Tên trung tâm" />
+                <RHFTextField name="name" label="Tên trung tâm" disabled={centerId} />
               </Grid>
 
               <Grid item xs={12} sm={6}>
@@ -257,6 +262,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
                   InputLabelProps={{ shrink: true }}
                   SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
                   sx={{ maxHeight: 50 }}
+                  disabled={centerId}
                 >
                   {cities?.length > 0 ? (
                     cities?.map((city) => (
@@ -298,6 +304,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
                   InputLabelProps={{ shrink: true }}
                   SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
                   sx={{ maxHeight: 50 }}
+                  disabled={centerId}
                 >
                   {districts?.length > 0 ? (
                     districts?.map((district) => (
@@ -339,6 +346,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
                   InputLabelProps={{ shrink: true }}
                   SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
                   sx={{ maxHeight: 50 }}
+                  disabled={centerId}
                 >
                   {wards?.length > 0 ? (
                     wards?.map((ward) => (
@@ -374,7 +382,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <RHFTextField name="address" label="Địa chỉ" />
+                <RHFTextField name="address" label="Địa chỉ" disabled={centerId} />
               </Grid>
 
               <Grid item xs={6}>
@@ -426,15 +434,17 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
               <Grid item xs={12}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <Typography>Thương hiệu</Typography>
-                  <Button
-                    disabled={isEdit}
-                    onClick={handleOpen}
-                    sx={{ width: 100, ml: 5 }}
-                    variant="text"
-                    startIcon={<Iconify icon={brandInfo ? 'eva:edit-fill' : 'eva:plus-fill'} color="primary" />}
-                  >
-                    {brandInfo ? 'Thay đổi' : 'Thêm'}
-                  </Button>
+                  {!centerId && (
+                    <Button
+                      disabled={isEdit}
+                      onClick={handleOpen}
+                      sx={{ width: 100, ml: 5 }}
+                      variant="text"
+                      startIcon={<Iconify icon={brandInfo ? 'eva:edit-fill' : 'eva:plus-fill'} color="primary" />}
+                    >
+                      {brandInfo ? 'Thay đổi' : 'Thêm'}
+                    </Button>
+                  )}
                 </Box>
                 {brandInfo ? (
                   <BrandInfo brandName={brandInfo?.name} ownerName={brandInfo?.owner?.name} />
@@ -447,9 +457,11 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
             </Grid>
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
-              <Button to={PATH_DASHBOARD.center.list} color="error" variant="contained" component={RouterLink}>
-                Hủy
-              </Button>
+              {!centerId && (
+                <Button to={PATH_DASHBOARD.center.list} color="error" variant="contained" component={RouterLink}>
+                  Hủy
+                </Button>
+              )}
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                 {!isEdit ? 'Tạo' : 'Cập nhật'}
               </LoadingButton>

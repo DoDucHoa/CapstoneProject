@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // @mui
 import {
@@ -32,16 +32,15 @@ import useTable, { emptyRows } from '../../../hooks/useTable';
 
 // components
 import Page from '../../../components/Page';
-import Iconify from '../../../components/Iconify';
 import Scrollbar from '../../../components/Scrollbar';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { TableEmptyRows, TableHeadCustom, TableNoData } from '../../../components/table';
 
 // sections
-import { OwnerTableRow, OwnerTableToolbar } from '../../../sections/@dashboard/owner/list';
+import { CustomerTableRow, CustomerTableToolbar } from '../../../sections/@dashboard/customer/list';
 
 // API
-import { getOwners, banOwner, unbanOwner } from './useOwnerAPI';
+import { changeCustomerStatus, getCustomers } from './useCustomerAPI';
 
 // ----------------------------------------------------------------------
 
@@ -66,8 +65,9 @@ export default function UserList() {
   const [metadata, setMetadata] = useState({});
   const [filterName, setFilterName] = useState('');
   const [searchRequest, setSearchRequest] = useState('');
+
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectIdAdmin, setSelectIdAdmin] = useState();
+  const [selectIdCustomer, setSelectIdCustomer] = useState();
 
   const {
     page,
@@ -87,24 +87,26 @@ export default function UserList() {
     setPage(0);
   };
 
-  const getOwnerData = async () => {
-    const response = await getOwners(page, rowsPerPage, filterStatus, searchRequest);
+  const getCustomerData = async () => {
+    const response = await getCustomers(page, rowsPerPage, filterStatus, searchRequest);
     const { data, metadata } = response;
 
-    const owners = data.map((owner, index) => ({
-      id: owner.id,
-      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`, // TODO: update photo for owner list
-      name: owner.name,
-      email: owner.email,
-      phoneNumber: owner.idNavigation.phone,
-      status: owner.idNavigation.status,
+    const customers = data.map((customer, index) => ({
+      id: customer.id,
+      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`,
+      name: customer.customer.name,
+      gender: customer.customer.gender,
+      birth: customer.customer.birth,
+      email: customer.userName,
+      phone: customer.phone,
+      status: customer.status,
     }));
-    setTableData(owners);
+    setTableData(customers);
     setMetadata(metadata);
   };
 
   useEffect(() => {
-    getOwnerData();
+    getCustomerData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, rowsPerPage, filterStatus, searchRequest]);
 
@@ -125,23 +127,23 @@ export default function UserList() {
     navigate(PATH_DASHBOARD.admin.edit(id));
   };
 
-  const handleBanAdmin = async (id) => {
-    await banOwner(id);
-    await getOwnerData();
-  };
-
-  const handleUnbanAdmin = async (id) => {
-    await unbanOwner(id);
-    await getOwnerData();
-  };
-
-  const handleOpenBanDialog = (idAdmin) => {
-    setSelectIdAdmin(idAdmin);
+  const handleOpenBanDialog = (idCustomer) => {
+    setSelectIdCustomer(idCustomer);
     setOpenDialog(true);
   };
 
   const handleCloseBanDialog = () => {
     setOpenDialog(false);
+  };
+
+  const handleUnbanCustomer = async (id) => {
+    await changeCustomerStatus(id);
+    await getCustomerData();
+  };
+
+  const handleBanCustomer = async (id) => {
+    await changeCustomerStatus(id);
+    await getCustomerData();
   };
 
   const denseHeight = 72;
@@ -152,21 +154,11 @@ export default function UserList() {
 
   return (
     <>
-      <Page title="Chủ trung tâm">
+      <Page title="Khách hàng">
         <Container maxWidth={themeStretch ? false : 'lg'}>
           <HeaderBreadcrumbs
-            heading="Danh sách chủ trung tâm"
-            links={[{ name: 'Trang chủ', href: PATH_DASHBOARD.root }, { name: 'Danh sách chủ trung tâm' }]}
-            action={
-              <Button
-                variant="contained"
-                component={RouterLink}
-                to={PATH_DASHBOARD.owner.new}
-                startIcon={<Iconify icon={'eva:plus-fill'} />}
-              >
-                Thêm mới chủ trung tâm
-              </Button>
-            }
+            heading="Danh sách khách hàng"
+            links={[{ name: 'Trang chủ', href: PATH_DASHBOARD.root }, { name: 'Danh sách khách hàng' }]}
           />
 
           <Card>
@@ -185,14 +177,12 @@ export default function UserList() {
 
             <Divider />
 
-            {/* Filter dữ liệu */}
-            <OwnerTableToolbar
+            <CustomerTableToolbar
               filterName={filterName}
               onFilterName={handleFilterName}
               onEnterPress={handleSearchRequest}
             />
 
-            {/* Scrollbar dùng để tạo scroll ngang cho giao diện điện thoại */}
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
                 <Table size={'medium'}>
@@ -200,11 +190,11 @@ export default function UserList() {
 
                   <TableBody>
                     {tableData.map((row) => (
-                      <OwnerTableRow
+                      <CustomerTableRow
                         key={row.id}
                         row={row}
                         onEditRow={() => handleEditRow(row.id)}
-                        onDeleteRow={() => (row.status ? handleOpenBanDialog(row.id) : handleUnbanAdmin(row.id))}
+                        onDeleteRow={() => (row.status ? handleOpenBanDialog(row.id) : handleUnbanCustomer(row.id))}
                       />
                     ))}
 
@@ -235,27 +225,29 @@ export default function UserList() {
           </Card>
         </Container>
       </Page>
-      <BanAdminDialog
+
+      <BanCustomerDialog
         open={openDialog}
         onClose={handleCloseBanDialog}
-        idAdmin={selectIdAdmin}
-        handleBanAdmin={handleBanAdmin}
+        idCustomer={selectIdCustomer}
+        handleBanCustomer={handleBanCustomer}
       />
     </>
   );
 }
 
 // ----------------------------------------------------------------------
-BanAdminDialog.propTypes = {
+
+BanCustomerDialog.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
-  idAdmin: PropTypes.number,
-  handleBanAdmin: PropTypes.func,
+  idCustomer: PropTypes.number,
+  handleBanCustomer: PropTypes.func,
 };
 
-function BanAdminDialog({ open, onClose, idAdmin, handleBanAdmin }) {
+function BanCustomerDialog({ open, onClose, idCustomer, handleBanCustomer }) {
   const onConfirm = () => {
-    handleBanAdmin(idAdmin);
+    handleBanCustomer(idCustomer);
     onClose();
   };
 

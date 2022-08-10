@@ -64,8 +64,8 @@ export default function CenterPopover({ petCenters, onChange }) {
             ratio={'1/1'}
             borderRadius={3}
             disabledEffect
-            src={selectedCenter.photos[0].url}
-            alt={selectedCenter.name}
+            src={selectedCenter?.photos?.length > 0 ? selectedCenter?.photos[0]?.url : ''}
+            alt={selectedCenter?.name}
           />
         </IconButtonAnimate>
       </Box>
@@ -88,7 +88,7 @@ export default function CenterPopover({ petCenters, onChange }) {
               selected={center.id === selectedCenter.id}
               onClick={() => handleChaneCenter(center)}
             >
-              <Image disabledEffect alt={center.name} src={center.photos[0].url} sx={{ width: 28, mr: 2 }} />
+              <Image disabledEffect alt={center?.name} src={center?.photos[0]?.url} sx={{ width: 28, mr: 2 }} />
               <Typography
                 variant="body2"
                 sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: 140 }}

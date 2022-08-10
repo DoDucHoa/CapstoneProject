@@ -107,9 +107,10 @@ export default function BookingList() {
   };
 
   const handelChangeBookingStatus = () => {
-    setInterval(async () => {
+    setTimeout(async () => {
       await getBookings();
     }, 3000);
+    clearTimeout();
   };
 
   const isNotFound = !(metadata.totalCount ? metadata.totalCount : 0);
