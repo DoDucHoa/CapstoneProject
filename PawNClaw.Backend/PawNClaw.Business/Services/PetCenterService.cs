@@ -60,7 +60,7 @@ namespace PawNClaw.Business.Services
             paging.PageSize);
         }
 
-        public PagedList<PetCenter> GetAllForAdmin(string name, bool? status, PagingParameter paging)
+        public PagedList<PetCenter> GetAllForAdmin(string name, bool? status, string brandName, PagingParameter paging)
         {
             var values = _petCenterRepository.GetPetCentersForAdmin();
 
@@ -72,6 +72,11 @@ namespace PawNClaw.Business.Services
             if (status != null)
             {
                 values = values.Where(x => x.Status == status);
+            }
+
+            if (brandName != null)
+            {
+                values = values.Where(x => x.Brand.Name.Contains(brandName));
             }
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
