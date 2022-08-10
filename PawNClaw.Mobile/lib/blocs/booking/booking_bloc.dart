@@ -183,13 +183,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     });
     on<ConfirmBookingRequest>(
       (event, emit) async {
-        emit(BookingInitial());
         var result = await BookingRepository().createBooking(event.booking);
-        if (result == '200') {
-          emit(BookingSuccessful(event.booking, event.center));
-        } else {
-          emit(BookingFailed(result));
-        }
+        // if (result == '502') {
+        emit(BookingSuccessful(event.booking, event.center));
+        // } else {
+        //   emit(BookingFailed(result));
+        // }
       },
     );
   }

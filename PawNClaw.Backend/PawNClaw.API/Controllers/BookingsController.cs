@@ -14,7 +14,7 @@ namespace PawNClaw.API.Controllers
 {
     [Route("api/bookings")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class BookingsController : ControllerBase
     {
         BookingService _bookingService;
@@ -215,7 +215,7 @@ namespace PawNClaw.API.Controllers
                         content = content,
                         time = DateTime.Now
                     };
-                    await _notificationService.AddNotification(notification);
+                    //await _notificationService.AddNotification(notification);
                 }
                 return Ok(data);
             }
