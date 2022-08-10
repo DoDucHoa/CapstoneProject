@@ -13,7 +13,7 @@ namespace PawNClaw.API.Controllers
 {
     [Route("api/policies")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class PoliciesController : ControllerBase
     {
         //[HttpGet]
