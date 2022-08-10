@@ -18,6 +18,8 @@ namespace PawNClaw.Data.Parameter
         public bool? Status { get; set; } = true;
         public int? CageTypeId { get; set; }
 
+        public bool? CanShift { get; set; }
+
         public string dir { get; set; } = "asc";
         public string sort { get; set; } = null;
         public string fields { get; set; } = null;
