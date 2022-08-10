@@ -136,9 +136,9 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("for-admin/get-all")]
-        public IActionResult GetCentersForAdmin([FromQuery] string name, [FromQuery] bool? status, [FromQuery] PagingParameter paging)
+        public IActionResult GetCentersForAdmin([FromQuery] string name, [FromQuery] bool? status, [FromQuery] string brandName, [FromQuery] PagingParameter paging)
         {
-            var data = _petCenterService.GetAllForAdmin(name, status, paging);
+            var data = _petCenterService.GetAllForAdmin(name, status, brandName, paging);
 
             var metadata = new
             {
