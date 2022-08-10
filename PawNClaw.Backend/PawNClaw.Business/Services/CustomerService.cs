@@ -35,7 +35,7 @@ namespace PawNClaw.Business.Services
                         cus.IdNavigation.Status = false;
                         break;
                     default:
-                        cus.IdNavigation.Status = false;
+                        cus.IdNavigation.Status = true;
                         break;
                 }
                 _customerRepository.Update(cus);

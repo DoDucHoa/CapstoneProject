@@ -26,7 +26,7 @@ namespace PawNClaw.Business.Services
         //Get All
         public PagedList<Owner> GetOwners(string Name, bool? Status, string dir, string sort, PagingParameter paging)
         {
-            var values = _ownerRepository.GetAll(includeProperties: "IdNavigation");
+            var values = _ownerRepository.GetAll(includeProperties: "IdNavigation,Brands");
 
             values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("OWN")).Select(x => new Owner() { 
                 Name = x.Name,
@@ -39,7 +39,8 @@ namespace PawNClaw.Business.Services
                     UserName = x.IdNavigation.UserName,
                     Status = x.IdNavigation.Status,
                     Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.Account)
-                }
+                },
+                Brands = x.Brands
             });
 
             // lọc theo name

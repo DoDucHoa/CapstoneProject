@@ -32,7 +32,7 @@ AdminNewEditForm.propTypes = {
 
 export default function AdminNewEditForm({ isEdit, adminData }) {
   const navigate = useNavigate();
-  const { accountInfo, register, uploadPhotoToFirebase } = useAuth();
+  const { accountInfo, register } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -100,13 +100,12 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
     try {
       if (!isEdit) {
         await Promise.all([
-          createOwner(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender).then((ownerId) =>
-            uploadPhotoToFirebase('accounts', values.avatarUrl, ownerId, 'account')
-          ), // create account on Backend
+          createOwner(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender), // create account on Backend
           register(values.email, values.password), // create account on Firebase
+          // TODO: handle avatar upload
         ]);
       } else {
-        await updateOwner(accountInfo.id, values.name, values.phoneNumber, values.gender);
+        updateOwner(accountInfo.id, values.name, values.phoneNumber, values.gender);
 
         // change password on Firebase
         // if (values.password !== specialString) {

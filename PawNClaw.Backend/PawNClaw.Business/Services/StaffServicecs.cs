@@ -61,7 +61,7 @@ namespace PawNClaw.Business.Services
         }
 
         //Get Staff By Center Id
-        public PagedList<Staff> GetByCenterId(int id, string? name, bool? status, PagingParameter paging)
+        public PagedList<Staff> GetByCenterId(int id, string name, bool? status, PagingParameter paging)
         {
             var values = _staffRepository.GetAll(x => x.CenterId == id, includeProperties: "IdNavigation").Select(x => new Staff()
             {
@@ -78,7 +78,7 @@ namespace PawNClaw.Business.Services
 
             if (!string.IsNullOrWhiteSpace(name))
             {
-                values = values.Where(x => name.Equals(x.Name.Trim()));
+                values = values.Where(x => name.Contains(x.Name.Trim()));
             }
             values = status switch
             {

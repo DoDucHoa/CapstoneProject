@@ -9,7 +9,12 @@ import GuestGuard from '../guards/GuestGuard';
 import AuthGuard from '../guards/AuthGuard';
 import RoleBasedGuard from '../guards/RoleBasedGuard';
 // config
-import { PATH_AFTER_LOGIN, PATH_AFTER_LOGIN_FOR_STAFF } from '../config';
+import {
+  PATH_AFTER_LOGIN_FOR_ADMIN,
+  PATH_AFTER_LOGIN_FOR_MODERATOR,
+  PATH_AFTER_LOGIN_FOR_OWNER,
+  PATH_AFTER_LOGIN_FOR_STAFF,
+} from '../config';
 // components
 import LoadingScreen from '../components/LoadingScreen';
 import useAuth from '../hooks/useAuth';
@@ -30,6 +35,36 @@ const Loadable = (Component) => (props) => {
 export default function Router() {
   const { accountInfo } = useAuth();
   const currentRole = accountInfo?.role;
+
+  const ProfileByRole = () => {
+    switch (currentRole) {
+      case 'Admin':
+        return <AdminProfile />;
+      case 'Staff':
+        return <StaffProfile />;
+      case 'Moderator':
+        return <ModeratorProfile />;
+      case 'Owner':
+        return <OwnerProfile />;
+      default:
+        return <StaffProfile />;
+    }
+  };
+
+  const pathAfterLogin = () => {
+    switch (currentRole) {
+      case 'Admin':
+        return PATH_AFTER_LOGIN_FOR_ADMIN;
+      case 'Moderator':
+        return PATH_AFTER_LOGIN_FOR_MODERATOR;
+      case 'Owner':
+        return PATH_AFTER_LOGIN_FOR_OWNER;
+      case 'Staff':
+        return PATH_AFTER_LOGIN_FOR_STAFF;
+      default:
+        return PATH_AFTER_LOGIN_FOR_STAFF;
+    }
+  };
 
   return useRoutes([
     {
@@ -68,15 +103,26 @@ export default function Router() {
       ),
       children: [
         {
-          element: (
-            <Navigate
-              to={currentRole?.toLowerCase() === 'staff' ? PATH_AFTER_LOGIN_FOR_STAFF : PATH_AFTER_LOGIN}
-              replace
-            />
-          ),
+          element: <Navigate to={pathAfterLogin()} replace />,
           index: true,
         },
         { path: 'bookingchart', element: <GeneralBooking /> },
+        { path: 'policy', element: <PolicyForm /> },
+        { path: 'log-action', element: <LogList /> },
+        // profile
+        {
+          path: 'user',
+          children: [
+            {
+              path: 'profile',
+              element: (
+                <AuthGuard>
+                  <ProfileByRole />
+                </AuthGuard>
+              ),
+            },
+          ],
+        },
         {
           path: 'admin',
           children: [
@@ -130,7 +176,7 @@ export default function Router() {
             {
               path: ':id/edit',
               element: (
-                <RoleBasedGuard accessibleRoles={['admin', 'moderator']} currentRole={currentRole}>
+                <RoleBasedGuard accessibleRoles={['admin', 'moderator', 'owner']} currentRole={currentRole}>
                   <BrandCreate />
                 </RoleBasedGuard>
               ),
@@ -160,7 +206,7 @@ export default function Router() {
             {
               path: ':id/edit',
               element: (
-                <RoleBasedGuard accessibleRoles={['admin', 'moderator']} currentRole={currentRole}>
+                <RoleBasedGuard accessibleRoles={['admin', 'moderator', 'owner']} currentRole={currentRole}>
                   <CenterCreate />
                 </RoleBasedGuard>
               ),
@@ -192,6 +238,20 @@ export default function Router() {
               element: (
                 <RoleBasedGuard accessibleRoles={['admin', 'moderator']} currentRole={currentRole}>
                   <OwnerCreate />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'customer',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/customer/list" replace />, index: true },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard accessibleRoles={['admin', 'moderator']} currentRole={currentRole}>
+                  <CustomerList />
                 </RoleBasedGuard>
               ),
             },
@@ -547,3 +607,18 @@ const CenterCreate = Loadable(lazy(() => import('../pages/dashboard/Center/Cente
 
 // SETTING
 const SettingList = Loadable(lazy(() => import('../pages/dashboard/Setting/SettingList')));
+
+// CUSTOMER
+const CustomerList = Loadable(lazy(() => import('../pages/dashboard/Customer/CustomerList')));
+
+// PROFILE
+const AdminProfile = Loadable(lazy(() => import('../pages/profile/AdminProfile')));
+const StaffProfile = Loadable(lazy(() => import('../pages/profile/StaffProfile')));
+const OwnerProfile = Loadable(lazy(() => import('../pages/profile/OwnerProfile')));
+const ModeratorProfile = Loadable(lazy(() => import('../pages/profile/ModeratorProfile')));
+
+// POLICY
+const PolicyForm = Loadable(lazy(() => import('../pages/dashboard/Policy/PolicyForm')));
+
+// LOG
+const LogList = Loadable(lazy(() => import('../pages/dashboard/LogAction/LogList')));
