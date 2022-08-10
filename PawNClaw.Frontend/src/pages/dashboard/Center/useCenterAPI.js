@@ -2,13 +2,14 @@ import axios from '../../../utils/axios';
 
 const URL = '/api/petcenters';
 
-const getCenters = async (page, rowsPerPage, filterStatus, searchName) => {
+const getCenters = async (page, rowsPerPage, filterStatus, searchName, filterBrandName) => {
   const response = await axios.get(`${URL}/for-admin/get-all`, {
     params: {
       name: searchName,
       PageSize: rowsPerPage,
       PageNumber: page,
       status: filterStatus,
+      brandName: filterBrandName,
     },
   });
   return response.data;

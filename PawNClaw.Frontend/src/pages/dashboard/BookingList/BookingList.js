@@ -116,10 +116,10 @@ export default function BookingList() {
   const isNotFound = !(metadata.totalCount ? metadata.totalCount : 0);
 
   return (
-    <Page title="Đơn booking">
+    <Page title="Đơn hàng">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="Đơn booking"
+          heading="Đơn hàng"
           links={[{ name: 'Trang chủ', href: PATH_DASHBOARD.root }, { name: 'Đơn booking' }]}
         />
 
