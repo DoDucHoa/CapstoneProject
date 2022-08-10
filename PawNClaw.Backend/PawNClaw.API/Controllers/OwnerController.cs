@@ -86,7 +86,7 @@ namespace PawNClaw.API.Controllers
 
                     await _logService.AddLog(new ActionLogsParameter()
                     {
-                        Id = (long)owner.Id,
+                        Id = (long)owner.ModifyUser,
                         Name = _accountService.GetAccountById(owner.ModifyUser).Admin.Name,
                         Target = "Owner " + owner.Name,
                         Type = "Update",
