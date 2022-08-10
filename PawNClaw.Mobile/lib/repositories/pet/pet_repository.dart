@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
+import 'package:pawnclaw_mobile_application/models/photo.dart';
 import 'package:pawnclaw_mobile_application/repositories/pet/base_pet_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -79,6 +80,40 @@ class PetRepository implements BasePetRepository {
       return response.statusCode == 200;
     } on DioError catch (e) {
       print(e);
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> delete(Pet pet) async {
+    final pref = await SharedPreferences.getInstance();
+    try {
+      _dio.options.headers = {
+        'Authorization': 'Bearer ' + pref.get("jwtToken").toString()
+      };
+      const String _url =
+          "https://pawnclawdevelopmentapi.azurewebsites.net/api/pets/delete";
+      var response = await _dio.put(_url, queryParameters: {"id": pet.id});
+      return response.statusCode == 200;
+    } on DioError catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> updateAvatar(Photo photo)  async{
+    final pref = await SharedPreferences.getInstance();
+    try {
+      _dio.options.headers = {
+        'Authorization': 'Bearer ' + pref.get("jwtToken").toString()
+      };
+      const String _url =
+          "https://pawnclawdevelopmentapi.azurewebsites.net/api/photos/pet";
+      var response = await _dio.post(_url, data: photo.toJson());
+      return response.statusCode == 200;
+    } on DioError catch (e) {
+    print(e);
       return false;
     }
   }

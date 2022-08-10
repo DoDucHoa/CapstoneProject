@@ -46,7 +46,8 @@ class SponsorRepository implements BaseSponsorRepository {
       //print(response.data);
       //var response = await request.asStream().first;
       print('[repo]get center at banner');
-      final centers = response.data.map<Center>((e) => Center.fromJson(e)).toList();
+      List<Center> centers = response.data.map<Center>((e) => Center.fromJson(e)).toList();
+      centers.forEach((e) => print(e.photos!.first.toJson()));
       return centers;
     } catch (e) {
       print(e);

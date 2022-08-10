@@ -1,4 +1,5 @@
-﻿using PawNClaw.Data.Database;
+﻿using PawNClaw.Data.Const;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Interface;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,10 @@ namespace PawNClaw.Data.Repository
 {
     public class ServiceOrderRepository : Repository<ServiceOrder>, IServiceOrderRepository
     {
-        public ServiceOrderRepository(ApplicationDbContext db) : base(db)
+        IPhotoRepository _photoRepository;
+        public ServiceOrderRepository(ApplicationDbContext db, IPhotoRepository photoRepository) : base(db)
         {
+            _photoRepository = photoRepository;
         }
 
         public void RemoveServiceOrder(int BookingId, int ServiceId)
@@ -26,7 +29,13 @@ namespace PawNClaw.Data.Repository
                 Note = x.Note,
                 PetId = x.PetId,
                 ServiceId = x.ServiceId,
-                Service = x.Service,
+                Service = new Service()
+                {
+                    Id = x.ServiceId,
+                    Name = x.Service.Name,
+                    Description = x.Service.Description,
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.ServiceId, PhotoTypesConst.Service),
+                },
                 Quantity = x.Quantity
             });
         }

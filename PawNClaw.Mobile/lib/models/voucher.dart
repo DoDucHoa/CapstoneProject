@@ -17,6 +17,8 @@ class Voucher {
         this.centerId,
         this.voucherTypeCode,
         this.voucherTypeName,
+        this.description
+
     });
 
     String? code;
@@ -28,6 +30,7 @@ class Voucher {
     int? centerId;
     String? voucherTypeCode;
     dynamic voucherTypeName;
+    String? description;
 
     factory Voucher.fromRawJson(String str) => Voucher.fromJson(json.decode(str));
 
@@ -43,6 +46,7 @@ class Voucher {
         centerId: json["centerId"],
         voucherTypeCode: json["voucherTypeCode"],
         voucherTypeName: json["voucherTypeName"],
+        description: json["description"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -55,6 +59,7 @@ class Voucher {
         "centerId": centerId,
         "voucherTypeCode": voucherTypeCode,
         "voucherTypeName": voucherTypeName,
+        "description": description
     };
 
     String formatStartDate(){

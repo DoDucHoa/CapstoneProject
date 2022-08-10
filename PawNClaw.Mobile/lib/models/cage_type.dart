@@ -1,3 +1,5 @@
+import 'package:pawnclaw_mobile_application/models/photo.dart';
+
 import 'cage.dart';
 
 class CageTypes {
@@ -12,6 +14,7 @@ class CageTypes {
   double? totalPrice;
   double? minPrice;
   double? maxPrice;
+  Photo? photo;
 
   CageTypes(
       {this.id,
@@ -24,7 +27,8 @@ class CageTypes {
       this.cages,
       this.totalPrice,
       this.minPrice,
-      this.maxPrice});
+      this.maxPrice,
+      this.photo});
 
   CageTypes.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -51,6 +55,13 @@ class CageTypes {
     //     prices!.add(new Null.fromJson(v));
     //   });
     // }
+    if (json['photos'] != null) {
+      var photos = <Photo>[];
+      json['photos'].forEach((v) {
+        photos.add(Photo.fromJson(v));
+      });
+      if(photos.isNotEmpty) photo = photos.first;
+    }
   }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -67,6 +78,9 @@ class CageTypes {
     if (this.totalPrice != null) data['totalPrice'] = this.totalPrice.toString();
     if (this.maxPrice != null) data['maxPrice'] = this.maxPrice.toString();
     if (this.minPrice != null) data['minPrice'] = this.minPrice.toString();
+    if (this.photo != null) {
+      data['photos'] = this.photo!.toJson();
+    }
     return data;
   }
 }

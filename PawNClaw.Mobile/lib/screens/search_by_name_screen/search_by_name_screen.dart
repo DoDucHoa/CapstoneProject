@@ -5,10 +5,12 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:pawnclaw_mobile_application/common/components/elevated_container.dart';
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/repositories/center/center_repository.dart';
+import 'package:pawnclaw_mobile_application/screens/home_screen/HomeScreen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_by_name_screen/components/search_bar.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 
@@ -47,8 +49,6 @@ class _SearchScreenState extends State<SearchScreen> {
   late List<String> centersName;
   late List<petCenter.Center> allCenters;
   // late StreamSubscription<Position> streamSubscription;
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -116,10 +116,12 @@ class _SearchScreenState extends State<SearchScreen> {
                     setState(() {
                       if (found.isNotEmpty) {
                         centers = found;
+                        isFound = 1;
                       } else {
+                        isFound = 2;
                         centers = allCenters;
                       }
-                      isFound = 1;
+                      // isFound = 1;
                       suggestions = [];
                     });
                   }
@@ -129,13 +131,12 @@ class _SearchScreenState extends State<SearchScreen> {
             )),
         //titleSpacing: 10,
         leading: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen())),
             icon: const Icon(
               Icons.arrow_back_ios_new_rounded,
               color: lightFontColor,
             )),
         leadingWidth: width * mediumPadRate,
-        
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(vertical: width * smallPadRate),
@@ -175,6 +176,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 isFound = 1;
                                 suggestions = [];
                               });
+                              FocusScope.of(context).unfocus();
                             }
                           },
                         ),
@@ -186,7 +188,44 @@ class _SearchScreenState extends State<SearchScreen> {
                     )
                   : Container(),
               //centers found
-              (isFound == 1)
+              (isFound == 2)
+                  ? Container(
+                    margin: EdgeInsets.symmetric(horizontal:  width * regularPadRate, vertical: width * smallPadRate),
+                    child: Column(
+                        children: [
+                          Container(
+                        padding: EdgeInsets.all(width * mediumPadRate),
+                        decoration: BoxDecoration(
+                            color: disableColor,
+                            borderRadius: BorderRadius.circular(65)),
+                        child: Icon(
+                          Iconsax.chart_fail3,
+                          size: 65,
+                          color: Colors.white,
+                        )
+                        ),
+                    SizedBox(
+                      height: width * mediumPadRate,
+                    ),
+                    Text(
+                      'Không tìm thấy kết quả',
+                      style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.w700, height: 1.5),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(
+                      height: width * extraSmallPadRate,
+                    ),
+                    Text(
+                      'Bạn có thể thử lại bằng từ khóa khác hoặc tham khảo các trung tâm bên dưới nhé?',
+                      style: TextStyle(fontSize: 15, height: 1.5),
+                      textAlign: TextAlign.center,
+                    ),
+                        ],
+                      ),
+                  )
+                  : Container(),
+              (isFound == 1 || isFound == 2)
                   ? ListView.builder(
                       itemBuilder: ((context, index) {
                         return CenterCard(center: centers![index]);
@@ -227,5 +266,4 @@ class _SearchScreenState extends State<SearchScreen> {
 
   // }
 
-  
 }

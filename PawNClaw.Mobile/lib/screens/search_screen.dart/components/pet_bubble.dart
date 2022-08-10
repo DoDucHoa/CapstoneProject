@@ -18,11 +18,25 @@ class SelectedPetBubble extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.all(width * 0.02),
-          child: CircleAvatar(
-            backgroundImage: AssetImage('lib/assets/cat_avatar0.png'),
+          child: Container(
+            width: width * 0.12,
+            height: width * 0.12,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(50),
+            color:  Colors.grey[200],
+            image: (pet.photos!.isEmpty)
+                  ? DecorationImage(
+                      image: AssetImage((pet.petTypeCode == 'DOG')
+                          ? 'lib/assets/dog.png'
+                          : 'lib/assets/black-cat.png'),
+                      fit: BoxFit.fitHeight,
+                    )
+                  : DecorationImage(
+                      image: NetworkImage(pet.photos!.first.url!),
+                      fit: BoxFit.fitHeight)
+            ),
           ),
         ),
-        Text(pet.name!),
+        Text(pet.name!, style: TextStyle(fontSize:12)),
       ],
     );
   }

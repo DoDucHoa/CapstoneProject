@@ -25,7 +25,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Mod,Owner")]
+        [Authorize(Roles = "Admin,Moderator,Owner")]
         public async Task<IActionResult> Add([FromBody] CreateStaffParameter staff)
         {
             try
@@ -78,7 +78,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "Admin,Mod,Owner,Staff")]
+        [Authorize(Roles = "Admin,Moderator,Owner,Staff")]
         public IActionResult updateStaff([FromBody] UpdateStaffParameter staff)
         {
             try
@@ -93,7 +93,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("update-status/{id}")]
-        [Authorize(Roles = "Admin,Mod,Owner")]
+        [Authorize(Roles = "Admin,Moderator,Owner")]
         public IActionResult BanStaff(int id)
         {
             try

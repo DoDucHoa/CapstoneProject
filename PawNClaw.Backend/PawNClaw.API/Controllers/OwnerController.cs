@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Parameter;
+using System;
+using System.Threading.Tasks;
 
 namespace PawNClaw.API.Controllers
 {
@@ -12,14 +14,18 @@ namespace PawNClaw.API.Controllers
     public class OwnerController : ControllerBase
     {
         private readonly OwnerService _OwnerService;
+        private LogsService _logService;
+        private AccountService _accountService;
 
-        public OwnerController(OwnerService OwnerService)
+        public OwnerController(OwnerService OwnerService, LogsService logsService, AccountService accountService)
         {
             _OwnerService = OwnerService;
+            _logService = logsService;
+            _accountService = accountService;
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult GetOwners([FromQuery] string Name, [FromQuery] bool? Status, [FromQuery] string dir, [FromQuery] string sort, [FromQuery] PagingParameter _paging)
         {
             var data = _OwnerService.GetOwners(Name, Status, dir, sort, _paging);
@@ -36,7 +42,6 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Mod")]
         public IActionResult GetOwnerById(int id)
         {
             var data = _OwnerService.GetOwnerById(id);
@@ -44,19 +49,31 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Add([FromBody] CreateOwnerParameter owner)
+        [Authorize(Roles = "Admin,Moderator")]
+        public async Task<IActionResult> Add([FromBody] CreateOwnerParameter owner)
         {
-            if (_OwnerService.Add(owner) != -1)
+            try
             {
-                return Ok();
+                var result = _OwnerService.Add(owner);
+                await _logService.AddLog(new ActionLogsParameter()
+                {
+                    Id = owner.CreatedUser,
+                    Name = _accountService.GetAccountById(owner.CreatedUser).Admin.Name,
+                    Target = "Owner " + owner.Name,
+                    Type = "Create",
+                    Time = DateTime.Now,
+                });
+                return Ok(result);
             }
-            return BadRequest();
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin,Mod")]
-        public IActionResult Update(int id, [FromBody] OwnerRequestParameter owner)
+        [Authorize(Roles = "Admin,Moderator")]
+        public async Task<IActionResult> Update(int id, [FromBody] OwnerRequestParameter owner)
         {
             var ownerDb = _OwnerService.GetOwnerById(id);
             ownerDb.Email = owner.Email;
@@ -64,13 +81,21 @@ namespace PawNClaw.API.Controllers
 
             if (_OwnerService.Update(ownerDb, owner.Phone))
             {
+                await _logService.AddLog(new ActionLogsParameter()
+                {
+                    Id = (long) owner.Id,
+                    Name = _accountService.GetAccountById(owner.ModifyUser).Admin.Name,
+                    Target = "Owner " + owner.Name,
+                    Type = "Update",
+                    Time = DateTime.Now,
+                });
                 return Ok();
             }
             return BadRequest();
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult Delete(int id)
         {
             if (_OwnerService.Delete(id))
@@ -81,7 +106,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("restore/{id}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult Restore(int id)
         {
             if (_OwnerService.Restore(id))

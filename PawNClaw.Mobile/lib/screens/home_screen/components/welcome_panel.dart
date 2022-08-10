@@ -151,7 +151,7 @@ class WelcomePanel extends StatelessWidget {
                     image:
                     (imgURL == null)
                      ? 
-                     DecorationImage(image: AssetImage((customer!.gender! > -1)
+                     DecorationImage(image: AssetImage((customer!.gender! < 2)
                               ? 'lib/assets/cus-${customer!.gender}.png'
                               : 'lib/assets/cus-2.png'), fit: BoxFit.cover)
                     : DecorationImage(

@@ -46,5 +46,24 @@ namespace PawNClaw.Data.Repository
 
             return query;
         }
+
+        public IEnumerable<Account> GetCustomerAccount()
+        {
+            IQueryable<Account> query = _dbSet
+                .Select(x => new Account
+                {
+                    Id = x.Id,
+                    UserName = x.UserName,
+                    CreatedUser = x.CreatedUser,
+                    DeviceId = x.DeviceId,
+                    Phone = x.Phone,
+                    Status = x.Status,
+                    RoleCode = x.RoleCode,
+                    Customer = x.Customer,
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.Account)
+                }).Where(x => x.Customer != null);
+
+            return query;
+        }
     }
 }

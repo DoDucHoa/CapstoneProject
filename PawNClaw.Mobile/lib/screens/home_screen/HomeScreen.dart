@@ -69,9 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           flexibleSpace: FlexibleSpaceBar(
                             collapseMode: CollapseMode.pin,
                             background: WelcomePanel(
-                              customer: state.customer,
-                              imgURL: state.user.photoUrl
-                            ),
+                                customer: state.customer,
+                                imgURL: state.user.photoUrl),
                           ),
                           centerTitle: false,
                           bottom: PreferredSize(
@@ -99,8 +98,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     color: primaryColor,
                                   ),
                                   label: Container(
-                                      margin:
-                                          EdgeInsets.fromLTRB(0, 12, width*mediumPadRate*2.4, 12),
+                                      margin: EdgeInsets.fromLTRB(0, 12,
+                                          width * mediumPadRate * 2.4, 12),
                                       child: Text(
                                         'Tìm kiếm trung tâm thú cưng',
                                         style: TextStyle(
@@ -168,11 +167,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             .where("seen", isEqualTo: false)
                             .snapshots(),
                         builder: (context, snapshot) {
-                          return Icon(
-                            snapshot.data?.size != 0
-                                ? Iconsax.message_notif5
-                                : Iconsax.message5,
-                          );
+                          return snapshot.data?.size == 0
+                              ? Icon(
+                                  Iconsax.message5,
+                                )
+                              : Stack(
+                                  children: [
+                                    Icon(Iconsax.message_notif5),
+                                    Icon(
+                                      Iconsax.message_notif1,
+                                      color: primaryColor,
+                                    ),
+                                  ],
+                                );
                         }),
                     label: ""),
                 BottomNavigationBarItem(

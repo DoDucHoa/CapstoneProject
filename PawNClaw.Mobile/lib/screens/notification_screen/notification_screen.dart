@@ -10,6 +10,7 @@ import 'package:pawnclaw_mobile_application/models/booking.dart';
 import 'package:pawnclaw_mobile_application/repositories/activity/activity_repository.dart';
 import 'package:pawnclaw_mobile_application/repositories/notification/notification_repository.dart';
 import 'package:pawnclaw_mobile_application/repositories/transaction/transaction_repository.dart';
+import 'package:pawnclaw_mobile_application/screens/notification_screen/components/noti_card.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/activity_list_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/activity_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/transaction_details_screen.dart';
@@ -56,59 +57,32 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 itemCount: state.notifications.length,
                 itemBuilder: (context, index) {
                   var notification = state.notifications[index];
-                  return InkWell(
-                    onTap: () async {
-                      if (notification.actorType == "Activity") {
-                        var activity = await ActivityRepository()
-                            .getActivityById(notification.actorId!);
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ActivityScreen(activity: activity!),
-                          ),
-                        );
-                      }
-                      if (notification.actorType == "Booking") {
-                        var bookings = await TransactionRepository()
-                            .getTransactions(notification.targetId!);
-                        var booking = bookings!.firstWhere(
-                            (element) => element.id == notification.actorId);
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                TransactionDetailsScreen(booking: booking),
-                          ),
-                        );
-                      }
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(width * smallPadRate),
-                      color: notification.seen == false
-                          ? primaryBackgroundColor
-                          : Colors.white,
-                      constraints: BoxConstraints(minHeight: height * 0.1),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            notification.title!,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
+                  return NotificationCard(
+                      notification: notification,
+                      onPressed: () async {
+                        if (notification.actorType == "Activity") {
+                          var activity = await ActivityRepository()
+                              .getActivityById(notification.actorId!);
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ActivityScreen(activity: activity!),
                             ),
-                          ),
-                          Text(notification.content!),
-                          Text(
-                            timeAgo(DateTime.parse(notification.time!)),
-                            style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              color: lightFontColor,
+                          );
+                        }
+                        if (notification.actorType == "Booking") {
+                          var bookings = await TransactionRepository()
+                              .getTransactions(notification.targetId!);
+                          var booking = bookings!.firstWhere(
+                              (element) => element.id == notification.actorId);
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  TransactionDetailsScreen(booking: booking),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                          );
+                        }
+                      });
                 }),
           );
         }

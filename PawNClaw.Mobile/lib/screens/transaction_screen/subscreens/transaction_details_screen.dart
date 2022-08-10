@@ -18,6 +18,7 @@ import 'package:pawnclaw_mobile_application/screens/transaction_screen/component
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/activity_list_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/invoice_screen.dart';
 
+import '../../../models/pet.dart';
 import '../components/booking_item_card.dart';
 
 class TransactionDetailsScreen extends StatefulWidget {
@@ -70,6 +71,8 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
     double height = size.height;
 
     int statusId = booking.statusId! - 1; //modifiedStatus(booking);
+
+  
 
     return BlocProvider(
         create: (context) =>
@@ -139,12 +142,19 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
+                            children: [ 
+                              (booking.center!.getThumbnail()== null)?
                               CircleAvatar(
                                 radius: height * 0.04,
                                 backgroundColor: lightPrimaryColor,
                                 backgroundImage:
                                     AssetImage('lib/assets/vet-ava.png'),
+                              ):
+                              CircleAvatar(
+                                radius: height * 0.04,
+                                backgroundColor: lightPrimaryColor,
+                                backgroundImage: NetworkImage(
+                                    booking.center!.getThumbnail()!.url!),
                               ),
                               Padding(
                                 padding: EdgeInsets.symmetric(

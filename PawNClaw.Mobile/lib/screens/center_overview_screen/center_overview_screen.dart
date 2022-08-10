@@ -7,6 +7,7 @@ import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/fake_data.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
+import 'package:pawnclaw_mobile_application/models/photo.dart';
 import 'package:pawnclaw_mobile_application/models/voucher.dart';
 import 'package:pawnclaw_mobile_application/repositories/center/center_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/booking_from_search_screen/main_screen.dart';
@@ -38,14 +39,40 @@ class _CenterOverviewState extends State<CenterOverview> {
   petCenter.Center? center;
   List<Voucher>? vouchers;
   bool loadedDetail = false;
-  List<String> supplyType = ["DRINK", "FOOD", "MED", "OTHER"];
+  // Photo? thumbnail;
+  // Photo? background;
+  List<String> supplyType = ["FOOD", "DRINK", "MED", "OTHER"];
+  List<String> photoUrls = [];
+  List<int> durations = [];
   @override
   void initState() {
     // TODO: implement initState
     //petCenter.Center? center;
+    // var temp;
     CenterRepository().getCenterOverview(widget.petCenterId).then((value) {
       setState(() {
-        this.center = value;
+        center = value;
+        if (value != null && value.photos!.isNotEmpty) {
+          if (value.getFacilities() != null && value.getFacilities()!.isNotEmpty) {
+            for (var i = 0; i < value.getFacilities()!.length; i++) {
+              photoUrls.add(value.getFacilities()![i].url!);
+              durations.add(2);
+            }
+          }
+          ;}
+    //       value.photos!.forEach((element) {
+    //         if (!element.isThumbnail!) {
+    //           background = element;
+    //           return;
+    //         }
+    //       });
+    //       // background =
+    //       //     value.photos!.firstWhere((photo) => photo.isThumbnail == false));
+        
+    //   // background =
+    //   //     value.photos!.firstWhere((photo) => photo.isThumbnail == false));
+
+    // }
       });
     });
 
@@ -66,7 +93,7 @@ class _CenterOverviewState extends State<CenterOverview> {
     //     .getCenterVouchers(widget.petCenterId, customerId)
     //     .then((value) {
     //   vouchers = value;
-      
+
     //   //loadedDetail = true;
     // });
     // return BlocProvider(
@@ -97,7 +124,8 @@ class _CenterOverviewState extends State<CenterOverview> {
                         // ),
                         centerTitle: true,
                         backgroundColor: frameColor,
-                        expandedHeight: appbarSize - ((vouchers == null || vouchers!.isEmpty) ?60:0),
+                        expandedHeight: appbarSize -
+                            ((vouchers == null || vouchers!.isEmpty) ? 60 : 0),
                         floating: true,
                         pinned: true,
                         //leading: Icon(Icons.arrow_back),
@@ -105,12 +133,19 @@ class _CenterOverviewState extends State<CenterOverview> {
                             collapseMode: CollapseMode.pin,
                             background: Stack(
                               children: [
-                                //campaign image
-                                Image.asset(
-                                  'lib/assets/center0.jpg',
-                                  width: width,
-                                  fit: BoxFit.cover,
-                                ),
+                                (center!.getBackGround() == null)
+                                    ? Image.asset(
+                                        'lib/assets/center0.jpg',
+                                        width: width,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.network(
+                                        //placeholder: 'lib/assets/new-paw.gif',
+                                        // image:
+                                        center!.getBackGround()!.url!,
+                                        width: width,
+                                        fit: BoxFit.cover,
+                                      ),
                                 // Image.network(
                                 //   center.![0].picture.toString(),
                                 //   width: width,
@@ -163,15 +198,22 @@ class _CenterOverviewState extends State<CenterOverview> {
                                                 Container(
                                                   width: width * 2 / 3,
                                                   height:
-                                                      width * largeFontRate +
-                                                          10,
+                                                      width * (largeFontRate) +
+                                                          10 +
+                                                          center!.name!.length *
+                                                              0.5,
                                                   child: Text(
                                                     center?.name ?? "",
-                                                    style: const TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        height: 1),
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          20, //width*(largeFontRate) - center!.name!.length*0.05,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      height: 1,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 2,
                                                   ),
                                                 ),
                                                 Expanded(child: SizedBox()),
@@ -298,10 +340,15 @@ class _CenterOverviewState extends State<CenterOverview> {
                                     width: 65,
                                     height: 65,
                                     decoration: BoxDecoration(
-                                        image: const DecorationImage(
-                                            image: AssetImage(
-                                                'lib/assets/vet-ava.png'),
-                                            fit: BoxFit.cover),
+                                        image: (center!.getThumbnail() == null)
+                                            ? DecorationImage(
+                                                image: AssetImage(
+                                                    'lib/assets/vet-ava.png'),
+                                                fit: BoxFit.cover)
+                                            : DecorationImage(
+                                                image: NetworkImage(
+                                                    center!.getThumbnail()!.url!),
+                                                fit: BoxFit.cover),
                                         borderRadius: BorderRadius.circular(
                                             size.height * 0.1),
                                         border: Border.all(
@@ -375,17 +422,26 @@ class _CenterOverviewState extends State<CenterOverview> {
                                   shrinkWrap: true,
                                   physics: ClampingScrollPhysics(),
                                 )),
-                                const Padding(
-                                  padding: EdgeInsets.fromLTRB(15, 15, 10, 10),
-                                  child: Text(
-                                    'CƠ SỞ VẬT CHẤT',
-                                    style: TextStyle(
-                                        color: lightFontColor,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                ),
-                                //CenterSlider(size: size, photoUrls: CAGE_PHOTOS, callback: ((index) {
+                                (photoUrls.isNotEmpty)
+                                    ? Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(15, 15, 10, 10),
+                                        child: Text(
+                                          'CƠ SỞ VẬT CHẤT',
+                                          style: TextStyle(
+                                              color: lightFontColor,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w700),
+                                        ),
+                                      )
+                                    : Container(),
+                                (photoUrls.isNotEmpty)
+                                    ? CenterSlider(
+                                        size: size*0.9,
+                                        photoUrls: photoUrls,
+                                        callback: (index) {},
+                                        durations: durations)
+                                    : Container(),
 
                                 // }),),
                                 SizedBox(height: 80)
@@ -405,6 +461,7 @@ class _CenterOverviewState extends State<CenterOverview> {
                                       ListView.separated(
                                     itemBuilder: (context, index) {
                                       var supplies = center?.supplies;
+                                      
                                       return SupplyTypeCard(
                                           supplyType: supplyType[index],
                                           size: size,
@@ -464,7 +521,8 @@ class _CenterOverviewState extends State<CenterOverview> {
                                     // children:
                                     ListView.separated(
                               itemBuilder: (context, index) {
-                                return ReviewCard(review: center!.reviews![index]);
+                                return ReviewCard(
+                                    review: center!.reviews![index]);
                               },
                               itemCount: center!.reviews!.length,
                               separatorBuilder: (context, index) =>

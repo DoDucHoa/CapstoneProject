@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PawNClaw.Business.Services;
 using PawNClaw.Data.Const;
+using PawNClaw.Data.Parameter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,11 +31,11 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdatePolicy(string newPolicy)
+        public async Task<IActionResult> UpdatePolicy([FromBody] UpdatePolicyParameter newPolicy)
         {
             try
             {
-                await PolicyService.AddData(Const.ProjectFirebaseId, newPolicy);
+                await PolicyService.AddData(Const.ProjectFirebaseId, newPolicy.NewPolicy);
                 return Ok();
             }
             catch (Exception ex)

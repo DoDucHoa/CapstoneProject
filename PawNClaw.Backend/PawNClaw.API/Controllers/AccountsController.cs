@@ -58,6 +58,22 @@ namespace PawNClaw.API.Controllers
             return Ok(new { data, metadata });
         }
 
+        [HttpGet("customer")]
+        public IActionResult GetAccountsCustomer([FromQuery] AccountRequestParameter _requestParameter, [FromQuery] PagingParameter _paging)
+        {
+            var data = _accountService.GetAccountsCus(_requestParameter, _paging);
+            var metadata = new
+            {
+                data.TotalCount,
+                data.PageSize,
+                data.CurrentPage,
+                data.TotalPages,
+                data.HasNext,
+                data.HasPrevious
+            };
+            return Ok(new { data, metadata });
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public IActionResult Add([FromBody] Account account)
@@ -72,7 +88,7 @@ namespace PawNClaw.API.Controllers
 
         [HttpPost]
         [Route("create-for-mod")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult AddForMod([FromBody] Account account)
         {
             if (account.RoleCode.Trim().Equals("01") || account.RoleCode.Trim().Equals("02")) return BadRequest();
@@ -137,7 +153,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult DeleteForMod(int id)
         {
             if (_accountService.GetAccountById(id).RoleCode.Trim().Equals("AD") ||
@@ -170,7 +186,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("restore/{id:int}")]
-        [Authorize(Roles = "Admin,Mod")]
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult Restore(int id)
         {
 

@@ -38,7 +38,22 @@ namespace PawNClaw.Business.Services
         //Get All
         public PagedList<PetCenter> GetAll(string includeProperties, PagingParameter paging)
         {
-            var values = _petCenterRepository.GetAll(includeProperties: "Brand,Bookings");
+            var values = _petCenterRepository.GetAll(includeProperties: "Brand,Bookings").Select(x => new PetCenter()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Address = x.Address,
+                Phone = x.Phone,
+                Rating = x.Rating,
+                CreateDate = x.CreateDate,
+                Status = x.Status,
+                OpenTime = x.OpenTime,
+                CloseTime = x.CloseTime,
+                Description = x.Description,
+                BrandId = x.BrandId,
+                Bookings = x.Bookings,
+                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.PetCenter)
+            });
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
@@ -170,7 +185,7 @@ namespace PawNClaw.Business.Services
         public PetCenter GetByStaffId(int id)
         {
             var staff = _staffRepository.GetFirstOrDefault(x => x.Id == id);
-            var value = _petCenterRepository.GetFirstOrDefault(x => x.Id == staff.CenterId, includeProperties: "Bookings");
+            var value = _petCenterRepository.GetPetCenterByIdAfterSearchName(staff.CenterId);
             return value;
         }
 
@@ -291,7 +306,7 @@ namespace PawNClaw.Business.Services
         {
             try
             {
-                PetCenter center = _petCenterRepository.GetFirstOrDefault(x => x.Id == petCenter.Id);
+                PetCenter center = _petCenterRepository.Get(petCenter.Id);
                 center.OpenTime = petCenter.OpenTime;
                 center.CloseTime = petCenter.CloseTime;
                 center.Checkin = petCenter.CheckIn;

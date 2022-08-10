@@ -6,6 +6,7 @@ import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/screens/center_overview_screen/center_overview_screen.dart';
 
+import '../../../models/photo.dart';
 
 class CenterCard extends StatelessWidget {
   const CenterCard({
@@ -19,6 +20,22 @@ class CenterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    // Photo? thumbnail;
+    // Photo? background;
+    // if (center.photos != null && center.photos!.isNotEmpty) {
+    //   center.photos!.forEach((photo) {
+    //     if (photo.isThumbnail!) {
+    //       thumbnail = photo;
+    //       return;
+    //     }
+    //   });
+    //   center.photos!.forEach((photo) {
+    //     if (!photo.isThumbnail!) {
+    //       background = photo;
+    //       return;
+    //     }
+    //   });
+    // }
     // return
     //  BlocBuilder<SponsorBloc, SponsorState>(
     //   builder: (context, state) {
@@ -71,12 +88,20 @@ class CenterCard extends StatelessWidget {
 
                         //   )
                         // :
-                        Image.asset(
-                      'lib/assets/center0.jpg',
-                      width: width * (1 - 2 * mediumPadRate),
-                      height: height * 0.18,
-                      fit: BoxFit.cover,
-                    ),
+                        (center.getBackGround() == null)
+                            ? Image.asset(
+                                'lib/assets/center0.jpg',
+                                width: width * (1 - 2 * mediumPadRate),
+                                height: height * 0.18,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.network(
+                                //placeholder: '/lib/assets/new-paw.gif',
+                                center.getBackGround()!.url!,
+                                width: width * (1 - 2 * mediumPadRate),
+                                height: height * 0.18,
+                                fit: BoxFit.cover,
+                              ),
                   ),
                 ),
                 Container(
@@ -121,25 +146,30 @@ class CenterCard extends StatelessWidget {
                         ),
                       ),
                       const Expanded(child: SizedBox()),
-                      if(center.rating != 0) Row(children: [Icon(
-                        Icons.star_rate_rounded,
-                        size: width * regularFontRate,
-                        color: primaryColor,
-                      ),
-                      Text(
-                        center.rating.toString(),
-                        style: TextStyle(
-                          color: primaryFontColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        '(' + center.ratingCount.toString() + ')',
-                        style: TextStyle(
-                          color: lightFontColor,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),],)
+                      if (center.rating != 0)
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.star_rate_rounded,
+                              size: width * regularFontRate,
+                              color: primaryColor,
+                            ),
+                            Text(
+                              center.rating.toString(),
+                              style: TextStyle(
+                                color: primaryFontColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              '(' + center.ratingCount.toString() + ')',
+                              style: TextStyle(
+                                color: lightFontColor,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        )
                     ],
                   ),
                 ),
@@ -180,9 +210,13 @@ class CenterCard extends StatelessWidget {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                  image: const DecorationImage(
-                      image: AssetImage('lib/assets/vet-ava.png'),
-                      fit: BoxFit.cover),
+                  image: (center.getThumbnail() == null)
+                      ? DecorationImage(
+                          image: AssetImage('lib/assets/vet-ava.png'),
+                          fit: BoxFit.cover)
+                      : DecorationImage(
+                          image: NetworkImage(center.getThumbnail()!.url!),
+                          fit: BoxFit.cover),
                   borderRadius: BorderRadius.circular(height * 0.1),
                   border: Border.all(width: 2, color: Colors.white)),
             ),

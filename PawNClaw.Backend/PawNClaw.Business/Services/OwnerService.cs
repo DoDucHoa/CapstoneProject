@@ -28,7 +28,19 @@ namespace PawNClaw.Business.Services
         {
             var values = _ownerRepository.GetAll(includeProperties: "IdNavigation");
 
-            values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("OWN"));
+            values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("OWN")).Select(x => new Owner() { 
+                Name = x.Name,
+                Email = x.Email,
+                Gender = x.Gender,
+                Id = x.Id,
+                IdNavigation = new Account()
+                {
+                    Phone = x.IdNavigation.Phone,
+                    UserName = x.IdNavigation.UserName,
+                    Status = x.IdNavigation.Status,
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.Account)
+                }
+            });
 
             // lọc theo name
             if (!string.IsNullOrWhiteSpace(Name)) values = values.Where(x => x.Name.Trim().Contains(Name));
@@ -88,10 +100,9 @@ namespace PawNClaw.Business.Services
                 var id = ownerToDb.Id;
                 return id;
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine("This is error: " + ex.Message);
-                return -1;
+                throw new Exception();
             }
         }
 

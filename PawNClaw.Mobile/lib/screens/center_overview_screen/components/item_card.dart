@@ -14,6 +14,7 @@ class ItemCard extends StatelessWidget {
   final String name;
   final List<double> sellPrice;
   final double discountPrice;
+  final String? imgURL;
   final Widget redirect;
   final int typeId;
   final String id;
@@ -25,7 +26,8 @@ class ItemCard extends StatelessWidget {
       required this.discountPrice,
       required this.redirect,
       required this.typeId,
-      required this.id})
+      required this.id,
+      required this.imgURL})
       : super(key: key);
 
   @override
@@ -37,7 +39,9 @@ class ItemCard extends StatelessWidget {
     //     child:
     //         BlocBuilder<BookingBloc, BookingState>(builder: (context, state) {
     return InkWell(
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => redirect,)),
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => redirect,
+            )),
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 10),
           child: Stack(children: [
@@ -70,7 +74,8 @@ class ItemCard extends StatelessWidget {
                                   symbol: 'đ',
                                   locale: 'vi_vn')
                               .format(sellPrice.first) +
-                          ((sellPrice.length > 1 && sellPrice.first != sellPrice.last)
+                          ((sellPrice.length > 1 &&
+                                  sellPrice.first != sellPrice.last)
                               ? " ~ " +
                                   NumberFormat.currency(
                                           decimalDigits: 0,
@@ -127,10 +132,19 @@ class ItemCard extends StatelessWidget {
               child: Container(
                 width: 65,
                 height: 65,
+               // padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  image: const DecorationImage(
-                      image: AssetImage('lib/assets/cage.png'),
-                      fit: BoxFit.cover),
+                  color: (imgURL == null) ? frameColor : null,
+                  image: (imgURL == null)
+                      ? (typeId == 0)
+                          ? DecorationImage(
+                              image: AssetImage('lib/assets/cage.png'),
+                              fit: BoxFit.cover)
+                          : DecorationImage(
+                              image: AssetImage('lib/assets/supply.png'),
+                              fit: BoxFit.contain)
+                      : DecorationImage(
+                          image: NetworkImage(imgURL!), fit: BoxFit.cover),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),

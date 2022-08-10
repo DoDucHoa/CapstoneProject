@@ -48,12 +48,23 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                     onPressed: () {
                       showCupertinoDialog(
                           context: context,
-                          builder: (context) {
-                            return PetRequestsDialog(
-                                requests: state is UpdatePetSelected
-                                    ? state.requests
-                                    : []);
-                          });
+                          builder: (_) => BlocProvider.value(
+                                value: BlocProvider.of<SearchBloc>(context),
+                                child: PetRequestsDialog(
+                                    requests: state is UpdatePetSelected
+                                        ? state.requests
+                                        : []),
+                              )).then((value) => context
+                          .findRootAncestorStateOfType()!
+                          .setState(() {}));
+                      // showCupertinoDialog(
+                      //     context: context,
+                      //     builder: (context) {
+                      //       return PetRequestsDialog(
+                      //           requests: state is UpdatePetSelected
+                      //               ? state.requests
+                      //               : []);
+                      //     });
                     },
                     icon: Image.asset('lib/assets/black-paw.png'
                         // color: primaryFontColor,
@@ -131,7 +142,7 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                                       setState(() {});
                                     },
                                     child: const Text(
-                                      "Tạo chuồng",
+                                      "Tạo phòng",
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 13),
                                     ),

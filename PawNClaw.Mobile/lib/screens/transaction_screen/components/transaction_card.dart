@@ -6,11 +6,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pawnclaw_mobile_application/blocs/transaction/transaction_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
+import 'package:pawnclaw_mobile_application/models/photo.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/transaction_details_screen.dart';
 
 import '../../../models/booking.dart';
 
-var statusColors = [primaryColor.withOpacity(0.45), primaryColor, primaryColor.withOpacity(0.45), Colors.red];
+var statusColors = [
+  primaryColor.withOpacity(0.45),
+  primaryColor,
+  primaryColor.withOpacity(0.45),
+  Colors.red
+];
 
 class TransactionCard extends StatelessWidget {
   final Booking booking;
@@ -23,9 +29,16 @@ class TransactionCard extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     //print('status: ' + booking.status!.id.toString());
+
+   
     return InkWell(
       onTap: (() {
-       Navigator.push(context,MaterialPageRoute(builder: (context) => TransactionDetailsScreen(booking: booking,)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => TransactionDetailsScreen(
+                      booking: booking,
+                    )));
       }),
       child: Column(
         children: [
@@ -49,7 +62,9 @@ class TransactionCard extends StatelessWidget {
                           Text(
                             DateFormat('HH:mm a, dd/MM/yyyy').format(
                                 DateTime.parse(booking.createTime!.toString())),
-                            style: TextStyle(color: lightFontColor, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                                color: lightFontColor,
+                                fontWeight: FontWeight.w500),
                           ),
                           Text(booking.status!.name!,
                               style: TextStyle(
@@ -78,7 +93,9 @@ class TransactionCard extends StatelessWidget {
                                 Text(
                                   DateFormat('HH:mm, dd/MM/yyyy').format(
                                       DateTime.parse(
-                                          booking.startBooking!.toString())),
+                                        (booking.checkIn == null)?
+                                          booking.startBooking!.toString() 
+                                          : booking.checkIn!.toString(),)),
                                   style: TextStyle(
                                     color: primaryFontColor,
                                     fontWeight: FontWeight.w500,
@@ -104,7 +121,9 @@ class TransactionCard extends StatelessWidget {
                                 Text(
                                   DateFormat('HH:mm, dd/MM/yyyy').format(
                                       DateTime.parse(
-                                          booking.endBooking!.toString())),
+                                        (booking.checkOut == null)?
+                                          booking.endBooking!.toString() : 
+                                          booking.checkOut!.toString(),)),
                                   style: TextStyle(
                                     color: primaryFontColor,
                                     fontWeight: FontWeight.w500,
@@ -177,9 +196,11 @@ class TransactionCard extends StatelessWidget {
                     Container(
                       height: 30,
                       width: 30,
-                      child: CircleAvatar(
+                      child: (booking.center!.getThumbnail() == null) ? CircleAvatar(
                           backgroundImage:
-                              AssetImage('lib/assets/vet-ava.png')),
+                              AssetImage('lib/assets/vet-ava.png')):CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(booking.center!.getThumbnail()!.url!)),
                     ),
                     SizedBox(
                       width: 10,

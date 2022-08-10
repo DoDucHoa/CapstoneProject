@@ -45,12 +45,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             //color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(width: 5, color: Colors.white),
-                            image: (state.user.photoUrl != null)
+                            image:
+                             (state.user.photoUrl != null)
                                 ? DecorationImage(
                                     image: NetworkImage(state.user.photoUrl!))
-                                : DecorationImage(
-                                    image: AssetImage((state.customer!.gender! >
-                                            -1)
+                                : 
+                                DecorationImage(
+                                    image: AssetImage((state.customer!.gender! < 2)
                                         ? 'lib/assets/cus-${state.customer!.gender}.png'
                                         : 'lib/assets/cus-2.png')),
                             // : null

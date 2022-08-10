@@ -6,6 +6,8 @@ import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/screens/center_overview_screen/center_overview_screen.dart';
 
+import '../../../models/photo.dart';
+
 class CenterCard extends StatelessWidget {
   const CenterCard({
     required this.location,
@@ -18,6 +20,23 @@ class CenterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    Photo? thumbnail;
+    Photo? background;
+    if (location.center!.photos != null &&
+        location.center!.photos!.isNotEmpty) {
+      location.center!.photos!.forEach((photo) {
+        if (photo.isThumbnail!) {
+          thumbnail = photo;
+          return;
+        }
+      });
+      location.center!.photos!.forEach((photo) {
+        if (!photo.isThumbnail!) {
+          background = photo;
+          return;
+        }
+      });
+    }
     // return
     //  BlocBuilder<SponsorBloc, SponsorState>(
     //   builder: (context, state) {
@@ -70,12 +89,19 @@ class CenterCard extends StatelessWidget {
 
                         //   )
                         // :
-                        Image.asset(
-                      'lib/assets/center0.jpg',
-                      width: width * (1 - 2 * mediumPadRate),
-                      height: height * 0.18,
-                      fit: BoxFit.cover,
-                    ),
+                        (background == null)
+                            ? Image.asset(
+                                'lib/assets/center0.jpg',
+                                width: width * (1 - 2 * mediumPadRate),
+                                height: height * 0.18,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.network(
+                                background!.url!,
+                                width: width * (1 - 2 * mediumPadRate),
+                                height: height * 0.18,
+                                fit: BoxFit.cover,
+                              ),
                   ),
                 ),
                 Container(
@@ -122,25 +148,32 @@ class CenterCard extends StatelessWidget {
                         ),
                       ),
                       const Expanded(child: SizedBox()),
-                      if(location.center!.rating != 0) Row(children: [Icon(
-                        Icons.star_rate_rounded,
-                        size: width * regularFontRate,
-                        color: primaryColor,
-                      ),
-                      Text(
-                        location.center!.rating.toString(),
-                        style: TextStyle(
-                          color: primaryFontColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        '(' + location.center!.ratingCount.toString() + ')',
-                        style: TextStyle(
-                          color: lightFontColor,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),],)
+                      if (location.center!.rating != 0)
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.star_rate_rounded,
+                              size: width * regularFontRate,
+                              color: primaryColor,
+                            ),
+                            Text(
+                              location.center!.rating.toString(),
+                              style: TextStyle(
+                                color: primaryFontColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              '(' +
+                                  location.center!.ratingCount.toString() +
+                                  ')',
+                              style: TextStyle(
+                                color: lightFontColor,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        )
                     ],
                   ),
                 ),
@@ -154,20 +187,25 @@ class CenterCard extends StatelessWidget {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                  image: const DecorationImage(
-                      image: AssetImage('lib/assets/vet-ava.png'),
-                      fit: BoxFit.cover),
+                  image: (thumbnail == null)
+                      ? DecorationImage(
+                          image: AssetImage('lib/assets/vet-ava.png'),
+                          fit: BoxFit.cover)
+                      : DecorationImage(
+                          image: NetworkImage(thumbnail!.url!),
+                          fit: BoxFit.cover),
                   borderRadius: BorderRadius.circular(height * 0.1),
                   border: Border.all(width: 2, color: Colors.white)),
             ),
           ),
-
           Positioned(
-            top: width*smallPadRate,
-            right: width*regularPadRate,
+            top: width * smallPadRate,
+            right: width * regularPadRate,
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 5, horizontal: width*extraSmallPadRate),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(50)),
+              padding: EdgeInsets.symmetric(
+                  vertical: 5, horizontal: width * extraSmallPadRate),
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(50)),
               child: Text(
                 location.duration! + '  ●  ' + location.distance!,
                 style: TextStyle(
