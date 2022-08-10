@@ -26,3 +26,24 @@ class BookingUpdated extends BookingState {
   // TODO: implement props
   List<Object> get props => [booking];
 }
+
+class BookingSuccessful extends BookingState {
+  final BookingRequestModel booking;
+  final Center center;
+
+  const BookingSuccessful(this.booking, this.center);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [booking, center];
+}
+
+class BookingFailed extends BookingState {
+  final String error;
+
+  const BookingFailed(this.error);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [error];
+}
