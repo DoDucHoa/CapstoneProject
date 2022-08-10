@@ -36,4 +36,14 @@ namespace PawNClaw.Data.Parameter
         public bool? Status { get; set; }
         public int BrandId { get; set; }
     }
+
+    public class UpdateExpiredSponsorBanner
+    {
+        public int Id { get; set; }
+        public DateTime? ModifyDate { get; set; }
+        public int? ModifyUser { get; set; }
+        public int BrandId { get; set; }
+        public int Year { get; set; }
+        public int Month { get; set; }
+    }
 }

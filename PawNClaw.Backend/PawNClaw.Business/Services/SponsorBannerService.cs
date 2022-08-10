@@ -53,7 +53,7 @@ namespace PawNClaw.Business.Services
                 BrandId = sponsorBannerP.BrandId
             };
 
-            var check = _sponsorBannerRepository.GetAll(x => x.Status == true && ((DateTime)x.StartDate).Date == firstDayOfMonth && ((DateTime)x.EndDate).Date == lastDayOfMonth);
+            var check = _sponsorBannerRepository.GetAll(x => x.Status == true && ((DateTime)x.EndDate).Date == lastDayOfMonth);
             var constraint = await ConstService.Get(Const.ProjectFirebaseId, "Const", "Config");
 
             var limitObj = constraint["numOfSponsor"];
@@ -82,6 +82,33 @@ namespace PawNClaw.Business.Services
 
             _sponsorBannerRepository.Update(sponsorBanner);
             _sponsorBannerRepository.SaveDbChange();
+            return true;
+        }
+
+        public async Task<bool> UpdateExpired(UpdateExpiredSponsorBanner sponsorBannerP)
+        {
+            var firstDayOfMonth = new DateTime(sponsorBannerP.Year, sponsorBannerP.Month, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+            SponsorBanner sponsorBanner = _sponsorBannerRepository.Get(sponsorBannerP.Id);
+            sponsorBanner.EndDate = lastDayOfMonth;
+            sponsorBanner.ModifyDate = sponsorBannerP.ModifyDate;
+            sponsorBanner.ModifyUser = sponsorBannerP.ModifyUser;
+
+            var check = _sponsorBannerRepository.GetAll(x => x.Status == true && ((DateTime)x.EndDate).Date == lastDayOfMonth);
+            var constraint = await ConstService.Get(Const.ProjectFirebaseId, "Const", "Config");
+
+            var limitObj = constraint["numOfSponsor"];
+            var limit = Convert.ToInt32(limitObj);
+
+            if (check.Count() >= limit)
+            {
+                throw new Exception("Max limit sponsor for this month");
+            }
+
+            _sponsorBannerRepository.Update(sponsorBanner);
+            _sponsorBannerRepository.SaveDbChange();
+
             return true;
         }
 
