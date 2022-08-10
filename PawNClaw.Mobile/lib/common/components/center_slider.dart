@@ -56,11 +56,12 @@ class _CenterSliderState extends State<CenterSlider> {
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     child: ClipRRect(
                         borderRadius: BorderRadius.all(Radius.circular(15)),
-                        child: //Image.network(widget.photoUrls[index], fit: BoxFit.cover,)
-                        Image.asset(
-                          'lib/assets/sponsor-0.png',
-                          fit: BoxFit.cover,
-                        ),
+                        child:
+                         Image.network(widget.photoUrls[index], fit: BoxFit.cover,)
+                        // Image.asset(
+                        //   'lib/assets/sponsor-0.png',
+                        //   fit: BoxFit.cover,
+                        // ),
                         )),
               );
             },
@@ -68,7 +69,7 @@ class _CenterSliderState extends State<CenterSlider> {
                 height: size.height * 0.35,
                 viewportFraction: 1,
                 enableInfiniteScroll: true,
-                autoPlay: true,
+                autoPlay: (widget.photoUrls.length > 1),
                 autoPlayInterval: Duration(seconds: currentDurations),
                 onPageChanged: ((index, reason) {
                   setState(() => activeIndex = index);
@@ -91,7 +92,7 @@ class _CenterSliderState extends State<CenterSlider> {
                           ? widget.photoUrls.length
                           : 5)) /
               2,
-          child: buildIndicator(),
+          child: (widget.photoUrls.length > 1) ? buildIndicator():Container(),
         )
       ],
     ));

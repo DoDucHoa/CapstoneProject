@@ -93,7 +93,7 @@ export default function UserList() {
 
     const owners = data.map((owner, index) => ({
       id: owner.id,
-      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`, // FIXME: update photo for owner list
+      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`, // TODO: update photo for owner list
       name: owner.name,
       email: owner.email,
       phoneNumber: owner.idNavigation.phone,
@@ -134,6 +134,7 @@ export default function UserList() {
     await unbanOwner(id);
     await getOwnerData();
   };
+
   const handleOpenBanDialog = (idAdmin) => {
     setSelectIdAdmin(idAdmin);
     setOpenDialog(true);

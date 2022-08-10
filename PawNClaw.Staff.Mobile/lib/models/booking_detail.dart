@@ -8,6 +8,7 @@ class BookingDetail {
   String? customerNote;
   String? staffNote;
   Customer? customer;
+  int? centerId;
   List<BookingDetails>? bookingDetails;
   List<ServiceOrders>? serviceOrders;
   List<SupplyOrders>? supplyOrders;
@@ -22,6 +23,7 @@ class BookingDetail {
       this.customerNote,
       this.staffNote,
       this.customer,
+      this.centerId,
       this.bookingDetails,
       this.serviceOrders,
       this.supplyOrders,
@@ -38,6 +40,7 @@ class BookingDetail {
     customer = json['customer'] != null
         ? new Customer.fromJson(json['customer'])
         : null;
+    centerId = json['centerId'];
     totalSupply = json['totalSupply'];
     totalService = json['totalService'];
     if (json['bookingDetails'] != null) {
@@ -106,13 +109,21 @@ class BookingDetail {
 
   List<BookingDetails> getUndoneFeedingAct() {
     List<BookingDetails> undone = [];
-    this.bookingDetails!.forEach((booking) {
-      booking.bookingActivities?.forEach((element) {
-        if (element.provideTime == null) {
-          undone.add(booking);
-        }
-      });
+    this.bookingActivities!.forEach((activity) {
+      // booking.bookingActivities?.forEach((element) {
+      //   if (element.provideTime == null) {
+      //     undone.add(booking);
+      //   }
+      // });
+      if (activity.bookingDetailId != null && activity.provideTime == null) {
+        this.bookingDetails!.forEach((detail) {
+          if (detail.id == activity.bookingDetailId) {
+            undone.add(detail);
+          }
+        });
+      }
     });
+    undone.toSet().toList();
     return undone;
   }
 
@@ -301,7 +312,7 @@ class BookingDetails {
   double? duration;
   // Null? note;
   // Null? booking;
-  // Null? c;
+  // Cage? c;
   List<BookingActivities>? bookingActivities;
   List<PetBookingDetails>? petBookingDetails;
   List<FoodSchedules>? foodSchedules;
@@ -379,12 +390,12 @@ class BookingDetails {
     return data;
   }
 
-  List<BookingActivities> getUndoneActivities() {
-    return this
-        .bookingActivities!
-        .where((element) => element.provideTime == null)
-        .toList();
-  }
+  // List<BookingActivities> getUndoneActivities() {
+  //   return this
+  //       .bookingActivities!
+  //       .where((element) => element.provideTime == null)
+  //       .toList();
+  // }
 }
 
 class FoodSchedules {

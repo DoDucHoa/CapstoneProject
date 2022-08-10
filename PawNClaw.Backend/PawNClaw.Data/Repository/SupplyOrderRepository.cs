@@ -1,4 +1,5 @@
-﻿using PawNClaw.Data.Database;
+﻿using PawNClaw.Data.Const;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Interface;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,10 @@ namespace PawNClaw.Data.Repository
 {
     public class SupplyOrderRepository : Repository<SupplyOrder>, ISupplyOrderRepository
     {
-        public SupplyOrderRepository(ApplicationDbContext db) : base(db)
+        IPhotoRepository _photoRepository;
+        public SupplyOrderRepository(ApplicationDbContext db, IPhotoRepository photoRepository) : base(db)
         {
+            _photoRepository = photoRepository;
         }
 
         public void RemoveSupplyOrder(int BookingId, int SupplyId)
@@ -24,7 +27,11 @@ namespace PawNClaw.Data.Repository
             return _dbSet.Where(x => x.BookingId == BookingId && x.PetId == PetId).Select(x => new SupplyOrder { 
                 BookingId = x.BookingId,
                 Note = x.Note,
-                Supply = x.Supply,
+                Supply = new Supply() {
+                    Id = x.SupplyId,
+                    Name = x.Supply.Name,
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.SupplyId, PhotoTypesConst.Supply),
+                },
                 PetId = x.PetId,
                 SupplyId = x.SupplyId,
                 Quantity = x.Quantity

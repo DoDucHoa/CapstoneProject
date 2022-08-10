@@ -6,6 +6,7 @@ import { Container } from '@mui/material';
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
 import useSettings from '../../../hooks/useSettings';
+import useAuth from '../../../hooks/useAuth';
 // components
 import Page from '../../../components/Page';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
@@ -24,13 +25,22 @@ export default function UserCreate() {
   const isEdit = pathname.includes('edit');
 
   const { id } = useParams();
+  const { centerInfo } = useAuth();
+
+  let idCenter = null;
+  if (id === '0') {
+    idCenter = centerInfo?.id;
+  } else {
+    idCenter = id;
+  }
+
   useEffect(() => {
     if (isEdit) {
-      getBrand(id).then((data) => {
+      getBrand(idCenter).then((data) => {
         setBrandData(data);
       });
     }
-  }, [id, isEdit]);
+  }, [id, isEdit, idCenter]);
 
   return (
     <Page title="Thương hiệu">

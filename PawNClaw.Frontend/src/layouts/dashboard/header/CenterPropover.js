@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 // @mui
-import { MenuItem, Stack, Typography } from '@mui/material';
+import { Box, MenuItem, Stack, Typography } from '@mui/material';
 // components
 import Image from '../../../components/Image';
 import MenuPopover from '../../../components/MenuPopover';
@@ -37,22 +37,38 @@ export default function CenterPopover({ petCenters, onChange }) {
 
   return (
     <>
-      <IconButtonAnimate
-        onClick={handleOpen}
-        sx={{
-          width: 40,
-          height: 40,
-          ...(open && { bgcolor: 'action.selected' }),
-        }}
-      >
-        <Image
-          disabledEffect
-          src={
-            'https://firebasestorage.googleapis.com/v0/b/pawnclaw-4b6ba.appspot.com/o/sponsor%2FBin-Bon-Dog-Shop.jpg?alt=media&token=c776bac1-52e0-44e1-9ef4-147f90488b8d' // FIXME: center photo is static
-          }
-          alt={selectedCenter.name}
-        />
-      </IconButtonAnimate>
+      <Box display="flex" sx={{ border: '1px dashed grey', borderRadius: 1, pl: 2 }}>
+        <Box mr={2} width={150}>
+          <Typography variant="caption" color="textSecondary">
+            Trung tâm
+          </Typography>
+          <Typography
+            variant="body2"
+            color="textPrimary"
+            fontWeight={700}
+            sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: 300 }}
+          >
+            {selectedCenter.name}
+          </Typography>
+        </Box>
+
+        <IconButtonAnimate
+          onClick={handleOpen}
+          sx={{
+            width: 50,
+            height: 50,
+            ...(open && { bgcolor: 'action.selected' }),
+          }}
+        >
+          <Image
+            ratio={'1/1'}
+            borderRadius={3}
+            disabledEffect
+            src={selectedCenter?.photos?.length > 0 ? selectedCenter?.photos[0]?.url : ''}
+            alt={selectedCenter?.name}
+          />
+        </IconButtonAnimate>
+      </Box>
 
       <MenuPopover
         open={Boolean(open)}
@@ -72,14 +88,7 @@ export default function CenterPopover({ petCenters, onChange }) {
               selected={center.id === selectedCenter.id}
               onClick={() => handleChaneCenter(center)}
             >
-              <Image
-                disabledEffect
-                alt={center.name}
-                src={
-                  'https://firebasestorage.googleapis.com/v0/b/pawnclaw-4b6ba.appspot.com/o/sponsor%2FBin-Bon-Dog-Shop.jpg?alt=media&token=c776bac1-52e0-44e1-9ef4-147f90488b8d'
-                }
-                sx={{ width: 28, mr: 2 }}
-              />
+              <Image disabledEffect alt={center?.name} src={center?.photos[0]?.url} sx={{ width: 28, mr: 2 }} />
               <Typography
                 variant="body2"
                 sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: 140 }}

@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:pawnclaw_mobile_application/common/components/voucher_dialog.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/voucher.dart';
 
@@ -42,16 +43,37 @@ class _VoucherCardState extends State<VoucherCard> {
         ? InkWell(
             //enableFeedback: widget.avaiable,
             onTap: (() {
-              widget.callback(widget.voucher.code!);
+              showModalBottomSheet(
+                  context: context,
+                  backgroundColor: Colors.black.withOpacity(0.02),
+                  builder: ((context) => VoucherDialog(
+                      voucher: widget.voucher,
+                      onPressed: () {
+                        widget.callback(widget.voucher.code!);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Áp dụng ưu đãi thành công!"),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                      isEnabled: true)));
+              //  showDialog(
+              //     context: context,
+              //     builder: ((context) => VoucherDialog(
+              //         voucher: widget.voucher,
+              //         onPressed: () {
+              //           widget.callback(widget.voucher.code!);
+              //           Navigator.pop(context);
+              //           Navigator.pop(context);
+              //         },
+              //         isEnabled: true)));
+              //widget.callback(widget.voucher.code!);
               //BlocProvider.of<BookingBloc>(context).add(AddVoucher(voucherCode: widget.voucher.code));
               // var state = BlocProvider.of<BookingBloc>(context).state;
               //var voucherCode  = (state as BookingUpdated).booking.voucherCode;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Chọn voucher thành công!"),
-                  duration: Duration(seconds: 1),
-                ),
-              );
             }),
             child: Column(
               children: [
@@ -72,7 +94,11 @@ class _VoucherCardState extends State<VoucherCard> {
                               'Giảm ' +
                                   NumberFormat.currency(
                                           decimalDigits: 0,
-                                          symbol: (widget.voucher.voucherTypeName!.contains('Tiền'))?'đ':'%',
+                                          symbol: (widget
+                                                  .voucher.voucherTypeName!
+                                                  .contains('Tiền'))
+                                              ? 'đ'
+                                              : '%',
                                           locale: 'vi_vn')
                                       .format((widget.voucher.value)) +
                                   ' đơn hàng',
@@ -103,7 +129,7 @@ class _VoucherCardState extends State<VoucherCard> {
                         width: 10,
                         child: DecoratedBox(
                             decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(0.3),
+                                color: frameColor,
                                 borderRadius: BorderRadius.only(
                                     topRight: Radius.circular(15),
                                     bottomRight: Radius.circular(15)))),
@@ -117,7 +143,7 @@ class _VoucherCardState extends State<VoucherCard> {
                             children: List.generate(
                                 (constraints.constrainWidth() / 10).floor(),
                                 (index) => SizedBox(
-                                      height: 1,
+                                      height: 1.5,
                                       width: 5,
                                       child: DecoratedBox(
                                           decoration: BoxDecoration(
@@ -132,7 +158,7 @@ class _VoucherCardState extends State<VoucherCard> {
                         width: 10,
                         child: DecoratedBox(
                             decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(0.3),
+                                color: frameColor,
                                 borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(15),
                                     bottomLeft: Radius.circular(15)))),
@@ -140,30 +166,30 @@ class _VoucherCardState extends State<VoucherCard> {
                     ],
                   ),
                 ),
-                // Container(
-                //     height: size * 0.25,
-                //     width: width,
-                //     decoration: BoxDecoration(
-                //         color: Colors.white,
-                //         borderRadius: BorderRadius.only(
-                //             bottomLeft: Radius.circular(15),
-                //             bottomRight: Radius.circular(15))),
-                //     child: Padding(
-                //         padding: EdgeInsets.all(10),
-                //         child: Row(children: [
-                //           Icon(
-                //             FontAwesomeIcons.clock,
-                //             color: primaryColor,
-                //             size: 15,
-                //           ),
-                //           SizedBox(
-                //             width: 10,
-                //           ),
-                //           Text('Hiệu lực từ: ' +
-                //               widget.voucher.formatStartDate() +
-                //               ' - ' +
-                //               widget.voucher.formatExpiredDate()),
-                //         ])))
+                Container(
+                    height: size * 0.25,
+                    width: width,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(15),
+                            bottomRight: Radius.circular(15))),
+                    child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(children: [
+                          Icon(
+                            FontAwesomeIcons.clock,
+                            color: primaryColor,
+                            size: 15,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text('Hiệu lực từ: ' +
+                              widget.voucher.formatStartDate() +
+                              ' - ' +
+                              widget.voucher.formatExpiredDate()),
+                        ])))
               ],
             ))
         : Opacity(
@@ -187,7 +213,11 @@ class _VoucherCardState extends State<VoucherCard> {
                               'Giảm ' +
                                   NumberFormat.currency(
                                           decimalDigits: 0,
-                                          symbol:(widget.voucher.voucherTypeName!.contains('Tiền')) ?'đ':'%',
+                                          symbol: (widget
+                                                  .voucher.voucherTypeName!
+                                                  .contains('Tiền'))
+                                              ? 'đ'
+                                              : '%',
                                           locale: 'vi_vn')
                                       .format((widget.voucher.value)) +
                                   ' đơn hàng',
@@ -255,30 +285,30 @@ class _VoucherCardState extends State<VoucherCard> {
                     ],
                   ),
                 ),
-                // Container(
-                //     height: size * 0.25,
-                //     width: width,
-                //     decoration: BoxDecoration(
-                //         color: Colors.white,
-                //         borderRadius: BorderRadius.only(
-                //             bottomLeft: Radius.circular(15),
-                //             bottomRight: Radius.circular(15))),
-                //     child: Padding(
-                //         padding: EdgeInsets.all(10),
-                //         child: Row(children: [
-                //           Icon(
-                //             FontAwesomeIcons.clock,
-                //             color: primaryColor,
-                //             size: 15,
-                //           ),
-                //           SizedBox(
-                //             width: 10,
-                //           ),
-                //           Text('Hiệu lực từ: ' +
-                //               widget.voucher.formatStartDate() +
-                //               ' - ' +
-                //               widget.voucher.formatExpiredDate()),
-                //         ]))),
+                Container(
+                    height: size * 0.25,
+                    width: width,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(15),
+                            bottomRight: Radius.circular(15))),
+                    child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(children: [
+                          Icon(
+                            FontAwesomeIcons.clock,
+                            color: primaryColor,
+                            size: 15,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text('Hiệu lực từ: ' +
+                              widget.voucher.formatStartDate() +
+                              ' - ' +
+                              widget.voucher.formatExpiredDate()),
+                        ]))),
                 Text(
                   '* Đơn hàng chưa đạt giá trị tối thiểu của Voucher',
                   style: TextStyle(fontStyle: FontStyle.italic),

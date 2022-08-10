@@ -44,6 +44,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       emit(UpdatePetSelected(
           [], (state as UpdatePetSelected).requests..add(event.pets)));
     });
+
+    on<RemovePetRequest>((event, emit) {
+      print('at remove pet request');
+      print(event.pets);
+      emit(UpdatePetSelected(
+          [], (state as UpdatePetSelected).requests..removeWhere((element) => element.contains(event.pets[0]))));
+    });
     on<ConfirmRequest>((event, emit) {
       emit(FillingInformation(
           (state as UpdatePetSelected).requests, event.centerId));

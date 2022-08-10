@@ -7,6 +7,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  updatePassword,
   // updatePassword,
 } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
@@ -103,7 +104,8 @@ const AuthContext = createContext({
   uploadPhotoToFirebase: (path, file, idActor, photoType) => Promise.resolve(path, file, idActor, photoType),
   changeCenter: () => null,
   uploadFileToFirebase: (path, file, fileName) => Promise.resolve(path, file, fileName),
-  // changePassword: (password) => Promise.resolve(password),
+  updatePhoto: (path, file, idActor) => Promise.resolve(path, file, idActor),
+  changePassword: (password) => Promise.resolve(password),
 });
 
 // ----------------------------------------------------------------------
@@ -209,6 +211,15 @@ function AuthProvider({ children }) {
     await uploadPhotoToBackend(idActor, downloadURL, photoType);
   };
 
+  const updatePhoto = async (path, file, idActor) => {
+    const storageRef = ref(storage, `${path}/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    await uploadTask;
+    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+    await updatePhotoToBackend(idActor, downloadURL);
+  };
+
   const uploadFileToFirebase = async (path, file, fileName) => {
     const storageRef = ref(storage, `${path}/${fileName}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
@@ -226,7 +237,7 @@ function AuthProvider({ children }) {
     });
   };
 
-  // const changePassword = (password) => updatePassword(AUTH.currentUser, password);
+  const changePassword = (password) => updatePassword(AUTH.currentUser, password);
 
   return (
     <AuthContext.Provider
@@ -254,7 +265,8 @@ function AuthProvider({ children }) {
         uploadPhotoToFirebase,
         changeCenter,
         uploadFileToFirebase,
-        // changePassword,
+        updatePhoto,
+        changePassword,
       }}
     >
       {children}
@@ -317,6 +329,14 @@ const uploadPhotoToBackend = async (idActor, url, photoType) => {
     idActor,
     url,
     isThumbnail: false,
+  });
+  return response.data;
+};
+
+const updatePhotoToBackend = async (id, url) => {
+  const response = await axios.post('/api/photos', {
+    id,
+    url,
   });
   return response.data;
 };

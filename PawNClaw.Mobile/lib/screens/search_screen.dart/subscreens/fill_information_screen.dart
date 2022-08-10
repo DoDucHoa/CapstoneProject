@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
+import 'package:pawnclaw_mobile_application/common/components/primary_button.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/common/date_picker.dart';
 import 'package:pawnclaw_mobile_application/models/area.dart';
@@ -63,7 +65,13 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
               ),
             ),
             leading: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                BlocProvider.of<SearchBloc>(context)
+                          ..add(BackToPetSelection(
+                              (state as FillingInformation).requests));
+              },
+              // =>
+              //  Navigator.of(context).pop(),
               icon: Icon(
                 Icons.arrow_back_ios_new,
                 color: primaryFontColor,
@@ -115,7 +123,9 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                             from = date;
                             _fromController.text =
                                 DateFormat("dd/MM/yyyy, h:mm a").format(date);
-                            if (to != null)  { due = getDue(from, to);}
+                            if (to != null) {
+                              due = getDue(from, to);
+                            }
                             fromTimeError = null;
                           },
                         );
@@ -226,7 +236,7 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                                   color: primaryBackgroundColor,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Icon(
-                                Icons.access_time_filled,
+                                Iconsax.calendar5,
                                 color: primaryColor,
                                 size: 20,
                               )),
@@ -307,43 +317,22 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                 SizedBox(
                   height: 15,
                 ),
-                Center(
-                  child: Opacity(
-                    opacity: (_fromController.text != "" &&
+                Opacity(
+                  opacity: (_fromController.text != "" &&
+                          _toController.text != "" &&
+                          _areaController.text != "")
+                      ? 1
+                      : 0.3,
+                  child: PrimaryButton(
+                    onPressed: (_fromController.text != "" &&
                             _toController.text != "" &&
                             _areaController.text != "")
-                        ? 1
-                        : 0.3,
-                    child: ElevatedButton(
-                      onPressed: (_fromController.text != "" &&
-                              _toController.text != "" &&
-                              _areaController.text != "")
-                          ? () => BlocProvider.of<SearchBloc>(context).add(
-                              SearchCenter(
-                                  (state as FillingInformation).requests,
-                                  from!,
-                                  due!,
-                                  cityCode!,
-                                  districtCode!,
-                                  0))
-                          : () {},
-                      child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text(
-                            "Xác nhận",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: width * regularFontRate),
-                          )),
-                      style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                        ),
-                      ),
-                    ),
+                        ? () => BlocProvider.of<SearchBloc>(context).add(
+                            SearchCenter((state as FillingInformation).requests,
+                                from!, due!, cityCode!, districtCode!, 0))
+                        : () {},
+                    text: "Xác nhận",
+                    contextWidth: width,
                   ),
                 ),
               ],

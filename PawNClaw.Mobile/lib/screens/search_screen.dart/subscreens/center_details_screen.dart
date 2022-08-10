@@ -7,6 +7,7 @@ import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/fake_data.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
+import 'package:pawnclaw_mobile_application/models/photo.dart';
 import 'package:pawnclaw_mobile_application/models/voucher.dart';
 import 'package:pawnclaw_mobile_application/repositories/center/center_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/booking_screen/confirm_booking.dart';
@@ -44,7 +45,11 @@ class CenterDetails extends StatefulWidget {
 class _CenterDetailsState extends State<CenterDetails> {
   petCenter.Center? center;
   //List<Voucher>? vouchers;
-  List<String> supplyType = ["DRINK", "FOOD", "MED", "OTHER"];
+  List<String> supplyType = ["FOOD","DRINK",  "MED", "OTHER"];
+  List<String> imgUrls = [];
+  List<int> durations = [];
+  // Photo? thumbnail;
+  // Photo? background;
   @override
   void initState() {
     // TODO: implement initState
@@ -54,6 +59,27 @@ class _CenterDetailsState extends State<CenterDetails> {
         .then((value) {
       setState(() {
         center = value;
+        if (value != null && value.photos!.isNotEmpty) {
+          if (value.getFacilities() != null && value.getFacilities()!.isNotEmpty) {
+            for (var i = 0; i < value.getFacilities()!.length; i++) {
+              imgUrls.add(value.getFacilities()![i].url!);
+              durations.add(2);
+            }
+          }
+          ;}
+    //       value.photos!.forEach((element) {
+    //         if (!element.isThumbnail!) {
+    //           background = element;
+    //           return;
+    //         }
+    //       });
+    //       // background =
+    //       //     value.photos!.firstWhere((photo) => photo.isThumbnail == false));
+        
+    //   // background =
+    //   //     value.photos!.firstWhere((photo) => photo.isThumbnail == false));
+
+    // }
       });
     });
 
@@ -69,6 +95,9 @@ class _CenterDetailsState extends State<CenterDetails> {
 
     var auth = BlocProvider.of<AuthBloc>(context).state;
     int customerId = (auth as Authenticated).user.id!;
+    print(widget.petCenterId);
+
+    
     // CenterRepository()
     //     .getCenterVouchers(widget.petCenterId, customerId)
     //     .then((value) {
@@ -112,12 +141,17 @@ class _CenterDetailsState extends State<CenterDetails> {
                                   collapseMode: CollapseMode.pin,
                                   background: Stack(
                                     children: [
-                                      //campaign image
-                                      Image.asset(
-                                        'lib/assets/center0.jpg',
-                                        width: width,
-                                        fit: BoxFit.cover,
-                                      ),
+                                      (center!.getBackGround() == null)
+                                          ? Image.asset(
+                                              'lib/assets/center0.jpg',
+                                              width: width,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : Image.network(
+                                              center!.getBackGround()!.url!,
+                                              width: width,
+                                              fit: BoxFit.cover,
+                                            ),
                                       // Image.network(
                                       //   center.![0].picture.toString(),
                                       //   width: width,
@@ -174,17 +208,23 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                       Container(
                                                         width: width * 2 / 3,
                                                         height: width *
-                                                                largeFontRate +
-                                                            10,
+                                                                (largeFontRate) +
+                                                            10 +
+                                                            center!.name!
+                                                                    .length *
+                                                                0.5,
                                                         child: Text(
                                                           center?.name ?? "",
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 20,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  height: 1),
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                                20, //width*(largeFontRate) - center!.name!.length*0.05,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            height: 1,
+                                                          ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 2,
                                                         ),
                                                       ),
                                                       Expanded(
@@ -212,7 +252,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                           ),
                                                           Text(
                                                             ' (' +
-                                                                (center?.rating!
+                                                                (center?.ratingCount!
                                                                         .toString() ??
                                                                     "") +
                                                                 ')',
@@ -280,7 +320,9 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                   SizedBox(
                                                     height: 10,
                                                   ),
-                                                  (center!.vouchers != null && center!.vouchers!.isNotEmpty)
+                                                  (center!.vouchers != null &&
+                                                          center!.vouchers!
+                                                              .isNotEmpty)
                                                       ? OutlinedButton.icon(
                                                           style: OutlinedButton.styleFrom(
                                                               shape: RoundedRectangleBorder(
@@ -292,16 +334,13 @@ class _CenterDetailsState extends State<CenterDetails> {
                                                               .push(MaterialPageRoute(
                                                                   builder: (context) =>
                                                                       ShowVouchers(
-                                                                          vouchers:
-                                                                              center!.vouchers!))),
+                                                                          vouchers: center!.vouchers!))),
                                                           icon: Image.asset(
                                                             'lib/assets/coupon.png',
                                                             width: 30,
                                                           ),
                                                           label: Container(
-                                                              padding:
-                                                                  EdgeInsets.fromLTRB(
-                                                                      10, 15, 5, 15),
+                                                              padding: EdgeInsets.fromLTRB(10, 15, 5, 15),
                                                               child: Row(
                                                                 children: [
                                                                   Text(
@@ -328,10 +367,15 @@ class _CenterDetailsState extends State<CenterDetails> {
                                           width: 65,
                                           height: 65,
                                           decoration: BoxDecoration(
-                                              image: const DecorationImage(
-                                                  image: AssetImage(
-                                                      'lib/assets/vet-ava.png'),
-                                                  fit: BoxFit.cover),
+                                              image: (center!.getThumbnail() == null)
+                                                  ? DecorationImage(
+                                                      image: AssetImage(
+                                                          'lib/assets/vet-ava.png'),
+                                                      fit: BoxFit.cover)
+                                                  : DecorationImage(
+                                                      image: NetworkImage(
+                                                          center!.getThumbnail()!.url!),
+                                                      fit: BoxFit.cover),
                                               borderRadius:
                                                   BorderRadius.circular(
                                                       size.height * 0.1),
@@ -423,18 +467,28 @@ class _CenterDetailsState extends State<CenterDetails> {
                                       )
                                           //cageTypeList(FAKE_CAGETYPES, context),
                                           ),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(15, 15, 10, 10),
-                                        child: Text(
-                                          'CƠ SỞ VẬT CHẤT',
-                                          style: TextStyle(
-                                              color: lightFontColor,
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w700),
-                                        ),
-                                      ),
-                                      //CenterSlider(size: size, photoUrls: CAGE_PHOTOS, callback: ((index) {
+                                      (imgUrls.isNotEmpty)
+                                          ? Padding(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  15, 15, 10, 10),
+                                              child: Text(
+                                                'CƠ SỞ VẬT CHẤT',
+                                                style: TextStyle(
+                                                    color: lightFontColor,
+                                                    fontSize: 15,
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                              ),
+                                            )
+                                          : Container(),
+                                      (imgUrls.isNotEmpty)
+                                          ? CenterSlider(
+                                              callback: (index) {},
+                                              durations: durations,
+                                              photoUrls: imgUrls,
+                                              size: size,
+                                            )
+                                          : Container(),
 
                                       // }),),
                                       SizedBox(height: 80)
@@ -562,7 +616,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                   : ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                            "Hãy chọn đủ chuồng cho pet trước khi tiến hành đặt lịch."),
+                                            "Hãy chọn đủ phòng cho thú cưng trước khi tiến hành đặt lịch."),
                                       ),
                                     ),
                           // onPressed: () async {

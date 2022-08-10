@@ -48,12 +48,15 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                     children: [
                       //campaign image
                       CarouselSlider.builder(
-                          itemCount: CAGE_PHOTOS.length,
+                          itemCount: 1,
                           itemBuilder: (context, index, realIndex) {
                             return Container(
                                 width: size.width,
-                                child: Image.asset(
-                                  CAGE_PHOTOS[index],
+                                child: (service.photo?.url == null) ? Image.asset(
+                                  'lib/assets/service.png',
+                                  fit: BoxFit.cover,
+                                ): Image.network(
+                                  service.photo!.url!,
                                   fit: BoxFit.cover,
                                 ));
                           },
@@ -64,13 +67,29 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                               onPageChanged: ((index, reason) {
                                 setState(() => activeIndex = index);
                               }))),
-                      Positioned(
-                          left: size.width / 3 + 15,
-                          top: appbarSize * (1 - 0.2),
-                          child: Center(
-                            child: buildIndicator(),
-                          )),
-
+                      // Positioned(
+                      //     left: size.width / 3 + 15,
+                      //     top: appbarSize * (1 - 0.2),
+                      //     child: Center(
+                      //       child: buildIndicator(),
+                      //     )),
+                        Container(
+                        height: appbarSize,
+                        decoration: const BoxDecoration(
+                          // borderRadius:
+                          //     BorderRadius.only(bottomLeft: Radius.circular(60)),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black12,
+                              Colors.black26,
+                              Colors.black38,
+                              Colors.black54,
+                            ],
+                          ),
+                        ),
+                      ),
                       Positioned(
                           bottom: 0,
                           left: 0,
@@ -107,7 +126,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  service.description ?? "",
+                  service.name ?? service.description ?? '',
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.w600),
                 ),
@@ -152,7 +171,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                       bottomRight: Radius.circular(15))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children:  [
                   Text(
                     'Chi tiết',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -162,7 +181,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                   ),
                   ReadMoreText(
                     // cage.description,
-                    "This is description...",
+                    service.description ?? '',
                     style: TextStyle(
                       fontSize: 15,
                       color: lightFontColor,

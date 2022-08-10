@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
+import 'package:pawnclaw_mobile_application/models/photo.dart';
 import 'package:pawnclaw_mobile_application/screens/center_overview_screen/center_overview_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/center_details_screen.dart';
 
@@ -21,6 +22,24 @@ class CenterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    Photo? thumbnail;
+    Photo? background;
+    if (center.photos != null &&
+        center.photos!.isNotEmpty) {
+      center.photos!.forEach((photo) {
+        if (photo.isThumbnail!) {
+          thumbnail = photo;
+          return;
+        }
+      });
+      center.photos!.forEach((photo) {
+        if (!photo.isThumbnail!) {
+          background = photo;
+          return;
+        }
+      });
+    }
+
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
         return InkWell(
@@ -84,8 +103,15 @@ class CenterCard extends StatelessWidget {
 
                             //   )
                             // :
+                            (background == null)?
                             Image.asset(
                           'lib/assets/center0.jpg',
+                          width: width * (1 - 2 * mediumPadRate),
+                          height: height * 0.18,
+                          fit: BoxFit.cover,
+                        ):
+                        Image.network(
+                          background!.url!,
                           width: width * (1 - 2 * mediumPadRate),
                           height: height * 0.18,
                           fit: BoxFit.cover,
@@ -165,9 +191,12 @@ class CenterCard extends StatelessWidget {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                      image: const DecorationImage(
+                      image: (thumbnail == null) ? DecorationImage(
                           image: AssetImage('lib/assets/vet-ava.png'),
-                          fit: BoxFit.cover),
+                          fit: BoxFit.cover):
+                          DecorationImage(
+                              image: NetworkImage(thumbnail!.url!),
+                              fit: BoxFit.cover),
                       borderRadius: BorderRadius.circular(height * 0.1),
                       border: Border.all(width: 2, color: Colors.white)),
                 ),

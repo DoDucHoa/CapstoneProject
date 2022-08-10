@@ -11,5 +11,6 @@ namespace PawNClaw.Data.Parameter
         public string Name { get; set; } = null;
         public string Description { get; set; } = null;
         public int OwnerId { get; set; } = 0;
+        public int ModifyUser { get; set; }
     }
 }

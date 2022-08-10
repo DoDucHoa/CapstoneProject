@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:pawnclaw_mobile_application/blocs/booking/booking_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
@@ -11,11 +12,21 @@ import 'package:pawnclaw_mobile_application/screens/search_screen.dart/component
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:readmore/readmore.dart';
 
+import '../../../common/components/secondary_icon_button.dart';
 import '../../../models/fake_data.dart';
 
 class ServiceDetails extends StatefulWidget {
   final petCenter.Services service;
-  const ServiceDetails({required this.service, Key? key}) : super(key: key);
+  final bool? isUpdate;
+  final int? quantity;
+  final int? petId;
+  const ServiceDetails(
+      {required this.service,
+      this.isUpdate,
+      this.quantity,
+      this.petId,
+      Key? key})
+      : super(key: key);
 
   @override
   State<ServiceDetails> createState() => _ServiceDetailsState();
@@ -25,6 +36,13 @@ class _ServiceDetailsState extends State<ServiceDetails> {
   int activeIndex = 0;
   int selectedIndex = 0;
   double selectedPrice = 0;
+  int quantity = 1;
+
+  @override
+  void initState() {
+    quantity = widget.quantity ?? 1;
+    super.initState();
+  }
 
   double updatePrice(Pet pet, petCenter.Services service) {
     List<petCenter.ServicePrices> prices = service.servicePrices!;
@@ -76,14 +94,19 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                     children: [
                       //campaign image
                       CarouselSlider.builder(
-                          itemCount: CAGE_PHOTOS.length,
+                          itemCount: 1,
                           itemBuilder: (context, index, realIndex) {
                             return Container(
                                 width: size.width,
-                                child: Image.asset(
-                                  CAGE_PHOTOS[index],
-                                  fit: BoxFit.cover,
-                                ));
+                                child: (service.photo?.url == null)
+                                    ? Image.asset(
+                                        CAGE_PHOTOS[index],
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.network(
+                                        service.photo!.url!,
+                                        fit: BoxFit.cover,
+                                      ));
                           },
                           options: CarouselOptions(
                               height: appbarSize,
@@ -92,12 +115,29 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                               onPageChanged: ((index, reason) {
                                 setState(() => activeIndex = index);
                               }))),
-                      Positioned(
-                          left: size.width / 3 + 15,
-                          top: appbarSize * (1 - 0.2),
-                          child: Center(
-                            child: buildIndicator(),
-                          )),
+                      // Positioned(
+                      //     left: size.width / 3 + 15,
+                      //     top: appbarSize * (1 - 0.2),
+                      //     child: Center(
+                      //       child: buildIndicator(),
+                      //     )),
+                      Container(
+                        height: appbarSize,
+                        decoration: const BoxDecoration(
+                          // borderRadius:
+                          //     BorderRadius.only(bottomLeft: Radius.circular(60)),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black12,
+                              Colors.black26,
+                              Colors.black38,
+                              Colors.black54,
+                            ],
+                          ),
+                        ),
+                      ),
 
                       Positioned(
                           bottom: 0,
@@ -135,7 +175,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  service.description ?? "",
+                  service.name ?? service.description ?? "",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 SizedBox(
@@ -149,7 +189,9 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                               .format((service.servicePrices![0].price ?? 0)) +
                           " ~ " +
                           NumberFormat.currency(
-                                  decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+                                  decimalDigits: 0,
+                                  symbol: 'đ',
+                                  locale: 'vi_vn')
                               .format((service
                                       .servicePrices![
                                           service.servicePrices!.length - 1]
@@ -200,51 +242,101 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                   //   children: [
                   ListView.separated(
                 itemBuilder: (context, index) {
-                  return InkWell(
-                      onTap: () {
-                        setState(() {
-                          selectedIndex = index;
-                          selectedPrice =
-                              updatePrice(pets[selectedIndex], service);
-                          // pet = pets[index];
-                          // print('pet id at choose ${pet.id}');
-                          // print(pets[index].id.toString());
-                        });
-                      },
-                      child: Stack(
-                          alignment: AlignmentDirectional.topCenter,
-                          children: [
-                            selectedIndex == index
-                                ? Positioned(
-                                    child: Icon(Icons.check_circle,
-                                        color: primaryColor, size: 20),
-                                    top: 5,
-                                    right: 5)
-                                : Container(),
-                            Container(
-                              height: width * 0.32,
-                              width: width * 0.3,
-                              decoration: BoxDecoration(
-                                  color: index == selectedIndex
-                                      ? primaryColor.withOpacity(0.15)
-                                      : frameColor,
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: PetCard(pets[index], context),
-                            ),
-                            Positioned(
-                              bottom: width * regularPadRate,
-                              //   left: width * 0.3 / 5,
-                              child: Center(
-                                child: Text(pets[index].name!,
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: index == selectedIndex
-                                            ? primaryColor
-                                            : lightFontColor)),
-                              ),
-                            )
-                          ]));
+                  if ((widget.isUpdate != null && widget.isUpdate!) &&
+                      pets[index].id == widget.petId) {
+                    selectedIndex = index;
+                  }
+                  ;
+                  return (widget.isUpdate == null)
+                      ? InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectedIndex = index;
+                              // pet = pets[index];
+                              // print('pet id at choose ${pet.id}');
+                              // print(pets[index].id.toString());
+                            });
+                          },
+                          child: Stack(
+                              alignment: AlignmentDirectional.topCenter,
+                              children: [
+                                selectedIndex == index
+                                    ? Positioned(
+                                        child: Icon(Icons.check_circle,
+                                            color: primaryColor, size: 20),
+                                        top: 5,
+                                        right: 5)
+                                    : Container(),
+                                Container(
+                                  height: width * 0.32,
+                                  width: width * 0.3,
+                                  decoration: BoxDecoration(
+                                      color: index == selectedIndex
+                                          ? primaryColor.withOpacity(0.15)
+                                          : frameColor,
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: PetCard(pets[index], context),
+                                ),
+                                Positioned(
+                                  bottom: width * regularPadRate,
+                                  //   left: width * 0.3 / 5,
+                                  child: Center(
+                                    child: Text(pets[index].name!,
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
+                                            color: index == selectedIndex
+                                                ? primaryColor
+                                                : lightFontColor)),
+                                  ),
+                                )
+                              ]))
+                      : (pets[index].id != widget.petId)
+                          ? Container()
+                          : InkWell(
+                              onTap: () {
+                                setState(() {
+                                  selectedIndex = index;
+                                  // pet = pets[index];
+                                  // print('pet id at choose ${pet.id}');
+                                  // print(pets[index].id.toString());
+                                });
+                              },
+                              child: Stack(
+                                  alignment: AlignmentDirectional.topCenter,
+                                  children: [
+                                    selectedIndex == index
+                                        ? Positioned(
+                                            child: Icon(Icons.check_circle,
+                                                color: primaryColor, size: 20),
+                                            top: 5,
+                                            right: 5)
+                                        : Container(),
+                                    Container(
+                                      height: width * 0.32,
+                                      width: width * 0.3,
+                                      decoration: BoxDecoration(
+                                          color: index == selectedIndex
+                                              ? primaryColor.withOpacity(0.15)
+                                              : frameColor,
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                      child: PetCard(pets[index], context),
+                                    ),
+                                    Positioned(
+                                      bottom: width * regularPadRate,
+                                      //   left: width * 0.3 / 5,
+                                      child: Center(
+                                        child: Text(pets[index].name!,
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w700,
+                                                color: index == selectedIndex
+                                                    ? primaryColor
+                                                    : lightFontColor)),
+                                      ),
+                                    )
+                                  ]));
                 },
                 separatorBuilder: (context, index) => SizedBox(
                   width: 12,
@@ -282,7 +374,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                   ),
                   ReadMoreText(
                     // cage.description,
-                    "This is description...",
+                    service.description ?? "",
                     style: TextStyle(
                       fontSize: 15,
                       color: lightFontColor,
@@ -297,6 +389,48 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                   )
                 ],
               )),
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SecondaryIconButton(
+                    icon: Iconsax.minus_square,
+                    color: primaryColor,
+                    onPressed: () {
+                      if (widget.isUpdate != null && widget.isUpdate!) {
+                              if (quantity > 0) {
+                                setState(() {
+                                  quantity = quantity - 1;
+                                });
+                              }
+                            } else if (quantity > 1) {
+                              setState(() {
+                                quantity = quantity - 1;
+                              });
+                            }
+                    }),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(quantity.toString(),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        height: 1.5)),
+                SizedBox(
+                  width: 10,
+                ),
+                SecondaryIconButton(
+                    icon: Iconsax.add_square,
+                    color: primaryColor,
+                    onPressed: () {
+                      setState(() {
+                        quantity = quantity + 1;
+                      });
+                    }),
+              ],
+            ),
+          )
         ])),
       ),
       floatingActionButton: Container(
@@ -314,13 +448,15 @@ class _ServiceDetailsState extends State<ServiceDetails> {
               print(pets[selectedIndex].id);
               BlocProvider.of<BookingBloc>(context).add(
                 SelectService(
-                  prices: service.servicePrices!,
-                  serviceId: service.id!,
-                  petId: pets[selectedIndex].id!,
-                ),
+                    prices: service.servicePrices!,
+                    serviceId: service.id!,
+                    petId: pets[selectedIndex].id!,
+                    isUpdate: widget.isUpdate??false,
+                    quantity: quantity),
               );
               ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Thêm dịch vụ thành công.")));
+                  SnackBar(content: Text(((widget.isUpdate == null) ? 'Thêm vào' : 'Cập nhật') +
+                            " sản phẩm thành công.")));
               Navigator.of(context).pop();
             },
             child: Row(children: [
@@ -329,10 +465,13 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                 height: 45,
               )),
               Text(
-                'Thêm vào giỏ hàng - ' +
+                 (quantity == 0)
+                      ? 'Xóa sản phẩm'
+                      : ((widget.isUpdate == null) ? 'Thêm vào' : 'Cập nhật') +
+                          ' giỏ hàng - ' +
                     NumberFormat.currency(
                             decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
-                        .format(selectedPrice),
+                        .format(selectedPrice * quantity),
                 // (service.discountPrice)), //== 0
                 // ? (selectedPrice ?? 0)
                 // : (service.discountPrice ?? 0)),
@@ -341,6 +480,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
               Expanded(child: SizedBox(height: 45)),
             ]),
             style: ElevatedButton.styleFrom(
+              primary: (quantity > 0) ? primaryColor : Colors.red,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15))),
           )),
@@ -361,17 +501,25 @@ Widget PetCard(Pet pet, BuildContext context) {
 
   return Center(
     child: Container(
-        height: height * 0.05,
-        width: height * 0.05,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(height),
-            border: Border.all(
-                color: Colors.white,
-                width: 3,
-                strokeAlign: StrokeAlign.outside)),
-        child: CircleAvatar(
-          backgroundImage: AssetImage('lib/assets/cat_avatar0.png'),
-        )),
+      height: height * 0.05,
+      width: height * 0.05,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(height),
+          image: (pet.photos!.isNotEmpty)
+              ? DecorationImage(
+                  image: NetworkImage(pet.photos!.first.url!),
+                  fit: BoxFit.contain)
+              : null,
+          border: Border.all(
+              color: Colors.white, width: 3, strokeAlign: StrokeAlign.outside)),
+      child: (pet.photos!.isEmpty)
+          ? CircleAvatar(
+              backgroundImage: AssetImage((pet.petTypeCode == 'DOG')
+                  ? 'lib/assets/dog.png'
+                  : 'lib/assets/black-cat.png'),
+            )
+          : null,
+    ),
   );
 }
 
@@ -479,7 +627,8 @@ Widget buildContent(petCenter.Services service, Size size, BuildContext context,
               SelectService(
                   prices: service.servicePrices!,
                   serviceId: service.id!,
-                  petId: value),
+                  petId: value,
+                  quantity: 1),
             );
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text("Thêm dịch vụ thành công.")));

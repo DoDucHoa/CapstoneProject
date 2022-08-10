@@ -105,9 +105,14 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
     try {
       if (!isEdit) {
         await Promise.all([
-          createAdmin(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender), // create account on Backend
+          createAdmin(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender).then(
+            (accountId) => {
+              if (values.avatarUrl) {
+                uploadPhotoToFirebase('moderators', values.avatarUrl, accountId, 'account');
+              }
+            }
+          ), // create account on Backend
           register(values.email, values.password), // create account on Firebase
-          uploadPhotoToFirebase('moderators', values.avatarUrl),
         ]);
       } else {
         updateAdmin(accountInfo.id, values.name, values.phoneNumber, values.gender);
@@ -197,6 +202,7 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
               <RHFTextField name="email" label="Email" disabled={isEdit} />
 
               <RHFTextField name="phoneNumber" label="Số điện thoại" />
+
               <RHFSelect
                 name="gender"
                 label="Giới tính"
@@ -215,7 +221,7 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
                       textTransform: 'capitalize',
                     }}
                   >
-                    {option.name}
+                    {option.label}
                   </MenuItem>
                 ))}
               </RHFSelect>

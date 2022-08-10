@@ -109,7 +109,7 @@ class _InputPhonePanelState extends State<InputPhonePanel> {
                       child: const Center(
                         child: Text(
                           'Xác thực số điện thoại',
-                          style:  TextStyle(
+                          style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w700),

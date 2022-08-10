@@ -24,6 +24,9 @@ const ICONS = {
   price: getIcon('ic_price_tag'),
   setting: getIcon('ic_setting'),
   adv: getIcon('ic_adv'),
+  customer: getIcon('ic_customer'),
+  policy: getIcon('ic_policy'),
+  log: getIcon('ic_log'),
 };
 
 // nav config for owner
@@ -97,6 +100,24 @@ const navConfig = [
       },
     ],
   },
+
+  // CENTER INFO
+  // ----------------------------------------------------------------------
+  {
+    subheader: 'Quản lý thông tin',
+    items: [
+      {
+        title: 'Thương hiệu',
+        path: PATH_DASHBOARD.brand.edit(0),
+        icon: ICONS.brand,
+      },
+      {
+        title: 'Trung tâm',
+        path: PATH_DASHBOARD.center.edit(0),
+        icon: ICONS.center,
+      },
+    ],
+  },
 ];
 
 export const navConfigForStaff = [
@@ -160,10 +181,10 @@ export const navConfigForStaff = [
 export const navConfigForAdmin = [
   // GENERAL
   // ----------------------------------------------------------------------
-  {
-    subheader: 'Báo cáo',
-    items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
-  },
+  // {
+  //   subheader: 'Báo cáo',
+  //   items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
+  // },
 
   // MANAGEMENT
   // ----------------------------------------------------------------------
@@ -180,6 +201,11 @@ export const navConfigForAdmin = [
         title: 'Chủ trung tâm',
         path: PATH_DASHBOARD.owner.list,
         icon: ICONS.owner,
+      },
+      {
+        title: 'Khách hàng',
+        path: PATH_DASHBOARD.customer.list,
+        icon: ICONS.customer,
       },
     ],
   },
@@ -219,6 +245,16 @@ export const navConfigForAdmin = [
         path: PATH_DASHBOARD.sponsor.list,
         icon: ICONS.adv,
       },
+      {
+        title: 'Chính sách',
+        path: PATH_DASHBOARD.policy.root,
+        icon: ICONS.policy,
+      },
+      {
+        title: 'Log',
+        path: PATH_DASHBOARD.logAction.root,
+        icon: ICONS.log,
+      },
     ],
   },
 ];
@@ -226,10 +262,10 @@ export const navConfigForAdmin = [
 export const navConfigForModerator = [
   // GENERAL
   // ----------------------------------------------------------------------
-  {
-    subheader: 'Báo cáo',
-    items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
-  },
+  // {
+  //   subheader: 'Báo cáo',
+  //   items: [{ title: 'Biểu Đồ', path: PATH_DASHBOARD.general.booking, icon: ICONS.chart }],
+  // },
 
   // MANAGEMENT
   // ----------------------------------------------------------------------
@@ -240,6 +276,11 @@ export const navConfigForModerator = [
         title: 'Chủ trung tâm',
         path: PATH_DASHBOARD.owner.list,
         icon: ICONS.owner,
+      },
+      {
+        title: 'Khách hàng',
+        path: PATH_DASHBOARD.customer.list,
+        icon: ICONS.customer,
       },
     ],
   },

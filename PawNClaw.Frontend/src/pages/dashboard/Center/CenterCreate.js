@@ -6,6 +6,7 @@ import { Container } from '@mui/material';
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
 import useSettings from '../../../hooks/useSettings';
+import useAuth from '../../../hooks/useAuth';
 // components
 import Page from '../../../components/Page';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
@@ -24,13 +25,22 @@ export default function CenterCreate() {
   const isEdit = pathname.includes('edit');
 
   const { id } = useParams();
+  const { centerId } = useAuth();
+
+  let idCenter = null;
+  if (id === '0') {
+    idCenter = centerId;
+  } else {
+    idCenter = id;
+  }
+
   useEffect(() => {
     if (isEdit) {
-      getCenter(id).then((data) => {
+      getCenter(idCenter).then((data) => {
         setCenterData(data);
       });
     }
-  }, [id, isEdit]);
+  }, [id, isEdit, idCenter]);
 
   return (
     <Page title="Trung tâm">

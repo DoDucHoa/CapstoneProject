@@ -14,7 +14,7 @@ import { getTotalCage } from './useOwnerDashboardAPI';
 
 // ----------------------------------------------------------------------
 BookingCageAvailable.propTypes = {
-  centerId: PropTypes.number.isRequired,
+  centerId: PropTypes.number,
   from: PropTypes.any,
   to: PropTypes.any,
 };
@@ -22,10 +22,6 @@ BookingCageAvailable.propTypes = {
 export default function BookingCageAvailable({ centerId, from, to }) {
   const [totalCage, setTotalCage] = useState(0);
   const [totalCageAvailable, setTotalCageAvailable] = useState(0);
-
-  const AVAILABLE = totalCageAvailable;
-  const SOLD_OUT = totalCage - totalCageAvailable;
-  const CHART_DATA = [totalCage === 0 ? 0 : (SOLD_OUT * 100) / totalCage];
 
   // HOOKS
   const theme = useTheme();
@@ -37,7 +33,12 @@ export default function BookingCageAvailable({ centerId, from, to }) {
     });
   }, [centerId, from, to]);
 
+  const AVAILABLE = totalCageAvailable;
+  const SOLD_OUT = totalCage - totalCageAvailable;
+  const CHART_DATA = [totalCage === 0 ? 0 : (SOLD_OUT * 100) / totalCage];
+
   const chartOptions = merge(BaseOptionChart(), {
+    caches: false,
     legend: { show: false },
     grid: {
       padding: { top: -32, bottom: -32 },
@@ -69,14 +70,17 @@ export default function BookingCageAvailable({ centerId, from, to }) {
   });
 
   return (
-    <Card>
-      <CardHeader title="Chuồng trống" sx={{ mb: 8 }} />
-      <ReactApexChart type="radialBar" series={CHART_DATA} options={chartOptions} height={310} />
+    <Card sx={{ pb: 2 }}>
+      <CardHeader title="Chuồng trống" sx={{ mb: 4 }} />
 
-      <Stack spacing={2} sx={{ p: 5 }}>
-        <Legend label="Đang đặt" number={SOLD_OUT} />
-        <Legend label="Còn trống" number={AVAILABLE} />
-      </Stack>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <ReactApexChart type="radialBar" series={CHART_DATA} options={chartOptions} height={310} />
+
+        <Stack spacing={2} sx={{ p: 5 }}>
+          <Legend label="Đang đặt" number={SOLD_OUT} />
+          <Legend label="Còn trống" number={AVAILABLE} />
+        </Stack>
+      </Box>
     </Card>
   );
 }
@@ -90,8 +94,8 @@ Legend.propTypes = {
 
 function Legend({ label, number }) {
   return (
-    <Stack direction="row" alignItems="center" justifyContent="space-between">
-      <Stack direction="row" alignItems="center" spacing={1}>
+    <Stack direction="row" alignItems="center">
+      <Stack direction="row" alignItems="center" spacing={1} mr={2} width={110}>
         <Box
           sx={{
             width: 16,
