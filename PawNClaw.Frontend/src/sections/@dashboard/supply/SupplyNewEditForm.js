@@ -41,8 +41,8 @@ export default function SupplyNewEditForm({ isEdit, supplyData }) {
 
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Bắt buộc nhập'),
-    sellPrice: Yup.number().required('Bắt buộc nhập').typeError('Bắt buộc nhập'),
-    quantity: Yup.number().required('Bắt buộc nhập').typeError('Bắt buộc nhập'),
+    sellPrice: Yup.number().required('Bắt buộc nhập').typeError('Bắt buộc nhập').min(0, 'Số tiền phải lớn hơn 0'),
+    quantity: Yup.number().required('Bắt buộc nhập').typeError('Bắt buộc nhập').min(0, 'Số lượng phải lớn hơn 0'),
     createUser: Yup.number().required(),
     modifyUser: Yup.number().required(),
     avatarUrl: Yup.mixed().test('required', 'Ảnh đồ dùng bắt buộc nhập', (value) => value !== ''),

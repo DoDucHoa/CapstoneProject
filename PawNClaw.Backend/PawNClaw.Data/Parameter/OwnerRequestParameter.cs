@@ -11,6 +11,7 @@ namespace PawNClaw.Data.Parameter
         public int? Id { get; set; } = null;
         public string Name { get; set; } = null;
         public string Email { get; set; } = null;
+        public int? Gender { get; set; }
         public bool? Status { get; set; } = null;
         public string Phone { get; set; } = null;
         public string dir { get; set; } = "asc";

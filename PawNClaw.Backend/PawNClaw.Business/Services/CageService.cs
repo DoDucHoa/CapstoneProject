@@ -110,6 +110,16 @@ namespace PawNClaw.Business.Services
                     };
                 }
 
+                if(cageRequestParameter.CanShift != null)
+                {
+                    values = cageRequestParameter.CanShift switch
+                    {
+                        true => values.Where(x => x.CanShift == true),
+                        false => values.Where(x => x.CanShift == false),
+                        _ => values
+                    };
+                }
+
                 if (cageRequestParameter.Status != null)
                 {
                     values = cageRequestParameter.Status switch

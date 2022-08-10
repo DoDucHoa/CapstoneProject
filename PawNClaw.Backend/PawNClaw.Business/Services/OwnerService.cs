@@ -26,7 +26,7 @@ namespace PawNClaw.Business.Services
         //Get All
         public PagedList<Owner> GetOwners(string Name, bool? Status, string dir, string sort, PagingParameter paging)
         {
-            var values = _ownerRepository.GetAll(includeProperties: "IdNavigation");
+            var values = _ownerRepository.GetAll(includeProperties: "IdNavigation,Brands");
 
             values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("OWN")).Select(x => new Owner() { 
                 Name = x.Name,
@@ -39,7 +39,8 @@ namespace PawNClaw.Business.Services
                     UserName = x.IdNavigation.UserName,
                     Status = x.IdNavigation.Status,
                     Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.Account)
-                }
+                },
+                Brands = x.Brands
             });
 
             // lọc theo name
@@ -63,6 +64,12 @@ namespace PawNClaw.Business.Services
         {
             var value = _ownerRepository.GetAll(includeProperties: "IdNavigation").FirstOrDefault(x => x.Id == id);
             value.IdNavigation.Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(value.Id, PhotoTypesConst.Account);
+            return value;
+        }
+
+        public Owner GetOwnerByIdForUpdate(int id)
+        {
+            var value = _ownerRepository.Get(id);
             return value;
         }
 

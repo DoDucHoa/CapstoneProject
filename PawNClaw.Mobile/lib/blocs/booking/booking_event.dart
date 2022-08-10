@@ -68,7 +68,11 @@ class SelectSupply extends BookingEvent {
   final bool? isUpdate;
 
   const SelectSupply(
-      {required this.sellPrice, required this.supplyId, required this.petId, required this.quantity, this.isUpdate});
+      {required this.sellPrice,
+      required this.supplyId,
+      required this.petId,
+      required this.quantity,
+      this.isUpdate});
 
   @override
   // TODO: implement props
@@ -83,9 +87,24 @@ class SelectService extends BookingEvent {
   final bool? isUpdate;
 
   const SelectService(
-      {required this.prices, required this.serviceId, required this.petId, required this.quantity, this.isUpdate});
+      {required this.prices,
+      required this.serviceId,
+      required this.petId,
+      required this.quantity,
+      this.isUpdate});
 
   @override
   // TODO: implement props
   List<Object> get props => [prices, serviceId, petId, quantity];
+}
+
+class ConfirmBookingRequest extends BookingEvent {
+  final BookingRequestModel booking;
+  final Center center;
+
+  const ConfirmBookingRequest(this.booking, this.center);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [booking, center];
 }

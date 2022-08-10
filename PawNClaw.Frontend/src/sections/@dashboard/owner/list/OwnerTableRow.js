@@ -21,7 +21,7 @@ OwnerTableRow.propTypes = {
 export default function OwnerTableRow({ row, onEditRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { name, avatarUrl, email, phoneNumber, status } = row;
+  const { name, avatarUrl, email, phoneNumber, status, brandName } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -45,6 +45,8 @@ export default function OwnerTableRow({ row, onEditRow, onDeleteRow }) {
       <TableCell align="left">{email}</TableCell>
 
       <TableCell align="left">{phoneNumber}</TableCell>
+
+      <TableCell align="left">{brandName}</TableCell>
 
       <TableCell align="left">
         <Label

@@ -16,7 +16,6 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
 import useAuth from '../../../hooks/useAuth';
 // components
-import Label from '../../../components/Label';
 import { FormProvider, RHFSelect, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
 import { createOwner, updateOwner } from '../../../pages/dashboard/Owner/useOwnerAPI';
 import Iconify from '../../../components/Iconify';
@@ -27,10 +26,10 @@ const specialString = 'Awz@******ÿ123';
 
 AdminNewEditForm.propTypes = {
   isEdit: PropTypes.bool,
-  adminData: PropTypes.object,
+  ownerData: PropTypes.object,
 };
 
-export default function AdminNewEditForm({ isEdit, adminData }) {
+export default function AdminNewEditForm({ isEdit, ownerData }) {
   const navigate = useNavigate();
   const { accountInfo, register, uploadPhotoToFirebase } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
@@ -50,7 +49,7 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
     confirmPassword: Yup.string()
       .required('Bắt buộc nhập')
       .oneOf([Yup.ref('password'), null], 'Mật khẩu không khớp'),
-    phoneNumber: Yup.string(),
+    phone: Yup.string(),
     createdUser: Yup.number().required(),
     gender: Yup.number().required(),
     avatarUrl: Yup.mixed(),
@@ -58,17 +57,20 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
 
   const defaultValues = useMemo(
     () => ({
-      name: adminData?.name || '',
-      email: adminData?.email || '',
+      id: ownerData.id || 0,
+      name: ownerData?.name || '',
+      email: ownerData?.email || '',
+      phone: ownerData?.idNavigation?.phone || '',
+      gender: ownerData?.gender || 1,
+      avatarUrl: ownerData?.idNavigation?.photos.length > 0 ? ownerData?.idNavigation?.photos[0].url : '',
+
+      modifyUser: accountInfo.id,
+      createdUser: ownerData?.createdUser || 0,
       password: isEdit ? specialString : '',
       confirmPassword: isEdit ? specialString : '',
-      phoneNumber: adminData?.phone || '',
-      createdUser: adminData?.createdUser || 0,
-      gender: adminData?.gender || 1,
-      avatarUrl: adminData?.avatarUrl || '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [adminData]
+    [ownerData]
   );
 
   const methods = useForm({
@@ -87,26 +89,26 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
   const values = watch();
 
   useEffect(() => {
-    if (isEdit && adminData) {
+    if (isEdit && ownerData) {
       reset(defaultValues);
     }
     if (!isEdit) {
       reset(defaultValues);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEdit, adminData]);
+  }, [isEdit, ownerData]);
 
   const onSubmit = async () => {
     try {
       if (!isEdit) {
         await Promise.all([
-          createOwner(values.email, accountInfo.id, values.phoneNumber, values.name, values.gender).then((ownerId) =>
+          createOwner(values.email, accountInfo.id, values.phone, values.name, values.gender).then((ownerId) =>
             uploadPhotoToFirebase('accounts', values.avatarUrl, ownerId, 'account')
           ), // create account on Backend
           register(values.email, values.password), // create account on Firebase
         ]);
       } else {
-        await updateOwner(accountInfo.id, values.name, values.phoneNumber, values.gender);
+        await updateOwner(values.id, values.name, values.phone, values.gender, values.modifyUser);
 
         // change password on Firebase
         // if (values.password !== specialString) {
@@ -143,15 +145,6 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
           <Card sx={{ py: 10, px: 3 }}>
-            {isEdit && (
-              <Label
-                color={adminData.status !== 'true' ? 'error' : 'success'}
-                sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
-              >
-                {adminData.status !== 'true' ? 'Đã khóa' : 'Hoạt động'}
-              </Label>
-            )}
-
             <Box sx={{ mb: 5 }}>
               <RHFUploadAvatar
                 name="avatarUrl"
@@ -192,7 +185,7 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
 
               <RHFTextField name="email" label="Email" disabled={isEdit} />
 
-              <RHFTextField name="phoneNumber" label="Số điện thoại" />
+              <RHFTextField name="phone" label="Số điện thoại" />
               <RHFSelect name="gender" label="Giới tính">
                 <option key="1" value="1">
                   Nam

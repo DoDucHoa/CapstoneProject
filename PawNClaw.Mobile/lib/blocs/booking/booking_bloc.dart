@@ -5,6 +5,7 @@ import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
 import 'package:intl/intl.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
+import 'package:pawnclaw_mobile_application/repositories/booking/booking_repository.dart';
 
 part 'booking_event.dart';
 part 'booking_state.dart';
@@ -180,5 +181,16 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       emit(BookingUpdated(booking: booking));
       // print('voucherCode add: ' + (state as BookingUpdated).booking.bookingCreateParameter!.voucherCode!);
     });
+    on<ConfirmBookingRequest>(
+      (event, emit) async {
+        emit(BookingInitial());
+        var result = await BookingRepository().createBooking(event.booking);
+        if (result == '200') {
+          emit(BookingSuccessful(event.booking, event.center));
+        } else {
+          emit(BookingFailed(result));
+        }
+      },
+    );
   }
 }

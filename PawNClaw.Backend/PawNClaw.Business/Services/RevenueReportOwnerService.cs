@@ -31,7 +31,9 @@ namespace PawNClaw.Business.Services
 
             if (from != null && to != null)
             {
-                booking = booking.Where(x => (x.StartBooking >= from && x.StartBooking <= to) || (x.EndBooking >= from && x.EndBooking <= to));
+                booking = booking.Where(x => (((DateTime)x.StartBooking).Date >= ((DateTime)from).Date && ((DateTime)x.StartBooking).Date <= ((DateTime)to).Date) 
+                                                || (((DateTime)x.StartBooking).Date <= ((DateTime)from).Date && ((DateTime)x.EndBooking).Date >= ((DateTime)from).Date) 
+                                                || (((DateTime)x.StartBooking).Date <= ((DateTime)to).Date && ((DateTime)x.EndBooking).Date >= ((DateTime)to).Date));
             }
 
             BookingCount bookingCount = new BookingCount()
@@ -47,7 +49,9 @@ namespace PawNClaw.Business.Services
 
             if (from != null && to != null)
             {
-                bookings = bookings.Where(x => (x.StartBooking >= from && x.StartBooking <= to) || (x.EndBooking >= from && x.EndBooking <= to));
+                bookings = bookings.Where(x => (((DateTime)x.StartBooking).Date >= ((DateTime)from).Date && ((DateTime)x.StartBooking).Date <= ((DateTime)to).Date)
+                                                || (((DateTime)x.StartBooking).Date <= ((DateTime)from).Date && ((DateTime)x.EndBooking).Date >= ((DateTime)from).Date)
+                                                || (((DateTime)x.StartBooking).Date <= ((DateTime)to).Date && ((DateTime)x.EndBooking).Date >= ((DateTime)to).Date)); ;
             }
 
             BookingCountWithStatus bookingCount = new BookingCountWithStatus()
@@ -68,8 +72,8 @@ namespace PawNClaw.Business.Services
             TotalCageOfCenter totalCageOfCenter = new TotalCageOfCenter()
             {
                 TotalCage = cages.Count(),
-                TotalCageAvailable = cages.Where(x => x.BookingDetails.Any(detail => 
-                                !(((DateTime.Compare((DateTime)from, (DateTime)detail.Booking.StartBooking) <= 0
+                TotalCageAvailable = cages.Where(x => !x.BookingDetails.Any(detail => 
+                                (((DateTime.Compare((DateTime)from, (DateTime)detail.Booking.StartBooking) <= 0
                                 && DateTime.Compare((DateTime)to, (DateTime)detail.Booking.EndBooking) >= 0)
                                 ||
                                 (DateTime.Compare((DateTime)from, (DateTime)detail.Booking.StartBooking) >= 0
@@ -87,8 +91,8 @@ namespace PawNClaw.Business.Services
         {
             var cages = _cageRepository.GetAll(x => x.CenterId == centerId && x.Status == true, includeProperties: "BookingDetails,BookingDetails.Booking");
 
-            cages = cages.Where(x => x.BookingDetails.Any(detail =>
-                                !(((DateTime.Compare((DateTime)from, (DateTime)detail.Booking.StartBooking) <= 0
+            cages = cages.Where(x => !x.BookingDetails.Any(detail =>
+                                (((DateTime.Compare((DateTime)from, (DateTime)detail.Booking.StartBooking) <= 0
                                 && DateTime.Compare((DateTime)to, (DateTime)detail.Booking.EndBooking) >= 0)
                                 ||
                                 (DateTime.Compare((DateTime)from, (DateTime)detail.Booking.StartBooking) >= 0
