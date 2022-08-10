@@ -75,7 +75,7 @@ namespace PawNClaw.API.Controllers
         [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Update(int id, [FromBody] OwnerRequestParameter owner)
         {
-            var ownerDb = _OwnerService.GetOwnerById(id);
+            var ownerDb = _OwnerService.GetOwnerByIdForUpdate(id);
             ownerDb.Email = owner.Email;
             ownerDb.Name = owner.Name;
 

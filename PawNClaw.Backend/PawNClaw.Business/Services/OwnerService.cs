@@ -67,6 +67,12 @@ namespace PawNClaw.Business.Services
             return value;
         }
 
+        public Owner GetOwnerByIdForUpdate(int id)
+        {
+            var value = _ownerRepository.Get(id);
+            return value;
+        }
+
         //Add
         public int Add(CreateOwnerParameter owner)
         {
