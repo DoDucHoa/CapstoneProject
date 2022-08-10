@@ -74,7 +74,24 @@ namespace PawNClaw.Business.Services
 
         public PagedList<Admin> GetAdmins(string Name, bool? Status, string dir, string sort, PagingParameter paging)
         {
-            var values = _adminRepository.GetAll(includeProperties: "IdNavigation");
+            var values = _adminRepository.GetAll(includeProperties: "IdNavigation").Select(x => new Admin()
+            {
+                Id = x.Id,
+                Email = x.Email,
+                Gender = x.Gender,
+                Name = x.Name,
+                IdNavigation = new Account()
+                {
+                    Id = x.IdNavigation.Id,
+                    UserName = x.IdNavigation.UserName,
+                    CreatedUser = x.IdNavigation.CreatedUser,
+                    DeviceId = x.IdNavigation.DeviceId,
+                    Phone = x.IdNavigation.Phone,
+                    Status = x.IdNavigation.Status,
+                    RoleCode = x.IdNavigation.RoleCode,
+                    Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.Account)
+                }
+            });
 
             values = values.Where(x => x.IdNavigation.RoleCode.Trim().Equals("MOD"));
 
