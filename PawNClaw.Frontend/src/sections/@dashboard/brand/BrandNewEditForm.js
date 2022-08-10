@@ -33,7 +33,7 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
   // STATE
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
-  const { accountInfo } = useAuth();
+  const { accountInfo, uploadPhotoToFirebase, centerId, centerInfo } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({
@@ -53,7 +53,7 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
       createUser: brandData?.createUser || accountInfo.id,
       modifyUser: accountInfo.id,
       ownerId: brandData?.ownerId || 0,
-      avatarUrl: brandData?.avatarUrl || '',
+      avatarUrl: brandData?.photos?.length > 0 ? brandData?.photos[0].url : '',
       ownerInfo: brandData?.owner || null,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -92,13 +92,22 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
   const onSubmit = async () => {
     try {
       if (!isEdit) {
-        await createBrand(values.name, values.description, values.ownerInfo.id, accountInfo.id, accountInfo.id);
+        const brandId = await createBrand(
+          values.name,
+          values.description,
+          values.ownerInfo.id,
+          accountInfo.id,
+          accountInfo.id
+        );
+        await uploadPhotoToFirebase('brands', values.avatarUrl, brandId, 'brand');
+      } else if (centerId) {
+        await updateBrand(centerInfo.id, values.name, values.description, accountInfo.id);
       } else {
         await updateBrand(brandData.id, values.name, values.description, values.ownerId);
       }
       reset();
       enqueueSnackbar(!isEdit ? 'Tạo mới thành công' : 'Cập nhật thành công');
-      navigate(PATH_DASHBOARD.owner.list);
+      if (!centerId) navigate(PATH_DASHBOARD.brand.list);
     } catch (error) {
       console.error(error);
     }
@@ -177,14 +186,16 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
 
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Typography>Chủ trung tâm</Typography>
-                <Button
-                  onClick={handleOpen}
-                  sx={{ width: 100, ml: 5 }}
-                  variant="text"
-                  startIcon={<Iconify icon={ownerInfo ? 'eva:edit-fill' : 'eva:plus-fill'} color="primary" />}
-                >
-                  {ownerInfo ? 'Thay đổi' : 'Thêm'}
-                </Button>
+                {!centerId && (
+                  <Button
+                    onClick={handleOpen}
+                    sx={{ width: 100, ml: 5 }}
+                    variant="text"
+                    startIcon={<Iconify icon={ownerInfo ? 'eva:edit-fill' : 'eva:plus-fill'} color="primary" />}
+                  >
+                    {ownerInfo ? 'Thay đổi' : 'Thêm'}
+                  </Button>
+                )}
               </Box>
               {ownerInfo ? (
                 <OwnerInfo name={ownerInfo.name} email={ownerInfo.email} phone={ownerInfo.idNavigation.phone} />
@@ -196,9 +207,11 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
             </Box>
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
-              <Button to={PATH_DASHBOARD.brand.list} color="error" variant="contained" component={RouterLink}>
-                Hủy
-              </Button>
+              {!centerId && (
+                <Button to={PATH_DASHBOARD.brand.list} color="error" variant="contained" component={RouterLink}>
+                  Hủy
+                </Button>
+              )}
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                 {!isEdit ? 'Tạo' : 'Cập nhật'}
               </LoadingButton>
@@ -207,12 +220,14 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
         </Grid>
       </Grid>
 
-      <OwnerDialog
-        open={openDialog}
-        onClose={handleClose}
-        selected={(ownerId) => ownerInfo?.id === ownerId}
-        onSelect={(ownerInfo) => setValue('ownerInfo', ownerInfo)}
-      />
+      {!centerId && (
+        <OwnerDialog
+          open={openDialog}
+          onClose={handleClose}
+          selected={(ownerId) => ownerInfo?.id === ownerId}
+          onSelect={(ownerInfo) => setValue('ownerInfo', ownerInfo)}
+        />
+      )}
     </FormProvider>
   );
 }

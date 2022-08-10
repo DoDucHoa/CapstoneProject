@@ -32,6 +32,11 @@ const updateCenter = async (centerData) => {
   return response.status;
 };
 
+const updateCenterForOwner = async (centerData) => {
+  const response = await axios.put(`${URL}/for-owner`, centerData);
+  return response.status;
+};
+
 const banCenter = async (idCenter) => {
   const response = await axios.delete(`${URL}/${idCenter}`);
   return response.data;
@@ -57,4 +62,15 @@ const getWards = async (districtCode) => {
   return response.data;
 };
 
-export { getCenter, getCenters, createCenter, banCenter, unbanCenter, updateCenter, getCities, getDistricts, getWards };
+export {
+  getCenter,
+  getCenters,
+  createCenter,
+  banCenter,
+  unbanCenter,
+  updateCenter,
+  getCities,
+  getDistricts,
+  getWards,
+  updateCenterForOwner,
+};

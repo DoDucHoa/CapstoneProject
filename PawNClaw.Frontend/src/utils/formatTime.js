@@ -10,6 +10,10 @@ export function fVNDate(date) {
   return format(new Date(date), 'dd/MM/yyyy');
 }
 
+export function fVNDateTime(date) {
+  return format(new Date(date), 'dd/MM/yyyy, HH:mm:ss');
+}
+
 export function fVNMonth(date) {
   return format(new Date(date), 'MM/yyyy');
 }

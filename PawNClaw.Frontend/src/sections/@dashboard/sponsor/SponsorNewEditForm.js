@@ -59,7 +59,7 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
       content: sponsorData?.content || '',
       duration: sponsorData?.duration || '',
       year: new Date(sponsorData?.startDate)?.getFullYear() || '',
-      month: new Date(sponsorData?.startDate)?.getMonth() || '',
+      month: new Date(sponsorData?.startDate)?.getMonth() + 1 || '',
       avatarUrl: sponsorData?.photos?.length > 0 ? sponsorData?.photos[0]?.url : '',
 
       brandId: sponsorData?.brand?.id || '',
