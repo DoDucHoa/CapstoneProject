@@ -216,9 +216,8 @@ namespace PawNClaw.API.Controllers
                         time = DateTime.Now
                     };
                     await _notificationService.AddNotification(notification);
-
-                    return Ok(data);
                 }
+                return Ok(data);
             }
             catch (Exception ex)
             {

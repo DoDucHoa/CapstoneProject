@@ -33,8 +33,11 @@ namespace PawNClaw.Business.Services
 
                 Tokens = registrationTokens,
             };
-            var result = await _message.SendMulticastAsync(message);
-            Console.WriteLine("success push notification: " + result);
+            if (_registrationTokens.Any())
+            {
+                var result = await _message.SendMulticastAsync(message);
+                Console.WriteLine("success push notification: " + result);
+            }
         }
 
         public async Task AddNotification(NotificationParameter data)
