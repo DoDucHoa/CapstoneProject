@@ -77,17 +77,22 @@ namespace PawNClaw.API.Controllers
         {
             var ownerDb = _OwnerService.GetOwnerByIdForUpdate(id);
             ownerDb.Name = owner.Name;
+            ownerDb.Gender = owner.Gender;
 
             if (_OwnerService.Update(ownerDb, owner.Phone))
             {
-                await _logService.AddLog(new ActionLogsParameter()
+                if(owner.ModifyUser != id)
                 {
-                    Id = (long)owner.Id,
-                    Name = _accountService.GetAccountById(owner.ModifyUser).Admin.Name,
-                    Target = "Owner " + owner.Name,
-                    Type = "Update",
-                    Time = DateTime.Now,
-                });
+
+                    await _logService.AddLog(new ActionLogsParameter()
+                    {
+                        Id = (long)owner.Id,
+                        Name = _accountService.GetAccountById(owner.ModifyUser).Admin.Name,
+                        Target = "Owner " + owner.Name,
+                        Type = "Update",
+                        Time = DateTime.Now,
+                    });
+                }
                 return Ok();
             }
             return BadRequest();
