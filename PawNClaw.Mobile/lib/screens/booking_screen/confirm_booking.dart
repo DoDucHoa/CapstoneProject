@@ -35,9 +35,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
 
   @override
   void didChangeDependencies() {
-    
     super.didChangeDependencies();
-    
   }
 
   @override
@@ -124,7 +122,8 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                         AssetImage('/lib/assets/center0.jpg'),
                                     fit: BoxFit.cover)
                                 : DecorationImage(
-                                    image: NetworkImage(center.getThumbnail()!.url!),
+                                    image: NetworkImage(
+                                        center.getThumbnail()!.url!),
                                     fit: BoxFit.cover,
                                   ),
                           ),
@@ -774,41 +773,43 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                             request.bookingCreateParameter!.total =
                                 request.getTotal();
                             print(request.bookingCreateParameter!.total);
-                            var isCreated = await BookingRepository()
-                                .createBooking(request);
-                            // isCreated = false;
-                            
-                            if (isCreated == '200') {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => BookingSuccess(
-                                        center: widget.center,
-                                        booking: state.booking,
-                                      )));
-                            } else {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15)),
-                                        title: Text('Lỗi'),
-                                        content: Text(
-                                            'Đã có lỗi xảy ra. $isCreated. Vui lòng thử lại.'),
-                                        actions: <Widget>[
-                                          ElevatedButton(
-                                            child: Text('OK'),
-                                            style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10))),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          )
-                                        ],
-                                      ));
-                            }
+                            BlocProvider.of<BookingBloc>(context).add(
+                                ConfirmBookingRequest(
+                                    state.booking, widget.center));
+                            // var isCreated = await BookingRepository()
+                            //     .createBooking(request);
+                            // // isCreated = false;
+                            // if (isCreated == '200') {
+                            //   Navigator.of(context).push(MaterialPageRoute(
+                            //       builder: (context) => BookingSuccess(
+                            //             center: widget.center,
+                            //             booking: state.booking,
+                            //           )));
+                            // } else {
+                            //   showDialog(
+                            //       context: context,
+                            //       builder: (context) => AlertDialog(
+                            //             shape: RoundedRectangleBorder(
+                            //                 borderRadius:
+                            //                     BorderRadius.circular(15)),
+                            //             title: Text('Lỗi'),
+                            //             content: Text(
+                            //                 'Đã có lỗi xảy ra. $isCreated. Vui lòng thử lại.'),
+                            //             actions: <Widget>[
+                            //               ElevatedButton(
+                            //                 child: Text('OK'),
+                            //                 style: ElevatedButton.styleFrom(
+                            //                     shape: RoundedRectangleBorder(
+                            //                         borderRadius:
+                            //                             BorderRadius.circular(
+                            //                                 10))),
+                            //                 onPressed: () {
+                            //                   Navigator.of(context).pop();
+                            //                 },
+                            //               )
+                            //             ],
+                            //           ));
+                            // }
                             // Navigator.of(context).push(MaterialPageRoute(
                             //     builder: (context) => BookingSuccess(
                             //           center: widget.center,
@@ -820,6 +821,27 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                 ],
               ),
             ),
+          );
+        } else if (state is BookingSuccessful) {
+          return BookingSuccess(center: state.center, booking: state.booking);
+        } else if (state is BookingFailed) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            title: Text('Lỗi'),
+            content:
+                Text('Đã có lỗi xảy ra. ${state.error}. Vui lòng thử lại.'),
+            actions: <Widget>[
+              ElevatedButton(
+                child: Text('OK'),
+                style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10))),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
           );
         } else
           return Center(

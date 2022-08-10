@@ -116,6 +116,27 @@ namespace PawNClaw.API.Controllers
             }
         }
 
+        [HttpPut("extend")]
+        public async Task<IActionResult> UpdateExpired(UpdateExpiredSponsorBanner sponsorBanner)
+        {
+            try
+            {
+                await _logService.AddLog(new ActionLogsParameter()
+                {
+                    Id = (long)sponsorBanner.ModifyUser,
+                    Name = _accountService.GetAccountById((int)sponsorBanner.ModifyUser).Admin.Name,
+                    Target = "Sponsor của trung tâm thuộc thương hiệu " + sponsorBanner.BrandId,
+                    Type = "Update",
+                    Time = DateTime.Now,
+                });
+                return Ok(_sponsorBannerService.UpdateExpired(sponsorBanner));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         [HttpPut("deactivate/{id}")]
         public async Task<IActionResult> Deactivate(int id)
         {

@@ -10,7 +10,8 @@ import 'package:pawnclaw_mobile_application/models/pet.dart';
 import 'package:pawnclaw_mobile_application/models/photo.dart';
 import 'package:pawnclaw_mobile_application/models/voucher.dart';
 import 'package:pawnclaw_mobile_application/repositories/center/center_repository.dart';
-import 'package:pawnclaw_mobile_application/screens/booking_screen/confirm_booking.dart';
+import 'package:pawnclaw_mobile_application/screens/booking_screen/confirm_booking.dart'
+    as screen;
 import 'package:pawnclaw_mobile_application/common/components/center_slider.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/item_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/service_card.dart';
@@ -45,7 +46,7 @@ class CenterDetails extends StatefulWidget {
 class _CenterDetailsState extends State<CenterDetails> {
   petCenter.Center? center;
   //List<Voucher>? vouchers;
-  List<String> supplyType = ["FOOD","DRINK",  "MED", "OTHER"];
+  List<String> supplyType = ["FOOD", "DRINK", "MED", "OTHER"];
   List<String> imgUrls = [];
   List<int> durations = [];
   // Photo? thumbnail;
@@ -60,26 +61,28 @@ class _CenterDetailsState extends State<CenterDetails> {
       setState(() {
         center = value;
         if (value != null && value.photos!.isNotEmpty) {
-          if (value.getFacilities() != null && value.getFacilities()!.isNotEmpty) {
+          if (value.getFacilities() != null &&
+              value.getFacilities()!.isNotEmpty) {
             for (var i = 0; i < value.getFacilities()!.length; i++) {
               imgUrls.add(value.getFacilities()![i].url!);
               durations.add(2);
             }
           }
-          ;}
-    //       value.photos!.forEach((element) {
-    //         if (!element.isThumbnail!) {
-    //           background = element;
-    //           return;
-    //         }
-    //       });
-    //       // background =
-    //       //     value.photos!.firstWhere((photo) => photo.isThumbnail == false));
-        
-    //   // background =
-    //   //     value.photos!.firstWhere((photo) => photo.isThumbnail == false));
+          ;
+        }
+        //       value.photos!.forEach((element) {
+        //         if (!element.isThumbnail!) {
+        //           background = element;
+        //           return;
+        //         }
+        //       });
+        //       // background =
+        //       //     value.photos!.firstWhere((photo) => photo.isThumbnail == false));
 
-    // }
+        //   // background =
+        //   //     value.photos!.firstWhere((photo) => photo.isThumbnail == false));
+
+        // }
       });
     });
 
@@ -97,7 +100,6 @@ class _CenterDetailsState extends State<CenterDetails> {
     int customerId = (auth as Authenticated).user.id!;
     print(widget.petCenterId);
 
-    
     // CenterRepository()
     //     .getCenterVouchers(widget.petCenterId, customerId)
     //     .then((value) {
@@ -367,14 +369,17 @@ class _CenterDetailsState extends State<CenterDetails> {
                                           width: 65,
                                           height: 65,
                                           decoration: BoxDecoration(
-                                              image: (center!.getThumbnail() == null)
+                                              image: (center!.getThumbnail() ==
+                                                      null)
                                                   ? DecorationImage(
                                                       image: AssetImage(
                                                           'lib/assets/vet-ava.png'),
                                                       fit: BoxFit.cover)
                                                   : DecorationImage(
                                                       image: NetworkImage(
-                                                          center!.getThumbnail()!.url!),
+                                                          center!
+                                                              .getThumbnail()!
+                                                              .url!),
                                                       fit: BoxFit.cover),
                                               borderRadius:
                                                   BorderRadius.circular(
@@ -608,7 +613,7 @@ class _CenterDetailsState extends State<CenterDetails> {
                                       builder: (_) => BlocProvider.value(
                                             value: BlocProvider.of<BookingBloc>(
                                                 context),
-                                            child: ConfirmBooking(
+                                            child: screen.ConfirmBooking(
                                               center: center!,
                                               vouchers: center!.vouchers,
                                             ),
