@@ -39,7 +39,8 @@ namespace PawNClaw.Business.Services
                     UserName = x.IdNavigation.UserName,
                     Status = x.IdNavigation.Status,
                     Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.Account)
-                }
+                },
+                Brands = x.Brands
             });
 
             // lọc theo name
