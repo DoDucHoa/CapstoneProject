@@ -455,6 +455,15 @@ namespace PawNClaw.Data.Repository
                         CenterId = bookingdetail.CenterId,
                         Duration = bookingdetail.Duration,
                         Note = bookingdetail.Note,
+                        C = new Cage
+                        {
+                            Name = bookingdetail.C.Name,
+                            CageType = new CageType
+                            {
+                                TypeName = bookingdetail.C.CageType.TypeName,
+                                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingdetail.C.CageType.Id, PhotoTypesConst.CageType)
+                            }
+                        },
                         PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
                         .Select(pet => new PetBookingDetail
                         {
@@ -487,7 +496,12 @@ namespace PawNClaw.Data.Repository
                         TotalPrice = supplyorder.TotalPrice,
                         Note = supplyorder.Note,
                         PetId = supplyorder.PetId,
-                        Supply = supplyorder.Supply,
+                        Supply = new Supply()
+                        {
+                            Id = supplyorder.Supply.Id,
+                            Name = supplyorder.Supply.Name,
+                            Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(supplyorder.SupplyId, PhotoTypesConst.Supply),
+                        },
                         Pet = new Pet
                         {
                             BreedName = supplyorder.Pet.BreedName,
@@ -504,7 +518,13 @@ namespace PawNClaw.Data.Repository
                         TotalPrice = serviceorder.TotalPrice,
                         Note = serviceorder.Note,
                         PetId = serviceorder.PetId,
-                        Service = serviceorder.Service,
+                        Service = new Service()
+                        {
+                            Id = serviceorder.Service.Id,
+                            Name = serviceorder.Service.Name,
+                            Description = serviceorder.Service.Description,
+                            Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(serviceorder.ServiceId, PhotoTypesConst.Service),
+                        },
                         Pet = new Pet
                         {
                             BreedName = serviceorder.Pet.BreedName,
