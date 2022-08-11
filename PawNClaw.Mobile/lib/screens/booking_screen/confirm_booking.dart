@@ -35,11 +35,6 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) {
     petCenter.Center center = widget.center;
     double height = MediaQuery.of(context).size.height;
@@ -774,16 +769,19 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                             request.bookingCreateParameter!.total =
                                 request.getTotal();
                             print(request.bookingCreateParameter!.total);
-                            // 3//         state.booking, widget.center));
-                            await BookingRepository().createBooking(request);
+                            BlocProvider.of<BookingBloc>(context).add(
+                                ConfirmBookingRequest(
+                                    state.booking, widget.center));
+                            // await BookingRepository()
+                            //     .createBooking(request);
                             // // isCreated = false;
                             // if (isCreated == '200') {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => BookingSuccess(
-                                      center: widget.center,
-                                      booking: state.booking,
-                                    )));
-                            // } else {
+                            // Navigator.of(context).push(MaterialPageRoute(
+                            //     builder: (context) => BookingSuccess(
+                            //           center: widget.center,
+                            //           booking: state.booking,
+                            //         )));
+                            // // } else {
                             //   showDialog(
                             //       context: context,
                             //       builder: (context) => AlertDialog(
