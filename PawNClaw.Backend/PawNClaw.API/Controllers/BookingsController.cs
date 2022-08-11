@@ -197,11 +197,11 @@ namespace PawNClaw.API.Controllers
                         registrationTokens.Add(staff.IdNavigation.DeviceId);
                     }*/
                     //insert data to message
-                    var noti = new Dictionary<string, string>() {
+                    /*var noti = new Dictionary<string, string>() {
                         { "Type", "Booking" },
                     };
                     var title = "Đơn hàng mới";
-                    var content = "Trung tâm của bạn vừa có một đơn hàng mới";
+                    var content = "Trung tâm của bạn vừa có một đơn hàng mới";*/
                     //send notification
                     //_notificationService.SendNoti(registrationTokens, noti, title, content);
                     //add notification to firebase
@@ -216,8 +216,9 @@ namespace PawNClaw.API.Controllers
                         time = DateTime.Now
                     };*/
                     //await _notificationService.AddNotification(notification);
+
+                    return Ok(data);
                 }
-                return Ok(data);
             }
             catch (Exception ex)
             {
