@@ -566,10 +566,13 @@ namespace PawNClaw.Business.Services
 
             values = values
                     .OrderByDescending(x => x.Bookings
-                                    .Where(booking => booking.CustomerId == customerId && booking.Rating > 0)
+                                    .Where(booking => booking.CustomerId == customerId 
+                                            && booking.Rating > 0 
+                                            && booking.StatusId == 3)
                                     .Sum(booking => booking.Rating))
                     .ThenByDescending(x => x.Bookings
-                                    .Where(booking => booking.CustomerId == customerId).Count());
+                                    .Where(booking => booking.CustomerId == customerId 
+                                            && booking.StatusId == 3).Count());
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
