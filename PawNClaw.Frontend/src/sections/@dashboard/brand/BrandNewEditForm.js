@@ -182,12 +182,13 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
             >
               <RHFTextField name="name" label="Tên thương hiệu" disabled={isEdit} />
 
-              <RHFTextField name="description" multiline rows={3} label="Mô tả" />
+              <RHFTextField name="description" multiline rows={6} label="Mô tả" />
 
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Typography>Chủ trung tâm</Typography>
                 {!centerId && (
                   <Button
+                    disabled={isEdit}
                     onClick={handleOpen}
                     sx={{ width: 100, ml: 5 }}
                     variant="text"

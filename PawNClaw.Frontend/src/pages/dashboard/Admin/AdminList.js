@@ -91,9 +91,9 @@ export default function UserList() {
     const response = await getAdmins(page, rowsPerPage, filterStatus, searchRequest);
     const { data, metadata } = response;
 
-    const admins = data.map((admin, index) => ({
+    const admins = data.map((admin) => ({
       id: admin.id,
-      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`, // TODO: update photo for moderator
+      avatarUrl: admin?.idNavigation?.photos?.length > 0 ? admin?.idNavigation?.photos[0].url : '',
       name: admin.name,
       email: admin.email,
       phoneNumber: admin.idNavigation.phone,

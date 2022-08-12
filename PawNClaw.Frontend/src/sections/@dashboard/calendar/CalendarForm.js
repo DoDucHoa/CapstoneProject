@@ -12,7 +12,7 @@ import { updateBookingStatus, createPetHealthStatus } from '../../../redux/slice
 import useResponsive from '../../../hooks/useResponsive';
 // components
 import { FormProvider } from '../../../components/hook-form';
-import { fDateTime } from '../../../utils/formatTime';
+import { compareBookingWithCurrentDate, fDateTime } from '../../../utils/formatTime';
 
 import { SupplyDialogForm, CageDialogForm, PDFInvoiceDialog, ServiceDialogForm } from './dialogs';
 
@@ -226,7 +226,7 @@ export default function CalendarForm({
   const onSubmit = async (data) => {
     try {
       // check if current date occurs before booking date
-      if (statusId !== 1 || new Date() >= new Date(startBooking)) {
+      if (statusId !== 1 || compareBookingWithCurrentDate(startBooking)) {
         if (statusId !== 1 || (!isDirty && isSizeValid)) {
           dispatch(createPetHealthStatus(data, id));
           dispatch(updateBookingStatus(data));

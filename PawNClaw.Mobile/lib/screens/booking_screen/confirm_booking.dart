@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pawnclaw_mobile_application/blocs/booking/booking_bloc.dart';
+import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/common/components/primary_button.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
@@ -31,11 +32,6 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
   void initState() {
     // TODO: implement initState
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
   }
 
   @override
@@ -776,16 +772,16 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                             BlocProvider.of<BookingBloc>(context).add(
                                 ConfirmBookingRequest(
                                     state.booking, widget.center));
-                            // var isCreated = await BookingRepository()
+                            // await BookingRepository()
                             //     .createBooking(request);
                             // // isCreated = false;
                             // if (isCreated == '200') {
-                            //   Navigator.of(context).push(MaterialPageRoute(
-                            //       builder: (context) => BookingSuccess(
-                            //             center: widget.center,
-                            //             booking: state.booking,
-                            //           )));
-                            // } else {
+                            // Navigator.of(context).push(MaterialPageRoute(
+                            //     builder: (context) => BookingSuccess(
+                            //           center: widget.center,
+                            //           booking: state.booking,
+                            //         )));
+                            // // } else {
                             //   showDialog(
                             //       context: context,
                             //       builder: (context) => AlertDialog(
@@ -844,9 +840,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
             ],
           );
         } else
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+          return LoadingIndicator(loadingText: "Vui lòng chờ");
       },
     );
   }

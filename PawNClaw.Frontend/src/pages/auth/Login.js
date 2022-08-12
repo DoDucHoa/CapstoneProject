@@ -1,6 +1,21 @@
+import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Box, Card, Stack, Container, Typography } from '@mui/material';
+import {
+  Box,
+  Card,
+  Stack,
+  Container,
+  Typography,
+  Link,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+} from '@mui/material';
+import ReactQuill from 'react-quill';
 
 // hooks
 import useResponsive from '../../hooks/useResponsive';
@@ -12,6 +27,9 @@ import Image from '../../components/Image';
 
 // sections
 import { LoginForm } from '../../sections/auth/login';
+
+// utils
+import axios from '../../utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -59,10 +77,19 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Login() {
+  const [openPolicy, setOpenPolicy] = useState(false);
   const mdUp = useResponsive('up', 'md');
 
+  const handleOpenPolicy = () => {
+    setOpenPolicy(true);
+  };
+
+  const handleClosePolicy = () => {
+    setOpenPolicy(false);
+  };
+
   return (
-    <Page title="Login">
+    <Page title="Đăng nhập">
       <RootStyle>
         <HeaderStyle>
           <Logo />
@@ -90,9 +117,59 @@ export default function Login() {
             </Stack>
 
             <LoginForm />
+
+            <Box>
+              <Link
+                component="button"
+                variant="body2"
+                sx={{ mt: 1 }}
+                color="primary"
+                onClick={() => handleOpenPolicy()}
+              >
+                Chính sách bảo mật
+              </Link>
+            </Box>
           </ContentStyle>
         </Container>
+
+        <PolicyDialog open={openPolicy} onClose={handleClosePolicy} />
       </RootStyle>
     </Page>
+  );
+}
+
+// ----------------------------------------------------------------------
+
+PolicyDialog.propTypes = {
+  open: PropTypes.bool,
+  onClose: PropTypes.func,
+};
+PolicyDialog.displayName = 'PolicyDialog';
+function PolicyDialog({ open, onClose }) {
+  const [policy, setPolicy] = useState('');
+
+  async function fetchPolicy() {
+    const { data } = await axios.get('/api/policies');
+    return data.policy;
+  }
+
+  useEffect(() => {
+    fetchPolicy().then((policy) => setPolicy(policy));
+  }, []);
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="md">
+      <DialogContent>
+        <DialogContentText>
+          <ReactQuill value={policy} theme={'bubble'} readOnly />
+        </DialogContentText>
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={onClose} color="primary" autoFocus>
+          Đóng
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }

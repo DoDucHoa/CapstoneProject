@@ -44,3 +44,18 @@ export function formatTime(date) {
   if (!isValid(new Date(date))) return '';
   return format(new Date(date), 'HH:mm');
 }
+
+export function compareBookingWithCurrentDate(bookingDate) {
+  const currentDate = new Date();
+  const bookingDateTime = new Date(bookingDate);
+
+  const currDateNum = currentDate.getFullYear() * 10000 + currentDate.getMonth() * 100 + currentDate.getDate();
+  const bookingDateNum =
+    bookingDateTime.getFullYear() * 10000 + bookingDateTime.getMonth() * 100 + bookingDateTime.getDate();
+
+  if (currDateNum >= bookingDateNum) {
+    return true;
+  }
+
+  return false;
+}

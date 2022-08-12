@@ -16,7 +16,7 @@ import UserNewEditForm from '../../../sections/@dashboard/owner/OwnerNewEditForm
 // ----------------------------------------------------------------------
 
 export default function UserCreate() {
-  const [adminData, setAdminData] = useState({});
+  const [ownerData, setOwnerData] = useState({});
 
   const { themeStretch } = useSettings();
   const { pathname } = useLocation();
@@ -27,7 +27,7 @@ export default function UserCreate() {
   useEffect(() => {
     if (isEdit) {
       getOwner(id).then((data) => {
-        setAdminData(data);
+        setOwnerData(data);
       });
     }
   }, [id, isEdit]);
@@ -43,7 +43,7 @@ export default function UserCreate() {
             { name: !isEdit ? 'Thêm mới' : 'Sửa' },
           ]}
         />
-        <UserNewEditForm isEdit={isEdit} adminData={adminData} />
+        <UserNewEditForm isEdit={isEdit} ownerData={ownerData} />
       </Container>
     </Page>
   );
