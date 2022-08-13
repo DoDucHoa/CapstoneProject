@@ -26,9 +26,9 @@ namespace PawNClaw.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,Moderator")]
-        public IActionResult GetOwners([FromQuery] string Name, [FromQuery] bool? Status, [FromQuery] string dir, [FromQuery] string sort, [FromQuery] PagingParameter _paging)
+        public IActionResult GetOwners([FromQuery] string Name, [FromQuery] bool? Status, [FromQuery] string dir, [FromQuery] string sort, [FromQuery] bool? isLookup, [FromQuery] PagingParameter _paging)
         {
-            var data = _OwnerService.GetOwners(Name, Status, dir, sort, _paging);
+            var data = _OwnerService.GetOwners(Name, Status, dir, sort, isLookup, _paging);
             var metadata = new
             {
                 data.TotalCount,

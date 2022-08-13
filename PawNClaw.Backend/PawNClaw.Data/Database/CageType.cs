@@ -52,6 +52,9 @@ namespace PawNClaw.Data.Database
         [NotMapped]
         public string TotalPrice { get; set; }
 
+        [NotMapped]
+        public bool? CanDelete { get; set; }
+
         [ForeignKey(nameof(CenterId))]
         [InverseProperty(nameof(PetCenter.CageTypes))]
         public virtual PetCenter Center { get; set; }
