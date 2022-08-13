@@ -231,6 +231,24 @@ class TransactionDetails {
     list.sort((a, b) => b.time.compareTo(a.time));
     return list;
   }
+
+  List<List<Pet>> idsToPetRequest(List<Pet> customerPets) {
+    List<List<Pet>> requests = [];
+    List<List<int>> petIds = bookingDetails!.map((e) => e.getPetIds()).toList();
+    
+    for (var petid in petIds) {
+      List<Pet> request = [];
+      for (var id in petid) {
+        for (var pet in customerPets) {
+          if (pet.id == id) {
+            request.add(pet);
+          }
+        }
+      }
+      requests.add(request);
+    }
+    return requests;
+  }
 }
 
 class BookingDetail {
@@ -279,6 +297,16 @@ class BookingDetail {
     });
     return pets;
   }
+
+  List<int> getPetIds() {
+    List<int> pets = [];
+    this.petBookingDetails!.forEach((element) {
+      pets.add(element.pet!.id!);
+    });
+    return pets;
+  }
+
+  
 }
 
 class Cage {
@@ -313,7 +341,11 @@ class CageType {
           ? Photo.fromJson(json["photos"].first)
           : null);
 
-  Map<String, dynamic> toJson() => {"id": id, "typeName": typeName, "photos": [photo!.toJson()]};
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "typeName": typeName,
+        "photos": [photo!.toJson()]
+      };
 
   String toRawJson() => json.encode(toJson());
 }

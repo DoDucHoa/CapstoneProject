@@ -5,7 +5,7 @@ import 'package:pawnclaw_mobile_application/models/voucher.dart';
 
 abstract class BaseCenterRepository {
   Future<SearchResponseModel?> searchCenterToBooking(DateTime timeFrom, int due,
-      List<List<Pet>> requests, String city, String district, int pageNumber);
+      List<List<Pet>> requests, String city, String district, int pageNumber, int customerId);
   Future<Center?> getCenterDetail(List<List<Pet>> requests, int centerId,
       DateTime timeFrom, DateTime timeTo);
   Future<List<Center>?> getCentersByName(

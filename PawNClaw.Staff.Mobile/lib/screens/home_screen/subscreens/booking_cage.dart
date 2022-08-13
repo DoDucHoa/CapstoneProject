@@ -87,11 +87,20 @@ class _BookingCageScreenState extends State<BookingCageScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        CircleAvatar(
-                          radius: height * 0.04,
-                          backgroundColor: lightPrimaryColor,
-                          backgroundImage: AssetImage('lib/assets/cus0.png'),
-                        ),
+                        (booking.customer!.idNavigation!.photo == null)
+                            ? CircleAvatar(
+                                radius: height * 0.04,
+                                backgroundColor: primaryBackgroundColor,
+                                backgroundImage:
+                                    AssetImage('lib/assets/cus0.png'),
+                              )
+                            : CircleAvatar(
+                                radius: height * 0.04,
+                                backgroundColor: frameColor,
+                                backgroundImage: NetworkImage(
+                                  booking.customer!.idNavigation!.photo!.url!,
+                                ),
+                              ),
                         Padding(
                           padding: EdgeInsets.all(width * smallPadRate),
                           child: Column(
@@ -121,7 +130,7 @@ class _BookingCageScreenState extends State<BookingCageScreen> {
                                     children: [
                                       WidgetSpan(
                                         child: Icon(
-                                          Icons.phone,
+                                          Icons.phone_rounded,
                                           size: width * regularFontRate,
                                           color: primaryColor,
                                         ),
@@ -157,7 +166,10 @@ class _BookingCageScreenState extends State<BookingCageScreen> {
                   margin: EdgeInsets.all(width * extraSmallPadRate + 5),
                   height: 55,
                   child: ClipRRect(
-                    child: Image.asset("lib/assets/vet-ava.png"),
+                    child: (bookingDetail.c!.cageType!.photos! == null)
+                        ? Image.asset("lib/assets/vet-ava.png")
+                        : Image.network(
+                            bookingDetail.c!.cageType!.photos![0].url!),
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -200,11 +212,18 @@ class _BookingCageScreenState extends State<BookingCageScreen> {
                       children: [
                         Padding(
                           padding: EdgeInsets.all(width * smallPadRate),
-                          child: CircleAvatar(
-                            backgroundImage:
-                                AssetImage("lib/assets/cat_avatar0.png"),
-                            radius: width * 0.08,
-                          ),
+                          child: (pets[index].photos == null)
+                              ? CircleAvatar(
+                                  backgroundImage:
+                                      AssetImage("lib/assets/cat_avatar0.png"),
+                                  radius: width * 0.08,
+                                )
+                              : CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    pets[index].photos![0].url!,
+                                  ),
+                                  radius: width * 0.08,
+                                ),
                         ),
                         Expanded(
                           child: Column(

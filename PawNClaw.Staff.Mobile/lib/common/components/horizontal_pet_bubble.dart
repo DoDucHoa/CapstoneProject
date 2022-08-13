@@ -1,8 +1,8 @@
-
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:pawnclaw_mobile_application/models/pet.dart';
+
+import '../../models/pet.dart';
 
 class PetBubbleCard extends StatelessWidget {
   const PetBubbleCard({

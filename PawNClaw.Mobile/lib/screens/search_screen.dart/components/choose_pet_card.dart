@@ -130,7 +130,7 @@ class _ChoosePetCardState extends State<ChoosePetCard> {
             border: Border.all(
                 color: Colors.white,
                 width: 3,
-                strokeAlign: StrokeAlign.outside)),
+                /*strokeAlign: StrokeAlign.outside*/)),
         child: (pet.photos!.isEmpty)
             ? CircleAvatar(
                 backgroundImage: AssetImage((pet.petTypeCode == 'DOG')

@@ -321,7 +321,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
                                         breedType!.contains('DOG'))
                                     ? lightPrimaryColor
                                     : Colors.white,
-                                strokeAlign: StrokeAlign.outside),
+                                /*strokeAlign: StrokeAlign.outside*/),
                             image: const DecorationImage(
                                 image: AssetImage('lib/assets/dog.png'),
                                 scale: 0.8)),
@@ -367,7 +367,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
                                         breedType!.contains('CAT'))
                                     ? lightPrimaryColor
                                     : Colors.white,
-                                strokeAlign: StrokeAlign.outside),
+                                /*strokeAlign: StrokeAlign.outside*/),
                             image: const DecorationImage(
                                 image: AssetImage('lib/assets/black-cat.png'),
                                 scale: 0.8)),

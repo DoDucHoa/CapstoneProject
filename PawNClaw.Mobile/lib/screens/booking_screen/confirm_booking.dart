@@ -482,7 +482,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                       Icon(Icons.keyboard_double_arrow_right),
                                     ],
                                   ))))
-                      : Container(),
+                      : SizedBox(height: width * smallPadRate,),
                   Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: width * smallPadRate,
