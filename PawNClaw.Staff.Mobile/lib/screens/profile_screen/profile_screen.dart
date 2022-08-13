@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:pncstaff_mobile_application/blocs/auth/auth_bloc.dart';
 import 'package:pncstaff_mobile_application/blocs/user/user_bloc.dart';
 import 'package:pncstaff_mobile_application/common/components/loading_indicator.dart';
@@ -101,36 +102,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               bottom: 0,
                               child: Align(
                                 alignment: Alignment.center,
-                                child: CircleAvatar(
-                                  radius: width * 0.2,
-                                  backgroundImage: NetworkImage(
-                                      user.photos?.first.url ?? ""),
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                      top: width * 0.4 - 38,
-                                      left: width * 0.4 - 38,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: frameColor,
+                                      width: 4,
                                     ),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: primaryColor,
+                                    borderRadius: BorderRadius.circular(width*0.3),
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: width * 0.2,
+                                    backgroundImage: NetworkImage(
+                                        user.photos?.first.url ?? ""),
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        top: width * 0.4 - 38,
+                                        left: width * 0.4 - 38,
                                       ),
-                                      child: IconButton(
-                                        onPressed: () async {
-                                          var imageUrl = await FirebaseUpload()
-                                              .pickFile("accounts/", false);
-                                          await UserRepository()
-                                              .updateUserAvatar(
-                                                  user.photos!.first.id!,
-                                                  imageUrl!);
-                                          setState(() {
-                                            user.photos?.first.url = imageUrl;
-                                          });
-                                        },
-                                        iconSize: 20,
-                                        icon: Icon(
-                                            Icons.add_photo_alternate_rounded),
-                                        color: Colors.white,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: primaryColor,
+                                        ),
+                                        child: IconButton(
+                                          onPressed: () async {
+                                            var imageUrl =
+                                                await FirebaseUpload().pickFile(
+                                                    "accounts/", false);
+                                            await UserRepository()
+                                                .updateUserAvatar(
+                                                    user.photos!.first.id!,
+                                                    imageUrl!);
+                                            setState(() {
+                                              user.photos?.first.url = imageUrl;
+                                            });
+                                          },
+                                          iconSize: 20,
+                                          icon: Icon(Icons
+                                              .add_photo_alternate_rounded),
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -175,13 +186,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           : Container(),
                       OutlinedText(
                         labelText: "Email",
-                        icon: Icons.email,
+                        icon: Icons.email_rounded,
                         controller: emailController,
                         enable: false,
                       ),
                       OutlinedText(
                         labelText: "Phone",
-                        icon: Icons.phone,
+                        icon: Icons.phone_rounded,
                         controller: phoneController,
                         enable: isEdit,
                       ),
@@ -232,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ),
                                     TextSpan(
-                                      text: (!isEdit) ? " EDIT" : " CANCEL",
+                                      text: (!isEdit) ? " Chỉnh sửa" : " Hủy",
                                       // style: TextStyle(color: primaryColor),
                                     ),
                                   ],
@@ -465,8 +476,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                     TextSpan(
                                       text: (!isEdit)
-                                          ? " CHANGE PASSWORD"
-                                          : " CONFIRM",
+                                          ? " Đổi mật khẩu"
+                                          : " Xác nhận",
                                       // style: TextStyle(color: primaryColor),
                                     ),
                                   ],

@@ -27,7 +27,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       print("line of BookingDetails: " +
           transactionDetails!.bookingDetails!.length.toString());
       print("line of petbookingdetails: " +
-          transactionDetails!.bookingDetails!.first.petBookingDetails!.length
+          transactionDetails.bookingDetails!.first.petBookingDetails!.length
               .toString());
       print('cage: ' +
           transactionDetails.bookingDetails!.first.cage!.cageType!.typeName!);

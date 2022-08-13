@@ -35,7 +35,7 @@ class CageCard extends StatelessWidget {
                     border: Border.all(
                         color: Colors.white,
                         width: 3,
-                        strokeAlign: StrokeAlign.outside)),
+                        /*strokeAlign: StrokeAlign.outside*/)),
                 child: (pets[0].photos!.isEmpty)
                     ? CircleAvatar(
                         backgroundImage: AssetImage(
@@ -62,7 +62,7 @@ class CageCard extends StatelessWidget {
                       border: Border.all(
                           color: Colors.white,
                           width: 3,
-                          strokeAlign: StrokeAlign.outside)),
+                          /*strokeAlign: StrokeAlign.outside*/)),
                   child: (pets[1].photos!.isEmpty)
                       ? CircleAvatar(
                           backgroundImage: AssetImage(
@@ -90,7 +90,7 @@ class CageCard extends StatelessWidget {
                 border: Border.all(
                     color: Colors.white,
                     width: 3,
-                    strokeAlign: StrokeAlign.outside)),
+                    /*strokeAlign: StrokeAlign.outside*/)),
             child: (pets[0].photos!.isEmpty)
                 ? CircleAvatar(
                     backgroundImage: AssetImage((pets[0].petTypeCode == 'DOG')
@@ -119,7 +119,7 @@ class CageCard extends StatelessWidget {
                       border: Border.all(
                           color: Colors.white,
                           width: 3,
-                          strokeAlign: StrokeAlign.outside)),
+                          /*strokeAlign: StrokeAlign.outside*/)),
                   child: (pets[0].photos!.isEmpty)
                       ? CircleAvatar(
                           backgroundImage: AssetImage(
@@ -145,7 +145,7 @@ class CageCard extends StatelessWidget {
                       border: Border.all(
                           color: Colors.white,
                           width: 3,
-                          strokeAlign: StrokeAlign.outside)),
+                          /*strokeAlign: StrokeAlign.outside*/)),
                   child: (pets[1].photos!.isEmpty)
                       ? CircleAvatar(
                           backgroundImage: AssetImage(
@@ -171,7 +171,7 @@ class CageCard extends StatelessWidget {
                       border: Border.all(
                           color: Colors.white,
                           width: 3,
-                          strokeAlign: StrokeAlign.outside)),
+                          /*strokeAlign: StrokeAlign.outside*/)),
                   child: (pets[2].photos!.isEmpty)
                       ? CircleAvatar(
                           backgroundImage: AssetImage(
@@ -202,7 +202,7 @@ class CageCard extends StatelessWidget {
                       border: Border.all(
                           color: Colors.white,
                           width: 3,
-                          strokeAlign: StrokeAlign.outside)),
+                          /*strokeAlign: StrokeAlign.outside*/)),
                   child: (pets[0].photos!.isEmpty)
                       ? CircleAvatar(
                           backgroundImage: AssetImage(
@@ -228,7 +228,7 @@ class CageCard extends StatelessWidget {
                       border: Border.all(
                           color: Colors.white,
                           width: 3,
-                          strokeAlign: StrokeAlign.outside)),
+                          /*strokeAlign: StrokeAlign.outside*/)),
                   child: (pets[1].photos!.isEmpty)
                       ? CircleAvatar(
                           backgroundImage: AssetImage(
@@ -260,7 +260,7 @@ class CageCard extends StatelessWidget {
                         border: Border.all(
                             color: Colors.white,
                             width: 3,
-                            strokeAlign: StrokeAlign.outside)),
+                            /*strokeAlign: StrokeAlign.outside*/)),
                     child: pets.length == 4
                         ? (pets[3].photos!.isEmpty)
                             ? CircleAvatar(
@@ -294,7 +294,8 @@ class CageCard extends StatelessWidget {
                       border: Border.all(
                           color: Colors.white,
                           width: 3,
-                          strokeAlign: StrokeAlign.outside)),
+                          /*strokeAlign: StrokeAlign.outside*/
+                          )),
                   child: (pets[2].photos!.isEmpty)
                       ? CircleAvatar(
                           backgroundImage: AssetImage(

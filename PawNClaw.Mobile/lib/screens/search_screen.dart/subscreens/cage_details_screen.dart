@@ -150,10 +150,11 @@ class _CageDetailsState extends State<CageDetails> {
               )
             ];
           },
-          body: buildContent(cageType, cage, size, context, requests!),
+          body: buildContent(cageType, cage, size, context, requests),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Container(
-            padding: EdgeInsets.only(left: 30),
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             //decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15))),
             child: ElevatedButton(
               onPressed: (selectedPetIds != null)

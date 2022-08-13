@@ -11,7 +11,8 @@ class InitSearch extends SearchEvent {}
 
 class InitCheck extends SearchEvent {
   final int centerId;
-  const InitCheck(this.centerId);
+  final List<List<Pet>>? requests;
+  const InitCheck(this.centerId, this.requests);
   @override
   // TODO: implement props
   List<Object> get props => [centerId];
@@ -65,9 +66,10 @@ class SearchCenter extends SearchEvent {
   final String cityCode;
   final String districtCode;
   final int pageNumber;
+  final int customerId;
 
   const SearchCenter(this.requests, this.timeFrom, this.due /*this.timeTo*/,
-      this.cityCode, this.districtCode, this.pageNumber);
+      this.cityCode, this.districtCode, this.pageNumber, this.customerId);
 
   @override
   // TODO: implement props

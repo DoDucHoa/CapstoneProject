@@ -10,6 +10,7 @@ import 'package:pawnclaw_mobile_application/models/booking.dart';
 import 'package:pawnclaw_mobile_application/models/transaction_details.dart';
 import 'package:pawnclaw_mobile_application/repositories/transaction/transaction_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/transaction_details_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/transaction_list_screen.dart';
 
 import '../../../models/review.dart';
 
@@ -222,7 +223,8 @@ class _ReviewDialogState extends State<ReviewDialog> {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) =>
                                           TransactionDetailsScreen(
-                                              booking: widget.booking)));
+                                              booking: widget.booking, 
+                                              redirect: TransactionList(),)));
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
