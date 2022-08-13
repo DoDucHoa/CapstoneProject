@@ -168,10 +168,11 @@ class Center {
     _endBooking = json['endBooking'];
 
     if (json['vouchers'] != null) {
-      _vouchers = <Voucher>[];
+      var vouchers = <Voucher>[];
       json['vouchers'].forEach((v) {
-        _vouchers!.add(Voucher.fromJson(v));
+        vouchers.add(Voucher.fromJson(v));
       });
+      (vouchers.isNotEmpty) ? _vouchers = vouchers : _vouchers = null;
     }
     if (json["photos"] != null) {
       _photos = <Photo>[];

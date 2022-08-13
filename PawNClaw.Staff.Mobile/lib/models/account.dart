@@ -1,4 +1,5 @@
 import 'package:pncstaff_mobile_application/models/pet_center.dart';
+import 'package:pncstaff_mobile_application/models/photo.dart';
 import 'package:pncstaff_mobile_application/repositories/center/center_repository.dart';
 
 class Account {
@@ -11,6 +12,7 @@ class Account {
   String? _role;
   PetCenter? _center;
   String? _url;
+  Photo? _photo;
 
   Account(
       {String? jwtToken,
@@ -65,6 +67,8 @@ class Account {
   set petCenter(PetCenter? center) => _center = center;
   String? get url => _url;
   set url(String? url) => _url = url;
+  Photo? get photo => _photo;
+  set photo(Photo? photo) => _photo = photo;
 
   Account.fromJson(Map<String, dynamic> json) {
     _jwtToken = json['jwtToken'];
@@ -75,6 +79,7 @@ class Account {
     _email = json['email'];
     _role = json['role'];
     _url = json['url'];
+
   }
 
   Map<String, dynamic> toJson() {

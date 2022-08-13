@@ -108,3 +108,14 @@ class ConfirmBookingRequest extends BookingEvent {
   // TODO: implement props
   List<Object> get props => [booking, center];
 }
+
+class ReorderBooking extends BookingEvent{
+  final Booking booking;
+  final TransactionDetails transactionDetails;
+  const ReorderBooking(this.booking, this.transactionDetails);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [booking, transactionDetails];
+  
+}

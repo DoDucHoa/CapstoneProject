@@ -13,11 +13,20 @@ import 'package:pawnclaw_mobile_application/screens/booking_from_search_screen/s
 import 'package:pawnclaw_mobile_application/screens/home_screen/HomeScreen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/center_details_screen.dart';
 
+import '../../models/pet.dart';
+import '../../models/transaction_details.dart';
+
 class SearchScreen extends StatefulWidget {
   final int centerId;
   final bool isSponsor;
+  final List<List<Pet>>? requests;
+  final TransactionDetails? transactionDetails;
   const SearchScreen(
-      {required this.centerId, required this.isSponsor, Key? key})
+      {required this.centerId,
+      required this.isSponsor,
+      this.requests,
+      this.transactionDetails,
+      Key? key})
       : super(key: key);
 
   @override
@@ -38,14 +47,21 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SearchBloc()..add(InitCheck(widget.centerId)),
+      create: (context) => SearchBloc()..add(InitCheck(widget.centerId, widget.requests)),
       child: BlocBuilder<SearchBloc, SearchState>(
         builder: (context, state) {
           if (state is FillingInformation) {
             return FillInformationScreen(isSponsor: widget.isSponsor);
           }
+          // if (widget.requests != null) {
+          //   return FillInformationScreen(
+          //     isSponsor: false,
+          //     centerId: widget.centerId,
+          //     requests: widget.requests,
+          //   );
+          // }
           if (state is CheckCenterInitial || state is UpdatePetSelected) {
-            return ChoosePetScreen(centerId: widget.centerId);
+            return ChoosePetScreen(centerId: widget.centerId, requests: widget.requests,);
           }
           if (state is SearchCompleted) {
             return const AvailableCenterScreen();
@@ -60,6 +76,7 @@ class _SearchScreenState extends State<SearchScreen> {
             );
           }
           if (state is CheckedCenter) {
+            // print(state);
             return CenterDetails(
                 petCenterId: widget.centerId,
                 requests: state.requests,

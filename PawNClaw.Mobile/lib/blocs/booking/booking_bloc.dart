@@ -1,10 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:pawnclaw_mobile_application/models/booking.dart';
 import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
 import 'package:intl/intl.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
+import 'package:pawnclaw_mobile_application/models/transaction_details.dart';
 import 'package:pawnclaw_mobile_application/repositories/booking/booking_repository.dart';
 
 part 'booking_event.dart';
