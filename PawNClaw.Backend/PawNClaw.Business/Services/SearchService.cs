@@ -562,8 +562,6 @@ namespace PawNClaw.Business.Services
                 Bookings = (ICollection<Booking>)_bookingRepository.GetCenterReviews(center.Id)
             });
 
-            
-
             values = values
                     .OrderByDescending(x => x.Bookings
                                     .Where(booking => booking.CustomerId == customerId 
