@@ -20,6 +20,9 @@ namespace PawNClaw.Data.Parameter
 
         public bool? CanShift { get; set; }
 
+        public DateTime? from { get; set; }
+        public DateTime? to { get; set; }
+
         public string dir { get; set; } = "asc";
         public string sort { get; set; } = null;
         public string fields { get; set; } = null;

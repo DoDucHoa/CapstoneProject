@@ -130,6 +130,20 @@ namespace PawNClaw.Business.Services
                     };
                 }
 
+                if (cageRequestParameter.from != null && cageRequestParameter.to != null)
+                {
+                    values = values.Where(x => !x.BookingDetails.Any(detail =>
+                                (((DateTime.Compare((DateTime)cageRequestParameter.from, (DateTime)detail.Booking.StartBooking) <= 0
+                                && DateTime.Compare((DateTime)cageRequestParameter.to, (DateTime)detail.Booking.EndBooking) >= 0)
+                                ||
+                                (DateTime.Compare((DateTime)cageRequestParameter.from, (DateTime)detail.Booking.StartBooking) >= 0
+                                && DateTime.Compare((DateTime)cageRequestParameter.from, (DateTime)detail.Booking.EndBooking) < 0)
+                                ||
+                                (DateTime.Compare((DateTime)cageRequestParameter.to, (DateTime)detail.Booking.StartBooking) > 0
+                                && DateTime.Compare((DateTime)cageRequestParameter.to, (DateTime)detail.Booking.EndBooking) <= 0))
+                                && (detail.Booking.StatusId == 1 || detail.Booking.StatusId == 2))));
+                }
+
                 if (!string.IsNullOrWhiteSpace(cageRequestParameter.sort))
                 {
                     switch (cageRequestParameter.sort)

@@ -45,8 +45,10 @@ namespace PawNClaw.Data.Repository
                     ModifyUser = x.ModifyUser,
                     Status = x.Status,
                     CenterId = x.CenterId,
+                    Cages = x.Cages,
                     Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Id, PhotoTypesConst.CageType),
-                    Prices = x.Prices
+                    Prices = x.Prices,
+                    CanDelete = !x.Cages.Any(cage => cage.BookingDetails.Any(booking => (booking.Booking.StartBooking >= DateTime.Now || booking.Booking.EndBooking >= DateTime.Now) && (booking.Booking.StatusId == 1 || booking.Booking.StatusId == 2)))
                 })
                 .Where(x => x.CenterId == centerId);
 

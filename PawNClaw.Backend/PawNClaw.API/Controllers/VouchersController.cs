@@ -38,7 +38,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("for-staff/center")]
-        public IActionResult GetVouchers(int centerId, bool? status, string code, [FromQuery] PagingParameter pagingParameter)
+        public IActionResult GetVouchers(int centerId, bool? status, string code, bool? isAvalable, [FromQuery] PagingParameter pagingParameter)
         {
             try
             {
@@ -52,7 +52,12 @@ namespace PawNClaw.API.Controllers
                 {
                     values = values.Where(x => x.Code.Contains(code));
                 }
+                if (isAvalable != null && isAvalable == true)
+                {
+                    DateTime today = DateTime.Now;
 
+                    values = values.Where(x => x.StartDate <= today && x.ExpireDate >= today && x.ReleaseAmount > 0);
+                }
                 var data = PagedList<Voucher>.ToPagedList(values.AsQueryable(),
                 pagingParameter.PageNumber,
                 10);
