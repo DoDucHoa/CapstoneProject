@@ -43,11 +43,11 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet("all")]
-        public IActionResult GetAllBanner([FromQuery] int? id, [FromQuery] PagingParameter pagingParameter)
+        public IActionResult GetAllBanner([FromQuery] int? id, int? Month, int? Year, [FromQuery] PagingParameter pagingParameter)
         {
             try
             {
-                var values = _sponsorBannerService.GetBanners();
+                var values = _sponsorBannerService.GetBanners(Month, Year);
 
                 if(id != null)
                 {

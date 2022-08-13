@@ -15,6 +15,7 @@ namespace PawNClaw.Data.Helper
         public string EndBooking { get; set; }
         public int Due { get; set; }
         public List<List<PetRequestForSearchCenter>> _petRequests { get; set; }
+        public int CustomerId { get; set; } = 0;
         public PagingParameter paging { get; set; }
     }
 }
