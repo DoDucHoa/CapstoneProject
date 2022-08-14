@@ -58,6 +58,9 @@ namespace PawNClaw.API.Controllers
 
                     values = values.Where(x => x.StartDate <= today && x.ExpireDate >= today && x.ReleaseAmount > 0);
                 }
+
+                values = values.OrderByDescending(x => x.ExpireDate);
+
                 var data = PagedList<Voucher>.ToPagedList(values.AsQueryable(),
                 pagingParameter.PageNumber,
                 10);
