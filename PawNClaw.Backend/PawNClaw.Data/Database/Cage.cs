@@ -61,5 +61,8 @@ namespace PawNClaw.Data.Database
 
         [NotMapped]
         public bool CanShift { get; set; }
+
+        [NotMapped]
+        public bool CanUpdateType { get; set; }
     }
 }
