@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 // @mui
-import { MenuItem, TableCell, TableRow, Typography } from '@mui/material';
+import { Link, MenuItem, TableCell, TableRow, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 // components
@@ -10,6 +11,7 @@ import Iconify from '../../../../components/Iconify';
 import Image from '../../../../components/Image';
 import Label from '../../../../components/Label';
 import { TableMoreMenu } from '../../../../components/table';
+import { PATH_DASHBOARD } from '../../../../routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +24,7 @@ BrandTableRow.propTypes = {
 export default function BrandTableRow({ row, onEditRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { name, photoUrl, brandName, address, status } = row;
+  const { name, photoUrl, brandName, address, status, brandId } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -50,7 +52,11 @@ export default function BrandTableRow({ row, onEditRow, onDeleteRow }) {
         {address}
       </TableCell>
 
-      <TableCell align="left">{brandName}</TableCell>
+      <TableCell align="left">
+        <Link component={RouterLink} to={PATH_DASHBOARD.brand.edit(brandId)} color="inherit">
+          {brandName}
+        </Link>
+      </TableCell>
 
       <TableCell align="center">
         <Label
