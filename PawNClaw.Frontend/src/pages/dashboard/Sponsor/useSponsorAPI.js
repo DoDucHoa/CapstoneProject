@@ -36,4 +36,13 @@ const banSponsor = async (idSponsor) => {
   return response.data;
 };
 
-export { getSponsor, getSponsors, createSponsor, banSponsor, updateSponsor };
+const extendSponsor = async (sponsorData) => {
+  const response = await axios.post(URL, sponsorData);
+  await axios.post('api/photos/banner', {
+    idActor: response.data,
+    url: sponsorData?.photos?.length > 0 ? sponsorData?.photos[0].url : '',
+    isThumbnail: false,
+  });
+};
+
+export { getSponsor, getSponsors, createSponsor, banSponsor, updateSponsor, extendSponsor };

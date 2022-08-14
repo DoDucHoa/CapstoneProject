@@ -209,7 +209,7 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
               {!centerId && (
-                <Button to={PATH_DASHBOARD.brand.list} color="error" variant="contained" component={RouterLink}>
+                <Button to={PATH_DASHBOARD.brand.list} color="error" variant="text" component={RouterLink}>
                   Hủy
                 </Button>
               )}

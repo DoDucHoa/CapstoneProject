@@ -145,6 +145,7 @@ PolicyDialog.propTypes = {
   onClose: PropTypes.func,
 };
 PolicyDialog.displayName = 'PolicyDialog';
+
 function PolicyDialog({ open, onClose }) {
   const [policy, setPolicy] = useState('');
 
@@ -154,7 +155,16 @@ function PolicyDialog({ open, onClose }) {
   }
 
   useEffect(() => {
-    fetchPolicy().then((policy) => setPolicy(policy));
+    let isMounted = true;
+    fetchPolicy().then((policy) => {
+      if (isMounted) {
+        setPolicy(policy);
+      }
+    });
+    return () => {
+      setPolicy('');
+      isMounted = false;
+    };
   }, []);
 
   return (

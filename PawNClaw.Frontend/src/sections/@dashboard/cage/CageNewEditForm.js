@@ -50,9 +50,9 @@ export default function CageNewEditForm({ isEdit, cageData }) {
     () => ({
       code: cageData?.code || '',
       centerId: cageData?.centerId || centerId,
-      name: '',
+      name: cageData?.name || '',
       color: cageData?.color || '',
-      isOnline: cageData?.isOnline || true,
+      isOnline: cageData?.isOnline,
       createUser: cageData?.createUser || accountInfo.id,
       modifyUser: accountInfo.id,
       status: cageData?.status || 1,
@@ -93,7 +93,6 @@ export default function CageNewEditForm({ isEdit, cageData }) {
   // ----------------------------------------------------------------------
   // FUNCTIONS
   const onSubmit = async () => {
-    console.log(values);
     try {
       if (!isEdit) {
         await createCage(values);
@@ -131,7 +130,15 @@ export default function CageNewEditForm({ isEdit, cageData }) {
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(1, 1fr)' },
               }}
             >
-              <RHFTextField name="code" label="Mã chuồng" disabled={isEdit} />
+              <RHFTextField
+                name="code"
+                label="Mã chuồng"
+                disabled={isEdit}
+                inputProps={{
+                  maxLength: 32,
+                  style: { textTransform: 'uppercase' },
+                }}
+              />
 
               <RHFTextField name="name" label="Tên chuồng" />
 
@@ -141,14 +148,16 @@ export default function CageNewEditForm({ isEdit, cageData }) {
 
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Typography>Loại chuồng</Typography>
-                <Button
-                  onClick={handleOpen}
-                  sx={{ width: 100, ml: 5 }}
-                  variant="text"
-                  startIcon={<Iconify icon={cageTypeInfo ? 'eva:edit-fill' : 'eva:plus-fill'} color="primary" />}
-                >
-                  {cageTypeInfo ? 'Thay đổi' : 'Thêm'}
-                </Button>
+                {!isEdit && (
+                  <Button
+                    onClick={handleOpen}
+                    sx={{ width: 100, ml: 5 }}
+                    variant="text"
+                    startIcon={<Iconify icon={cageTypeInfo ? 'eva:edit-fill' : 'eva:plus-fill'} color="primary" />}
+                  >
+                    {cageTypeInfo ? 'Thay đổi' : 'Thêm'}
+                  </Button>
+                )}
               </Box>
               {cageTypeInfo ? (
                 <CageTypeInfo
@@ -166,7 +175,7 @@ export default function CageNewEditForm({ isEdit, cageData }) {
             </Box>
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
-              <Button to={PATH_DASHBOARD.cage.list} color="error" variant="contained" component={RouterLink}>
+              <Button to={PATH_DASHBOARD.cage.list} color="error" variant="text" component={RouterLink}>
                 Hủy
               </Button>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

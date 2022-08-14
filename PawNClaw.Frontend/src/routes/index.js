@@ -107,7 +107,13 @@ export default function Router() {
           index: true,
         },
         { path: 'bookingchart', element: <GeneralBooking /> },
-        { path: 'policy', element: <PolicyForm /> },
+        {
+          path: 'policy',
+          children: [
+            { path: 'owner', element: <PolicyForm /> },
+            { path: 'customer', element: <PolicyForm /> },
+          ],
+        },
         { path: 'log-action', element: <LogList /> },
         // profile
         {

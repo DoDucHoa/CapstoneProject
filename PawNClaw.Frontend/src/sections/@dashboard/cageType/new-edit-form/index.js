@@ -168,7 +168,7 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
             <CageTypeFoodSchedule />
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
-              <Button to={PATH_DASHBOARD.cageType.list} color="error" variant="contained" component={RouterLink}>
+              <Button to={PATH_DASHBOARD.cageType.list} color="error" variant="text" component={RouterLink}>
                 Hủy
               </Button>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
