@@ -57,6 +57,7 @@ namespace PawNClaw.Business.Services
                 cage.Status = updateCageParameter.Status;
                 cage.Color = updateCageParameter.Color;
                 cage.Name = updateCageParameter.Name;
+                cage.CageTypeId = updateCageParameter.CageTypeId;
 
                 _cageRepository.Update(cage);
                 _cageRepository.SaveDbChange();

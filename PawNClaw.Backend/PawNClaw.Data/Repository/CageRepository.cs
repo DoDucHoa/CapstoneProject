@@ -85,6 +85,7 @@ namespace PawNClaw.Data.Repository
                         Name = cage.Name,
                         Status = cage.Status,
                         CanShift = !cage.BookingDetails.Any(booking => (booking.Booking.StartBooking >= DateTime.Now || booking.Booking.EndBooking >= DateTime.Now) && (booking.Booking.StatusId == 1 || booking.Booking.StatusId == 2)),
+                        CanUpdateType = !(cage.BookingDetails.Count > 0)
                     }).AsQueryable();
             return values;
         }

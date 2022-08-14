@@ -67,5 +67,6 @@ namespace PawNClaw.Data.Parameter
         public int? ModifyUser { get; set; }
 
         public bool? Status { get; set; }
+        public int CageTypeId { get; set; }
     }
 }
