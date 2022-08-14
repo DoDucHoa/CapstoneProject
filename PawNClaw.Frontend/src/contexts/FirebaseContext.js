@@ -199,6 +199,7 @@ function AuthProvider({ children }) {
     setCenterInfoSession(null);
     setCenterIdSession(null);
     dispatch({ type: 'LOGOUT' });
+    window.location.reload();
   };
 
   // create function upload photo to Firebase use async
