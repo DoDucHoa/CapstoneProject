@@ -16,9 +16,10 @@ SponsorTableRow.propTypes = {
   row: PropTypes.object,
   onEditRow: PropTypes.func,
   onDeleteRow: PropTypes.func,
+  onExtend: PropTypes.func,
 };
 
-export default function SponsorTableRow({ row, onEditRow, onDeleteRow }) {
+export default function SponsorTableRow({ row, onEditRow, onDeleteRow, onExtend }) {
   const { title, photoUrl, content, brandName, endDate } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
@@ -66,6 +67,15 @@ export default function SponsorTableRow({ row, onEditRow, onDeleteRow }) {
               >
                 <Iconify icon={'eva:edit-fill'} />
                 Sửa
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  onExtend();
+                  handleCloseMenu();
+                }}
+              >
+                <Iconify icon={'bxs:duplicate'} />
+                Gia hạn 1 tháng
               </MenuItem>
               <MenuItem
                 onClick={() => {

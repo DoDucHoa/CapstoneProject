@@ -7,6 +7,7 @@ import Iconify from '../../../../components/Iconify';
 import InvoicePDF from '../invoice/InvoicePDF';
 
 // ----------------------------------------------------------------------
+
 PDFInvoiceDialog.propTypes = {
   openPDFDialog: PropTypes.bool,
   handleClosePDFDialog: PropTypes.func,
@@ -14,7 +15,7 @@ PDFInvoiceDialog.propTypes = {
   petData: PropTypes.array,
   supplyOrders: PropTypes.array,
   serviceOrders: PropTypes.array,
-  centerInfo: PropTypes.object,
+  centerName: PropTypes.string,
 };
 PDFInvoiceDialog.defaultProps = {
   openPDFDialog: false,
@@ -23,7 +24,7 @@ PDFInvoiceDialog.defaultProps = {
   petData: [],
   supplyOrders: [],
   serviceOrders: [],
-  centerInfo: {},
+  centerName: {},
 };
 PDFInvoiceDialog.displayName = 'PDFInvoiceDialog';
 
@@ -34,7 +35,7 @@ export default function PDFInvoiceDialog({
   petData,
   supplyOrders,
   serviceOrders,
-  centerInfo,
+  centerName,
 }) {
   return (
     <Dialog fullScreen open={openPDFDialog}>
@@ -60,7 +61,7 @@ export default function PDFInvoiceDialog({
               petData={petData}
               supplyOrders={supplyOrders}
               serviceOrders={serviceOrders}
-              centerInfo={centerInfo}
+              centerName={centerName}
             />
           </PDFViewer>
         </Box>
