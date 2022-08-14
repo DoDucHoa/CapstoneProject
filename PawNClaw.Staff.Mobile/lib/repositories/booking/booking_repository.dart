@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:pncstaff_mobile_application/models/booking.dart';
 import 'package:pncstaff_mobile_application/models/booking_detail.dart';
+import 'package:pncstaff_mobile_application/models/photo.dart';
 import 'package:pncstaff_mobile_application/repositories/booking/base_booking_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,10 +22,15 @@ class BookingRepository implements BaseBookingRepository {
       var response = await _dio.get(
         _url,
       );
-      print(response.data);
-      final bookings = response.data
+      //print(response.data);
+      List<BookingDetail> bookings = response.data
           .map<BookingDetail>((e) => BookingDetail.fromJson(e))
           .toList();
+      print('reponse: $bookings.length');
+      bookings.first.bookingDetails!.forEach((element) {
+        print(element.c!.toJson());
+      });
+
       return bookings;
     } on DioError catch (e) {
       print(e.response?.data);

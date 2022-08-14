@@ -1,3 +1,5 @@
+import 'package:pncstaff_mobile_application/models/photo.dart';
+
 import 'booking_detail.dart';
 import 'pet.dart';
 import 'package:intl/intl.dart';
@@ -162,6 +164,7 @@ class Booking {
 class Customer {
   int? id;
   String? name;
+  Photo? photo;
   // String? birth;
   // Null? gender;
   // Null? idNavigation;
@@ -172,6 +175,7 @@ class Customer {
   Customer({
     this.id,
     this.name,
+    this.photo,
     // this.birth,
     // this.gender,
     // this.idNavigation,
@@ -210,6 +214,7 @@ class Customer {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
+    data['photo'] = this.photo;
     // data['birth'] = this.birth;
     // data['gender'] = this.gender;
     // data['idNavigation'] = this.idNavigation;

@@ -36,7 +36,8 @@ namespace PawNClaw.API.Controllers
             {
                 var data = await _searchService.ReferenceCenter(_searchRequestModel.City, _searchRequestModel.District,
                                                 _searchRequestModel.StartBooking, _searchRequestModel.Due,
-                                                _searchRequestModel._petRequests, _searchRequestModel.paging);
+                                                _searchRequestModel._petRequests, _searchRequestModel.CustomerId,
+                                                _searchRequestModel.paging);
 
                 if (data.petCenters.Count == 0)
                 {

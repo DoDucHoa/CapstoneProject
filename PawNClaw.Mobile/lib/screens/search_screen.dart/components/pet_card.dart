@@ -286,7 +286,7 @@ class _PetCardState extends State<PetCard> {
                 shape: CircleBorder(
                     side: BorderSide(
                   width: 1,
-                  strokeAlign: StrokeAlign.outside,
+                  /*strokeAlign: StrokeAlign.outside*/
                   color: (isSelected || isLock) ? primaryColor : disableColor,
                 )),
               ),

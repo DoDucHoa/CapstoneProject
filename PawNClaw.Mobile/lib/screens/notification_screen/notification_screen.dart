@@ -77,8 +77,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               (element) => element.id == notification.actorId);
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  TransactionDetailsScreen(booking: booking),
+                              builder: (context) => TransactionDetailsScreen(
+                                booking: booking,
+                                redirect: NotificationScreen(),
+                              ),
                             ),
                           );
                         }

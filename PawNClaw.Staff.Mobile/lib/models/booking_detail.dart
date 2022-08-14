@@ -1,3 +1,6 @@
+import 'package:pncstaff_mobile_application/models/photo.dart';
+import 'dart:convert';
+
 import 'pet.dart';
 import 'package:intl/intl.dart';
 
@@ -287,18 +290,21 @@ class Customer {
 class IdNavigation {
   int? id;
   String? phone;
+  Photo? photo;
 
   IdNavigation({this.id, this.phone});
 
   IdNavigation.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     phone = json['phone'];
+    photo = json['photos'] != [] ?  Photo.fromJson(json['photos'][0]) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['phone'] = this.phone;
+    data['photo'] = this.photo?.toJson();
     return data;
   }
 }
@@ -312,7 +318,7 @@ class BookingDetails {
   double? duration;
   // Null? note;
   // Null? booking;
-  // Cage? c;
+  Cage? c;
   List<BookingActivities>? bookingActivities;
   List<PetBookingDetails>? petBookingDetails;
   List<FoodSchedules>? foodSchedules;
@@ -362,6 +368,7 @@ class BookingDetails {
       });
     }
     cageType = json['cageType'];
+    c = json['c'] != null ? new Cage.fromJson(json['c']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -387,6 +394,8 @@ class BookingDetails {
       data['foodSchedules'] =
           this.foodSchedules!.map((v) => v.toJson()).toList();
     }
+    data['cageType'] = this.cageType;
+    data['c'] = this.c?.toJson();
     return data;
   }
 
@@ -851,3 +860,77 @@ class BookingActivities {
     return data;
   }
 }
+// To parse this JSON data, do
+//
+//     final cage = cageFromJson(jsonString);
+
+
+class Cage {
+    Cage({
+        this.code,
+        this.centerId,
+        this.name,
+        this.color,
+        this.cageType,
+    });
+
+    String? code;
+    int? centerId;
+    String? name;
+    String? color;
+    CageType? cageType;
+
+    factory Cage.fromRawJson(String str) => Cage.fromJson(json.decode(str));
+
+    String toRawJson() => json.encode(toJson());
+
+    factory Cage.fromJson(Map<String, dynamic> json) => Cage(
+        code: json["code"] == null ? null : json["code"],
+        centerId: json["centerId"] == null ? null : json["centerId"],
+        name: json["name"] == null ? null : json["name"],
+        color: json["color"],
+        cageType: json["cageType"] == null ? null : CageType.fromJson(json["cageType"]),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "code": code == null ? null : code,
+        "centerId": centerId == null ? null : centerId,
+        "name": name == null ? null : name,
+        "color": color,
+        "cageType": cageType == null ? null : cageType!.toJson(),
+    };
+}
+
+class CageType {
+    CageType({
+        this.id,
+        this.typeName,
+        this.isSingle,
+        this.photos,
+    });
+
+    int? id;
+    String? typeName;
+    bool? isSingle;
+    List<Photo>? photos;
+
+    factory CageType.fromRawJson(String str) => CageType.fromJson(json.decode(str));
+
+    String toRawJson() => json.encode(toJson());
+
+    factory CageType.fromJson(Map<String, dynamic> json) => CageType(
+        id: json["id"] == null ? null : json["id"],
+        typeName: json["typeName"] == null ? null : json["typeName"],
+        isSingle: json["isSingle"] == null ? null : json["isSingle"],
+        photos: json["photos"] == null ? null : List<Photo>.from(json["photos"].map((x) => Photo.fromJson(x))),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "id": id == null ? null : id,
+        "typeName": typeName == null ? null : typeName,
+        "isSingle": isSingle == null ? null : isSingle,
+        "photos": photos == null ? null : List<Photo>.from(photos!.map((x) => x.toJson())),
+    };
+}
+
+

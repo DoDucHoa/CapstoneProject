@@ -6,11 +6,14 @@ import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/components/primary_button.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/common/date_picker.dart';
+import 'package:pawnclaw_mobile_application/models/account.dart';
 import 'package:pawnclaw_mobile_application/models/area.dart';
 import 'package:pawnclaw_mobile_application/repositories/area/area_repository.dart';
 import 'package:intl/intl.dart';
 import 'package:pawnclaw_mobile_application/repositories/center/center_repository.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/choose_location_dialog.dart';
+
+import '../../../blocs/authentication/auth_bloc.dart';
 
 class FillInformationScreen extends StatefulWidget {
   const FillInformationScreen({
@@ -33,10 +36,13 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
   TextEditingController _toController = TextEditingController();
   String? toTimeError;
   String? fromTimeError;
+  Account? account;
 
   @override
   void initState() {
     // TODO: implement initState
+    var authState = BlocProvider.of<AuthBloc>(context).state as Authenticated;
+    account = authState.user;
     AreaRepository().getAllArea().then((value) {
       setState(
         () {
@@ -67,8 +73,8 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
             leading: IconButton(
               onPressed: () {
                 BlocProvider.of<SearchBloc>(context)
-                          ..add(BackToPetSelection(
-                              (state as FillingInformation).requests));
+                  ..add(BackToPetSelection(
+                      (state as FillingInformation).requests));
               },
               // =>
               //  Navigator.of(context).pop(),
@@ -328,8 +334,14 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                             _toController.text != "" &&
                             _areaController.text != "")
                         ? () => BlocProvider.of<SearchBloc>(context).add(
-                            SearchCenter((state as FillingInformation).requests,
-                                from!, due!, cityCode!, districtCode!, 0))
+                            SearchCenter(
+                                (state as FillingInformation).requests,
+                                from!,
+                                due!,
+                                cityCode!,
+                                districtCode!,
+                                0,
+                                account!.id!))
                         : () {},
                     text: "Xác nhận",
                     contextWidth: width,

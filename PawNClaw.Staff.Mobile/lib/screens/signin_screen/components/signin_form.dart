@@ -2,8 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pncstaff_mobile_application/blocs/auth/auth_bloc.dart';
+import 'package:pncstaff_mobile_application/common/components/primary_button.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
-
+import 'package:iconsax/iconsax.dart';
 import '../../../common/input_validation.dart';
 
 class SignInForm extends StatefulWidget {
@@ -47,7 +48,7 @@ class _SignInFormState extends State<SignInForm> {
               flex: 1,
             ),
             Text(
-              "để sử dụng dịch vụ của bạn",
+              "để sử dụng PawNClaw",
               style: TextStyle(
                 color: lightFontColor,
                 fontSize: width * largeFontRate,
@@ -62,10 +63,19 @@ class _SignInFormState extends State<SignInForm> {
               decoration: InputDecoration(
                   labelText: "Email",
                   errorText: emailError,
-                  prefixIcon: Icon(
-                    Icons.email,
-                    color: primaryColor,
-                  ),
+                  prefixIcon: Container(
+                      width: 30,
+                      height: 30,
+                      margin: EdgeInsets.all(5),
+                      // padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: primaryBackgroundColor,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Icon(
+                        Icons.mail_rounded,
+                        color: primaryColor,
+                        size: 20,
+                      )),
                   border: InputBorder.none),
               onChanged: (input) => setState(() {
                 emailError = InputValidator().isEmpty(input) ??
@@ -88,11 +98,19 @@ class _SignInFormState extends State<SignInForm> {
                     decoration: InputDecoration(
                         labelText: "Password",
                         errorText: passwordError,
-                        prefixIcon: Icon(
-                          Icons.key,
-                          color: primaryColor,
-                          size: 20,
-                        ),
+                        prefixIcon: Container(
+                            width: 30,
+                            height: 30,
+                            margin: EdgeInsets.all(5),
+                            // padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                color: primaryBackgroundColor,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Icon(
+                              Icons.lock,
+                              color: primaryColor,
+                              size: 20,
+                            )),
                         border: InputBorder.none),
                     onChanged: (input) => setState(() {
                       passwordError = InputValidator().isEmpty(input);
@@ -104,7 +122,7 @@ class _SignInFormState extends State<SignInForm> {
                           isHidden ? isHidden = false : isHidden = true;
                         }),
                     icon: Icon(
-                      Icons.remove_red_eye,
+                      (isHidden) ? Iconsax.eye_slash : Iconsax.eye,
                       color: primaryColor,
                     ))
               ],
@@ -125,24 +143,16 @@ class _SignInFormState extends State<SignInForm> {
                 opacity: (_passwordController.text != "" && emailError == null)
                     ? 1
                     : 0.3,
-                child: ElevatedButton(
-                  onPressed: (passwordError == null && emailError == null)
-                      ? () {
-                          BlocProvider.of<AuthBloc>(context).add(SignIn(
-                              _emailController.text, _passwordController.text));
-                        }
-                      : () {},
-                  child: Text(
-                    "Đăng nhập",
-                    style: TextStyle(
-                        color: Colors.white, fontSize: width * regularFontRate),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      fixedSize: Size(width * 0.5, height * 0.05)),
-                ),
+                child: PrimaryButton(
+                    text: 'Đăng nhập',
+                    contextWidth: width,
+                    onPressed: (passwordError == null && emailError == null)
+                        ? () {
+                            BlocProvider.of<AuthBloc>(context).add(SignIn(
+                                _emailController.text,
+                                _passwordController.text));
+                          }
+                        : () {}),
               ),
             ),
           ],

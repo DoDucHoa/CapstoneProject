@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:pncstaff_mobile_application/blocs/auth/auth_bloc.dart';
 import 'package:pncstaff_mobile_application/blocs/booking/booking_bloc.dart';
 import 'package:pncstaff_mobile_application/common/components/elevated_container.dart';
@@ -47,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
       color: frameColor,
       child: TrackingActivities(),
     ),
+    Container(child: Text('Booking list'),),
     ProfileScreen(),
   ];
 
@@ -99,12 +101,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     text: 'Next up tasks',
                                   ),
                                 ],
-                                labelColor: primaryColor,
-                                unselectedLabelColor: lightFontColor,
+                                labelColor: Colors.white,
+                                padding: EdgeInsets.all(7),
+                                unselectedLabelColor: Colors.white54,
                                 labelStyle:
                                     TextStyle(fontWeight: FontWeight.w700),
                                 indicator: LineIndicator(
-                                    color: primaryColor, radius: width / 4),
+                                    color: Colors.white, radius: width / 5),
                                 splashBorderRadius: BorderRadius.only(
                                     bottomLeft: Radius.circular(10),
                                     bottomRight: Radius.circular(10)),
@@ -141,12 +144,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 items: const [
                   BottomNavigationBarItem(
                       icon: Icon(
-                        Icons.home,
+                        Iconsax.home5,
+                      ),
+                      label: ""),
+                      BottomNavigationBarItem(
+                      icon: Icon(
+                        Iconsax.document_text5,
                       ),
                       label: ""),
                   BottomNavigationBarItem(
                       icon: Icon(
-                        Icons.person,
+                        Icons.person_rounded,
                       ),
                       label: ""),
                 ],
@@ -154,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           } else {
             return LoadingIndicator(
-              loadingText: "Bạn chờ pnw xíu nhé",
+              loadingText: "PawNClaw xin chào!",
             );
           }
         },

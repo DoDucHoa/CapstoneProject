@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
 
+
 class LoadingIndicator extends StatelessWidget {
   const LoadingIndicator({Key? key, required this.loadingText})
       : super(key: key);
@@ -19,7 +20,7 @@ class LoadingIndicator extends StatelessWidget {
               //const CircularProgressIndicator(),
               SizedBox(
                 height: width * 0.25,
-                child: Image.asset('lib/assets/paw-gif.gif'),
+                child: Image.asset('lib/assets/new-paw.gif'),
               ),
               const SizedBox(height: 5),
               Container(

@@ -21,7 +21,7 @@ namespace PawNClaw.Data.Repository
         IServiceOrderRepository _serviceOrderRepository;
         IBookingActivityRepository _bookingActivityRepository;
 
-        public BookingRepository(ApplicationDbContext db, PhotoRepository photoRepository, 
+        public BookingRepository(ApplicationDbContext db, PhotoRepository photoRepository,
             ISupplyOrderRepository supplyOrderRepository, IServiceOrderRepository serviceOrderRepository,
             IBookingActivityRepository bookingActivityRepository) : base(db)
         {
@@ -53,7 +53,8 @@ namespace PawNClaw.Data.Repository
 
         public IEnumerable<Booking> GetCenterReviews(int centerId)
         {
-            var values = _dbSet.Include(x => x.Customer).ThenInclude(x => x.IdNavigation).Where(x => x.CenterId == centerId).Where(x => x.Rating != null).Select(booking => new Booking() {
+            var values = _dbSet.Include(x => x.Customer).ThenInclude(x => x.IdNavigation).Where(x => x.CenterId == centerId).Where(x => x.Rating != null).Select(booking => new Booking()
+            {
                 CheckOut = booking.CheckOut,
                 Rating = booking.Rating,
                 Feedback = booking.Feedback,
@@ -62,7 +63,7 @@ namespace PawNClaw.Data.Repository
                     Name = booking.Customer.Name,
                     IdNavigation = new Account()
                     {
-                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(booking.CustomerId,PhotoTypesConst.Account),
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(booking.CustomerId, PhotoTypesConst.Account),
                     }
                 }
             }).OrderByDescending(x => x.CheckOut).ToList();
@@ -127,7 +128,8 @@ namespace PawNClaw.Data.Repository
                     StartBooking = x.StartBooking,
                     EndBooking = x.EndBooking,
                     StatusId = x.StatusId,
-                    Customer = new Customer() { 
+                    Customer = new Customer()
+                    {
                         Id = x.Customer.Id,
                         Name = x.Customer.Name,
                         IdNavigation = new Account()
@@ -309,7 +311,7 @@ namespace PawNClaw.Data.Repository
                             CageType = new CageType
                             {
                                 TypeName = bookingdetail.C.CageType.TypeName,
-                                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingdetail.C.CageType.Id,PhotoTypesConst.CageType)
+                                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(bookingdetail.C.CageType.Id, PhotoTypesConst.CageType)
                             }
                         },
                         PetBookingDetails = (ICollection<PetBookingDetail>)bookingdetail.PetBookingDetails
@@ -361,7 +363,8 @@ namespace PawNClaw.Data.Repository
                         TotalPrice = serviceorder.TotalPrice,
                         Note = serviceorder.Note,
                         PetId = serviceorder.PetId,
-                        Service = new Service() { 
+                        Service = new Service()
+                        {
                             Id = serviceorder.Service.Id,
                             Name = serviceorder.Service.Name,
                             Description = serviceorder.Service.Description,
@@ -378,7 +381,7 @@ namespace PawNClaw.Data.Repository
                         IdNavigation = new Account
                         {
                             Phone = x.Customer.IdNavigation.Phone,
-                            Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Customer.Id,PhotoTypesConst.Account)
+                            Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.Customer.Id, PhotoTypesConst.Account)
                         }
                     },
                     Status = new BookingStatus
@@ -417,6 +420,9 @@ namespace PawNClaw.Data.Repository
             DateTime now = DateTime.Today;
 
             IQueryable<Booking> query = _dbSet
+               /* .Include(x => x.Customer)
+                .ThenInclude(x => x.IdNavigation)
+                .Include(x => x.BookingDetails).ThenInclude(x => x.C).ThenInclude(x => x.CageType).Include(x => x.SupplyOrders).ThenInclude(x => x.Supply).Include(x => x.ServiceOrders).ThenInclude(x => x.Service)*/
                 .Select(x => new Booking
                 {
                     Id = x.Id,
@@ -478,7 +484,7 @@ namespace PawNClaw.Data.Repository
                                 Birth = pet.Pet.Birth,
                                 BreedName = pet.Pet.BreedName,
                                 PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == bookingdetail.BookingId),
-                                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(pet.Pet.Id,PhotoTypesConst.PetProfile)
+                                Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(pet.Pet.Id, PhotoTypesConst.PetProfile)
                             }
                         }),
                         BookingActivities = bookingdetail.BookingActivities,
@@ -578,7 +584,8 @@ namespace PawNClaw.Data.Repository
                     Rating = x.Rating,
                     CustomerNote = x.CustomerNote,
                     StaffNote = x.StaffNote,
-                    Center = new PetCenter() {
+                    Center = new PetCenter()
+                    {
                         Id = x.Center.Id,
                         Name = x.Center.Name,
                         Address = x.Center.Address,
@@ -716,14 +723,15 @@ namespace PawNClaw.Data.Repository
                         {
                             BookingDetailId = pet.BookingDetailId,
                             PetId = pet.PetId,
-                            Pet = new Pet() {
+                            Pet = new Pet()
+                            {
                                 Name = pet.Pet.Name,
                                 Height = pet.Pet.Height,
                                 Length = pet.Pet.Length,
                                 Weight = pet.Pet.Weight,
                                 Birth = pet.Pet.Birth,
                                 Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(pet.PetId, PhotoTypesConst.PetProfile),
-                            }                        
+                            }
                         })
                     })
                     .Where(bookingdetail => bookingdetail.CageCode.Equals(CageCode))

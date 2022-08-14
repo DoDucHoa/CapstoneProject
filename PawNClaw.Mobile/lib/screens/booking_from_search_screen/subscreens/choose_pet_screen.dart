@@ -11,9 +11,13 @@ import 'package:pawnclaw_mobile_application/screens/search_screen.dart/component
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/pet_card.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/pet_requests_dialog.dart';
 
+import '../../../models/pet.dart';
+
 class ChoosePetScreen extends StatefulWidget {
+  final List<List<Pet>>? requests;
   const ChoosePetScreen({
     required this.centerId,
+    this.requests,
     Key? key,
   }) : super(key: key);
   final int centerId;
@@ -29,7 +33,13 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
     double width = MediaQuery.of(context).size.width;
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
-        var request = (state as UpdatePetSelected).requests;
+        var request;
+        if (widget.requests != null) {
+          request = widget.requests;
+        } else {
+          request = (state as UpdatePetSelected).requests;
+        }
+        // var request = (state as UpdatePetSelected).requests;
         return Scaffold(
           backgroundColor: frameColor,
           appBar: AppBar(
