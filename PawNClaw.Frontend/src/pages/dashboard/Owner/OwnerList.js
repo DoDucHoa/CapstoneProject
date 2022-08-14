@@ -100,6 +100,7 @@ export default function UserList() {
       phoneNumber: owner.idNavigation.phone,
       status: owner.idNavigation.status,
       brandName: owner?.brands?.length > 0 ? owner?.brands[0].name : 'Chưa có',
+      brandId: owner?.brands?.length > 0 ? owner?.brands[0].id : null,
     }));
     setTableData(owners);
     setMetadata(metadata);

@@ -100,6 +100,7 @@ export default function CenterList() {
       name: center.name,
       address: center.address,
       brandName: center.brand.name,
+      brandId: center.brand.id,
       status: center.status,
     }));
     setTableData(centers);
