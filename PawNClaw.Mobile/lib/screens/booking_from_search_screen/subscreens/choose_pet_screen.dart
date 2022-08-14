@@ -33,9 +33,9 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
     double width = MediaQuery.of(context).size.width;
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
-        var request;
+        List<List<Pet>> request;
         if (widget.requests != null) {
-          request = widget.requests;
+          request = widget.requests!;
         } else {
           request = (state as UpdatePetSelected).requests;
         }

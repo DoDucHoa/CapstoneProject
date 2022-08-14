@@ -33,10 +33,12 @@ class CenterDetails extends StatefulWidget {
       required this.endDate,
       required this.due,
       this.transactionDetails,
+      this.center,
       Key? key})
       : super(key: key);
 
   final int petCenterId;
+  final petCenter.Center? center;
   final List<List<Pet>> requests;
   final DateTime bookingDate;
   final DateTime endDate;
@@ -53,42 +55,49 @@ class _CenterDetailsState extends State<CenterDetails> {
   List<String> supplyType = ["FOOD", "DRINK", "MED", "OTHER"];
   List<String> imgUrls = [];
   List<int> durations = [];
+  bool isMessage = false;
   // Photo? thumbnail;
   // Photo? background;
   @override
   void initState() {
     // TODO: implement initState
-    CenterRepository()
-        .getCenterDetail(widget.requests, widget.petCenterId,
-            widget.bookingDate, widget.endDate)
-        .then((value) {
-      setState(() {
-        center = value;
-        if (value != null && value.photos!.isNotEmpty) {
-          if (value.getFacilities() != null &&
-              value.getFacilities()!.isNotEmpty) {
-            for (var i = 0; i < value.getFacilities()!.length; i++) {
-              imgUrls.add(value.getFacilities()![i].url!);
-              durations.add(2);
+    if (widget.center != null) {
+      center = widget.center;
+      isMessage = true;
+    } else {
+      CenterRepository()
+          .getCenterDetail(widget.requests, widget.petCenterId,
+              widget.bookingDate, widget.endDate)
+          .then((value) {
+        setState(() {
+          center = value;
+          isMessage = true;
+          if (value != null && value.photos!.isNotEmpty) {
+            if (value.getFacilities() != null &&
+                value.getFacilities()!.isNotEmpty) {
+              for (var i = 0; i < value.getFacilities()!.length; i++) {
+                imgUrls.add(value.getFacilities()![i].url!);
+                durations.add(2);
+              }
             }
+            ;
           }
-          ;
-        }
-        //       value.photos!.forEach((element) {
-        //         if (!element.isThumbnail!) {
-        //           background = element;
-        //           return;
-        //         }
-        //       });
-        //       // background =
-        //       //     value.photos!.firstWhere((photo) => photo.isThumbnail == false));
+          //       value.photos!.forEach((element) {
+          //         if (!element.isThumbnail!) {
+          //           background = element;
+          //           return;
+          //         }
+          //       });
+          //       // background =
+          //       //     value.photos!.firstWhere((photo) => photo.isThumbnail == false));
 
-        //   // background =
-        //   //     value.photos!.firstWhere((photo) => photo.isThumbnail == false));
+          //   // background =
+          //   //     value.photos!.firstWhere((photo) => photo.isThumbnail == false));
 
-        // }
+          // }
+        });
       });
-    });
+    }
 
     super.initState();
   }
@@ -114,17 +123,75 @@ class _CenterDetailsState extends State<CenterDetails> {
     return BlocProvider(
         create: (context) => BookingBloc()
           ..add(
-            InitBooking(
-                startBooking: widget.bookingDate,
-                endBooking: widget.endDate,
-                centerId: widget.petCenterId,
-                request: widget.requests,
-                customerId: customerId,
-                due: widget.due),
+            (widget.transactionDetails == null)
+                ? InitBooking(
+                    startBooking: widget.bookingDate,
+                    endBooking: widget.endDate,
+                    centerId: widget.petCenterId,
+                    request: widget.requests,
+                    customerId: customerId,
+                    due: widget.due)
+                : ReorderBooking(
+                    startBooking: widget.bookingDate,
+                    endBooking: widget.endDate,
+                    centerId: widget.petCenterId,
+                    request: widget.requests,
+                    customerId: customerId,
+                    due: widget.due,
+                    // booking: widget.booking!,
+                    transactionDetails: widget.transactionDetails!,
+                    center: center!),
           ),
         child:
             BlocBuilder<BookingBloc, BookingState>(builder: (context, state) {
           if (center != null && state is BookingUpdated) {
+            if (widget.transactionDetails != null && isMessage) {
+              isMessage = false;
+              Future.delayed(
+                  Duration.zero,
+                  () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(((widget.requests.length ==
+                                    state.booking.bookingDetailCreateParameters!
+                                        .length) &&
+                                state.booking.serviceOrderCreateParameters!
+                                        .length ==
+                                    widget.transactionDetails!.serviceOrders!
+                                        .length &&
+                                state.booking.supplyOrderCreateParameters!
+                                        .length ==
+                                    widget.transactionDetails!.supplyOrders!
+                                        .length)
+                            ? 'Tất cả sản phẩm đã được thêm vào giỏ hàng'
+                            : 'Một số sản phẩm đã hết ở thời điểm này. Vui lòng thêm sản phẩm khác'),
+                        action: ((widget.requests.length ==
+                                    state.booking.bookingDetailCreateParameters!
+                                        .length) &&
+                                state.booking.serviceOrderCreateParameters!
+                                        .length ==
+                                    widget.transactionDetails!.serviceOrders!
+                                        .length &&
+                                state.booking.supplyOrderCreateParameters!
+                                        .length ==
+                                    widget.transactionDetails!.supplyOrders!
+                                        .length)
+                            ? SnackBarAction(
+                                label: 'Xem giỏ hàng',
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (_) => BlocProvider.value(
+                                            value: BlocProvider.of<BookingBloc>(
+                                                context),
+                                            child: screen.ConfirmBooking(
+                                              center: center!,
+                                              vouchers: center!.vouchers,
+                                            ),
+                                          )));
+                                },
+                              )
+                            : null,
+                      )));
+            }
+
             return Scaffold(
               backgroundColor: frameColor,
               body: DefaultTabController(
@@ -388,7 +455,16 @@ class _CenterDetailsState extends State<CenterDetails> {
                           ],
                           leading: IconButton(
                             icon: Icon(Icons.arrow_back_ios_new_rounded),
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () {
+                              if (widget.transactionDetails == null) {
+                                Navigator.pop(context);
+                              } else {
+                                print('pop to transaction details');
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                // Navigator.pop(context);
+                              }
+                            },
                           ),
                           bottom: TabBar(
                             tabs: [
@@ -618,18 +694,25 @@ class _CenterDetailsState extends State<CenterDetails> {
                           //  state == BookingInitial() ? Container():
                           Container(
                               //margin: EdgeInsets.only(left: 30),
+                              height: 21,
+                              width: 21,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 5, vertical: 5 / 2),
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              child: Text(
-                                (state as BookingUpdated)
-                                    .booking
-                                    .getCartCount()
-                                    .toString(),
-                                style: TextStyle(color: primaryColor),
+                                      BorderRadius.all(Radius.circular(20))),
+                              child: Center(
+                                child: Text(
+                                  (state as BookingUpdated)
+                                      .booking
+                                      .getCartCount()
+                                      .toString(),
+                                  style: TextStyle(
+                                      color: primaryColor,
+                                      fontSize: 15,
+                                      height: 1),
+                                ),
                               )),
                       label: Container(
                         child: Row(children: [
@@ -691,7 +774,7 @@ class _CenterDetailsState extends State<CenterDetails> {
               ],
             );
           } else
-            return LoadingIndicator(loadingText: "Vui lòng chờ");
+            return LoadingIndicator(loadingText: "Vui lòng đợi");
         }));
   }
 }

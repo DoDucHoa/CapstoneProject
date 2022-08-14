@@ -30,12 +30,12 @@ typedef void CenterCallback(int brandId);
 
 class _CenterSliderState extends State<CenterSlider> {
   int activeIndex = 0;
-  int currentDurations = 0; 
+  int currentDurations = 0;
 
   @override
   Widget build(BuildContext context) {
     Size size = widget.size;
-    currentDurations =  widget.durations[0];
+    currentDurations = widget.durations[0];
 
     return Container(
         child: Stack(
@@ -44,7 +44,7 @@ class _CenterSliderState extends State<CenterSlider> {
             itemCount: widget.photoUrls.length,
             itemBuilder: (context, index, realIndex) {
               // setState(() {
-                // currentDurations = widget.durations[index];
+              // currentDurations = widget.durations[index];
               // });
               return InkWell(
                 onTap: () => widget.callback(index),
@@ -56,8 +56,12 @@ class _CenterSliderState extends State<CenterSlider> {
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     child: ClipRRect(
                         borderRadius: BorderRadius.all(Radius.circular(15)),
-                        child:
-                         Image.network(widget.photoUrls[index], fit: BoxFit.cover,)
+                        child: FadeInImage.assetNetwork(
+                          placeholder: 'lib/assets/loading.gif',
+                          image: widget.photoUrls[index],
+                          fit: BoxFit.cover,
+                        )
+                        //  Image.network(widget.photoUrls[index], fit: BoxFit.cover,)
                         // Image.asset(
                         //   'lib/assets/sponsor-0.png',
                         //   fit: BoxFit.cover,
@@ -92,7 +96,7 @@ class _CenterSliderState extends State<CenterSlider> {
                           ? widget.photoUrls.length
                           : 5)) /
               2,
-          child: (widget.photoUrls.length > 1) ? buildIndicator():Container(),
+          child: (widget.photoUrls.length > 1) ? buildIndicator() : Container(),
         )
       ],
     ));

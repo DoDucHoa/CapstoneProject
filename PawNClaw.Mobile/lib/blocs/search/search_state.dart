@@ -76,7 +76,8 @@ class SearchFail extends SearchState {
   final String errorMessage;
   final List<List<Pet>> requests;
   final int? centerId;
-  const SearchFail(this.errorMessage, this.requests, this.centerId);
+  final dynamic target;
+  const SearchFail(this.errorMessage, this.requests, this.centerId, this.target);
 
   @override
   // TODO: implement props
