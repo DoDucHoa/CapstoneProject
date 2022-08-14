@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { LoadingButton } from '@mui/lab';
-import { Box, Card, Grid, Stack, Typography, Button, InputAdornment, IconButton } from '@mui/material';
+import { Box, Card, Grid, Stack, Typography, Button, InputAdornment, IconButton, MenuItem } from '@mui/material';
 // utils
 import { fData } from '../../../utils/formatNumber';
 // routes
@@ -23,6 +23,11 @@ import Iconify from '../../../components/Iconify';
 // ----------------------------------------------------------------------
 
 const specialString = 'Awz@******ÿ123';
+const GENDER_OPTIONS = [
+  { value: 1, label: 'Nam' },
+  { value: 2, label: 'Nữ' },
+  { value: 3, label: 'Khác' },
+];
 
 AdminNewEditForm.propTypes = {
   isEdit: PropTypes.bool,
@@ -62,7 +67,7 @@ export default function AdminNewEditForm({ isEdit, ownerData }) {
       email: ownerData?.email || '',
       phone: ownerData?.idNavigation?.phone || '',
       gender: ownerData?.gender || 1,
-      avatarUrl: ownerData?.idNavigation?.photos.length > 0 ? ownerData?.idNavigation?.photos[0].url : '',
+      avatarUrl: ownerData?.idNavigation?.photos?.length > 0 ? ownerData?.idNavigation?.photos[0].url : '',
 
       modifyUser: accountInfo.id,
       createdUser: ownerData?.createdUser || 0,
@@ -186,17 +191,30 @@ export default function AdminNewEditForm({ isEdit, ownerData }) {
               <RHFTextField name="email" label="Email" disabled={isEdit} />
 
               <RHFTextField name="phone" label="Số điện thoại" />
-              <RHFSelect name="gender" label="Giới tính">
-                <option key="1" value="1">
-                  Nam
-                </option>
-                <option key="2" value="2">
-                  Nữ
-                </option>
-                <option key="3" value="3">
-                  Khác
-                </option>
+
+              <RHFSelect
+                name="gender"
+                label="Giới tính"
+                InputLabelProps={{ shrink: true }}
+                SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
+              >
+                {GENDER_OPTIONS.map((option) => (
+                  <MenuItem
+                    key={option.value}
+                    value={option.value}
+                    sx={{
+                      mx: 1,
+                      my: 0.5,
+                      borderRadius: 0.75,
+                      typography: 'body2',
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {option.label}
+                  </MenuItem>
+                ))}
               </RHFSelect>
+
               {!isEdit && (
                 <>
                   <RHFTextField
@@ -236,7 +254,7 @@ export default function AdminNewEditForm({ isEdit, ownerData }) {
             </Box>
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
-              <Button to={PATH_DASHBOARD.owner.list} color="error" variant="contained" component={RouterLink}>
+              <Button to={PATH_DASHBOARD.owner.list} color="error" variant="text" component={RouterLink}>
                 Hủy
               </Button>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

@@ -89,6 +89,7 @@ export default function CageTypeList() {
       isSingle: cageType.isSingle,
       photoUrl: cageType?.photos?.length > 0 ? cageType?.photos[0].url : '',
       status: cageType.status,
+      canDelete: cageType.canDelete,
     }));
 
     setTableData(cageTypes);

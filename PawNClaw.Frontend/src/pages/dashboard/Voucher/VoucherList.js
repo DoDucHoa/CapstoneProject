@@ -47,6 +47,7 @@ const TABLE_HEAD = [
   { id: 'description', label: 'Diễn giải', align: 'left' },
   { id: 'voucherTypeCode', label: 'Loại voucher', align: 'left' },
   { id: 'value', label: 'Giá trị', align: 'right' },
+  { id: 'expireDate', label: 'Ngày hết hạn', align: 'center' },
   { id: '' },
 ];
 
@@ -90,6 +91,7 @@ export default function UserList() {
       voucherType: voucher.voucherTypeCode,
       value: voucher.value,
       description: voucher.description,
+      expireDate: voucher.expireDate,
     }));
     setTableData(vouchers);
     setMetadata(metadata);

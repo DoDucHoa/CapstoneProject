@@ -162,7 +162,7 @@ export default function BookingList() {
               labelDisplayedRows={({ from, to, count }) => `${from} đến ${to} trên ${count}`}
               rowsPerPageOptions={[5, 10, 15, 20]}
               component="div"
-              count={metadata.totalCount ? metadata.totalCount : 0}
+              count={metadata?.totalCount ? metadata?.totalCount : 0}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={onChangePage}

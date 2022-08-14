@@ -30,12 +30,33 @@ namespace PawNClaw.API.Controllers
             return Ok(data);
         }
 
+        [HttpGet("for-customer")]
+        public async Task<IActionResult> GetCustomerPolicy()
+        {
+            var data = await PolicyService.GetCustomerPolicy(Const.ProjectFirebaseId);
+            return Ok(data);
+        }
+
         [HttpPost]
         public async Task<IActionResult> UpdatePolicy([FromBody] UpdatePolicyParameter newPolicy)
         {
             try
             {
                 await PolicyService.AddData(Const.ProjectFirebaseId, newPolicy.NewPolicy);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost("for-customer")]
+        public async Task<IActionResult> UpdateCustomerPolicy([FromBody] UpdatePolicyParameter newPolicy)
+        {
+            try
+            {
+                await PolicyService.UpdateCustomerPolicy(Const.ProjectFirebaseId, newPolicy.NewPolicy);
                 return Ok();
             }
             catch (Exception ex)

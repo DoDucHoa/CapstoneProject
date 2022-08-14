@@ -19,8 +19,8 @@ export default function UserCreate() {
   const [supplyData, setSupplyData] = useState({});
 
   const { themeStretch } = useSettings();
-  const { pathname } = useLocation();
 
+  const { pathname } = useLocation();
   const isEdit = pathname.includes('edit');
 
   const { id } = useParams();

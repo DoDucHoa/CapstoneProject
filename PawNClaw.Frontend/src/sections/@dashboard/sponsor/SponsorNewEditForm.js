@@ -57,7 +57,7 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
     () => ({
       title: sponsorData?.title || '',
       content: sponsorData?.content || '',
-      duration: sponsorData?.duration || '',
+      duration: sponsorData?.duration || 0,
       year: new Date(sponsorData?.startDate)?.getFullYear() || '',
       month: new Date(sponsorData?.startDate)?.getMonth() + 1 || '',
       avatarUrl: sponsorData?.photos?.length > 0 ? sponsorData?.photos[0]?.url : '',
@@ -210,7 +210,7 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
             </Grid>
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
-              <Button to={PATH_DASHBOARD.sponsor.list} color="error" variant="contained" component={RouterLink}>
+              <Button to={PATH_DASHBOARD.sponsor.list} color="error" variant="text" component={RouterLink}>
                 Hủy
               </Button>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

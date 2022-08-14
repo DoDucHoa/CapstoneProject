@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Page, View, Text, Image, Document } from '@react-pdf/renderer';
+import { Page, View, Text, Document } from '@react-pdf/renderer';
 // utils
 import { fNumber } from '../../../../utils/formatNumber';
 import { fVNDate } from '../../../../utils/formatTime';
@@ -13,10 +13,10 @@ InvoicePDF.propTypes = {
   petData: PropTypes.array.isRequired,
   supplyOrders: PropTypes.array,
   serviceOrders: PropTypes.array,
-  centerInfo: PropTypes.object,
+  centerName: PropTypes.string,
 };
 
-export default function InvoicePDF({ invoice, petData, supplyOrders, serviceOrders, centerInfo }) {
+export default function InvoicePDF({ invoice, petData, supplyOrders, serviceOrders, centerName }) {
   // const logoUrl = centerInfo.photos[0].url;
 
   return (
@@ -29,7 +29,7 @@ export default function InvoicePDF({ invoice, petData, supplyOrders, serviceOrde
           {/* <Image source={logoUrl} style={{ height: 32 }} /> */}
           <View style={styles.col6}>
             <Text style={styles.h5}>Thương hiệu</Text>
-            <Text style={styles.title}>{centerInfo.name}</Text>
+            <Text style={styles.title}>{centerName}</Text>
           </View>
           <View style={{ alignItems: 'flex-end', flexDirection: 'column' }}>
             <Text style={styles.h5}>Số chứng từ</Text>

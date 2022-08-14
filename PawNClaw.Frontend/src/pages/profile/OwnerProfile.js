@@ -112,7 +112,7 @@ export default function OwnerProfile() {
         email: data.email,
         gender: data.gender,
         phone: data.idNavigation.phone,
-        avatarUrl: data.idNavigation.avatarUrl,
+        avatarUrl: data.idNavigation.photos[0].url,
         modifyUser: accountInfo.id,
       };
       setProfileData(profile);

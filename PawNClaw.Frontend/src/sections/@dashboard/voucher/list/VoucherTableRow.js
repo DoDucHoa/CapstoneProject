@@ -9,6 +9,7 @@ import Iconify from '../../../../components/Iconify';
 // utils
 import { TableMoreMenu } from '../../../../components/table';
 import { fNumber } from '../../../../utils/formatNumber';
+import { fVNDate } from '../../../../utils/formatTime';
 
 // ----------------------------------------------------------------------
 
@@ -20,7 +21,7 @@ VoucherTableRow.propTypes = {
 };
 
 export default function VoucherTableRow({ row, onEditRow, onDeleteRow, voucherTypes }) {
-  const { code, voucherType, value, description } = row;
+  const { code, voucherType, value, description, expireDate } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -52,6 +53,8 @@ export default function VoucherTableRow({ row, onEditRow, onDeleteRow, voucherTy
       <TableCell align="left">{voucher?.name}</TableCell>
 
       <TableCell align="right">{voucher?.code === '1' ? `${fNumber(value)}%` : `${fNumber(value)} ₫`}</TableCell>
+
+      <TableCell align="center">{fVNDate(expireDate)}</TableCell>
 
       <TableCell align="right">
         <TableMoreMenu

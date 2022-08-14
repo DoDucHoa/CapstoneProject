@@ -108,7 +108,7 @@ export default function AdminProfile() {
       const profile = {
         id: data.id,
         name: data.name,
-        email: data.email,
+        email: data.idNavigation.userName,
         gender: data.gender,
         phone: data.idNavigation.phone,
         avatarUrl: data.idNavigation.photos[0]?.url || '',

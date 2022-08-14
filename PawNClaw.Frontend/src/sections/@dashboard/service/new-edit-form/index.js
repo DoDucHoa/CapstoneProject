@@ -71,6 +71,7 @@ export default function ServiceNewEditForm({ isEdit, serviceData }) {
         modifyDate: new Date(),
         centerId,
         avatarUrl: serviceData?.photos?.length > 0 ? serviceData?.photos[0].url : '',
+        status: serviceData?.status || true,
       },
       servicePrice: serviceData?.servicePrices || [
         {
@@ -140,10 +141,10 @@ export default function ServiceNewEditForm({ isEdit, serviceData }) {
 
             <Box sx={{ my: 3 }} />
 
-            <ServicePrice createUser={accountInfo.id} />
+            <ServicePrice createUser={accountInfo.id} isEdit={isEdit} />
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
-              <Button to={PATH_DASHBOARD.service.list} color="error" variant="contained" component={RouterLink}>
+              <Button to={PATH_DASHBOARD.service.list} color="error" variant="text" component={RouterLink}>
                 Hủy
               </Button>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

@@ -24,7 +24,7 @@ namespace PawNClaw.Business.Services
         }
 
         //Get All
-        public PagedList<Owner> GetOwners(string Name, bool? Status, string dir, string sort, PagingParameter paging)
+        public PagedList<Owner> GetOwners(string Name, bool? Status, string dir, string sort, bool? isLookup, PagingParameter paging)
         {
             var values = _ownerRepository.GetAll(includeProperties: "IdNavigation,Brands");
 
@@ -50,6 +50,12 @@ namespace PawNClaw.Business.Services
             if (Status != null)
             {
                 values = Status == true ? values.Where(x => x.IdNavigation.Status == true) : values.Where(x => x.IdNavigation.Status == false);
+            }
+
+            // lọc theo đang sở hữu brand nào hay không
+            if (isLookup != null && isLookup == true)
+            {
+                values = values.Where(x => x.Brands.Count < 1);
             }
 
             values = dir == "asc" ? values.OrderBy(d => d.Name) : values.OrderByDescending(d => d.Name);
