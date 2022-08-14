@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:pawnclaw_mobile_application/screens/search_screen.dart/SearchScreen.dart';
+import 'package:pawnclaw_mobile_application/models/transaction_details.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreens/choose_pet_screen.dart';
 
 import '../../../blocs/search/search_bloc.dart';
 import '../../../common/constants.dart';
+import '../../booking_from_search_screen/main_screen.dart';
 import '../../home_screen/HomeScreen.dart';
 
 class SearchFailDialog extends StatelessWidget {
@@ -68,9 +69,34 @@ class SearchFailDialog extends StatelessWidget {
                   ),
                   ElevatedButton(
                       onPressed: () {
-                        BlocProvider.of<SearchBloc>(context)
-                          ..add(BackToPetSelection(
-                              (state as SearchFail).requests));
+                        if ((state as SearchFail).target
+                            is TransactionDetails) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SearchScreen(
+                                        centerId: state.centerId!,
+                                        isSponsor: false,
+                                        requests: state.requests,
+                                        transactionDetails:
+                                            state.target as TransactionDetails,
+                                      )));
+                        } else
+                          BlocProvider.of<SearchBloc>(context).add(
+                              BackToPetSelection(
+                                  (state as SearchFail).requests));
+
+                        // if (errorMessage.contains('pet') &&
+                        //     errorMessage.contains('already')) {
+                        // BlocProvider.of<SearchBloc>(context)..add(
+                        //     ConfirmRequest((state as SearchFail).requests,
+                        //         state.centerId!));
+                        // } else {
+                        //   BlocProvider.of<SearchBloc>(context).add(
+                        //       BackToPetSelection(
+                        //           (state as SearchFail).requests));
+                        // }
+
                         // Navigator.of(context).push(MaterialPageRoute(
                         //   builder: (context) => SearchScreen(),
                         // )
@@ -107,9 +133,15 @@ class SearchFailDialog extends StatelessWidget {
                     height: width * smallPadRate,
                   ),
                   ElevatedButton(
-                      onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: ((context) => HomeScreen()))),
+                      onPressed: () {
+                        if ((state as SearchFail).target
+                            is TransactionDetails) {
+                          Navigator.pop(context);
+                        } else {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: ((context) => HomeScreen())));
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                           primary: Colors.white,
                           side: BorderSide(
@@ -124,7 +156,10 @@ class SearchFailDialog extends StatelessWidget {
                         ),
                         child: Center(
                           child: Text(
-                            'Quay về trang chủ',
+                            (!((state as SearchFail).target
+                                    is TransactionDetails))
+                                ? 'Quay về trang chủ'
+                                : 'Trở về đơn hàng',
                             style: TextStyle(
                                 color: primaryColor,
                                 fontSize: 15,

@@ -235,7 +235,7 @@ class TransactionDetails {
   List<List<Pet>> idsToPetRequest(List<Pet> customerPets) {
     List<List<Pet>> requests = [];
     List<List<int>> petIds = bookingDetails!.map((e) => e.getPetIds()).toList();
-    
+
     for (var petid in petIds) {
       List<Pet> request = [];
       for (var id in petid) {
@@ -258,12 +258,14 @@ class BookingDetail {
       this.price,
       this.duration,
       this.petBookingDetails,
+      this.cageCode,
       this.cage});
 
   int? bookingId;
   int? id;
   double? price;
   double? duration;
+  String? cageCode;
   List<PetBookingDetail>? petBookingDetails;
   Cage? cage;
 
@@ -279,6 +281,7 @@ class BookingDetail {
       duration: json["duration"].toDouble(),
       petBookingDetails: List<PetBookingDetail>.from(
           json["petBookingDetails"].map((x) => PetBookingDetail.fromJson(x))),
+      cageCode: json["cageCode"],
       cage: Cage.fromJson(json["c"]));
 
   Map<String, dynamic> toJson() => {
@@ -286,6 +289,7 @@ class BookingDetail {
         "id": id,
         "price": price,
         "duration": duration,
+        "cageCode": cageCode,
         "petBookingDetails": List<PetBookingDetail>.from(
             petBookingDetails!.map((x) => x.toJson())),
         "c": cage!.toJson()
@@ -305,8 +309,6 @@ class BookingDetail {
     });
     return pets;
   }
-
-  
 }
 
 class Cage {
