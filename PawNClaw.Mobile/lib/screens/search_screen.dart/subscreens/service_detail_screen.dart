@@ -424,17 +424,23 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                     icon: Iconsax.add_square,
                     color: primaryColor,
                     onPressed: () {
+                      if (quantity < state.booking.bookingCreateParameter!.due!)
                       setState(() {
                         quantity = quantity + 1;
                       });
+                      else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Số lượng dịch vụ tối da dựa theo số ngày.')));
+                      }
                     }),
               ],
             ),
           )
         ])),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Container(
-          padding: EdgeInsets.only(left: 30),
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           //decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15))),
           child: ElevatedButton(
             onPressed: () {
@@ -511,7 +517,7 @@ Widget PetCard(Pet pet, BuildContext context) {
                   fit: BoxFit.contain)
               : null,
           border: Border.all(
-              color: Colors.white, width: 3, strokeAlign: StrokeAlign.outside)),
+              color: Colors.white, width: 3, /*strokeAlign: StrokeAlign.outside*/)),
       child: (pet.photos!.isEmpty)
           ? CircleAvatar(
               backgroundImage: AssetImage((pet.petTypeCode == 'DOG')

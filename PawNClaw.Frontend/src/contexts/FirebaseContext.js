@@ -334,7 +334,7 @@ const uploadPhotoToBackend = async (idActor, url, photoType) => {
 };
 
 const updatePhotoToBackend = async (id, url) => {
-  const response = await axios.post('/api/photos', {
+  const response = await axios.put('/api/photos', {
     id,
     url,
   });

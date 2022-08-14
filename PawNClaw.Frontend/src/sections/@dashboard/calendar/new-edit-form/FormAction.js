@@ -19,7 +19,7 @@ FormAction.propTypes = {
   petData: PropTypes.array,
   supplyOrders: PropTypes.array,
   serviceOrders: PropTypes.array,
-  centerInfo: PropTypes.object,
+  centerName: PropTypes.string,
   handleOpenPDFDialog: PropTypes.func,
   onCancel: PropTypes.func,
   isSubmitting: PropTypes.bool,
@@ -31,7 +31,7 @@ FormAction.defaultProps = {
   petData: [],
   supplyOrders: [],
   serviceOrders: [],
-  centerInfo: {},
+  centerName: {},
   handleOpenPDFDialog: () => {},
   onCancel: () => {},
   isSubmitting: false,
@@ -45,7 +45,7 @@ export default function FormAction({
   petData,
   supplyOrders,
   serviceOrders,
-  centerInfo,
+  centerName,
   handleOpenPDFDialog,
   onCancel,
   isSubmitting,
@@ -64,7 +64,7 @@ export default function FormAction({
                 petData={petData}
                 supplyOrders={supplyOrders}
                 serviceOrders={serviceOrders}
-                centerInfo={centerInfo}
+                centerName={centerName}
               />
             }
             fileName={`${selectedEvent.id}-invoice.pdf`}
@@ -112,7 +112,7 @@ export default function FormAction({
                   petData={petData}
                   supplyOrders={supplyOrders}
                   serviceOrders={serviceOrders}
-                  centerInfo={centerInfo}
+                  centerName={centerName}
                 />
               }
             >

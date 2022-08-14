@@ -21,7 +21,8 @@ class CenterRepository implements BaseCenterRepository {
       List<List<Pet>> requests,
       String city,
       String district,
-      int pageNumber) async {
+      int pageNumber,
+      int customerId) async {
     final pref = await SharedPreferences.getInstance();
     var searchResponseModel;
     Response? response;
@@ -35,6 +36,7 @@ class CenterRepository implements BaseCenterRepository {
         "startBooking": DateFormat('yyyy-MM-dd HH:mm:ss').format(timeFrom),
         //"endBooking": DateFormat('yyyy-MM-dd HH:mm:ss').format(timeTo),
         "due": due,
+        "customerId": customerId,
         // "_petRequests": parseRequestToJson(requests),
         "_petRequests": [
           for (var items in requests) [for (var item in items) item.toJson()]

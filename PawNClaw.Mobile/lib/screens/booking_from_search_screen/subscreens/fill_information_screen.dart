@@ -12,12 +12,19 @@ import 'package:pawnclaw_mobile_application/models/area.dart';
 import 'package:pawnclaw_mobile_application/repositories/area/area_repository.dart';
 import 'package:intl/intl.dart';
 import 'package:pawnclaw_mobile_application/repositories/center/center_repository.dart';
+import 'package:pawnclaw_mobile_application/screens/booking_from_search_screen/main_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/choose_location_dialog.dart';
+
+import '../../../models/pet.dart';
 
 class FillInformationScreen extends StatefulWidget {
   final bool isSponsor;
+  final int? centerId;
+  final List<List<Pet>>? requests;
   const FillInformationScreen({
     required this.isSponsor,
+    this.centerId,
+    this.requests,
     Key? key,
   }) : super(key: key);
 
@@ -65,9 +72,12 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
             ),
             leading: IconButton(
               onPressed: () {
-                BlocProvider.of<SearchBloc>(context)
-                  ..add(BackToPetSelection(
-                      (state as FillingInformation).requests));
+                if (widget.requests == null) {
+                  BlocProvider.of<SearchBloc>(context)
+                    ..add(BackToPetSelection(
+                        (state as FillingInformation).requests));
+                } else
+                  Navigator.of(context).pop();
               },
               // => Navigator.of(context).pop(),
               icon: Icon(
@@ -328,22 +338,54 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                       onPressed: (_fromController.text != "" &&
                               _toController.text != "")
                           ? () {
-                              if (widget.isSponsor) {
-                                BlocProvider.of<SearchBloc>(context).add(
-                                    CheckSponsorCenter(
-                                        (state as FillingInformation).centerId,
-                                        customerId,
-                                        state.requests,
-                                        from!,
-                                        due!));
+                              if (state is FillingInformation) {
+                                if (widget.isSponsor) {
+                                  BlocProvider.of<SearchBloc>(context).add(
+                                      CheckSponsorCenter(
+                                          (state as FillingInformation)
+                                              .centerId,
+                                          customerId,
+                                          state.requests,
+                                          from!,
+                                          due!));
+                                } else {
+                                  BlocProvider.of<SearchBloc>(context).add(
+                                      CheckCenter(
+                                          (state as FillingInformation)
+                                              .centerId,
+                                          state.requests,
+                                          from!,
+                                          due!,
+                                          customerId));
+                                }
                               } else {
                                 BlocProvider.of<SearchBloc>(context).add(
                                     CheckCenter(
-                                        (state as FillingInformation).centerId,
-                                        state.requests,
+                                        widget.centerId!,
+                                        widget.requests!,
                                         from!,
                                         due!,
                                         customerId));
+                                
+                            //      BlocProvider.of<SearchBloc>(context)
+                            // .add( CheckCenter(
+                            //             widget.centerId!,
+                            //             widget.requests!,
+                            //             from!,
+                            //             due!,
+                            //             customerId));
+                            // Navigator.of(context).push(MaterialPageRoute(
+                            //     builder: (_) => BlocProvider.value(
+                            //           value: BlocProvider.of<SearchBloc>(
+                            //               context)..add( CheckCenter(
+                            //             widget.centerId!,
+                            //             widget.requests!,
+                            //             from!,
+                            //             due!,
+                            //             customerId))
+                            //             ,
+                            //           child:SearchScreen(centerId: widget.centerId!, isSponsor: false,),
+                            //         )));
                               }
                             }
                           : () {},

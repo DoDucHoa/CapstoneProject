@@ -8,6 +8,7 @@ import 'package:pawnclaw_mobile_application/blocs/transaction/transaction_bloc.d
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/photo.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/transaction_details_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreens/transaction_list_screen.dart';
 
 import '../../../models/booking.dart';
 
@@ -38,6 +39,7 @@ class TransactionCard extends StatelessWidget {
             MaterialPageRoute(
                 builder: (context) => TransactionDetailsScreen(
                       booking: booking,
+                      redirect:  TransactionList()
                     )));
       }),
       child: Column(

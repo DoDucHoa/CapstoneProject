@@ -1,4 +1,5 @@
-// import 'package:pncstaff_mobile_application/models/photo.dart';
+
+import 'package:pncstaff_mobile_application/models/photo.dart';
 
 class PetCenter {
   int? id;
@@ -19,29 +20,30 @@ class PetCenter {
   String? checkout;
   int? ratingCount;
   String? endBooking;
-  // Photo? photos;
+  Photo? photos;
 
-  PetCenter({
-    this.id,
-    this.name,
-    this.address,
-    this.phone,
-    this.rating,
-    this.createDate,
-    this.modifyDate,
-    this.createUser,
-    this.modifyUser,
-    this.status,
-    this.brandId,
-    this.openTime,
-    this.closeTime,
-    this.description,
-    this.checkin,
-    this.checkout,
-    this.ratingCount,
-    this.endBooking,
-    //this.photos
-  });
+
+  PetCenter(
+      {this.id,
+      this.name,
+      this.address,
+      this.phone,
+      this.rating,
+      this.createDate,
+      this.modifyDate,
+      this.createUser,
+      this.modifyUser,
+      this.status,
+      this.brandId,
+      this.openTime,
+      this.closeTime,
+      this.description,
+      this.checkin,
+      this.checkout,
+      this.ratingCount,
+      this.endBooking,
+      //this.photos
+      });
 
   PetCenter.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -62,8 +64,12 @@ class PetCenter {
     checkout = json['checkout'];
     ratingCount = json['ratingCount'];
     endBooking = json['endBooking'];
+    if (json['photos'] != null) {
 
-    // photos = Photo.fromJson(json['photos']);
+      photos = Photo.fromJson(json['photos'].first);
+    }
+    
+
   }
 
   Map<String, dynamic> toJson() {
@@ -86,7 +92,7 @@ class PetCenter {
     data['checkout'] = this.checkout;
     data['ratingCount'] = this.ratingCount;
     data['endBooking'] = this.endBooking;
-    // data['photos'] = this.photos?.toJson();
+    data['photos'] = this.photos?.toJson();
     return data;
   }
 }

@@ -84,7 +84,12 @@ getOwnerList.propTypes = {
 };
 async function getOwnerList(filterName) {
   try {
-    const response = await axios.get(`/api/owners?Name=${filterName}`);
+    const response = await axios.get('/api/owners', {
+      params: {
+        Name: filterName,
+        isLookup: true,
+      },
+    });
     return response.data.data;
   } catch (error) {
     console.log(error);

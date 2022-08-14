@@ -74,7 +74,7 @@ export default function BrandTableRow({ row, onEditRow, onDeleteRow, centerId })
                 <Iconify icon={'eva:edit-fill'} />
                 Sửa
               </MenuItem>
-              <MenuItem
+              {/* <MenuItem
                 disabled={!canShift}
                 onClick={() => {
                   onDeleteRow();
@@ -84,7 +84,7 @@ export default function BrandTableRow({ row, onEditRow, onDeleteRow, centerId })
               >
                 <Iconify icon={'eva:trash-2-outline'} />
                 Xóa
-              </MenuItem>
+              </MenuItem> */}
             </>
           }
         />

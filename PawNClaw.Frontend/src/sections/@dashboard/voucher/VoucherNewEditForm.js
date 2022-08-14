@@ -181,7 +181,15 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
           <Card sx={{ p: 3 }}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <RHFTextField name="code" label="Mã voucher" disabled={isEdit} />
+                <RHFTextField
+                  name="code"
+                  label="Mã voucher"
+                  disabled={isEdit}
+                  inputProps={{
+                    maxLength: 32,
+                    style: { textTransform: 'uppercase' },
+                  }}
+                />
               </Grid>
 
               <Grid item xs={12} sm={6}>
@@ -230,7 +238,11 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <RHFTextField name="releaseAmount" label="Số lượng phát hành" type="number" />
+                <RHFTextField
+                  name="releaseAmount"
+                  label={!isEdit ? 'Số lượng phát hành' : 'Số lượng còn lại'}
+                  type="number"
+                />
               </Grid>
 
               <Grid item xs={12} sm={6}>
@@ -247,7 +259,7 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
             </Grid>
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
-              <Button to={PATH_DASHBOARD.voucher.list} color="error" variant="contained" component={RouterLink}>
+              <Button to={PATH_DASHBOARD.voucher.list} color="error" variant="text" component={RouterLink}>
                 Hủy
               </Button>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

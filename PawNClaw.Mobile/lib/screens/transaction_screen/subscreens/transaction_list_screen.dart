@@ -8,6 +8,7 @@ import 'package:pawnclaw_mobile_application/blocs/transaction/transaction_bloc.d
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/repositories/transaction/transaction_repository.dart';
+import 'package:pawnclaw_mobile_application/screens/home_screen/HomeScreen.dart';
 import 'package:pawnclaw_mobile_application/screens/transaction_screen/components/transaction_card.dart';
 
 import '../../../blocs/authentication/auth_bloc.dart';
@@ -21,11 +22,14 @@ class TransactionList extends StatefulWidget {
 
 class _TransactionListState extends State<TransactionList> {
   var account;
+  
 
   @override
   void initState() {
     var authState = BlocProvider.of<AuthBloc>(context).state as Authenticated;
     account = authState.user;
+
+
     super.initState();
   }
 
@@ -44,7 +48,7 @@ class _TransactionListState extends State<TransactionList> {
               elevation: 0,
               leading: IconButton(
                 icon: Icon(Icons.arrow_back_ios_new_rounded),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen())),
               ),
             ),
             body: SingleChildScrollView(

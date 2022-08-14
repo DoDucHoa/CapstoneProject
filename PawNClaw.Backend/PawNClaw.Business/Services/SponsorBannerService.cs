@@ -26,9 +26,16 @@ namespace PawNClaw.Business.Services
             return _sponsorBannerRepository.GetSponsorBannersWithPhoto();
         }
 
-        public IEnumerable<SponsorBanner> GetBanners()
+        public IEnumerable<SponsorBanner> GetBanners(int? Month, int? Year)
         {
-            var values = _sponsorBannerRepository.GetSponsorBanners().OrderByDescending(x => x.EndDate);
+            var values = _sponsorBannerRepository.GetSponsorBanners();
+
+            if (Month != null && Year != null)
+            {
+                values = values.Where(x => ((DateTime)x.EndDate).Month == Month && ((DateTime)x.EndDate).Year == Year);
+            }
+
+            values = values.OrderByDescending(x => x.EndDate);
 
             return values;
         }
@@ -53,7 +60,9 @@ namespace PawNClaw.Business.Services
                 BrandId = sponsorBannerP.BrandId
             };
 
-            var check = _sponsorBannerRepository.GetAll(x => x.Status == true && ((DateTime)x.EndDate).Date == lastDayOfMonth);
+            var check = _sponsorBannerRepository.GetAll(x => x.Status == true 
+                                                        && ((DateTime)x.StartDate).Date == firstDayOfMonth
+                                                        && ((DateTime)x.EndDate).Date == lastDayOfMonth);
             var constraint = await ConstService.Get(Const.ProjectFirebaseId, "Const", "Config");
 
             var limitObj = constraint["numOfSponsor"];
@@ -95,7 +104,9 @@ namespace PawNClaw.Business.Services
             sponsorBanner.ModifyDate = sponsorBannerP.ModifyDate;
             sponsorBanner.ModifyUser = sponsorBannerP.ModifyUser;
 
-            var check = _sponsorBannerRepository.GetAll(x => x.Status == true && ((DateTime)x.EndDate).Date == lastDayOfMonth);
+            var check = _sponsorBannerRepository.GetAll(x => x.Status == true 
+                                                        && ((DateTime)x.StartDate).Date <= sponsorBanner.StartDate
+                                                        && ((DateTime)x.EndDate).Date >= lastDayOfMonth);
             var constraint = await ConstService.Get(Const.ProjectFirebaseId, "Const", "Config");
 
             var limitObj = constraint["numOfSponsor"];

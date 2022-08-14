@@ -6,20 +6,23 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import { RHFTextField } from '../../../../components/hook-form';
 // utils
 import { fCurrency, fNumber } from '../../../../utils/formatNumber';
+import Iconify from '../../../../components/Iconify';
 // components
 
 // ----------------------------------------------------------------------
 
 CageManagement.propTypes = {
   statusId: PropTypes.number,
-  centerId: PropTypes.number,
+  centerId: PropTypes.any,
   isDesktop: PropTypes.bool,
   handleCheckSize: PropTypes.func,
   handleOpenCageDialogForm: PropTypes.func,
 };
 
 export default function CageManagement({ statusId, centerId, isDesktop, handleCheckSize, handleOpenCageDialogForm }) {
-  const { trigger, control } = useFormContext();
+  const { trigger, control, watch } = useFormContext();
+  const values = watch();
+  const { cageSizeCheck: checks } = values;
 
   const { fields } = useFieldArray({
     control,
@@ -51,11 +54,19 @@ export default function CageManagement({ statusId, centerId, isDesktop, handleCh
               <Typography variant="caption">Giá tiền</Typography>
               <Typography variant="h6">{fCurrency(cage.price)} ₫</Typography>
             </Grid>
+
             {statusId === 1 && isDesktop && (
               <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                <Box>
+                <Box display="flex" alignItems="center">
+                  <Iconify
+                    icon={checks[index].isValid ? 'flat-color-icons:ok' : 'flat-color-icons:high-priority'}
+                    sx={{ color: checks[index].isValid ? 'green' : 'red' }}
+                    width={30}
+                    height={30}
+                  />
+
                   <Button
-                    sx={{ mr: 3 }}
+                    sx={{ mx: 3 }}
                     variant="contained"
                     color="primary"
                     onClick={() => {

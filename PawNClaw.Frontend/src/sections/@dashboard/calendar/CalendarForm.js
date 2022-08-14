@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { useSnackbar } from 'notistack';
@@ -27,11 +27,13 @@ import {
 } from './new-edit-form';
 
 import { checkSize } from './useCalendarAPI';
+import useAuth from '../../../hooks/useAuth';
+import axios from '../../../utils/axios';
 
 // ----------------------------------------------------------------------
 
 CalendarForm.propTypes = {
-  centerId: PropTypes.number,
+  centerId: PropTypes.any,
   centerInfo: PropTypes.object,
   selectedEvent: PropTypes.object,
   onCancel: PropTypes.func,
@@ -60,17 +62,13 @@ export default function CalendarForm({
   updateStatusColor,
 }) {
   // STATE
-  // ----------------------------------------------------------------------
   const [openSupplyDialogForm, setOpenSupplyDialogForm] = useState(false);
   const [openServiceDialogForm, setOpenServiceDialogForm] = useState(false);
   const [openCageDialogForm, setOpenCageDialogForm] = useState(false);
   const [openPDFDialog, setOpenPDFDialog] = useState(false);
 
-  const [isSizeValid, setIsSizeValid] = useState(false);
   const [cageSearchParam, setCageSearchParam] = useState({});
 
-  const { enqueueSnackbar } = useSnackbar();
-  const dispatch = useDispatch();
   const {
     id,
     statusId,
@@ -122,10 +120,16 @@ export default function CalendarForm({
     return status;
   });
 
+  const cageSizeCheck = petData.map((cage) => ({ cageCode: cage.cageCode, isValid: false }));
+
+  // * ----------------------------------------------------------------------
+  // HOOKS
+  const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useDispatch();
   const isDesktop = useResponsive('up', 'sm');
 
+  // * ----------------------------------------------------------------------
   // CONFIGURE FORM
-  // ----------------------------------------------------------------------
   const EventSchema = Yup.object().shape({
     id: Yup.number(),
     statusId: Yup.number().required('Bắt buộc nhập'),
@@ -167,13 +171,14 @@ export default function CalendarForm({
 
   const methods = useForm({
     resolver: yupResolver(EventSchema),
-    defaultValues: { id, statusId, staffNote: '', petData },
+    defaultValues: { id, statusId, staffNote: '', petData, cageSizeCheck },
   });
 
   const {
     reset,
     watch,
     handleSubmit,
+    setValue,
     formState: { isSubmitting, isDirty },
   } = methods;
 
@@ -223,6 +228,8 @@ export default function CalendarForm({
     setOpenCageDialogForm(false);
   };
 
+  const isSizeValid = values.cageSizeCheck?.every((cage) => cage.isValid);
+
   const onSubmit = async (data) => {
     try {
       // check if current date occurs before booking date
@@ -252,15 +259,35 @@ export default function CalendarForm({
       if (response === true) {
         enqueueSnackbar('Kích thước thú cưng hợp lệ!');
         reset({ petData }, { keepValues: true });
-        setIsSizeValid(true);
+        setValue(`cageSizeCheck[${cageIndex}].isValid`, true);
       } else {
         enqueueSnackbar('Kích thước thú cưng không hợp lệ!', { variant: 'error' });
-        setIsSizeValid(false);
+        setValue(`cageSizeCheck[${cageIndex}].isValid`, false);
       }
     } catch (error) {
       console.error(error);
     }
   };
+
+  const [centerName, setCenterName] = useState('');
+  const { accountInfo } = useAuth();
+
+  useEffect(() => {
+    async function fetchCenterName(staffId) {
+      const res = await axios.get(`/api/petcenters/staff/${staffId}`);
+      setCenterName(res.data.name);
+    }
+
+    if (!centerInfo) {
+      fetchCenterName(accountInfo.id);
+    } else {
+      setCenterName(centerInfo?.name);
+    }
+    return () => {
+      setCenterName('');
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // RETURN
   // ----------------------------------------------------------------------
@@ -304,7 +331,7 @@ export default function CalendarForm({
         <BookingStatusCombobox statusId={statusId} bookingStatuses={bookingStatuses} />
 
         <FormAction
-          centerInfo={centerInfo}
+          centerName={centerName}
           handleOpenPDFDialog={handleOpenPDFDialog}
           isSubmitting={isSubmitting}
           onCancel={onCancel}
@@ -341,7 +368,7 @@ export default function CalendarForm({
       />
 
       <PDFInvoiceDialog
-        centerInfo={centerInfo}
+        centerName={centerName}
         handleClosePDFDialog={handleClosePDFDialog}
         openPDFDialog={openPDFDialog}
         petData={petData}

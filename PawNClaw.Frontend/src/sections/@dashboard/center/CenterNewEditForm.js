@@ -108,6 +108,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
     reset,
     watch,
     setValue,
+    setError,
     handleSubmit,
     formState: { isSubmitting, errors },
   } = methods;
@@ -143,6 +144,22 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
   // * ----------------------------------------------------------------------
   // HANDLE SUBMIT
   const onSubmit = async () => {
+    if (values.closeTimeUI < values.openTimeUI) {
+      setError('closeTimeUI', {
+        type: 'checkCloseTime',
+        message: 'Thời gian đóng cửa phải lớn hơn thời gian mở cửa',
+      });
+      return;
+    }
+
+    if (values.checkoutUI < values.checkinUI) {
+      setError('checkoutUI', {
+        type: 'checkCheckoutTime',
+        message: 'Thời gian checkout phải lớn hơn thời gian checkin',
+      });
+      return;
+    }
+
     try {
       if (!isEdit) {
         const centerId = await createCenter(values);
@@ -248,7 +265,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
           <Card sx={{ p: 3 }}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
-                <RHFTextField name="name" label="Tên trung tâm" disabled={centerId} />
+                <RHFTextField name="name" label="Tên trung tâm" disabled={!!centerId} />
               </Grid>
 
               <Grid item xs={12} sm={6}>
@@ -262,7 +279,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
                   InputLabelProps={{ shrink: true }}
                   SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
                   sx={{ maxHeight: 50 }}
-                  disabled={centerId}
+                  disabled={!!centerId}
                 >
                   {cities?.length > 0 ? (
                     cities?.map((city) => (
@@ -304,7 +321,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
                   InputLabelProps={{ shrink: true }}
                   SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
                   sx={{ maxHeight: 50 }}
-                  disabled={centerId}
+                  disabled={!!centerId}
                 >
                   {districts?.length > 0 ? (
                     districts?.map((district) => (
@@ -346,7 +363,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
                   InputLabelProps={{ shrink: true }}
                   SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
                   sx={{ maxHeight: 50 }}
-                  disabled={centerId}
+                  disabled={!!centerId}
                 >
                   {wards?.length > 0 ? (
                     wards?.map((ward) => (
@@ -382,7 +399,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <RHFTextField name="address" label="Địa chỉ" disabled={centerId} />
+                <RHFTextField name="address" label="Địa chỉ" disabled={!!centerId} />
               </Grid>
 
               <Grid item xs={6}>
@@ -458,7 +475,7 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
               {!centerId && (
-                <Button to={PATH_DASHBOARD.center.list} color="error" variant="contained" component={RouterLink}>
+                <Button to={PATH_DASHBOARD.center.list} color="error" variant="text" component={RouterLink}>
                   Hủy
                 </Button>
               )}
@@ -470,12 +487,14 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
         </Grid>
       </Grid>
 
-      <BrandDialog
-        open={openDialog}
-        onClose={handleClose}
-        selected={(brandId) => brandInfo?.id === brandId}
-        onSelect={(brandInfo) => setValue('brandInfo', brandInfo)}
-      />
+      {!centerId && (
+        <BrandDialog
+          open={openDialog}
+          onClose={handleClose}
+          selected={(brandId) => brandInfo?.id === brandId}
+          onSelect={(brandInfo) => setValue('brandInfo', brandInfo)}
+        />
+      )}
     </FormProvider>
   );
 }

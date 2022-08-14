@@ -417,6 +417,8 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                           icon: Iconsax.add_square,
                           color: primaryColor,
                           onPressed: () {
+                            print(supply.quantity);
+                            if (quantity < supply.quantity!)
                             setState(() {
                               quantity = quantity + 1;
                             });
@@ -467,8 +469,10 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                 //     ))
               ])),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Container(
-            padding: EdgeInsets.only(left: 30),
+
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             //decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15))),
             child: ElevatedButton(
               onPressed: () {
@@ -540,7 +544,7 @@ Widget PetCard(Pet pet, BuildContext context) {
                   fit: BoxFit.contain)
               : null,
           border: Border.all(
-              color: Colors.white, width: 3, strokeAlign: StrokeAlign.outside)),
+              color: Colors.white, width: 3, /*strokeAlign: StrokeAlign.outside*/)),
       child: (pet.photos!.isEmpty)
           ? CircleAvatar(
               backgroundImage: AssetImage((pet.petTypeCode == 'DOG')

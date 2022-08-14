@@ -24,7 +24,7 @@ class PetRepository implements BasePetRepository {
       );
       final pets =
           response.data['data'].map<Pet>((e) => Pet.fromJson(e)).toList();
-      // pets.forEach((e) => print(e.toJson()));
+      //  pets.forEach((e) => print(e.toJson()));
       return pets;
     } catch (e) {
       print(e);

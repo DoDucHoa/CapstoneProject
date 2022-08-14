@@ -31,7 +31,7 @@ class _WelcomePanelState extends State<WelcomePanel> {
           ),
           Container(
             padding: EdgeInsets.all(10),
-            height: height * 0.08,
+            height: height * 0.4,
             width: width,
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -43,75 +43,92 @@ class _WelcomePanelState extends State<WelcomePanel> {
                 end: Alignment.topLeft,
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
+            child: Column(
               children: [
-                ElevatedContainer(
-                  height: height * 0.06,
-                  width: width * 0.8,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: TextField(
-                      onChanged: (value) => setState(() {}),
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        // suffixIcon: IconButton(
-                        //   onPressed: () {},
-                        //   icon: Icon(
-                        //     Icons.navigate_next,
-                        //     color: _searchController.text.isEmpty
-                        //         ? Colors.white
-                        //         : primaryColor,
-                        //     size: 20,
-                        //   ),
-                        // ),
-                        // prefixIcon: Icon(
-                        //   Icons.search,
-                        //   color: primaryColor,
-                        // ),
-                        hintText: "Tìm kiếm theo mã chuồng",
-                        hintStyle:
-                            TextStyle(color: lightFontColor, fontSize: 16),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                  elevation: width * 0.015,
-                ),
-                _searchController.text.isEmpty
-                    ? CircleAvatar(
-                        radius: height * 0.025,
-                        backgroundColor: Colors.white,
-                        backgroundImage: NetworkImage(user.url ?? ""),
-                      )
-                    : Container(
-                        width: height * 0.05,
-                        height: height * 0.05,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          color: Colors.white.withOpacity(0.7),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            var center = (BlocProvider.of<AuthBloc>(context)
-                                    .state as Authenticated)
-                                .user
-                                .petCenter;
-                            var cageCode = _searchController.text.toUpperCase();
-                            BlocProvider.of<SearchBloc>(context)
-                                .add(SearchByCagecode(cageCode, center!.id!));
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => SearchScreen(),
-                            ));
-                          },
-                          icon: Icon(
-                            Icons.search,
-                            color: primaryColor,
-                            size: height * 0.03,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ElevatedContainer(
+                      height: height * 0.06,
+                      width: width *(1 - 2*smallPadRate - smallPadRate) - height * 0.03,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: TextField(
+                          onChanged: (value) => setState(() {}),
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            // suffixIcon: IconButton(
+                            //   onPressed: () {},
+                            //   icon: Icon(
+                            //     Icons.navigate_next,
+                            //     color: _searchController.text.isEmpty
+                            //         ? Colors.white
+                            //         : primaryColor,
+                            //     size: 20,
+                            //   ),
+                            // ),
+                            // prefixIcon: Icon(
+                            //   Icons.search,
+                            //   color: primaryColor,
+                            // ),
+                            hintText: "Tìm kiếm theo mã chuồng",
+                            hintStyle:
+                                TextStyle(color: lightFontColor, fontSize: 16),
+                            border: InputBorder.none,
                           ),
                         ),
                       ),
+                      elevation: width * 0.015,
+                    ),
+                    _searchController.text.isEmpty
+                        ? ElevatedContainer(
+                          elevation: 5,
+                          height: height * 0.06,
+                          width: height * 0.06,
+                          // decoration: BoxDecoration(
+                          //   border: Border.all(
+                          //     color: Colors.white,
+                          //     width: 2,
+                          //   ),
+                          //   borderRadius: BorderRadius.circular(50),
+                          // ),
+                          child: CircleAvatar(
+                              radius: height * 0.03,
+                              backgroundColor: Colors.white,
+                              backgroundImage: NetworkImage(user.url ?? ""),
+                              
+                            ),
+                        )
+                        : Container(
+                            width: height * 0.05,
+                            height: height * 0.05,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              color: Colors.white.withOpacity(0.7),
+                            ),
+                            child: IconButton(
+                              onPressed: () {
+                                var center = (BlocProvider.of<AuthBloc>(context)
+                                        .state as Authenticated)
+                                    .user
+                                    .petCenter;
+                                var cageCode = _searchController.text.toUpperCase();
+                                BlocProvider.of<SearchBloc>(context)
+                                    .add(SearchByCagecode(cageCode, center!.id!));
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => SearchScreen(),
+                                ));
+                              },
+                              icon: Icon(
+                                Icons.search,
+                                color: primaryColor,
+                                size: height * 0.03,
+                              ),
+                            ),
+                          ),
+                  ],
+                ),
               ],
             ),
           ),

@@ -288,7 +288,7 @@ namespace PawNClaw.Business.Services
         //Main Search Center Part 2
         public PagedList<PetCenter> MainSearchCenter_ver_2(string City, string District,
             string StartBooking, int Due,
-            List<List<PetRequestForSearchCenter>> _petRequests, PagingParameter paging)
+            List<List<PetRequestForSearchCenter>> _petRequests, int customerId, PagingParameter paging)
         {
             //Check loaction
             var values = _petCenterRepository.SearchPetCenter(City, District);
@@ -562,6 +562,16 @@ namespace PawNClaw.Business.Services
                 Bookings = (ICollection<Booking>)_bookingRepository.GetCenterReviews(center.Id)
             });
 
+            values = values
+                    .OrderByDescending(x => x.Bookings
+                                    .Where(booking => booking.CustomerId == customerId 
+                                            && booking.Rating > 0 
+                                            && booking.StatusId == 3)
+                                    .Sum(booking => booking.Rating))
+                    .ThenByDescending(x => x.Bookings
+                                    .Where(booking => booking.CustomerId == customerId 
+                                            && booking.StatusId == 3).Count());
+
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
             paging.PageNumber,
             paging.PageSize);
@@ -632,11 +642,11 @@ namespace PawNClaw.Business.Services
         //Reference Center
         public async Task<SearchPetCenterResponse> ReferenceCenter(string City, string District,
             string StartBooking, int Due,
-            List<List<PetRequestForSearchCenter>> _petRequests, PagingParameter paging)
+            List<List<PetRequestForSearchCenter>> _petRequests, int customerId, PagingParameter paging)
         {
             var values = MainSearchCenter_ver_2(City, District,
                                                 StartBooking, Due,
-                                                _petRequests, paging);
+                                                _petRequests, customerId, paging);
 
             SearchPetCenterResponse searchPetCenterResponse = new SearchPetCenterResponse();
 
@@ -686,7 +696,7 @@ namespace PawNClaw.Business.Services
                     {
                         values = MainSearchCenter_ver_2(City, item.Key.Code,
                                                     StartBooking, Due,
-                                                    _petRequests, paging);
+                                                    _petRequests, customerId, paging);
 
                         count++;
                         if (values.Count > 0)

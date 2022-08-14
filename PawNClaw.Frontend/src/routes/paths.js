@@ -136,6 +136,8 @@ export const PATH_DASHBOARD = {
   },
   policy: {
     root: path(ROOTS_DASHBOARD, '/policy'),
+    owner: path(ROOTS_DASHBOARD, '/policy/owner'),
+    customer: path(ROOTS_DASHBOARD, '/policy/customer'),
   },
   logAction: {
     root: path(ROOTS_DASHBOARD, '/log-action'),
