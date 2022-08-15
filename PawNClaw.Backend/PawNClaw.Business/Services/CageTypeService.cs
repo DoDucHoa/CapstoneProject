@@ -193,7 +193,6 @@ namespace PawNClaw.Business.Services
                     cageType.Description = cageTypeP.Description;
                     cageType.IsSingle = cageTypeP.IsSingle;
                     cageType.ModifyDate = cageTypeP.ModifyDate;
-                    cageType.Status = cageTypeP.Status;
 
                     _cageTypeRepository.Update(cageType);
                     await _cageTypeRepository.SaveDbChangeAsync();
@@ -207,7 +206,6 @@ namespace PawNClaw.Business.Services
                         price.PriceTypeCode = item.PriceTypeCode;
                         price.ModifyDate = item.ModifyDate;
                         price.ModifyUser = item.ModifyUser;
-                        price.Status = item.Status;
                         price.CageTypeId = item.CageTypeId;
                         _priceRepository.Update(price);
                         await _priceRepository.SaveDbChangeAsync();
