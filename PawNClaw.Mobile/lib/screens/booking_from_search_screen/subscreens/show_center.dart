@@ -73,40 +73,42 @@ class _ShowAvailableCenterState extends State<AvailableCenterScreen> {
             backgroundColor: backgroundColor,
             elevation: 0,
           ),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(
-                Icons.flag_circle_rounded,
-                size: 65,
-                color: lightFontColor,
-              ),
-              Container(
-                width: width * (1 - 2 * mediumPadRate),
-                child: Text(
-                  'Rất tiếc! Trung tâm không còn\n phòng trống nào theo yêu cầu của bạn.\nBạn có thể tham khảo những khách sạn \n ở khu vực lân cận sau đây.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: lightFontColor,
-                      height: 1.2),
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(
+                  Icons.flag_circle_rounded,
+                  size: 65,
+                  color: lightFontColor,
                 ),
-              ),
-
-              ListView.builder(
-                itemCount: centers!.length,
-                itemBuilder: ((context, index) {
-                  return CenterCard(
-                    center: centers![index],
-                  );
-                }),
-                physics: ClampingScrollPhysics(),
-                shrinkWrap: true,
-              ),
-              //bloc
-            ],
+                Container(
+                  width: width * (1 - 2 * mediumPadRate),
+                  child: Text(
+                    'Rất tiếc! Trung tâm không còn\n phòng trống nào theo yêu cầu của bạn.\nBạn có thể tham khảo những khách sạn \n ở khu vực lân cận sau đây.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: lightFontColor,
+                        height: 1.2),
+                  ),
+                ),
+          
+                ListView.builder(
+                  itemCount: centers!.length,
+                  itemBuilder: ((context, index) {
+                    return CenterCard(
+                      center: centers![index],
+                    );
+                  }),
+                  physics: ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                ),
+                //bloc
+              ],
+            ),
           ),
         );
       },

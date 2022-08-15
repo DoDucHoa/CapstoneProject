@@ -248,11 +248,14 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                               SizedBox(
                                                 height: 10,
                                               ),
-                                              ElevatedButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Text('Đóng'))
+                                              PrimaryButton(
+                                                contextWidth: width,
+                                                text: "Đóng",
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop();
+                                                },
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -434,7 +437,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                           ),
                         )
                       : Container(),
-                  (widget.vouchers!.isNotEmpty)
+                  (widget.vouchers != null)
                       ? Container(
                           // padding: EdgeInsets.symmetric(
                           //   horizontal: width * smallPadRate,
@@ -544,12 +547,14 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                                 SizedBox(
                                                   height: 10,
                                                 ),
-                                                ElevatedButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                    child: Text('Đóng'))
+                                                PrimaryButton(
+                                                contextWidth: width,
+                                                text: "Đóng",
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop();
+                                                },
+                                              ),
                                               ],
                                             ),
                                           ),

@@ -8,6 +8,7 @@ import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart'
 import 'package:pawnclaw_mobile_application/blocs/user/user_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/screens/profile_screen/subscreens/personal_info_screen.dart';
+import 'package:pawnclaw_mobile_application/screens/profile_screen/subscreens/policy_screen.dart';
 
 import '../../common/constants.dart';
 import '../home_screen/HomeScreen.dart';
@@ -182,7 +183,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: width * smallPadRate,
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () => Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => PolicyScreen())),
                       child: Container(
                         // width: width*regularPadRate,
                         padding: EdgeInsets.all(width * smallPadRate),

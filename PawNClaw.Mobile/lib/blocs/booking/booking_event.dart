@@ -110,12 +110,27 @@ class ConfirmBookingRequest extends BookingEvent {
 }
 
 class ReorderBooking extends BookingEvent{
-  final Booking booking;
+  final DateTime startBooking;
+  final DateTime endBooking;
+  final int centerId;
+  final List<List<Pet>> request;
+  final int customerId;
+  final int due;
+  //final Booking booking;
   final TransactionDetails transactionDetails;
-  const ReorderBooking(this.booking, this.transactionDetails);
+  final Center center;
+  const ReorderBooking({required this.startBooking,
+      required this.endBooking,
+      required this.centerId,
+      required this.request,
+      required this.customerId,
+      required this.due, 
+      // required this.booking, 
+      required this.transactionDetails,
+      required this.center});
 
   @override
   // TODO: implement props
-  List<Object> get props => [booking, transactionDetails];
+  List<Object> get props => [transactionDetails, startBooking, endBooking, centerId, request, customerId, due];
   
 }

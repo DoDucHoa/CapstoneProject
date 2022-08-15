@@ -26,6 +26,18 @@ class _ServiceCardState extends State<ServiceCard> {
     Widget redirect = widget.redirect;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    var updateState =
+        BlocProvider.of<BookingBloc>(context).state as BookingUpdated;
+    var booking = updateState.booking;
+    int quantity = 0;
+    if (booking.serviceOrderCreateParameters!.isNotEmpty){
+      booking.serviceOrderCreateParameters!.forEach((element) {
+        if (element.serviceId.toString() == service.id.toString()) {
+          quantity = quantity + element.quantity!;
+        }
+      });
+    }
+
     return InkWell(
         onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => BlocProvider.value(
@@ -38,19 +50,50 @@ class _ServiceCardState extends State<ServiceCard> {
               color: Colors.white, borderRadius: BorderRadius.circular(15)),
           padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           child: Stack(children: [
+             (quantity > 0)
+                ? Container(
+                    decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: SizedBox(
+                      height: 85,
+                      width: 3,
+                    ))
+                : Container(),
+            Padding(
+              padding: EdgeInsets.only(left: (quantity > 0) ? width * 0.03 : 0),
+              child:
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: width*0.6,
-                  child: Text(
-                    service.name ?? service.description ?? "",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                Text.rich(
+                    TextSpan(
+                      text: (quantity > 0 ? quantity.toString() + 'x ' : ''),
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: primaryColor),
+                      children: [
+                        TextSpan(
+                          text: service.name ?? service.description ?? "",
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: primaryFontColor),
+                        ),
+                      ],
+                    ),
                   ),
+                // Container(
+                //   width: width*0.6,
+                //   child: Text(
+                //     service.name ?? service.description ?? "",
+                //     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                //     maxLines: 1,
+                //     overflow: TextOverflow.ellipsis,
+                //   ),
                   
-                ),
+                // ),
                 SizedBox(
                   height: 10,
                 ),
@@ -112,7 +155,7 @@ class _ServiceCardState extends State<ServiceCard> {
                   height: 30,
                 ),
               ],
-            ),
+            )),
             Positioned(
               right: 5,
               child: Container(

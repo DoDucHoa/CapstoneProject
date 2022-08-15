@@ -73,19 +73,20 @@ class SearchFailDialog extends StatelessWidget {
                   ElevatedButton(
                       onPressed: (!isPetBooked)
                           ? () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => SearchScreen(),
-                              )
-                                  // builder: (_) => BlocProvider.value(
-                                  //       value: BlocProvider.of<SearchBloc>(context),
-                                  //       child: ChoosePetScreen(),
-                                  //     ))
-                                  );
+                              BlocProvider.of<SearchBloc>(context).add(
+                                  ConfirmRequest((state as SearchFail).requests,
+                                      (state).centerId!));
+                              // builder: (_) => BlocProvider.value(
+                              //       value: BlocProvider.of<SearchBloc>(context),
+                              //       child: ChoosePetScreen(),
+                              //     ))
+                              // );
                               // .then((value) => context
                               //     .findRootAncestorStateOfType()!
                               //     .setState(() {}))
                             }
                           : () {
+                            print("hello");
                               BlocProvider.of<SearchBloc>(context)
                                   .add(BackToPetSelection([]));
                             },
@@ -103,7 +104,7 @@ class SearchFailDialog extends StatelessWidget {
                           child: Text(
                             (!isPetBooked)
                                 ? 'Tìm trung tâm khác'
-                                : 'Chọn thú cưng khác',
+                                : 'Chỉnh sửa thông tin đặt lịch',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,
