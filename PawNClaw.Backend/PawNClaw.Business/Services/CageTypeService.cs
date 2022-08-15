@@ -181,44 +181,86 @@ namespace PawNClaw.Business.Services
             return cageType.Id;
         }
 
-        public bool Update(UpdateCageTypeParameter cageTypeP, List<UpdatePriceParameter> updatePriceParameters, List<UpdateFoodSchedule> updateFoodSchedules)
+        public async Task<bool> Update(UpdateCageTypeParameter cageTypeP, List<UpdatePriceParameter> updatePriceParameters, List<UpdateFoodSchedule> updateFoodSchedules)
         {
-            CageType cageType = _cageTypeRepository.Get(cageTypeP.Id);
-            cageType.TypeName = cageTypeP.TypeName;
-            cageType.Description = cageTypeP.Description;
-            cageType.IsSingle = cageTypeP.IsSingle;
-            cageType.ModifyDate = cageTypeP.ModifyDate;
-            cageType.Status = cageTypeP.Status;
 
-            _cageTypeRepository.Update(cageType);
-            _cageTypeRepository.SaveDbChange();
-
-            foreach (var item in updatePriceParameters)
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                Price price = _priceRepository.Get(item.Id);
-                price.UnitPrice = item.UnitPrice;
-                price.CreateDate = item.CreateDate;
-                price.CreateUser = item.CreateUser;
-                price.PriceTypeCode = item.PriceTypeCode;
-                price.ModifyDate = item.ModifyDate;
-                price.ModifyUser = item.ModifyUser;
-                price.Status = item.Status;
-                price.CageTypeId = item.CageTypeId;
-                _priceRepository.Update(price);
-                _priceRepository.SaveDbChange();
-            }
+                try
+                {
+                    CageType cageType = _cageTypeRepository.Get(cageTypeP.Id);
+                    cageType.TypeName = cageTypeP.TypeName;
+                    cageType.Description = cageTypeP.Description;
+                    cageType.IsSingle = cageTypeP.IsSingle;
+                    cageType.ModifyDate = cageTypeP.ModifyDate;
+                    cageType.Status = cageTypeP.Status;
 
-            foreach (var item in updateFoodSchedules)
-            {
-                FoodSchedule food = _foodScheduleRepository.Get(item.Id);
-                food.FromTime = item.FromTime.TimeOfDay;
-                food.ToTime = item.ToTime.TimeOfDay;
-                food.Name = item.Name;
-                food.CageTypeId = item.CageTypeId;
-                _foodScheduleRepository.Update(food);
-                _foodScheduleRepository.SaveDbChange();
+                    _cageTypeRepository.Update(cageType);
+                    await _cageTypeRepository.SaveDbChangeAsync();
+
+                    foreach (var item in updatePriceParameters)
+                    {
+                        Price price = _priceRepository.Get(item.Id);
+                        price.UnitPrice = item.UnitPrice;
+                        price.CreateDate = item.CreateDate;
+                        price.CreateUser = item.CreateUser;
+                        price.PriceTypeCode = item.PriceTypeCode;
+                        price.ModifyDate = item.ModifyDate;
+                        price.ModifyUser = item.ModifyUser;
+                        price.Status = item.Status;
+                        price.CageTypeId = item.CageTypeId;
+                        _priceRepository.Update(price);
+                        await _priceRepository.SaveDbChangeAsync();
+                    }
+
+                    var foodSchedules = _foodScheduleRepository.GetAll();
+
+                    foreach (var item in foodSchedules)
+                    {
+                        if (updateFoodSchedules.Where(x => x.Id == item.Id).Count() == 0)
+                        {
+                            _foodScheduleRepository.Remove(item.Id);
+                            await _foodScheduleRepository.SaveDbChangeAsync();
+                        }
+                    }
+
+                    foreach (var item in updateFoodSchedules)
+                    {
+                        FoodSchedule food = _foodScheduleRepository.Get(item.Id);
+
+                        if (food == null)
+                        {
+                            food = new FoodSchedule()
+                            {
+                                FromTime = item.FromTime.TimeOfDay,
+                                ToTime = item.ToTime.TimeOfDay,
+                                Name = item.Name,
+                                CageTypeId = item.CageTypeId,
+                            };
+
+                            _foodScheduleRepository.Add(food);
+                            await _foodScheduleRepository.SaveDbChangeAsync();
+
+                        }
+                        else
+                        {
+                            food.FromTime = item.FromTime.TimeOfDay;
+                            food.ToTime = item.ToTime.TimeOfDay;
+                            food.Name = item.Name;
+                            food.CageTypeId = item.CageTypeId;
+                            _foodScheduleRepository.Update(food);
+                            await _foodScheduleRepository.SaveDbChangeAsync();
+                        }
+                    }
+
+                    transaction.Commit();
+                    return true;
+                } catch
+                {
+                    transaction.Rollback();
+                    throw new Exception();
+                }
             }
-            return true;
         }
 
         public bool Delete(int id)
