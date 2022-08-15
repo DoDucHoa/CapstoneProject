@@ -90,14 +90,17 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         event.transactionDetails.supplyOrders!.forEach((supplyOrder) {
           var supply = event.center.supplies!
               .firstWhere((supply) => supply.id == supplyOrder.supplyId);
-
-          booking.supplyOrderCreateParameters!.add(SupplyOrderCreateParameters(
+            if (supply.quantity! >= supplyOrder.quantity!) {
+               booking.supplyOrderCreateParameters!.add(SupplyOrderCreateParameters(
             supplyId: supplyOrder.supplyId,
             quantity: supplyOrder.quantity,
             sellPrice: supply.sellPrice!,
             totalPrice: supply.sellPrice! * supplyOrder.quantity!,
             petId: supplyOrder.petId,
           ));
+            }
+
+         
         });
       }
 
