@@ -398,16 +398,16 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                     color: primaryColor,
                     onPressed: () {
                       if (widget.isUpdate != null && widget.isUpdate!) {
-                              if (quantity > 0) {
-                                setState(() {
-                                  quantity = quantity - 1;
-                                });
-                              }
-                            } else if (quantity > 1) {
-                              setState(() {
-                                quantity = quantity - 1;
-                              });
-                            }
+                        if (quantity > 0) {
+                          setState(() {
+                            quantity = quantity - 1;
+                          });
+                        }
+                      } else if (quantity > 1) {
+                        setState(() {
+                          quantity = quantity - 1;
+                        });
+                      }
                     }),
                 SizedBox(
                   width: 10,
@@ -424,13 +424,36 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                     icon: Iconsax.add_square,
                     color: primaryColor,
                     onPressed: () {
+                      if (state
+                          .booking.serviceOrderCreateParameters!.isNotEmpty) {
+                        var serviceOrder = state
+                            .booking.serviceOrderCreateParameters!
+                            .where((element) =>
+                                element.serviceId == service.id &&
+                                element.petId == pets[selectedIndex].id)
+                            .toList();
+                        if (serviceOrder.isNotEmpty) {
+                          if (quantity + serviceOrder.first.quantity! <
+                              state.booking.bookingCreateParameter!.due!) {
+                            setState(() {
+                              quantity = quantity + 1;
+                            });
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(
+                                    'Số lượng dịch vụ tối đa dựa theo số ngày.')));
+                          }
+                        }
+                      }
+
                       if (quantity < state.booking.bookingCreateParameter!.due!)
-                      setState(() {
-                        quantity = quantity + 1;
-                      });
+                        setState(() {
+                          quantity = quantity + 1;
+                        });
                       else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Số lượng dịch vụ tối da dựa theo số ngày.')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                'Số lượng dịch vụ tối đa dựa theo số ngày.')));
                       }
                     }),
               ],
@@ -451,19 +474,48 @@ class _ServiceDetailsState extends State<ServiceDetails> {
               //     return ChoosePetDialog(requests: requests);
               //   },
               // ).then((value) {
-              print(pets[selectedIndex].id);
-              BlocProvider.of<BookingBloc>(context).add(
-                SelectService(
-                    prices: service.servicePrices!,
-                    serviceId: service.id!,
-                    petId: pets[selectedIndex].id!,
-                    isUpdate: widget.isUpdate??false,
-                    quantity: quantity),
-              );
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(((widget.isUpdate == null) ? 'Thêm vào' : 'Cập nhật') +
+              // print(pets[selectedIndex].id);
+              bool isValid = false;
+              if (state.booking.serviceOrderCreateParameters!.isNotEmpty) {
+                var serviceOrder = state.booking.serviceOrderCreateParameters!
+                    .where((element) =>
+                        element.serviceId == service.id &&
+                        element.petId == pets[selectedIndex].id)
+                    .toList();
+                if (serviceOrder.isNotEmpty) {
+                  if (quantity + serviceOrder.first.quantity! <=
+                      state.booking.bookingCreateParameter!.due!) {
+                    isValid = true;
+                  } else {
+                    isValid = false;
+                  }
+                } else {
+                  if (quantity <= state.booking.bookingCreateParameter!.due!) {
+                    isValid = true;
+                  } else {
+                    isValid = false;
+                  }
+                }
+              }
+              if (isValid) {
+                BlocProvider.of<BookingBloc>(context).add(
+                  SelectService(
+                      prices: service.servicePrices!,
+                      serviceId: service.id!,
+                      petId: pets[selectedIndex].id!,
+                      isUpdate: widget.isUpdate ?? false,
+                      quantity: quantity),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        ((widget.isUpdate == null) ? 'Thêm vào' : 'Cập nhật') +
                             " sản phẩm thành công.")));
-              Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content:
+                        Text('Số lượng dịch vụ tối đa dựa theo số ngày.')));
+              }
             },
             child: Row(children: [
               Expanded(
@@ -471,13 +523,13 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                 height: 45,
               )),
               Text(
-                 (quantity == 0)
-                      ? 'Xóa sản phẩm'
-                      : ((widget.isUpdate == null) ? 'Thêm vào' : 'Cập nhật') +
-                          ' giỏ hàng - ' +
-                    NumberFormat.currency(
-                            decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
-                        .format(selectedPrice * quantity),
+                (quantity == 0)
+                    ? 'Xóa sản phẩm'
+                    : ((widget.isUpdate == null) ? 'Thêm vào' : 'Cập nhật') +
+                        ' giỏ hàng - ' +
+                        NumberFormat.currency(
+                                decimalDigits: 0, symbol: 'đ', locale: 'vi_vn')
+                            .format(selectedPrice * quantity),
                 // (service.discountPrice)), //== 0
                 // ? (selectedPrice ?? 0)
                 // : (service.discountPrice ?? 0)),
@@ -486,7 +538,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
               Expanded(child: SizedBox(height: 45)),
             ]),
             style: ElevatedButton.styleFrom(
-              primary: (quantity > 0) ? primaryColor : Colors.red,
+                primary: (quantity > 0) ? primaryColor : Colors.red,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15))),
           )),
@@ -517,7 +569,9 @@ Widget PetCard(Pet pet, BuildContext context) {
                   fit: BoxFit.contain)
               : null,
           border: Border.all(
-              color: Colors.white, width: 3, /*strokeAlign: StrokeAlign.outside*/)),
+            color: Colors.white,
+            width: 3, /*strokeAlign: StrokeAlign.outside*/
+          )),
       child: (pet.photos!.isEmpty)
           ? CircleAvatar(
               backgroundImage: AssetImage((pet.petTypeCode == 'DOG')
@@ -603,7 +657,7 @@ Widget buildContent(petCenter.Services service, Size size, BuildContext context,
             ),
             ReadMoreText(
               // cage.description,
-              "This is description...",
+              service.description ?? '',
               style: TextStyle(
                 fontSize: 15,
                 color: lightFontColor,

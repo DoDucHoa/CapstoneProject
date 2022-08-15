@@ -417,11 +417,44 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                           icon: Iconsax.add_square,
                           color: primaryColor,
                           onPressed: () {
-                            print(supply.quantity);
-                            if (quantity < supply.quantity!)
-                            setState(() {
-                              quantity = quantity + 1;
-                            });
+                            //print(supply.quantity);
+                            if (state.booking.supplyOrderCreateParameters!
+                                .isNotEmpty) {
+                              var supplyOrder = state
+                                  .booking.supplyOrderCreateParameters!
+                                  .where((element) =>
+                                      supply.id == element.supplyId);
+
+                              if (supplyOrder.isNotEmpty) {
+                                int booked = 0;
+                                supplyOrder.forEach((element) {
+                                  booked += element.quantity!;
+                                });
+                                if (quantity + booked < supply.quantity!) {
+                                  setState(() {
+                                    quantity = quantity + 1;
+                                  });
+                                } else {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(
+                                        'Số lượng của sản phẩm này đã đạt đủ'),
+                                  ));
+                                }
+                              }
+                            } else {
+                              if (quantity < supply.quantity!) {
+                                setState(() {
+                                  quantity = quantity + 1;
+                                });
+                              } else {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text(
+                                      'Số lượng của sản phẩm này đã đạt đủ'),
+                                ));
+                              }
+                            }
                           }),
                     ],
                   ),
@@ -471,26 +504,54 @@ class _SupplyDetailsState extends State<SupplyDetails> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Container(
-
             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             //decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15))),
             child: ElevatedButton(
               onPressed: () {
-                print('pet id:' + pets[selectedIndex].id!.toString());
-                BlocProvider.of<BookingBloc>(context).add(SelectSupply(
-                        sellPrice: supply.sellPrice!,
-                        quantity: quantity,
-                        supplyId: supply.id!,
-                        isUpdate: widget.isUpdate ?? false,
-                        petId: pets[selectedIndex]
-                            .id!) //: (state as BookingUpdated).selectedPet!.id!),
-                    );
+                //print('pet id:' + pets[selectedIndex].id!.toString());
+                bool isValid = false;
+                if (state.booking.supplyOrderCreateParameters!.isNotEmpty) {
+                  var supplyOrder = state.booking.supplyOrderCreateParameters!
+                      .where((element) => supply.id == element.supplyId);
 
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(
-                        ((widget.isUpdate == null) ? 'Thêm vào' : 'Cập nhật') +
-                            " sản phẩm thành công.")));
-                Navigator.of(context).pop();
+                  if (supplyOrder.isNotEmpty) {
+                    int booked = 0;
+                    supplyOrder.forEach((element) {
+                      booked += element.quantity!;
+                    });
+                    if (quantity + booked < supply.quantity!) {
+                      isValid = true;
+                    } else {
+                      isValid = false;
+                    }
+                  }
+                } else {
+                  if (quantity <= supply.quantity!) {
+                    isValid = true;
+                  } else {
+                    isValid = false;
+                  }
+                }
+                if (isValid) {
+                  BlocProvider.of<BookingBloc>(context).add(SelectSupply(
+                          sellPrice: supply.sellPrice!,
+                          quantity: quantity,
+                          supplyId: supply.id!,
+                          isUpdate: widget.isUpdate ?? false,
+                          petId: pets[selectedIndex]
+                              .id!) //: (state as BookingUpdated).selectedPet!.id!),
+                      );
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(((widget.isUpdate == null)
+                              ? 'Thêm vào'
+                              : 'Cập nhật') +
+                          " sản phẩm thành công.")));
+                  Navigator.of(context).pop();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Số lượng của sản phẩm này đã đạt đủ'),
+                  ));
+                }
               },
               child: Row(children: [
                 Expanded(
@@ -544,7 +605,9 @@ Widget PetCard(Pet pet, BuildContext context) {
                   fit: BoxFit.contain)
               : null,
           border: Border.all(
-              color: Colors.white, width: 3, /*strokeAlign: StrokeAlign.outside*/)),
+            color: Colors.white,
+            width: 3, /*strokeAlign: StrokeAlign.outside*/
+          )),
       child: (pet.photos!.isEmpty)
           ? CircleAvatar(
               backgroundImage: AssetImage((pet.petTypeCode == 'DOG')
