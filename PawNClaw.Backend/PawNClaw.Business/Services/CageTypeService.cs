@@ -211,7 +211,7 @@ namespace PawNClaw.Business.Services
                         await _priceRepository.SaveDbChangeAsync();
                     }
 
-                    var foodSchedules = _foodScheduleRepository.GetAll();
+                    var foodSchedules = _foodScheduleRepository.GetAll(x => x.CageTypeId == cageType.Id);
 
                     foreach (var item in foodSchedules)
                     {
@@ -233,7 +233,7 @@ namespace PawNClaw.Business.Services
                                 FromTime = item.FromTime.TimeOfDay,
                                 ToTime = item.ToTime.TimeOfDay,
                                 Name = item.Name,
-                                CageTypeId = item.CageTypeId,
+                                CageTypeId = cageType.Id,
                             };
 
                             _foodScheduleRepository.Add(food);
