@@ -47,7 +47,7 @@ namespace PawNClaw.API.Controllers
 
                 if (create)
                 {
-                    var check = _bookingService.ConfirmBooking(updateStatusParameter.id,
+                    var check = await _bookingService.ConfirmBooking(updateStatusParameter.id,
                                                             updateStatusParameter.statusId,
                                                             updateStatusParameter.staffNote);
                     if (check)
@@ -98,6 +98,20 @@ namespace PawNClaw.API.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex);
+            }
+        }
+
+        [HttpPut("customer/cancel-booking")]
+        public IActionResult CancelBookingForCus(int Id)
+        {
+            var data = _bookingService.CancelBookingForCus(Id);
+
+            if (data)
+            {
+                return Ok(data);
+            } else
+            {
+                return BadRequest(data);
             }
         }
 
