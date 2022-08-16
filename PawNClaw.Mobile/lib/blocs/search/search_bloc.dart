@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart';
 import 'package:pawnclaw_mobile_application/models/pet.dart';
 import 'package:pawnclaw_mobile_application/models/center.dart' as petCenter;
+import 'package:pawnclaw_mobile_application/models/transaction_details.dart';
 
 import 'package:pawnclaw_mobile_application/repositories/center/center_repository.dart';
 
@@ -57,8 +58,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
             ..removeWhere((element) => element.contains(event.pets[0]))));
     });
     on<ConfirmRequest>((event, emit) {
-      emit(FillingInformation(
+      if (state is UpdatePetSelected){
+emit(FillingInformation(
           (state as UpdatePetSelected).requests, event.centerId));
+      }else{
+        emit(FillingInformation(event.requests, event.centerId));
+      }
+      
     });
     on<SearchCenter>((event, emit) async {
       emit(Loading());
@@ -76,7 +82,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           : (searchResponse.petCenters != null)
               ? emit(SearchCompleted(searchResponse.petCenters!, event.requests,
                   event.timeFrom, event.due, searchResponse))
-              : emit(SearchFail(searchResponse.result!, event.requests, null));
+              : emit(SearchFail(searchResponse.result!, event.requests, null, "search"));
     });
     on<CheckCenter>((event, emit) async {
       emit(Loading());
@@ -101,10 +107,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       } else {
         searchResponse.result =
             searchResponse.result ?? "" + event.centerId.toString();
-        emit(SearchFail(searchResponse.result!, event.requests, null));
+        emit(SearchFail(searchResponse.result!, event.requests, event.centerId, event.target));
       }
     });
     on<CheckSponsorCenter>((event, emit) async {
+      emit(Loading());
       var searchResponse = await _centerRepository.checkCenterToBooking(
           event.centerId,
           event.customerId,
@@ -123,7 +130,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         emit(SearchCompleted(centers, event.requests, event.timeFrom, event.due,
             searchResponse));
       } else {
-        emit(SearchFail(searchResponse.result!, event.requests, null));
+        emit(SearchFail(searchResponse.result!, event.requests, event.centerId, "check"));
       }
     });
     on<BackToPetSelection>(
@@ -131,5 +138,32 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         emit(UpdatePetSelected([], event.requests));
       },
     );
+
+    on<CheckReorder>((event, emit) async {
+      emit(Loading());
+      var searchResponse = await _centerRepository.checkCenterToBooking(
+          event.centerId,
+          event.customerId,
+          event.timeFrom,
+          event.due,
+          event.requests);
+      if (searchResponse == null)
+        emit(Loading());
+      else if (searchResponse.petCenters != null) {
+        if (searchResponse.petCenters!.length == 1 &&
+            searchResponse.petCenters!.first.id == event.centerId) {
+          print('center is available');
+          emit(CheckedCenter(searchResponse.petCenters!.first, event.requests,
+              event.timeFrom, event.due));
+        } else {
+          emit(SearchCompleted(searchResponse.petCenters!, event.requests,
+              event.timeFrom, event.due, searchResponse));
+        }
+      } else {
+        searchResponse.result =
+            searchResponse.result ?? "" + event.centerId.toString();
+        emit(SearchFail(searchResponse.result!, event.requests, event.centerId, event.transactionDetails));
+      }
+    });
   }
 }

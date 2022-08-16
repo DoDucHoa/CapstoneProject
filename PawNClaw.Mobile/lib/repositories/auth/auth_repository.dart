@@ -182,4 +182,22 @@ class AuthRepository implements BaseAuthRepository {
       return e.response!.data["Message"].toString().contains("Value cannot be null");
     }
   }
+
+  Future<String?> getPolicy() async{
+    final pref = await SharedPreferences.getInstance();
+    try {
+      _dio.options.headers = {
+        'Authorization': 'Bearer ' + pref.get("jwtToken").toString()
+      };
+      const String _url =
+          "https://pawnclawdevelopmentapi.azurewebsites.net/api/policies/for-customer";
+      var response = await _dio.get(_url);
+      
+      print('[repository] getPolicy: ${response.data["policy"]}');
+      return response.data["policy"];
+    } on DioError catch (e) {
+      print(e.response!.data);
+      return null;
+    }
+  }
 }

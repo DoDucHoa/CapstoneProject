@@ -6,7 +6,6 @@ import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
-import 'package:pawnclaw_mobile_application/screens/booking_from_search_screen/components/search_fail_dialog.dart';
 import 'package:pawnclaw_mobile_application/screens/booking_from_search_screen/subscreens/choose_pet_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/booking_from_search_screen/subscreens/fill_information_screen.dart';
 import 'package:pawnclaw_mobile_application/screens/booking_from_search_screen/subscreens/show_center.dart';
@@ -15,6 +14,7 @@ import 'package:pawnclaw_mobile_application/screens/search_screen.dart/subscreen
 
 import '../../models/pet.dart';
 import '../../models/transaction_details.dart';
+import '../search_screen.dart/components/search_fail_dialog.dart';
 
 class SearchScreen extends StatefulWidget {
   final int centerId;
@@ -47,11 +47,16 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SearchBloc()..add(InitCheck(widget.centerId, widget.requests)),
+      create: (context) =>
+          SearchBloc()..add(InitCheck(widget.centerId, widget.requests)),
       child: BlocBuilder<SearchBloc, SearchState>(
         builder: (context, state) {
           if (state is FillingInformation) {
-            return FillInformationScreen(isSponsor: widget.isSponsor);
+            return FillInformationScreen(
+                isSponsor: widget.isSponsor,
+                requests: widget.requests,
+                transactionDetails: widget.transactionDetails,
+                centerId: widget.centerId,);
           }
           // if (widget.requests != null) {
           //   return FillInformationScreen(
@@ -61,7 +66,10 @@ class _SearchScreenState extends State<SearchScreen> {
           //   );
           // }
           if (state is CheckCenterInitial || state is UpdatePetSelected) {
-            return ChoosePetScreen(centerId: widget.centerId, requests: widget.requests,);
+            return ChoosePetScreen(
+              centerId: widget.centerId,
+              requests: widget.requests,
+            );
           }
           if (state is SearchCompleted) {
             return const AvailableCenterScreen();
@@ -73,6 +81,7 @@ class _SearchScreenState extends State<SearchScreen> {
             var statusMessage = state.errorMessage;
             return SearchFailDialog(
               errorMessage: statusMessage,
+              
             );
           }
           if (state is CheckedCenter) {
@@ -82,15 +91,19 @@ class _SearchScreenState extends State<SearchScreen> {
                 requests: state.requests,
                 bookingDate: state.bookingDate,
                 endDate: DateTime.parse(state.center.endBooking!),
-                due: state.due);
+                due: state.due,
+                transactionDetails: widget.transactionDetails,
+                center: state.center);
           }
           if (state is CheckedSponsorCenter) {
+            
             return CenterDetails(
                 petCenterId: widget.centerId,
                 requests: state.requests,
                 bookingDate: state.bookingDate,
                 endDate: DateTime.parse(state.center.endBooking!),
-                due: state.due);
+                due: state.due,
+                center: state.center,);
           }
           return const Scaffold(
               backgroundColor: Colors.white,

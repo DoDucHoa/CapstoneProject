@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:pawnclaw_mobile_application/blocs/authentication/auth_bloc.dart';
 import 'package:pawnclaw_mobile_application/models/booking.dart';
 import 'package:pawnclaw_mobile_application/models/booking_create_model.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +16,7 @@ part 'booking_state.dart';
 class BookingBloc extends Bloc<BookingEvent, BookingState> {
   BookingBloc() : super(BookingInitial()) {
     on<InitBooking>((event, emit) {
-      BookingRequestModel booking = new BookingRequestModel(
+      BookingRequestModel booking = BookingRequestModel(
         bookingCreateParameter: BookingCreateParameter(
             centerId: event.centerId,
             startBooking:
@@ -33,6 +34,79 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       );
       emit(BookingUpdated(booking: booking, requests: event.request));
     });
+
+    on<ReorderBooking>((event, emit) {
+// print('im here');
+      BookingRequestModel booking = BookingRequestModel(
+        bookingCreateParameter: BookingCreateParameter(
+            centerId: event.centerId,
+            startBooking:
+                DateFormat('yyyy-MM-dd HH:mm:ss').format(event.startBooking),
+            endBooking:
+                DateFormat('yyyy-MM-dd HH:mm:ss').format(event.endBooking),
+            customerId: event.customerId,
+            createTime:
+                DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+            statusId: 1,
+            due: event.due),
+        bookingDetailCreateParameters: [],
+        serviceOrderCreateParameters: [],
+        supplyOrderCreateParameters: [],
+      );
+      print(event.transactionDetails.serviceOrders);
+      event.transactionDetails.bookingDetails!.forEach((element) {
+        booking.bookingDetailCreateParameters!.add(
+            BookingDetailCreateParameters(
+                cageCode: element.cageCode,
+                petId: element.getPetIds(),
+                duration: event.due,
+                price: element.price));
+      });
+      if (event.transactionDetails.serviceOrders != null) {
+        event.transactionDetails.serviceOrders!.forEach((serviceOrder) {
+          var service = event.center.services!
+              .firstWhere((service) => service.id == serviceOrder.serviceId);
+          Pet pet = event.transactionDetails
+              .getPets()
+              .firstWhere((pet) => pet.id == serviceOrder.petId);
+          double price = 0;
+          service.servicePrices!.forEach((element) {
+            if (element.minWeight! <= pet.weight! &&
+                element.maxWeight! > pet.weight!) {
+              price = element.price!;
+            }
+          });
+          booking.serviceOrderCreateParameters!
+              .add(ServiceOrderCreateParameters(
+            serviceId: serviceOrder.serviceId,
+            quantity: serviceOrder.quantity,
+            sellPrice: price,
+            totalPrice: price * serviceOrder.quantity!,
+            petId: serviceOrder.petId,
+          ));
+        });
+      }
+      if (event.transactionDetails.supplyOrders != null) {
+        event.transactionDetails.supplyOrders!.forEach((supplyOrder) {
+          var supply = event.center.supplies!
+              .firstWhere((supply) => supply.id == supplyOrder.supplyId);
+            if (supply.quantity! >= supplyOrder.quantity!) {
+               booking.supplyOrderCreateParameters!.add(SupplyOrderCreateParameters(
+            supplyId: supplyOrder.supplyId,
+            quantity: supplyOrder.quantity,
+            sellPrice: supply.sellPrice!,
+            totalPrice: supply.sellPrice! * supplyOrder.quantity!,
+            petId: supplyOrder.petId,
+          ));
+            }
+
+         
+        });
+      }
+
+      emit(BookingUpdated(booking: booking, requests: event.request));
+    });
+
     on<SelectCage>((event, emit) {
       BookingRequestModel booking = (state as BookingUpdated).booking;
       BookingDetailCreateParameters details = BookingDetailCreateParameters(
@@ -62,13 +136,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     on<SelectSupply>(
       (event, emit) {
         BookingRequestModel booking = (state as BookingUpdated).booking;
-        SupplyOrderCreateParameters supplyOrder =
-            new SupplyOrderCreateParameters(
-                petId: event.petId,
-                sellPrice: event.sellPrice,
-                totalPrice: event.sellPrice * event.quantity,
-                supplyId: event.supplyId,
-                quantity: event.quantity);
+        SupplyOrderCreateParameters supplyOrder = SupplyOrderCreateParameters(
+            petId: event.petId,
+            sellPrice: event.sellPrice,
+            totalPrice: event.sellPrice * event.quantity,
+            supplyId: event.supplyId,
+            quantity: event.quantity);
         if (event.isUpdate != null && event.isUpdate == true) {
           if (event.quantity == 0) {
             booking.supplyOrderCreateParameters!.removeWhere((element) =>
@@ -124,7 +197,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         print(price);
         BookingRequestModel booking = (state as BookingUpdated).booking;
         ServiceOrderCreateParameters serviceOrder =
-            new ServiceOrderCreateParameters(
+            ServiceOrderCreateParameters(
                 sellPrice: price,
                 totalPrice: price * event.quantity,
                 petId: event.petId,

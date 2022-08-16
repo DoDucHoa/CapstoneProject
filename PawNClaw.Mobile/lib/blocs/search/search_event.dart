@@ -83,8 +83,23 @@ class CheckCenter extends SearchEvent {
   final DateTime timeFrom;
   final int due;
   final int customerId;
-  const CheckCenter(
-      this.centerId, this.requests, this.timeFrom, this.due, this.customerId);
+  final String? target;
+  const CheckCenter(this.centerId, this.requests, this.timeFrom, this.due,
+      this.customerId, this.target);
+  @override
+  // TODO: implement props
+  List<Object> get props => [centerId, requests, timeFrom, due, customerId];
+}
+
+class CheckReorder extends SearchEvent {
+  final int centerId;
+  final List<List<Pet>> requests;
+  final DateTime timeFrom;
+  final int due;
+  final int customerId;
+  final TransactionDetails transactionDetails;
+  const CheckReorder(this.centerId, this.requests, this.timeFrom, this.due,
+      this.customerId, this.transactionDetails);
   @override
   // TODO: implement props
   List<Object> get props => [centerId, requests, timeFrom, due, customerId];
