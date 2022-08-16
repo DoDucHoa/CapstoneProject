@@ -26,6 +26,7 @@ namespace PawNClaw.Data.Database
         public virtual DbSet<Brand> Brands { get; set; }
         public virtual DbSet<Cage> Cages { get; set; }
         public virtual DbSet<CageType> CageTypes { get; set; }
+        public virtual DbSet<CancelLog> CancelLogs { get; set; }
         public virtual DbSet<City> Cities { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<CustomerVoucherLog> CustomerVoucherLogs { get; set; }
@@ -261,6 +262,27 @@ namespace PawNClaw.Data.Database
                     .WithMany(p => p.CageTypeModifyUserNavigations)
                     .HasForeignKey(d => d.ModifyUser)
                     .HasConstraintName("FK__CageTypes__modif__4830B400");
+            });
+
+            modelBuilder.Entity<CancelLog>(entity =>
+            {
+                entity.Property(e => e.CancelTime).HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.Booking)
+                    .WithMany(p => p.CancelLogs)
+                    .HasForeignKey(d => d.BookingId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__CancelLog__booki__035179CE");
+
+                entity.HasOne(d => d.Center)
+                    .WithMany(p => p.CancelLogs)
+                    .HasForeignKey(d => d.CenterId)
+                    .HasConstraintName("FK__CancelLog__cente__025D5595");
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.CancelLogs)
+                    .HasForeignKey(d => d.CustomerId)
+                    .HasConstraintName("FK__CancelLog__custo__0169315C");
             });
 
             modelBuilder.Entity<City>(entity =>
