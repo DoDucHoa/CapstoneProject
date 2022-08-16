@@ -85,7 +85,6 @@ namespace PawNClaw.API.Controllers
 
             if (_brandService.Update(brandDb))
             {
-                var name;
                 await _logService.AddLog(new ActionLogsParameter()
                 {
                     Id = brand.ModifyUser,
