@@ -43,7 +43,8 @@ namespace PawNClaw.Business.Services
             }
         }
 
-        public static async Task UpdateData(string project, string collection, string document, int kmSearch, int numOfSponsor)
+        public static async Task UpdateData(string project, string collection, string document,
+            int kmSearch, int numOfSponsor, int limitCancelDay, int limitCancelCountCustomer, int validCancelDayForCenter)
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "pawnclaw-4b6ba-firebase-adminsdk-txxl7-50dcc161a7.json");
             FirestoreDb db = FirestoreDb.Create(project);
@@ -52,7 +53,10 @@ namespace PawNClaw.Business.Services
             Dictionary<string, object> policy = new Dictionary<string, object>
             {
                 { "kmSearch", kmSearch },
-                { "numOfSponsor", numOfSponsor}
+                { "numOfSponsor", numOfSponsor},
+                { "limitCancelDay", limitCancelDay},
+                { "limitCancelCountCustomer", limitCancelCountCustomer},
+                { "validCancelDayForCenter", validCancelDayForCenter}
             };
             await docRef.SetAsync(policy);
             // [END fs_add_data_1]
