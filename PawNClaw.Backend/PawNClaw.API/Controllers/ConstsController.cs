@@ -91,7 +91,10 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                await ConstService.UpdateData(Const.ProjectFirebaseId, "Const", "Config", constParameter.KmSearch, constParameter.NumOfSponsor);
+                await ConstService.UpdateData(Const.ProjectFirebaseId, "Const", "Config", 
+                    constParameter.KmSearch, constParameter.NumOfSponsor, 
+                    constParameter.LimitCancelDay, constParameter.LimitCancelCountCustomer,
+                    constParameter.ValidCancelDayForCenter);
                 return Ok();
             }
             catch (Exception ex)
