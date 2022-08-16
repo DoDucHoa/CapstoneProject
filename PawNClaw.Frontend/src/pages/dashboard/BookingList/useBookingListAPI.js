@@ -2,7 +2,7 @@ import axios from '../../../utils/axios';
 
 const URL = '/api/bookings';
 
-const getBookingList = async (centerId, page, rowsPerPage, bookingStatus) => {
+const getBookingList = async (centerId, page, rowsPerPage, bookingStatus, fromDate, toDate) => {
   const response = await axios.get(`${URL}/list`, {
     params: {
       CenterId: centerId,
@@ -10,6 +10,8 @@ const getBookingList = async (centerId, page, rowsPerPage, bookingStatus) => {
       PageNumber: page,
       dir: 'desc',
       StatusId: bookingStatus === 0 ? null : bookingStatus,
+      StartBooking: fromDate,
+      EndBooking: toDate,
     },
   });
   return response.data;
