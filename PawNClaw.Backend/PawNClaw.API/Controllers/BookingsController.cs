@@ -14,7 +14,7 @@ namespace PawNClaw.API.Controllers
 {
     [Route("api/bookings")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class BookingsController : ControllerBase
     {
         BookingService _bookingService;
@@ -102,7 +102,7 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Owner,Staff")]
+        [Authorize(Roles = "Owner,Staff")]
         public IActionResult GetBookingForStaff([FromQuery] BookingRequestParameter bookingRequestParameter)
         {
             var data = _bookingService.GetBookings(bookingRequestParameter);
