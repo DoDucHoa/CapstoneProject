@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
-
+import { vi } from 'date-fns/locale';
 // @mui
+import { LocalizationProvider } from '@mui/lab';
 import DatePicker from '@mui/lab/DatePicker';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { Card, Grid, MenuItem, TextField } from '@mui/material';
 
 // config
@@ -9,8 +11,8 @@ import { BOOKING_STATUS } from '../../../config';
 
 // ----------------------------------------------------------------------
 BookingListToolbar.propTypes = {
-  fromDate: PropTypes.string,
-  toDate: PropTypes.string,
+  fromDate: PropTypes.any,
+  toDate: PropTypes.any,
   bookingStatus: PropTypes.number,
   setFromDate: PropTypes.func,
   setToDate: PropTypes.func,
@@ -28,27 +30,35 @@ export default function BookingListToolbar({
   return (
     <Card sx={{ p: 3 }}>
       <Grid container spacing={3}>
-        <Grid item md={4}>
-          <DatePicker
-            label="Từ ngày"
-            value={fromDate}
-            onChange={(newValue) => {
-              setFromDate(newValue);
-            }}
-            renderInput={(params) => <TextField {...params} fullWidth />}
-          />
-        </Grid>
+        {AdapterDateFns && (
+          <Grid item md={4}>
+            <LocalizationProvider dateAdapter={AdapterDateFns} locale={vi}>
+              <DatePicker
+                label="Từ ngày"
+                value={fromDate}
+                onChange={(newValue) => {
+                  setFromDate(newValue);
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+          </Grid>
+        )}
 
-        <Grid item md={4}>
-          <DatePicker
-            label="Đến ngày"
-            value={toDate}
-            onChange={(newValue) => {
-              setToDate(newValue);
-            }}
-            renderInput={(params) => <TextField {...params} fullWidth />}
-          />
-        </Grid>
+        {AdapterDateFns && (
+          <Grid item md={4}>
+            <LocalizationProvider dateAdapter={AdapterDateFns} locale={vi}>
+              <DatePicker
+                label="Đến ngày"
+                value={toDate}
+                onChange={(newValue) => {
+                  setToDate(newValue);
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+          </Grid>
+        )}
 
         {BOOKING_STATUS.length > 0 && (
           <Grid item xs={8} md={4}>
