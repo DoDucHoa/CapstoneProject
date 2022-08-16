@@ -105,9 +105,12 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
       } else {
         await updateBrand(brandData.id, values.name, values.description, values.ownerId);
       }
-      reset();
       enqueueSnackbar(!isEdit ? 'Tạo mới thành công' : 'Cập nhật thành công');
-      if (!centerId) navigate(PATH_DASHBOARD.brand.list);
+
+      if (!centerId) {
+        reset();
+        navigate(PATH_DASHBOARD.brand.list);
+      }
     } catch (error) {
       console.error(error);
     }

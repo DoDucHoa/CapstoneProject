@@ -701,3 +701,20 @@ ALTER TABLE dbo.CustomerVoucherLog ADD FOREIGN KEY (center_id) REFERENCES [dbo].
 GO
 ALTER TABLE dbo.CustomerVoucherLog ADD FOREIGN KEY (voucher_code) REFERENCES [dbo].Vouchers(code)
 GO
+
+CREATE TABLE CancelLog
+(
+    id INT IDENTITY PRIMARY KEY,
+    booking_id INT NOT NULL,
+    center_id INT,
+    customer_id INT,
+    cancel_time DATETIME DEFAULT GETDATE(),
+    description NVARCHAR(256)
+)
+GO
+ALTER TABLE dbo.CancelLog ADD FOREIGN KEY (customer_id) REFERENCES [dbo].Customers(id)
+GO
+ALTER TABLE dbo.CancelLog ADD FOREIGN KEY (center_id) REFERENCES [dbo].PetCenters(id)
+GO
+ALTER TABLE dbo.CancelLog ADD FOREIGN KEY (booking_id) REFERENCES [dbo].Bookings(id)
+GO

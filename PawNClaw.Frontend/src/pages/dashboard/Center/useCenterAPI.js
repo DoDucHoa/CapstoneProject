@@ -1,4 +1,5 @@
 import axios from '../../../utils/axios';
+import { formatTime } from '../../../utils/formatTime';
 
 const URL = '/api/petcenters';
 
@@ -23,13 +24,23 @@ const getCenter = async (idCenter) => {
 const createCenter = async (centerData) => {
   const response = await axios.post(URL, {
     ...centerData,
+    checkin: formatTime(centerData.checkinUI),
+    checkout: formatTime(centerData.checkoutUI),
+    openTime: formatTime(centerData.openTimeUI),
+    closeTime: formatTime(centerData.closeTimeUI),
     brandId: centerData.brandInfo.id,
   });
   return response.data;
 };
 
 const updateCenter = async (centerData) => {
-  const response = await axios.put(`${URL}/for-admin`, centerData);
+  const response = await axios.put(`${URL}/for-admin`, {
+    ...centerData,
+    checkin: formatTime(centerData.checkinUI),
+    checkout: formatTime(centerData.checkoutUI),
+    openTime: formatTime(centerData.openTimeUI),
+    closeTime: formatTime(centerData.closeTimeUI),
+  });
   return response.status;
 };
 
