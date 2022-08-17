@@ -85,8 +85,8 @@ namespace PawNClaw.Business.Services
             Owner ownerToDb = new()
             {
                 Email = owner.UserName,
-                Name = owner.Name
-                //Gender = owner.Gender
+                Name = owner.Name,
+                Gender = owner.Gender
             };
 
             Account accountToDb = new()
