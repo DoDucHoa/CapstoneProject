@@ -2,11 +2,9 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 
 // @mui
-import { useTheme } from '@mui/material/styles';
 import { TableRow, TableCell, Typography, MenuItem } from '@mui/material';
 
 // components
-import Label from '../../../../components/Label';
 import Iconify from '../../../../components/Iconify';
 import { TableMoreMenu } from '../../../../components/table';
 import Image from '../../../../components/Image';
@@ -23,8 +21,7 @@ SupplyTableRow.propTypes = {
 };
 
 export default function SupplyTableRow({ row, onEditRow, onDeleteRow }) {
-  const theme = useTheme();
-  const { name, description, photoUrl, status, createDate } = row;
+  const { name, description, photoUrl, createDate } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -56,16 +53,6 @@ export default function SupplyTableRow({ row, onEditRow, onDeleteRow }) {
         <Typography variant="subtitle2" noWrap>
           {fVNDate(createDate)}
         </Typography>
-      </TableCell>
-
-      <TableCell align="center">
-        <Label
-          variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-          color={(status === false && 'error') || 'success'}
-          sx={{ textTransform: 'capitalize' }}
-        >
-          {status ? 'Hoạt động' : 'Đã khóa'}
-        </Label>
       </TableCell>
 
       <TableCell align="right">

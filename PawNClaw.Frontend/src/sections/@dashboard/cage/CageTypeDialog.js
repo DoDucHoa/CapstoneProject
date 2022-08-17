@@ -24,7 +24,7 @@ export default function CageTypeDialog({ centerId, open, onClose, selected, onSe
   const [cageTypeList, setCageTypeList] = useState([]);
 
   useEffect(() => {
-    getCageTypes(centerId).then((response) => setCageTypeList(response.data));
+    getCageTypes(centerId, filterName).then((response) => setCageTypeList(response.data));
   }, [centerId, filterName]);
 
   const onEnterPress = (value) => {

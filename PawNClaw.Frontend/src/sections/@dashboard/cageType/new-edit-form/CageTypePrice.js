@@ -1,32 +1,25 @@
-import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 // @mui
-import { Button, Divider, MenuItem, Stack, Typography } from '@mui/material';
+import { Divider, Stack, Typography } from '@mui/material';
 // hook form
-import { RHFSelect, RHFTextField } from '../../../../components/hook-form';
-// components
-// import Iconify from '../../../../components/Iconify';
-import { getPriceTypes } from '../../../../pages/dashboard/CageType/useCageTypeAPI';
+import { RHFTextField } from '../../../../components/hook-form';
 
-CageTypePrice.propTypes = {
-  createUser: PropTypes.number,
-};
+// ----------------------------------------------------------------------
 
-export default function CageTypePrice({ createUser }) {
+export default function CageTypePrice() {
   const { control } = useFormContext();
-  const [priceTypes, setPriceTypes] = useState([]);
+  // const [priceTypes, setPriceTypes] = useState([]);
 
-  useEffect(() => {
-    getPriceTypes()
-      .then((data) => setPriceTypes(data))
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+  // useEffect(() => {
+  //   getPriceTypes()
+  //     .then((data) => setPriceTypes(data))
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, []);
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: 'createPriceParameters',
   });

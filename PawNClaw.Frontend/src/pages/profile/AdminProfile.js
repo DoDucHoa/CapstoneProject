@@ -42,7 +42,10 @@ export default function AdminProfile() {
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Bắt buộc nhập'),
     email: Yup.string().required('Bắt buộc nhập').email(),
-    phone: Yup.string(),
+    phone: Yup.string().matches(
+      /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/,
+      'Số điện thoại không hợp lệ'
+    ),
     gender: Yup.number().required(),
     avatarUrl: Yup.mixed(),
     password: Yup.string().when('isChangingPassword', {

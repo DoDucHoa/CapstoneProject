@@ -22,7 +22,7 @@ const getStaffs = async (centerId, page, rowsPerPage, filterStatus, searchName) 
 
 const createStaff = async (staffData) => {
   const response = await axios.post(URL, staffData);
-  return response.data;
+  return response;
 };
 
 const updateStaff = async (idStaff, name, phone, gender) => {

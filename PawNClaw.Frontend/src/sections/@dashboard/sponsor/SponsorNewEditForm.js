@@ -55,6 +55,7 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
 
   const defaultValues = useMemo(
     () => ({
+      id: sponsorData?.id || null,
       title: sponsorData?.title || '',
       content: sponsorData?.content || '',
       duration: sponsorData?.duration || 0,
@@ -68,6 +69,7 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
       createDate: sponsorData?.createDate || new Date(),
       modifyDate: new Date(),
       brandInfo: sponsorData?.brand || null,
+      status: sponsorData?.status || true,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [sponsorData]
@@ -115,11 +117,14 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
           .catch(() => enqueueSnackbar('Số lượng quảng cáo đạt quá giới hạn trong tháng', { variant: 'error' }));
       } else {
         await updateSponsor(values);
-        enqueueSnackbar('Cập nhật thành công');
         reset();
+        enqueueSnackbar('Cập nhật thành công');
+        navigate(PATH_DASHBOARD.sponsor.list);
       }
     } catch (error) {
       console.error(error);
+      reset();
+      enqueueSnackbar('Có lỗi xảy ra, vui lòng thử lại sau!', { variant: 'error' });
     }
   };
 
@@ -188,16 +193,18 @@ export default function SponsorNewEditForm({ isEdit, sponsorData }) {
               </Grid>
 
               <Grid item xs={12}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <Typography>Thương hiệu</Typography>
-                  <Button
-                    onClick={handleOpen}
-                    sx={{ width: 100, ml: 5 }}
-                    variant="text"
-                    startIcon={<Iconify icon={brandInfo ? 'eva:edit-fill' : 'eva:plus-fill'} color="primary" />}
-                  >
-                    {brandInfo ? 'Thay đổi' : 'Thêm'}
-                  </Button>
+                  {!isEdit && (
+                    <Button
+                      onClick={handleOpen}
+                      sx={{ width: 100, ml: 5 }}
+                      variant="text"
+                      startIcon={<Iconify icon={brandInfo ? 'eva:edit-fill' : 'eva:plus-fill'} color="primary" />}
+                    >
+                      {brandInfo ? 'Thay đổi' : 'Thêm'}
+                    </Button>
+                  )}
                 </Box>
                 {brandInfo ? (
                   <BrandInfo brandName={brandInfo.name} ownerName={'Viet Hong'} />
