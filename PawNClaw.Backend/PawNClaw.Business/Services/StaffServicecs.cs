@@ -78,7 +78,7 @@ namespace PawNClaw.Business.Services
 
             if (!string.IsNullOrWhiteSpace(name))
             {
-                values = values.Where(x => name.Contains(x.Name.Trim()));
+                values = values.Where(x => name.ToLower().ToLower().Contains(x.Name.ToLower().Trim()));
             }
             values = status switch
             {

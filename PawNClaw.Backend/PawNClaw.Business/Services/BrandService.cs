@@ -63,6 +63,12 @@ namespace PawNClaw.Business.Services
         //Add
         public int Add(CreateBrandParameter brand)
         {
+
+            if (_brandRepository.GetAll(x => x.Name.ToLower().Equals(brand.Name.ToLower())).Count() > 0)
+            {
+                throw new Exception("Name is existed");
+            }
+
             Brand brandToDb = new()
             {
                 Name = brand.Name,
@@ -79,10 +85,9 @@ namespace PawNClaw.Business.Services
                 var id = brandToDb.Id;
                 return id;
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine("This is error: " + ex.Message);
-                return -1;
+                throw new Exception("Bad Request");
             }
         }
 

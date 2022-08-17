@@ -55,7 +55,10 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Bắt buộc nhập'),
     address: Yup.string().required('Bắt buộc nhập'),
-    phone: Yup.string().required('Bắt buộc nhập'),
+    phone: Yup.string().matches(
+      /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/,
+      'Số điện thoại không hợp lệ'
+    ),
     openTimeUI: Yup.string().nullable().required('Bắt buộc nhập'),
     closeTimeUI: Yup.string().nullable().required('Bắt buộc nhập'),
     description: Yup.string(),

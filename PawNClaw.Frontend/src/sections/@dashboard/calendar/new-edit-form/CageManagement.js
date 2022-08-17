@@ -118,7 +118,7 @@ export default function CageManagement({ statusId, centerId, isDesktop, handleCh
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={2}>
                     <Typography variant="caption" color="textSecondary">
-                      Tên pet
+                      Tên thú cưng
                     </Typography>
                     <Typography variant="body1">{pet.name}</Typography>
                   </Grid>

@@ -61,8 +61,8 @@ const unbanCage = async (idCage) => {
   return response.data;
 };
 
-const getCageTypes = async (centerId) => {
-  const response = await axios.get(`/api/cagetypes?CenterId=${centerId}`);
+const getCageTypes = async (centerId, typeName) => {
+  const response = await axios.get(`/api/cagetypes?CenterId=${centerId}&TypeName=${typeName}`);
   return response.data;
 };
 

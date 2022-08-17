@@ -102,9 +102,9 @@ namespace PawNClaw.API.Controllers
         }
 
         [HttpPut("customer/cancel-booking")]
-        public IActionResult CancelBookingForCus(int Id)
+        public async Task<IActionResult> CancelBookingForCus(int Id)
         {
-            var data = _bookingService.CancelBookingForCus(Id);
+            var data = await _bookingService.CancelBookingForCus(Id);
 
             if (data)
             {

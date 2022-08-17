@@ -60,14 +60,16 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                await _logService.AddLog(new ActionLogsParameter(){ 
-                    Id =  brand.CreateUser,
+                var data = _brandService.Add(brand);
+                await _logService.AddLog(new ActionLogsParameter()
+                {
+                    Id = brand.CreateUser,
                     Name = _accountService.GetAccountById(brand.CreateUser).Admin.Name,
-                    Target = "Brand "+brand.Name,
+                    Target = "Brand " + brand.Name,
                     Type = "Create",
                     Time = DateTime.Now,
                 });
-                return Ok(_brandService.Add(brand));
+                return Ok(data);
             }
             catch (Exception e)
             {
@@ -128,7 +130,7 @@ namespace PawNClaw.API.Controllers
             {
                 return Ok(_brandService.GetBrandByOwnerId(id));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex);
             }
