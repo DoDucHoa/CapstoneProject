@@ -37,7 +37,7 @@ import { TableEmptyRows, TableHeadCustom, TableNoData } from '../../../component
 import { SponsorTableRow } from '../../../sections/@dashboard/sponsor/list';
 
 // API
-import { getSponsors, banSponsor } from './useSponsorAPI';
+import { getSponsors, banSponsor, extendSponsor } from './useSponsorAPI';
 
 // ----------------------------------------------------------------------
 
@@ -52,11 +52,15 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 export default function SponsorList() {
+  // STATE
   const [tableData, setTableData] = useState([]);
   const [metadata, setMetadata] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
   const [selectIdAdmin, setSelectIdAdmin] = useState();
 
+  // HOOKS
+  const { themeStretch } = useSettings();
+  const navigate = useNavigate();
   const {
     page,
     order,
@@ -68,6 +72,7 @@ export default function SponsorList() {
     onChangeRowsPerPage,
   } = useTable({ defaultRowsPerPage: 10 });
 
+  // STARTUP
   const getSponsorData = async () => {
     const response = await getSponsors(page, rowsPerPage);
     const { data, metadata } = response;
@@ -79,6 +84,7 @@ export default function SponsorList() {
       brandName: sponsor.brand.name,
       endDate: sponsor.endDate,
       photoUrl: sponsor?.photos?.length > 0 ? sponsor?.photos[0].url : '',
+      ...sponsor,
     }));
 
     setTableData(sponsors);
@@ -90,19 +96,7 @@ export default function SponsorList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, rowsPerPage]);
 
-  const { themeStretch } = useSettings();
-
-  const navigate = useNavigate();
-
-  const handleEditRow = (id) => {
-    navigate(PATH_DASHBOARD.sponsor.edit(id));
-  };
-
-  const handleBanAdmin = async (id) => {
-    await banSponsor(id);
-    await getSponsorData();
-  };
-
+  // HANDLE FUNCTIONS
   const handleOpenBanDialog = (idAdmin) => {
     setSelectIdAdmin(idAdmin);
     setOpenDialog(true);
@@ -110,6 +104,31 @@ export default function SponsorList() {
 
   const handleCloseBanDialog = () => {
     setOpenDialog(false);
+  };
+
+  const handleEditRow = (id) => {
+    navigate(PATH_DASHBOARD.sponsor.edit(id));
+  };
+
+  const handleDeleteSponsor = async (id) => {
+    await banSponsor(id);
+    await getSponsorData();
+  };
+
+  const handleExtendSponsor = async (sponsorData) => {
+    const month = new Date(sponsorData.endDate).getMonth() + 1;
+    const year = new Date(sponsorData.endDate).getFullYear();
+
+    if (month === 12) {
+      const newYear = year + 1;
+      const newMonth = 1;
+      await extendSponsor({ ...sponsorData, year: newYear, month: newMonth });
+    } else {
+      const newMonth = month + 1;
+      await extendSponsor({ ...sponsorData, year, month: newMonth });
+    }
+
+    await getSponsorData();
   };
 
   const denseHeight = 72;
@@ -149,6 +168,7 @@ export default function SponsorList() {
                         row={row}
                         onEditRow={() => handleEditRow(row.id)}
                         onDeleteRow={() => handleOpenBanDialog(row.id)}
+                        onExtend={() => handleExtendSponsor(row)}
                       />
                     ))}
 
@@ -179,27 +199,29 @@ export default function SponsorList() {
           </Card>
         </Container>
       </Page>
-      <BanAdminDialog
+
+      <DeleteSponsorDialog
         open={openDialog}
         onClose={handleCloseBanDialog}
         idAdmin={selectIdAdmin}
-        handleBanAdmin={handleBanAdmin}
+        handleBanAdmin={handleDeleteSponsor}
       />
     </>
   );
 }
 
 // ----------------------------------------------------------------------
-BanAdminDialog.propTypes = {
+DeleteSponsorDialog.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
-  idAdmin: PropTypes.number,
-  handleBanAdmin: PropTypes.func,
+  idSponsor: PropTypes.number,
+  handleDeleteSponsor: PropTypes.func,
 };
+DeleteSponsorDialog.displayName = 'DeleteSponsorDialog';
 
-function BanAdminDialog({ open, onClose, idAdmin, handleBanAdmin }) {
+function DeleteSponsorDialog({ open, onClose, idSponsor, handleDeleteSponsor }) {
   const onConfirm = () => {
-    handleBanAdmin(idAdmin);
+    handleDeleteSponsor(idSponsor);
     onClose();
   };
 

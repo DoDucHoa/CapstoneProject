@@ -21,7 +21,7 @@ SupplyTableRow.propTypes = {
 };
 
 export default function SupplyTableRow({ row, onEditRow, onDeleteRow }) {
-  const { name, height, length, width, isSingle, photoUrl } = row;
+  const { name, height, length, width, isSingle, photoUrl, canDelete } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -60,6 +60,7 @@ export default function SupplyTableRow({ row, onEditRow, onDeleteRow }) {
           actions={
             <>
               <MenuItem
+                disabled={!canDelete}
                 onClick={() => {
                   onEditRow();
                   handleCloseMenu();
@@ -69,6 +70,7 @@ export default function SupplyTableRow({ row, onEditRow, onDeleteRow }) {
                 Sửa
               </MenuItem>
               <MenuItem
+                disabled={!canDelete}
                 onClick={() => {
                   onDeleteRow();
                   handleCloseMenu();

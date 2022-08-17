@@ -16,15 +16,18 @@ import 'package:pawnclaw_mobile_application/screens/booking_from_search_screen/m
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/choose_location_dialog.dart';
 
 import '../../../models/pet.dart';
+import '../../../models/transaction_details.dart';
 
 class FillInformationScreen extends StatefulWidget {
   final bool isSponsor;
   final int? centerId;
   final List<List<Pet>>? requests;
+  final TransactionDetails? transactionDetails;
   const FillInformationScreen({
     required this.isSponsor,
     this.centerId,
     this.requests,
+    this.transactionDetails,
     Key? key,
   }) : super(key: key);
 
@@ -72,12 +75,13 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
             ),
             leading: IconButton(
               onPressed: () {
-                if (widget.requests == null) {
+                if (widget.requests != null) {
+                  Navigator.pop(context);
+                } else {
                   BlocProvider.of<SearchBloc>(context)
                     ..add(BackToPetSelection(
                         (state as FillingInformation).requests));
-                } else
-                  Navigator.of(context).pop();
+                }
               },
               // => Navigator.of(context).pop(),
               icon: Icon(
@@ -348,7 +352,19 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                                           state.requests,
                                           from!,
                                           due!));
-                                } else {
+                                } else if (widget.transactionDetails != null){
+                                  print("fill info");
+                                   BlocProvider.of<SearchBloc>(context).add(
+                                    CheckReorder(
+                                        widget.centerId!,
+                                        widget.requests!,
+                                        from!,
+                                        due!,
+                                        customerId,
+                                        widget.transactionDetails!
+                                        ));
+                                }
+                                 else {
                                   BlocProvider.of<SearchBloc>(context).add(
                                       CheckCenter(
                                           (state as FillingInformation)
@@ -356,36 +372,34 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                                           state.requests,
                                           from!,
                                           due!,
-                                          customerId));
+                                          customerId,"check"));
                                 }
                               } else {
-                                BlocProvider.of<SearchBloc>(context).add(
-                                    CheckCenter(
-                                        widget.centerId!,
-                                        widget.requests!,
-                                        from!,
-                                        due!,
-                                        customerId));
-                                
-                            //      BlocProvider.of<SearchBloc>(context)
-                            // .add( CheckCenter(
-                            //             widget.centerId!,
-                            //             widget.requests!,
-                            //             from!,
-                            //             due!,
-                            //             customerId));
-                            // Navigator.of(context).push(MaterialPageRoute(
-                            //     builder: (_) => BlocProvider.value(
-                            //           value: BlocProvider.of<SearchBloc>(
-                            //               context)..add( CheckCenter(
-                            //             widget.centerId!,
-                            //             widget.requests!,
-                            //             from!,
-                            //             due!,
-                            //             customerId))
-                            //             ,
-                            //           child:SearchScreen(centerId: widget.centerId!, isSponsor: false,),
-                            //         )));
+                               
+                                // ScaffoldMessenger.of(context)
+                                //     .showSnackBar(SnackBar(
+                                //   content: Text('Booking updated'),
+                                // ));
+
+                                //      BlocProvider.of<SearchBloc>(context)
+                                // .add( CheckCenter(
+                                //             widget.centerId!,
+                                //             widget.requests!,
+                                //             from!,
+                                //             due!,
+                                //             customerId));
+                                // Navigator.of(context).push(MaterialPageRoute(
+                                //     builder: (_) => BlocProvider.value(
+                                //           value: BlocProvider.of<SearchBloc>(
+                                //               context)..add( CheckCenter(
+                                //             widget.centerId!,
+                                //             widget.requests!,
+                                //             from!,
+                                //             due!,
+                                //             customerId))
+                                //             ,
+                                //           child:SearchScreen(centerId: widget.centerId!, isSponsor: false,),
+                                //         )));
                               }
                             }
                           : () {},

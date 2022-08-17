@@ -249,6 +249,10 @@ export const navConfigForAdmin = [
         title: 'Chính sách',
         path: PATH_DASHBOARD.policy.root,
         icon: ICONS.policy,
+        children: [
+          { title: 'Kinh doanh', path: PATH_DASHBOARD.policy.owner },
+          { title: 'Cá nhân', path: PATH_DASHBOARD.policy.customer },
+        ],
       },
       {
         title: 'Log',

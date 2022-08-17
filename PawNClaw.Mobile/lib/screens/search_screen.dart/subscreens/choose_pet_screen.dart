@@ -6,10 +6,13 @@ import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
+import 'package:pawnclaw_mobile_application/models/account.dart';
 import 'package:pawnclaw_mobile_application/screens/home_screen/HomeScreen.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/pet_bubble.dart';
 import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/pet_requests_dialog.dart';
 
+import '../../../blocs/authentication/auth_bloc.dart';
+import '../../my_pet_screen/subscreens/add_pet_screen.dart';
 import '../components/pet_card.dart';
 
 class ChoosePetScreen extends StatefulWidget {
@@ -22,11 +25,27 @@ class ChoosePetScreen extends StatefulWidget {
 }
 
 class _ChoosePetScreenState extends State<ChoosePetScreen> {
+  Account? account;
+  @override
+  void initState() {
+    var authState = BlocProvider.of<AuthBloc>(context).state as Authenticated;
+    account = authState.user;
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return BlocBuilder<SearchBloc, SearchState>(
+    return
+    RefreshIndicator(
+      onRefresh: () async {
+        BlocProvider.of<PetBloc>(context).add(GetPets(account!));
+      },
+      
+      child:
+     BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
         return Scaffold(
           backgroundColor: frameColor,
@@ -252,9 +271,10 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
                       strokeWidth: 2,
                       dashPattern: [5, 2],
                       child: TextButton(
-                        onPressed: () {
-                          //create pet
-                        },
+                        onPressed:(() => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => AddPetScreen(
+                                            customerId: account!.id!)))),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -297,6 +317,6 @@ class _ChoosePetScreenState extends State<ChoosePetScreen> {
           ),
         );
       },
-    );
+    ));
   }
 }

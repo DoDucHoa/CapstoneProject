@@ -30,7 +30,8 @@ import '../components/booking_item_card.dart';
 class TransactionDetailsScreen extends StatefulWidget {
   final Booking booking;
   final Widget? redirect;
-  const TransactionDetailsScreen({required this.booking, required this.redirect, Key? key})
+  const TransactionDetailsScreen(
+      {required this.booking, required this.redirect, Key? key})
       : super(key: key);
 
   @override
@@ -98,7 +99,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
     //         TransactionBloc()..add(GetTransactionDetails(booking.id!)),
     //     child: BlocBuilder<TransactionBloc, TransactionState>(
     //         builder: (context, state) {
-    return (transactionDetails != null || isLoading)
+    return (transactionDetails != null && isLoading == false)
         // state is TransactionDetailsLoaded
         ? Scaffold(
             backgroundColor: Colors.white,
@@ -114,8 +115,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                   if (widget.redirect != null) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => widget.redirect!),
+                      MaterialPageRoute(builder: (context) => widget.redirect!),
                     );
                   } else {
                     Navigator.pop(context);
@@ -139,7 +139,6 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                                     review: review!,
                                     booking: booking,
                                   ));
-                          
                         } else {
                           //           BlocProvider.of<SearchBloc>(context)
                           // ..add(BackToPetSelection(
@@ -420,7 +419,10 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                                         centerId: booking.center!.id!,
                                         isSponsor: false,
                                         requests: requests,
-                                      )));
+                                        transactionDetails: transactionDetails,
+                                      ))).then((value) => setState(() {
+                                isLoading = false;
+                              }));
                         }
                       },
                       icon: Text(

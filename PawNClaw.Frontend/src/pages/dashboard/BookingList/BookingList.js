@@ -72,7 +72,7 @@ export default function BookingList() {
   // * --------------------------------------------------------------------------------------------------------------------------------------------
   // STARTUP
   const getBookings = async () => {
-    const { data, metadata } = await getBookingList(centerId, page, rowsPerPage, bookingStatus);
+    const { data, metadata } = await getBookingList(centerId, page, rowsPerPage, bookingStatus, fromDate, toDate);
 
     const bookingList = data.map((booking) => ({
       id: booking.id,
@@ -94,7 +94,7 @@ export default function BookingList() {
       setMetadata({});
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, rowsPerPage, bookingStatus, centerId]);
+  }, [page, rowsPerPage, bookingStatus, centerId, fromDate, toDate]);
 
   // * --------------------------------------------------------------------------------------------------------------------------------------------
   // REDUX FUNCTION
@@ -107,10 +107,10 @@ export default function BookingList() {
   };
 
   const handelChangeBookingStatus = () => {
-    setTimeout(async () => {
+    const getBook = setTimeout(async () => {
       await getBookings();
     }, 3000);
-    clearTimeout();
+    return () => clearTimeout(getBook);
   };
 
   const isNotFound = !(metadata.totalCount ? metadata.totalCount : 0);
@@ -162,7 +162,7 @@ export default function BookingList() {
               labelDisplayedRows={({ from, to, count }) => `${from} đến ${to} trên ${count}`}
               rowsPerPageOptions={[5, 10, 15, 20]}
               component="div"
-              count={metadata.totalCount ? metadata.totalCount : 0}
+              count={metadata?.totalCount ? metadata?.totalCount : 0}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={onChangePage}

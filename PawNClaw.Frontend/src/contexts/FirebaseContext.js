@@ -199,6 +199,7 @@ function AuthProvider({ children }) {
     setCenterInfoSession(null);
     setCenterIdSession(null);
     dispatch({ type: 'LOGOUT' });
+    // window.location.reload();
   };
 
   // create function upload photo to Firebase use async
@@ -334,7 +335,7 @@ const uploadPhotoToBackend = async (idActor, url, photoType) => {
 };
 
 const updatePhotoToBackend = async (id, url) => {
-  const response = await axios.post('/api/photos', {
+  const response = await axios.put('/api/photos', {
     id,
     url,
   });

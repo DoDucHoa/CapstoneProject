@@ -39,8 +39,16 @@ export default function SettingList() {
   }, []);
 
   const NewUserSchema = Yup.object().shape({
-    kmSearch: Yup.number().required('Bắt buộc nhập').typeError('Bắt buộc nhập'),
-    numOfSponsor: Yup.number().required('Bắt buộc nhập').typeError('Bắt buộc nhập'),
+    kmSearch: Yup.number()
+      .required('Bắt buộc nhập')
+      .typeError('Bắt buộc nhập')
+      .max(50, 'Không được quá 50km')
+      .min(5, 'Không được nhỏ hơn 5km'),
+    numOfSponsor: Yup.number()
+      .required('Bắt buộc nhập')
+      .typeError('Bắt buộc nhập')
+      .moreThan(0, 'Phải lớn hơn 0')
+      .max(15, 'Không được quá 15'),
   });
 
   const defaultValues = useMemo(
@@ -88,7 +96,7 @@ export default function SettingList() {
 
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={3}>
-            <Grid item xs={5}>
+            <Grid item xs={12} sm={4}>
               <Stack direction={'column'} sx={{ width: 1 }} spacing={3}>
                 <RHFTextField name="kmSearch" label="Phạm vi tìm trung tâm (km)" type="number" />
                 <RHFTextField name="numOfSponsor" label="Số lượng sponsor trong 1 tháng" type="number" />

@@ -10,9 +10,10 @@ import Iconify from '../../../../components/Iconify';
 
 ServicePrice.propTypes = {
   createUser: PropTypes.number,
+  isEdit: PropTypes.bool,
 };
 
-export default function ServicePrice({ createUser }) {
+export default function ServicePrice({ createUser, isEdit }) {
   const { control, watch, trigger } = useFormContext();
 
   const values = watch('servicePrice');
@@ -25,7 +26,7 @@ export default function ServicePrice({ createUser }) {
   const lastMaxWeight = () => {
     const lastPriceInList = values.at(-1);
 
-    return lastPriceInList.maxWeight;
+    return lastPriceInList?.maxWeight;
   };
 
   const handleAdd = async () => {
@@ -63,28 +64,37 @@ export default function ServicePrice({ createUser }) {
                 type="number"
                 disabled
               />
-              <RHFTextField name={`servicePrice[${index}].maxWeight`} label="Trọng lượng tối đa (Kg)" type="number" />
+              <RHFTextField
+                disabled={isEdit}
+                name={`servicePrice[${index}].maxWeight`}
+                label="Trọng lượng tối đa (Kg)"
+                type="number"
+              />
             </Stack>
 
-            <Button
-              disabled={index === 0 || index !== values.length - 1}
-              size="small"
-              color="error"
-              startIcon={<Iconify icon="eva:trash-2-outline" />}
-              onClick={() => handleRemove(index)}
-            >
-              Xóa
-            </Button>
+            {!isEdit && (
+              <Button
+                disabled={index === 0 || index !== values.length - 1}
+                size="small"
+                color="error"
+                startIcon={<Iconify icon="eva:trash-2-outline" />}
+                onClick={() => handleRemove(index)}
+              >
+                Xóa
+              </Button>
+            )}
           </Stack>
         ))}
       </Stack>
       <Divider sx={{ my: 3, borderStyle: 'dashed' }} />
 
-      <Stack spacing={2} direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'flex-start', md: 'center' }}>
-        <Button size="small" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleAdd}>
-          Thêm giá
-        </Button>
-      </Stack>
+      {!isEdit && (
+        <Stack spacing={2} direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'flex-start', md: 'center' }}>
+          <Button size="small" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleAdd}>
+            Thêm giá
+          </Button>
+        </Stack>
+      )}
 
       <Stack spacing={2} direction="column" alignItems="flex-start" marginTop={2} sx={{ width: 1 }}>
         <Typography variant="body2">

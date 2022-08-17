@@ -20,6 +20,7 @@ import CageTypeDetail from './CageTypeDetail';
 import CageTypePrice from './CageTypePrice';
 import CageTypeFoodSchedule from './CageTypeFoodSchedule';
 import CageTypePhoto from './CageTypePhoto';
+import { addTime } from '../../../../utils/formatTime';
 
 // ----------------------------------------------------------------------
 
@@ -51,7 +52,7 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
       Yup.object().shape({
         unitPrice: Yup.number().required('Bắt buộc nhập').moreThan(0, 'Phải lớn hơn 0').typeError('Bắt buộc nhập'),
         createUser: Yup.number().required(),
-        priceTypeCode: Yup.string().required('Bắt buộc nhập'),
+        // priceTypeCode: Yup.string().required('Bắt buộc nhập'),
       })
     ),
     foodSchedules: Yup.array().of(
@@ -86,12 +87,17 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
           createUser: accountInfo.id,
           priceTypeCode: 'PRICE-001',
         },
+        {
+          unitPrice: '',
+          createUser: accountInfo.id,
+          priceTypeCode: 'PRICE-002',
+        },
       ],
       foodSchedules: cageTypeData?.foodSchedules?.map((foodSchedules) => ({
         ...foodSchedules,
-        fromTime: new Date(foodSchedules.fromTimeDate),
+        fromTime: addTime(foodSchedules.fromTimeDate),
         fromTimeUI: new Date(foodSchedules.fromTimeDate),
-        toTime: new Date(foodSchedules.toTimeDate),
+        toTime: addTime(foodSchedules.toTimeDate),
         toTimeUI: new Date(foodSchedules.toTimeDate),
       })) || [
         {
@@ -168,7 +174,7 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
             <CageTypeFoodSchedule />
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
-              <Button to={PATH_DASHBOARD.cageType.list} color="error" variant="contained" component={RouterLink}>
+              <Button to={PATH_DASHBOARD.cageType.list} color="error" variant="text" component={RouterLink}>
                 Hủy
               </Button>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

@@ -105,9 +105,12 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
       } else {
         await updateBrand(brandData.id, values.name, values.description, values.ownerId);
       }
-      reset();
       enqueueSnackbar(!isEdit ? 'Tạo mới thành công' : 'Cập nhật thành công');
-      if (!centerId) navigate(PATH_DASHBOARD.brand.list);
+
+      if (!centerId) {
+        reset();
+        navigate(PATH_DASHBOARD.brand.list);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -209,7 +212,7 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
 
             <Stack direction="row" alignItems="flex-end" justifyContent="flex-end" spacing={3} sx={{ mt: 3 }}>
               {!centerId && (
-                <Button to={PATH_DASHBOARD.brand.list} color="error" variant="contained" component={RouterLink}>
+                <Button to={PATH_DASHBOARD.brand.list} color="error" variant="text" component={RouterLink}>
                   Hủy
                 </Button>
               )}

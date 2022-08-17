@@ -83,10 +83,9 @@ export default function CageList() {
     const response = await getCages(centerId, page, rowsPerPage, filterCageCode, filterIsOnline, selectedCageType);
     const { data, metadata } = response;
 
-    const cages = data.map((cage, index) => ({
+    const cages = data.map((cage) => ({
       code: cage.code,
       name: cage.name,
-      avatarUrl: `https://i.pravatar.cc/150?img=${index + 1}`,
       isSingle: cage.cageType.isSingle,
       typeName: cage.cageType.typeName,
       isOnline: cage.isOnline,
