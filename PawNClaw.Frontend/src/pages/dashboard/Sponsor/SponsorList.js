@@ -149,7 +149,7 @@ export default function SponsorList() {
                 to={PATH_DASHBOARD.sponsor.new}
                 startIcon={<Iconify icon={'eva:plus-fill'} />}
               >
-                Thêm mới quảng cáo
+                Thêm quảng cáo mới
               </Button>
             }
           />

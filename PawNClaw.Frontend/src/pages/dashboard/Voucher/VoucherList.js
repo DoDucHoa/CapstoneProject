@@ -148,7 +148,7 @@ export default function UserList() {
                 to={PATH_DASHBOARD.voucher.new}
                 startIcon={<Iconify icon={'eva:plus-fill'} />}
               >
-                Thêm mới voucher
+                Thêm mới chiết khấu
               </Button>
             }
           />

@@ -101,9 +101,9 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
         );
         await uploadPhotoToFirebase('brands', values.avatarUrl, brandId, 'brand');
       } else if (centerId) {
-        await updateBrand(centerInfo.id, values.name, values.description, accountInfo.id);
+        await updateBrand(centerInfo.id, values.name, values.description, accountInfo.id, accountInfo.id);
       } else {
-        await updateBrand(brandData.id, values.name, values.description, values.ownerId);
+        await updateBrand(brandData.id, values.name, values.description, values.ownerId, values.modifyUser);
       }
       enqueueSnackbar(!isEdit ? 'Tạo mới thành công' : 'Cập nhật thành công');
 

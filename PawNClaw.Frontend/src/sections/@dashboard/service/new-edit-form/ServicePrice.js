@@ -60,14 +60,14 @@ export default function ServicePrice({ createUser, isEdit }) {
               <RHFTextField name={`servicePrice[${index}].price`} label="Giá" type="number" />
               <RHFTextField
                 name={`servicePrice[${index}].minWeight`}
-                label="Trọng lượng tối thiểu (Kg)"
+                label="Trọng lượng tối thiểu (kg)"
                 type="number"
                 disabled
               />
               <RHFTextField
                 disabled={isEdit}
                 name={`servicePrice[${index}].maxWeight`}
-                label="Trọng lượng tối đa (Kg)"
+                label="Trọng lượng tối đa (kg)"
                 type="number"
               />
             </Stack>

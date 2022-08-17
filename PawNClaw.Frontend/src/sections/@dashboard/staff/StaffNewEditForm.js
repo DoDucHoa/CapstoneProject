@@ -49,7 +49,10 @@ export default function StaffNewEditForm({ isEdit, staffData }) {
     confirmPassword: Yup.string()
       .required('Bắt buộc nhập')
       .oneOf([Yup.ref('password'), null], 'Mật khẩu không khớp'),
-    phone: Yup.string(),
+    phone: Yup.string().matches(
+      /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/,
+      'Số điện thoại không hợp lệ'
+    ),
     createUser: Yup.number().required(),
     avatarUrl: Yup.mixed(),
   });
@@ -61,7 +64,7 @@ export default function StaffNewEditForm({ isEdit, staffData }) {
       phone: staffData?.idNavigation?.phone || '',
       createUser: staffData?.createUser || accountInfo.id,
       centerId: staffData?.centerId || centerId,
-      avatarUrl: staffData?.avatarUrl || '',
+      avatarUrl: staffData?.photos?.length > 0 ? staffData.photos[0].url : '',
       password: isEdit ? specialString : '',
       confirmPassword: isEdit ? specialString : '',
     }),
@@ -97,24 +100,26 @@ export default function StaffNewEditForm({ isEdit, staffData }) {
   const onSubmit = async () => {
     try {
       if (!isEdit) {
-        await Promise.all([
-          createStaff(values).then((staffId) => uploadPhotoToFirebase('staffs', values.avatarUrl, staffId, 'account')), // create account on Backend
-          register(values.userName, values.password), // create account on Firebase
-        ]);
+        createStaff(values) // create account on Backend
+          .then((response) => uploadPhotoToFirebase('staffs', values.avatarUrl, response.data, 'account'))
+          .then(() => {
+            register(values.userName, values.password); // create account on Firebase
+            enqueueSnackbar('Tạo mới thành công!');
+            navigate(PATH_DASHBOARD.staff.list);
+          })
+          .catch((error) => {
+            if (error.status === 400) {
+              enqueueSnackbar('Email đã tồn tại', { variant: 'error' });
+            }
+          });
       } else {
-        updateStaff(accountInfo.id, values.name, values.phone, values.gender);
-
-        // change password on Firebase
-        // if (values.password !== specialString) {
-        //   changePassword(values.password);
-        // }
+        await updateStaff(accountInfo.id, values.name, values.phone, values.gender);
+        enqueueSnackbar('Cập nhật thành công!');
+        navigate(PATH_DASHBOARD.staff.list);
+        reset();
       }
-
-      reset();
-      enqueueSnackbar(!isEdit ? 'Tạo mới thành công!' : 'Cập nhật thành công!');
-      navigate(PATH_DASHBOARD.staff.list);
     } catch (error) {
-      console.error(error);
+      console.error('Hello', error);
     }
   };
 
