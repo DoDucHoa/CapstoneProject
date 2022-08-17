@@ -66,7 +66,7 @@ namespace PawNClaw.Business.Services
 
             if (!String.IsNullOrEmpty(name))
             {
-                values = values.Where(x => x.Name.Contains(name));
+                values = values.Where(x => x.Name.ToLower().Contains(name.ToLower()));
             }
 
             if (status != null)
@@ -76,7 +76,7 @@ namespace PawNClaw.Business.Services
 
             if (brandName != null)
             {
-                values = values.Where(x => x.Brand.Name.Contains(brandName));
+                values = values.Where(x => x.Brand.Name.ToLower().Contains(brandName.ToLower()));
             }
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
