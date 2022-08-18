@@ -1,19 +1,27 @@
-﻿using PawNClaw.Data.Database;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
 using PawNClaw.Data.Interface;
 using PawNClaw.Data.Parameter;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PawNClaw.Business.Services
 {
     public class BrandService
     {
         private readonly IBrandRepository _brandRepository;
+        private readonly IPetCenterRepository _petCenterRepository;
 
-        public BrandService(IBrandRepository brandRepository)
+        private readonly ApplicationDbContext _db;
+
+        public BrandService(IBrandRepository brandRepository, IPetCenterRepository petCenterRepository,
+            ApplicationDbContext db)
         {
             _brandRepository = brandRepository;
+            _petCenterRepository = petCenterRepository;
+            _db = db;
         }
 
         //Get All
@@ -107,23 +115,41 @@ namespace PawNClaw.Business.Services
         }
 
         //Delete
-        public bool Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            try
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                var brandFromDb = _brandRepository.Get(id);
-                if (brandFromDb != null)
+                try
                 {
-                    brandFromDb.Status = false;
-                    _brandRepository.SaveDbChange();
-                    return true;
+                    var brandFromDb = _brandRepository.Get(id);
+
+                    var centers = _petCenterRepository.GetAll(x => x.BrandId == id && x.Status == true);
+
+                    foreach (var item in centers)
+                    {
+                        var center = _petCenterRepository.Get(item.Id);
+                        center.Status = false;
+
+                        _petCenterRepository.Update(center);
+                        await _petCenterRepository.SaveDbChangeAsync();
+                    }
+
+                    if (brandFromDb != null)
+                    {
+                        brandFromDb.Status = false;
+                        await _brandRepository.SaveDbChangeAsync();
+                        transaction.Commit();
+                        return true;
+                    }
                 }
-            }
-            catch
-            {
+                catch
+                {
+                    transaction.Rollback();
+                    throw new Exception();
+                }
+                transaction.Rollback();
                 return false;
             }
-            return false;
         }
 
         //Restore
