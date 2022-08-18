@@ -23,4 +23,6 @@ double mediumPadRate = 0.075;
 double smallPadRate = 0.05;
 double extraSmallPadRate = 0.025;
 
-
+//Search const ref from backend
+const double addHeight = 5;
+const double widthRatio = 2.5;

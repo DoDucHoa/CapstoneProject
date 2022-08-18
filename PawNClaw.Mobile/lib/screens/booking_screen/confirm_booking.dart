@@ -28,6 +28,7 @@ class ConfirmBooking extends StatefulWidget {
 }
 
 class _ConfirmBookingState extends State<ConfirmBooking> {
+  final TextEditingController _noteController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -252,8 +253,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                                 contextWidth: width,
                                                 text: "Đóng",
                                                 onPressed: () {
-                                                  Navigator.of(context)
-                                                      .pop();
+                                                  Navigator.of(context).pop();
                                                 },
                                               ),
                                             ],
@@ -485,7 +485,9 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                       Icon(Icons.keyboard_double_arrow_right),
                                     ],
                                   ))))
-                      : SizedBox(height: width * smallPadRate,),
+                      : SizedBox(
+                          height: width * smallPadRate,
+                        ),
                   Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: width * smallPadRate,
@@ -548,13 +550,12 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                                   height: 10,
                                                 ),
                                                 PrimaryButton(
-                                                contextWidth: width,
-                                                text: "Đóng",
-                                                onPressed: () {
-                                                  Navigator.of(context)
-                                                      .pop();
-                                                },
-                                              ),
+                                                  contextWidth: width,
+                                                  text: "Đóng",
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -726,6 +727,39 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                       ],
                     ),
                   ),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: width * smallPadRate,
+                    ),
+                    margin: EdgeInsets.symmetric(
+                      horizontal: width * mediumPadRate,
+                      vertical: width * smallPadRate,
+                    ),
+                    width: width,
+                    height: height * 0.065 * 2,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: Colors.white,
+                      border: Border.all(color: Colors.black12),
+                    ),
+                    child: TextField(
+                      controller: _noteController,
+                      maxLines: 2,
+                      maxLength: 50,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Ghi chú cho trung tâm",
+                        hintStyle: TextStyle(
+                          color: primaryFontColor,
+                          fontSize: width * regularFontRate * 0.8,
+                        ),
+                      ),
+                      onChanged: ((value) {
+                        state.booking.bookingCreateParameter!.customerNote = value;
+                      }),
+                    ),
+                  ),
+
                   Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: width * mediumPadRate,

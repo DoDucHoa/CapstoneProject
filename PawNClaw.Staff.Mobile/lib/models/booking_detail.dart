@@ -309,7 +309,7 @@ class IdNavigation {
   }
 }
 
-class BookingDetails {
+class BookingDetails { 
   int? bookingId;
   int? id;
   double? price;
@@ -929,7 +929,7 @@ class CageType {
         "id": id == null ? null : id,
         "typeName": typeName == null ? null : typeName,
         "isSingle": isSingle == null ? null : isSingle,
-        "photos": photos == null ? null : List<Photo>.from(photos!.map((x) => x.toJson())),
+        "photos": photos == null ? null : photos!.map((x) => x.toJson()).toList(),
     };
 }
 

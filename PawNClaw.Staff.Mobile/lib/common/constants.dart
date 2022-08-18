@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 //Color
 const primaryColor = Color(0xFF00AB55); // halt
-Color lightPrimaryColor = primaryColor.withOpacity(0.45);
+Color lightPrimaryColor = primaryColor.withOpacity(0.15);
 Color primaryBackgroundColor = primaryColor.withOpacity(0.15);
 Color backgroundColor = const Color(0xFFF4F4F4);
 Color frameColor = const Color(0xffF4F4F4); // GREY layout for ListView

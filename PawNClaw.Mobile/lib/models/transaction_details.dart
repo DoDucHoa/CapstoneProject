@@ -148,7 +148,7 @@ class TransactionDetails {
                       .cage!
                       .cageType!
                       .typeName!,
-                  imgUrl: "lib/assets/cage.png",
+                  imgUrl: act.photo!.first.url ?? "",
                   note: act.description != null
                       ? act.description!
                       : 'Cho ${pet.name} ăn'),
@@ -180,7 +180,7 @@ class TransactionDetails {
                         .first
                         .supply!
                         .name!,
-                    imgUrl: "lib/assets/cage.png",
+                    imgUrl: act.photo!.first.url ?? "",
                     note: act.description != null
                         ? act.description!
                         : 'Không có chú thích'),
@@ -211,7 +211,7 @@ class TransactionDetails {
                         .first
                         .service!
                         .description!,
-                    imgUrl: "lib/assets/cage.png",
+                    imgUrl: act.photo!.first.url ?? "",
                     note: act.description != null
                         ? act.description!
                         : 'Không có chú thích'),

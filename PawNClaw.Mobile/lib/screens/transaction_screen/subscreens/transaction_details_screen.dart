@@ -9,6 +9,7 @@ import 'package:im_stepper/stepper.dart';
 import 'package:pawnclaw_mobile_application/blocs/pet/pet_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/transaction/transaction_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
+import 'package:pawnclaw_mobile_application/common/components/primary_button.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
 import 'package:pawnclaw_mobile_application/models/booking.dart';
 import 'package:pawnclaw_mobile_application/models/review.dart';
@@ -25,6 +26,7 @@ import 'package:pawnclaw_mobile_application/screens/transaction_screen/subscreen
 
 import '../../../blocs/search/search_bloc.dart';
 import '../../../models/pet.dart';
+import '../../../repositories/booking/booking_repository.dart';
 import '../components/booking_item_card.dart';
 
 class TransactionDetailsScreen extends StatefulWidget {
@@ -101,372 +103,520 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
     //         builder: (context, state) {
     return (transactionDetails != null && isLoading == false)
         // state is TransactionDetailsLoaded
-        ? Scaffold(
-            backgroundColor: Colors.white,
-            appBar: AppBar(
-              elevation: 0,
-              backgroundColor: Colors.white,
-              leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: Colors.black,
-                ),
-                onPressed: () {
-                  if (widget.redirect != null) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => widget.redirect!),
-                    );
-                  } else {
-                    Navigator.pop(context);
-                  }
-                },
-              ),
-              actions: [
-                Container(
-                  margin: EdgeInsets.only(right: width * extraSmallPadRate),
-                  child: TextButton(
-                      onPressed: () async {
-                        if (booking.statusId == 3) {
-                          var review = transactionDetails!.review;
-                          print(booking.rating);
-                          if (review == null) {
-                            review = Review(rating: 0, bookingId: booking.id!);
-                          }
-                          showDialog(
-                              context: context,
-                              builder: (context) => ReviewDialog(
-                                    review: review!,
-                                    booking: booking,
-                                  ));
-                        } else {
-                          //           BlocProvider.of<SearchBloc>(context)
-                          // ..add(BackToPetSelection(
-                          //     (state as SearchCompleted).requests));
-                          // Navigator.of(context).push(MaterialPageRoute(
-                          //     builder: (_) => BlocProvider.value(
-                          //           value: BlocProvider.of<SearchBloc>(
-                          //               context)
-                          //             ..add(
-                          //                 ConfirmRequest(requests, -1)),
-                          //           child:SearchScreen(centerId: booking.center!.id!, isSponsor: false,),
-                          //         )));
-                          // }
-                        }
-                      },
-                      child: Text(
-                        booking.statusId == 3
-                            ? transactionDetails!.review != null
-                                ? "Đã đánh giá"
-                                : "Đánh giá"
-                            : '',
-                        style: TextStyle(
-                            color: booking.statusId == 3
-                                ? transactionDetails!.review != null
-                                    ? Colors.black
-                                    : primaryColor
-                                : primaryColor),
-                      )),
-                )
-              ],
-            ),
-            body: SingleChildScrollView(
-                child: Column(
-                    // crossAxisAlignment: CrossAxisAlignment.start,
-                    // mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: width * smallPadRate),
-                    height: height * 0.10,
-                    decoration: BoxDecoration(
-                      // borderRadius: BorderRadius.only(
-                      //   bottomLeft: Radius.circular(25),
-                      //   bottomRight: Radius.circular(25),
-                      // ),
-                      color: Colors.white,
+        ? RefreshIndicator(
+            onRefresh: () async {
+              setState(() {
+                isLoading = true;
+              });
+              await TransactionRepository()
+                  .getTransactionDetails(booking.id!)
+                  .then((value) {
+                setState(() {
+                  transactionDetails = value;
+                  isLoading = false;
+                });
+              });
+            },
+            child: Scaffold(
+                backgroundColor: Colors.white,
+                appBar: AppBar(
+                  elevation: 0,
+                  backgroundColor: Colors.white,
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Colors.black,
                     ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        (booking.center!.getThumbnail() == null)
-                            ? CircleAvatar(
-                                radius: height * 0.04,
-                                backgroundColor: lightPrimaryColor,
-                                backgroundImage:
-                                    AssetImage('lib/assets/vet-ava.png'),
-                              )
-                            : CircleAvatar(
-                                radius: height * 0.04,
-                                backgroundColor: lightPrimaryColor,
-                                backgroundImage: NetworkImage(
-                                    booking.center!.getThumbnail()!.url!),
-                              ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: width * smallPadRate),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                height: width * regularFontRate,
-                                child: Text(
-                                  widget.booking.center!.name!,
-                                  style: TextStyle(
-                                      fontSize: width * regularFontRate,
-                                      fontWeight: FontWeight.w500,
-                                      color: primaryFontColor,
-                                      height: 1),
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  children: [
-                                    WidgetSpan(
-                                      child: Icon(
-                                        Icons.location_on_rounded,
-                                        size: width * regularFontRate,
-                                        color: primaryColor,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text:
-                                          widget.booking.center!.shortAddress(),
-                                      style: TextStyle(
-                                        color: lightFontColor,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: width * smallFontRate,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                    onPressed: () {
+                      if (widget.redirect != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => widget.redirect!),
+                        );
+                      } else {
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                  actions: [
+                    Container(
+                      margin: EdgeInsets.only(right: width * extraSmallPadRate),
+                      child: TextButton(
+                          onPressed: () async {
+                            if (booking.statusId == 3) {
+                              var review = transactionDetails!.review;
+                              print(booking.rating);
+                              if (review == null) {
+                                review =
+                                    Review(rating: 0, bookingId: booking.id!);
+                              }
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => ReviewDialog(
+                                        review: review!,
+                                        booking: booking,
+                                      ));
+                            } else {
+                              //           BlocProvider.of<SearchBloc>(context)
+                              // ..add(BackToPetSelection(
+                              //     (state as SearchCompleted).requests));
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (_) => BlocProvider.value(
+                              //           value: BlocProvider.of<SearchBloc>(
+                              //               context)
+                              //             ..add(
+                              //                 ConfirmRequest(requests, -1)),
+                              //           child:SearchScreen(centerId: booking.center!.id!, isSponsor: false,),
+                              //         )));
+                              // }
+                            }
+                          },
+                          child: Text(
+                            booking.statusId == 3
+                                ? transactionDetails!.review != null
+                                    ? "Đã đánh giá"
+                                    : "Đánh giá"
+                                : '',
+                            style: TextStyle(
+                                color: booking.statusId == 3
+                                    ? transactionDetails!.review != null
+                                        ? Colors.black
+                                        : primaryColor
+                                    : primaryColor),
+                          )),
+                    )
+                  ],
+                ),
+                body: SingleChildScrollView(
+                    child: Column(
+                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        // mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: width * smallPadRate),
+                        height: height * 0.10,
+                        decoration: BoxDecoration(
+                          // borderRadius: BorderRadius.only(
+                          //   bottomLeft: Radius.circular(25),
+                          //   bottomRight: Radius.circular(25),
+                          // ),
+                          color: Colors.white,
                         ),
-                        Expanded(child: SizedBox()),
-                        Container(
-                            height: 35,
-                            width: 35,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: primaryColor),
-                            child: IconButton(
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) => Dialog(
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(15)),
-                                              ),
-                                              padding: EdgeInsets.all(20),
-                                              width: width * 0.5,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Container(
-                                                    padding: EdgeInsets.all(15),
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color:
-                                                                disableColor),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10)),
-                                                    child: Text(
-                                                      booking.center!.phone!,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          fontSize: 18),
-                                                    ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            (booking.center!.getThumbnail() == null)
+                                ? CircleAvatar(
+                                    radius: height * 0.04,
+                                    backgroundColor: lightPrimaryColor,
+                                    backgroundImage:
+                                        AssetImage('lib/assets/vet-ava.png'),
+                                  )
+                                : CircleAvatar(
+                                    radius: height * 0.04,
+                                    backgroundColor: lightPrimaryColor,
+                                    backgroundImage: NetworkImage(
+                                        booking.center!.getThumbnail()!.url!),
+                                  ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: width * smallPadRate),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    height: width * regularFontRate,
+                                    child: Text(
+                                      widget.booking.center!.name!,
+                                      style: TextStyle(
+                                          fontSize: width * regularFontRate,
+                                          fontWeight: FontWeight.w500,
+                                          color: primaryFontColor,
+                                          height: 1),
+                                    ),
+                                  ),
+                                  RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        WidgetSpan(
+                                          child: Icon(
+                                            Icons.location_on_rounded,
+                                            size: width * regularFontRate,
+                                            color: primaryColor,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: widget.booking.center!
+                                              .shortAddress(),
+                                          style: TextStyle(
+                                            color: lightFontColor,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: width * smallFontRate,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(child: SizedBox()),
+                            Container(
+                                height: 35,
+                                width: 35,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50),
+                                    color: primaryColor),
+                                child: IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) => Dialog(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                15)),
                                                   ),
-                                                  // SizedBox(
-                                                  //   height: 10,
-                                                  // ),
+                                                  padding: EdgeInsets.all(20),
+                                                  width: width * 0.5,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Container(
+                                                        padding:
+                                                            EdgeInsets.all(15),
+                                                        decoration: BoxDecoration(
+                                                            border: Border.all(
+                                                                color:
+                                                                    disableColor),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10)),
+                                                        child: Text(
+                                                          booking
+                                                              .center!.phone!,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              fontSize: 18),
+                                                        ),
+                                                      ),
+                                                      // SizedBox(
+                                                      //   height: 10,
+                                                      // ),
 
-                                                  Container(
-                                                    //padding: EdgeInsets.all(5),
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color:
-                                                                primaryColor),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10)),
-                                                    child: IconButton(
-                                                      onPressed: () async {
-                                                        final data =
-                                                            ClipboardData(
-                                                                text: booking
-                                                                    .center!
-                                                                    .phone!);
-                                                        Clipboard.setData(data);
+                                                      Container(
+                                                        //padding: EdgeInsets.all(5),
+                                                        decoration: BoxDecoration(
+                                                            border: Border.all(
+                                                                color:
+                                                                    primaryColor),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10)),
+                                                        child: IconButton(
+                                                          onPressed: () async {
+                                                            final data =
+                                                                ClipboardData(
+                                                                    text: booking
+                                                                        .center!
+                                                                        .phone!);
+                                                            Clipboard.setData(
+                                                                data);
 
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        final getdata =
-                                                            await Clipboard
-                                                                .getData(
-                                                                    'text/plain');
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(SnackBar(
-                                                                content: Text(
-                                                                    'Đã sao chép: ' +
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            final getdata =
+                                                                await Clipboard
+                                                                    .getData(
+                                                                        'text/plain');
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(SnackBar(
+                                                                    content: Text('Đã sao chép: ' +
                                                                         getdata!
                                                                             .text
                                                                             .toString())));
-                                                      },
-                                                      icon: Icon(Iconsax
-                                                          .document_copy),
-                                                      color: primaryColor,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ));
-                                },
-                                icon: Icon(
-                                  Iconsax.call5,
-                                  color: Colors.white,
-                                  size: 18,
-                                ))),
-                      ],
-                    ),
-                  ),
-                  BookingInfoCard(
-                    booking: booking,
-                    details: transactionDetails!,
-                  ),
-                  Container(
-                      height: width * (1 - regularPadRate),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              margin: EdgeInsets.only(top: lineLength - 20),
-                              child: IconStepper(
-                                icons: buildIcon(statusId),
-                                // onStepReached: (index) => setState(() {
-                                //   currentstatus = index;
-                                // }),
-                                activeStep: statusId, // - 1,
-                                direction: Axis.vertical,
-                                lineLength: lineLength,
-                                scrollingDisabled: true,
-                                alignment: Alignment.topLeft,
-                                stepPadding: 0,
-                                stepRadius: 18,
-                                activeStepBorderPadding: 0,
-                                lineColor: lightFontColor,
-                                enableNextPreviousButtons: false,
-                                activeStepColor: primaryBackgroundColor,
-                                stepColor: Colors.white,
-                                activeStepBorderColor: Colors.white,
-                                lineDotRadius: 0.7,
-                                stepReachedAnimationEffect: Curves.easeIn,
-                              )),
-                          buildStatusCard(
-                              statusId, width, transactionDetails!, booking),
-                          //     Stepper(
-                          //       onStepTapped: (value) => setState(() {
-                          //         currentstatus = value;
-                          //       }),
-
-                          //       currentStep: currentstatus,
-                          //   steps: [
-                          //     Step(title: Text(''), content: Text('Đặt lich thành công'),state: (currentstatus >= 0)? Stepcomplete:Stepindexed, isActive: (currentstatus >= 0)?true:false),
-                          //     Step(title: Text(''), content: Text('Đặt lich thành công'),state:(currentstatus > 0)? Stepcomplete:Stepindexed, isActive: (currentstatus > 0)?true:false),
-                          //     Step(title: Text(''), content: Text('Đặt lich thành công'),state: (currentstatus > 1)? Stepcomplete:Stepindexed, isActive: (currentstatus > 1)?true:false),
-                          //     Step(title: Text(''), content: Text('Đặt lich thành công'),state: (currentstatus > 2)? Stepcomplete:Stepindexed, isActive: (currentstatus > 2)?true:false)
-                          //   ],
-                          // )
-                        ],
-                      )),
-                  if (booking.statusId == 3)
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                          elevation: 0,
-                          onPrimary: primaryColor,
-                          padding: EdgeInsets.all(0)),
-                      onPressed: () async {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        var customePets = await PetRepository()
-                            .getPetsByCustomer(customerId: booking.customerId!);
-
-                        if (customePets != null) {
-                          List<List<Pet>> requests =
-                              transactionDetails!.idsToPetRequest(customePets);
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SearchScreen(
-                                        centerId: booking.center!.id!,
-                                        isSponsor: false,
-                                        requests: requests,
-                                        transactionDetails: transactionDetails,
-                                      ))).then((value) => setState(() {
-                                isLoading = false;
-                              }));
-                        }
-                      },
-                      icon: Text(
-                        'Đặt lại đơn hàng này',
-                        style: TextStyle(
-                            color: primaryColor, fontSize: 15, height: 1),
+                                                          },
+                                                          icon: Icon(Iconsax
+                                                              .document_copy),
+                                                          color: primaryColor,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ));
+                                    },
+                                    icon: Icon(
+                                      Iconsax.call5,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ))),
+                          ],
+                        ),
                       ),
-                      label: Icon(Icons.keyboard_double_arrow_right_sharp),
-                    ),
-                  buildSeperator(size),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: height * extraSmallPadRate),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "THÔNG TIN CHUỒNG",
+                      BookingInfoCard(
+                        booking: booking,
+                        details: transactionDetails!,
+                      ),
+                      Container(
+                          height: width * (1 - regularPadRate),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                  margin: EdgeInsets.only(top: lineLength - 20),
+                                  child: IconStepper(
+                                    icons: buildIcon(statusId),
+                                    // onStepReached: (index) => setState(() {
+                                    //   currentstatus = index;
+                                    // }),
+                                    activeStep: statusId, // - 1,
+                                    direction: Axis.vertical,
+                                    lineLength: lineLength,
+                                    scrollingDisabled: true,
+                                    alignment: Alignment.topLeft,
+                                    stepPadding: 0,
+                                    stepRadius: 18,
+                                    activeStepBorderPadding: 0,
+                                    lineColor: lightFontColor,
+                                    enableNextPreviousButtons: false,
+                                    activeStepColor: primaryBackgroundColor,
+                                    stepColor: Colors.white,
+                                    activeStepBorderColor: Colors.white,
+                                    lineDotRadius: 0.7,
+                                    stepReachedAnimationEffect: Curves.easeIn,
+                                  )),
+                              buildStatusCard(statusId, width,
+                                  transactionDetails!, booking),
+                              //     Stepper(
+                              //       onStepTapped: (value) => setState(() {
+                              //         currentstatus = value;
+                              //       }),
+
+                              //       currentStep: currentstatus,
+                              //   steps: [
+                              //     Step(title: Text(''), content: Text('Đặt lich thành công'),state: (currentstatus >= 0)? Stepcomplete:Stepindexed, isActive: (currentstatus >= 0)?true:false),
+                              //     Step(title: Text(''), content : Text('Đặt lich thành công'),state:(currentstatus > 0)? Stepcomplete:Stepindexed, isActive: (currentstatus > 0)?true:false),
+                              //     Step(title: Text(''), content: Text('Đặt lich thành công'),state: (currentstatus > 1)? Stepcomplete:Stepindexed, isActive: (currentstatus > 1)?true:false),
+                              //     Step(title: Text(''), content: Text('Đặt lich thành công'),state: (currentstatus > 2)? Stepcomplete:Stepindexed, isActive: (currentstatus > 2)?true:false)
+                              //   ],
+                              // )
+                            ],
+                          )),
+                      if (booking.statusId! > 2)
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.white,
+                              elevation: 0,
+                              onPrimary: primaryColor,
+                              padding: EdgeInsets.all(0)),
+                          onPressed: () async {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            var customePets = await PetRepository()
+                                .getPetsByCustomer(
+                                    customerId: booking.customerId!);
+
+                            if (customePets != null) {
+                              List<List<Pet>> requests = transactionDetails!
+                                  .idsToPetRequest(customePets);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SearchScreen(
+                                            centerId: booking.center!.id!,
+                                            isSponsor: false,
+                                            requests: requests,
+                                            transactionDetails:
+                                                transactionDetails,
+                                          ))).then((value) => setState(() {
+                                    isLoading = false;
+                                  }));
+                            }
+                          },
+                          icon: Text(
+                            'Đặt lại đơn hàng này',
                             style: TextStyle(
-                              color: primaryFontColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: width * regularFontRate,
-                            ),
+                                color: primaryColor, fontSize: 15, height: 1),
                           ),
-                          ListView.separated(
-                            itemBuilder: (context, index) => BookingCageCard(
-                                booking: booking,
-                                bookingDetails:
-                                    transactionDetails!.bookingDetails![index],
-                                center: booking.center!),
-                            itemCount:
-                                transactionDetails!.bookingDetails!.length,
-                            separatorBuilder:
-                                (BuildContext context, int index) => SizedBox(
-                              height: 8,
-                            ),
-                            physics: ClampingScrollPhysics(),
-                            shrinkWrap: true,
-                          )
-                        ]),
-                  ),
-                  buildPetCards(transactionDetails!, size, booking),
-                  buildSeperator(size)
-                ])))
+                          label: Icon(Icons.keyboard_double_arrow_right_sharp),
+                        ),
+                      if (booking.statusId! == 1)
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.white,
+                              elevation: 0,
+                              onPrimary: primaryColor,
+                              padding: EdgeInsets.all(0)),
+                          onPressed: () async {
+                            showDialog(
+                                context: context,
+                                builder: ((context) => AlertDialog(
+                                      title: Text('Xác nhận hủy đơn hàng'),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      content: Text(
+                                          'Bạn có chắc chắn muốn hủy đơn hàng này không?'),
+                                      actions: <Widget>[
+                                        IconButton(
+                                          icon:
+                                              Icon(Icons.info_outline_rounded, color: Colors.red,),
+                                          onPressed: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: ((context) => Dialog(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10)),
+                                                      child: Container(
+                                                        padding: EdgeInsets.all(width*smallPadRate),
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Text(
+                                                              "Chính sách hủy đơn hàng",
+                                                              style: TextStyle(
+                                                                  fontSize: 18,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700, height: 1.4),
+                                                            ),
+                                                            SizedBox(height: width*extraSmallPadRate,),
+                                                            Text(
+                                                                "Thật tiếc khi chúng tôi không mang lại trải nghiệm tốt nhất cho bạn. Nếu xảy ra sự cố ngoài ý muốn, hãy thử trao đổi với trung tâm để giải quyết một cách thỏa đáng nhất. \nNếu bạn vẫn muốn hủy đơn hàng, hãy nhớ rằng bạn chỉ có thể hủy đơn hàng 24h trước giờ checkin. Sau khoảng thời gian đó, chúng tôi sẽ tính hành vi này là vi phạm và bạn sẽ bị trừ điểm trong hệ thống vì đã gây bất lợi cho đối tác của chúng tôi. Khi bạn vi phạm quá số lần cho phép, chúng tôi sẽ khóa tài khoản của bạn vĩnh viễn.",
+                                                                style: TextStyle(
+                                                                    fontSize: 15,
+                                                                    height: 1.4,
+                                                                    ),textAlign: TextAlign.justify,),
+                                                            TextButton(
+                                                                onPressed: () =>
+                                                                    Navigator.pop(
+                                                                        context),
+                                                                child: Text(
+                                                                  "Đồng ý",
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          primaryColor),
+                                                                )),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    )));
+                                          },
+                                        ),
+                                        
+                                        TextButton(
+                                          child: Text('Hủy'),
+                                          style: TextButton.styleFrom(
+                                            primary: lightFontColor,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: Text('Xác nhận'),
+                                          style: TextButton.styleFrom(
+                                            primary: Colors.red,
+                                          ),
+                                          onPressed: () async {
+                                            Navigator.of(context).pop();
+                                            setState(() {
+                                              isLoading = true;
+                                            });
+                                            String result =
+                                                await BookingRepository()
+                                                    .cancelBooking(booking.id!);
+                                            
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text((result == "200")
+                                                  ? 'Đã hủy đơn hàng'
+                                                  : "Không thể hủy đơn hàng"),
+                                            ));
+                                            setState(() {
+                                              isLoading = false;
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    )));
+                          },
+                          icon: Text(
+                            'Hủy đơn hàng này',
+                            style: TextStyle(
+                                color: Colors.red, fontSize: 15, height: 1),
+                          ),
+                          label: Text(
+                            '!',
+                            style: TextStyle(
+                                color: Colors.red, fontSize: 15, height: 1),
+                          ),
+                        ),
+                      buildSeperator(size),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: height * extraSmallPadRate),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "THÔNG TIN CHUỒNG",
+                                style: TextStyle(
+                                  color: primaryFontColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: width * regularFontRate,
+                                ),
+                              ),
+                              ListView.separated(
+                                itemBuilder: (context, index) =>
+                                    BookingCageCard(
+                                        booking: booking,
+                                        bookingDetails: transactionDetails!
+                                            .bookingDetails![index],
+                                        center: booking.center!),
+                                itemCount:
+                                    transactionDetails!.bookingDetails!.length,
+                                separatorBuilder:
+                                    (BuildContext context, int index) =>
+                                        SizedBox(
+                                  height: 8,
+                                ),
+                                physics: ClampingScrollPhysics(),
+                                shrinkWrap: true,
+                              )
+                            ]),
+                      ),
+                      buildPetCards(transactionDetails!, size, booking),
+                      buildSeperator(size)
+                    ]))),
+          )
         : Center(
             child: LoadingIndicator(loadingText: 'Vui lòng đợi'),
           );
