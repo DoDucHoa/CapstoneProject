@@ -51,13 +51,18 @@ namespace PawNClaw.Data.Repository
         {
             try
             {
-                var staff = _dbSet.FirstOrDefault(x => x.Id == updateStaffParameter.Id);
-                var account = _accountRepository.GetFirstOrDefault(x => x.Id == updateStaffParameter.Id);
+                var staff = _dbSet.Find(updateStaffParameter.Id);
+                var account = _accountRepository.Get(updateStaffParameter.Id);
 
                 staff.ModifyDate = DateTime.Now;
                 staff.ModifyUser = updateStaffParameter.ModifyUser;
                 staff.Name = updateStaffParameter.Name;
                 
+
+                if (_accountRepository.GetAll(x => x.Phone.Equals(updateStaffParameter.Phone)).Count() > 0)
+                {
+                    throw new Exception("Cannot Update New Phone !!!");
+                }
                 account.Phone = updateStaffParameter.Phone;
                 if(updateStaffParameter.Status != null)
                 {

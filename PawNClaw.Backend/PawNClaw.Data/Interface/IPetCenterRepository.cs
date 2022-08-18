@@ -27,5 +27,7 @@ namespace PawNClaw.Data.Interface
         public PetCenter GetPetCenterById(int id);
 
         public IEnumerable<PetCenter> GetPetCentersForAdmin();
+
+        public PetCenter CheckCenterForCreate(PetCenter petCenter, Location location);
     }
 }
