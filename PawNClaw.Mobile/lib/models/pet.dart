@@ -235,3 +235,27 @@ class PetHealthHistories {
         "booking": booking,
       };
 }
+
+class PetSizeCage {
+  double? _height;
+  double? _width;
+  bool? _isSingle;
+
+  PetSizeCage(
+    double? height,
+    double? width,
+    bool? isSingle,
+  ){
+    _height = height;
+    _width = width;
+    _isSingle = isSingle;
+  }
+
+  bool? get isSingle => _isSingle;
+  set isSingle(bool? isSingle) => _isSingle = isSingle;
+  double? get width => _width;
+  set width(double? width) => _width = width;
+  double? get height => _height;
+  set height(double? height) => _height = height;
+
+}

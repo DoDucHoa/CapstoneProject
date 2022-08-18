@@ -90,17 +90,16 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         event.transactionDetails.supplyOrders!.forEach((supplyOrder) {
           var supply = event.center.supplies!
               .firstWhere((supply) => supply.id == supplyOrder.supplyId);
-            if (supply.quantity! >= supplyOrder.quantity!) {
-               booking.supplyOrderCreateParameters!.add(SupplyOrderCreateParameters(
-            supplyId: supplyOrder.supplyId,
-            quantity: supplyOrder.quantity,
-            sellPrice: supply.sellPrice!,
-            totalPrice: supply.sellPrice! * supplyOrder.quantity!,
-            petId: supplyOrder.petId,
-          ));
-            }
-
-         
+          if (supply.quantity! >= supplyOrder.quantity!) {
+            booking.supplyOrderCreateParameters!
+                .add(SupplyOrderCreateParameters(
+              supplyId: supplyOrder.supplyId,
+              quantity: supplyOrder.quantity,
+              sellPrice: supply.sellPrice!,
+              totalPrice: supply.sellPrice! * supplyOrder.quantity!,
+              petId: supplyOrder.petId,
+            ));
+          }
         });
       }
 
@@ -266,5 +265,18 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         // }
       },
     );
+    on<ChangeCage>((event, emit) {
+      BookingRequestModel booking = (state as BookingUpdated).booking;
+      booking.bookingDetailCreateParameters!.removeWhere(
+        (element) => element.petId.toString() == event.replacePetId.toString(),
+      );
+      booking.bookingDetailCreateParameters!
+          .firstWhere(
+            (element) => element.cageCode == event.cageCode,
+          )
+          .petId = event.replacePetId;
+
+      emit(BookingUpdated(booking: booking));
+    });
   }
 }

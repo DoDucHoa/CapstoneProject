@@ -29,4 +29,25 @@ class BookingRepository implements BaseBookingRepository {
       return e.response!.data["Message"];
     }
   }
+  
+  @override
+  Future<String> cancelBooking(int bookingId) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    try {
+      _dio.options.headers = {
+        'Authorization': 'Bearer ' + pref.get("jwtToken").toString()
+      };
+      final String _url =
+          "https://pawnclawdevelopmentapi.azurewebsites.net/api/bookings/customer/cancel-booking?id=$bookingId";
+      var response = await _dio.put(_url);
+      final result = response.statusCode;
+      return result.toString();
+      // return '';
+    } on DioError catch (e) {
+      //throw Exception(e.response!.data);
+      print(e);
+      return e.response!.data["Message"];
+    }
+    
+  }
 }

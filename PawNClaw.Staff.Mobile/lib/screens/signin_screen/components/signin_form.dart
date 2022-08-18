@@ -96,7 +96,7 @@ class _SignInFormState extends State<SignInForm> {
                     obscuringCharacter: '*',
                     controller: _passwordController,
                     decoration: InputDecoration(
-                        labelText: "Password",
+                        labelText: "Mật khẩu",
                         errorText: passwordError,
                         prefixIcon: Container(
                             width: 30,

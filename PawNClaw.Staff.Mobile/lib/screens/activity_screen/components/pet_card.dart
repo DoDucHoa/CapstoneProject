@@ -59,7 +59,7 @@ class _PetCardState extends State<PetCard> {
                 height: 5,
               ),
               Text(
-                widget.pet.breedName!,
+                widget.pet.breedName?? '',
                 style: TextStyle(
                   fontSize: width * smallFontRate,
                   fontWeight: FontWeight.w300,

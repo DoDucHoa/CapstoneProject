@@ -42,6 +42,18 @@ class SelectCage extends BookingEvent {
   List<Object> get props => [price, cageCode, petId];
 }
 
+class ChangeCage extends BookingEvent{
+  final double price;
+  final String cageCode;
+  final List<int> replacePetId;
+  const ChangeCage({required this.price, required this.cageCode, required this.replacePetId});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [price, cageCode, replacePetId];
+
+}
+
 class SelectRequest extends BookingEvent {
   final List<int> petId;
 
