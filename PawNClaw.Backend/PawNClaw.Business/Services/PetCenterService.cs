@@ -66,7 +66,7 @@ namespace PawNClaw.Business.Services
 
             if (!String.IsNullOrEmpty(name))
             {
-                values = values.Where(x => x.Name.Contains(name));
+                values = values.Where(x => x.Name.ToLower().Contains(name.ToLower()));
             }
 
             if (status != null)
@@ -76,7 +76,7 @@ namespace PawNClaw.Business.Services
 
             if (brandName != null)
             {
-                values = values.Where(x => x.Brand.Name.Contains(brandName));
+                values = values.Where(x => x.Brand.Name.ToLower().Contains(brandName.ToLower()));
             }
 
             return PagedList<PetCenter>.ToPagedList(values.AsQueryable(),
@@ -214,8 +214,9 @@ namespace PawNClaw.Business.Services
                 {
                     if (_petCenterRepository.GetFirstOrDefault(x => x.Name.Trim().Equals(petCenter.Name)) != null)
                         throw new Exception("This Name Already Existed");
-                    if (_petCenterRepository.GetFirstOrDefault(x => x.Address.Trim().Equals(petCenter.Address)) != null)
+                    if (_petCenterRepository.CheckCenterForCreate(petCenter, location) != null)
                         throw new Exception("This Address Already Existed");
+                    
                     _petCenterRepository.Add(petCenter);
                     await _petCenterRepository.SaveDbChangeAsync();
 

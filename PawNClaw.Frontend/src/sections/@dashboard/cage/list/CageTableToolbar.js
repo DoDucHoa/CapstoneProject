@@ -110,7 +110,7 @@ export default function CageTableToolbar({
                 textTransform: 'capitalize',
               }}
             >
-              Hoạt động
+              Online
             </MenuItem>
             <MenuItem
               key={0}

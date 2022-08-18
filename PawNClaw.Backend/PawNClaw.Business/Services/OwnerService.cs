@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Storage;
 using PawNClaw.Data.Const;
 using PawNClaw.Data.Database;
 using PawNClaw.Data.Helper;
@@ -14,14 +16,26 @@ namespace PawNClaw.Business.Services
         private readonly IAccountRepository _accountRepository;
         private readonly IOwnerRepository _ownerRepository;
         private readonly IPhotoRepository _photoRepository;
+        private readonly IBrandRepository _brandRepository;
+        private readonly IPetCenterRepository _petCenterRepository;
 
-        public OwnerService(IOwnerRepository ownerRepository, IAccountRepository accountRepository,
-            IPhotoRepository photoRepository)
+        private readonly ApplicationDbContext _db;
+
+        public OwnerService(IAccountRepository accountRepository, IOwnerRepository ownerRepository, 
+            IPhotoRepository photoRepository, IBrandRepository brandRepository, 
+            IPetCenterRepository petCenterRepository, 
+            ApplicationDbContext db)
         {
-            _ownerRepository = ownerRepository;
             _accountRepository = accountRepository;
+            _ownerRepository = ownerRepository;
             _photoRepository = photoRepository;
+            _brandRepository = brandRepository;
+            _petCenterRepository = petCenterRepository;
+            _db = db;
         }
+
+
+
 
         //Get All
         public PagedList<Owner> GetOwners(string Name, bool? Status, string dir, string sort, bool? isLookup, PagingParameter paging)
@@ -85,8 +99,8 @@ namespace PawNClaw.Business.Services
             Owner ownerToDb = new()
             {
                 Email = owner.UserName,
-                Name = owner.Name
-                //Gender = owner.Gender
+                Name = owner.Name,
+                Gender = owner.Gender
             };
 
             Account accountToDb = new()
@@ -153,25 +167,52 @@ namespace PawNClaw.Business.Services
         }
 
         //Delete
-        public bool Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            try
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                var accountFromDb = _accountRepository.Get(id);
-                if (accountFromDb != null)
+                try
                 {
-                    accountFromDb.Status = false;
-                    _accountRepository.Update(accountFromDb);
-                    _accountRepository.SaveDbChange();
-                    return true;
+
+                    var accountFromDb = _accountRepository.Get(id);
+                    if (accountFromDb != null)
+                    {
+                        accountFromDb.Status = false;
+                        _accountRepository.Update(accountFromDb);
+                        await _accountRepository.SaveDbChangeAsync();
+                    }
+
+                    var brandFromDb = _brandRepository.Get(_brandRepository.GetFirstOrDefault(x => x.OwnerId == id).Id);
+
+                    var centers = _petCenterRepository.GetAll(x => x.BrandId == brandFromDb.Id && x.Status == true);
+
+                    foreach (var item in centers)
+                    {
+                        var center = _petCenterRepository.Get(item.Id);
+                        center.Status = false;
+
+                        _petCenterRepository.Update(center);
+                        await _petCenterRepository.SaveDbChangeAsync();
+                    }
+
+                    if (brandFromDb != null)
+                    {
+                        brandFromDb.Status = false;
+                        await _brandRepository.SaveDbChangeAsync();
+
+                        transaction.Commit();
+                        return true;
+                    }
                 }
-            }
-            catch
-            {
+                catch
+                {
+                    transaction.Rollback();
+                    throw new Exception();
+                }
+                transaction.Rollback();
                 return false;
             }
-
-            return false;
         }
 
         //Restore

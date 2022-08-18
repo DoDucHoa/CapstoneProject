@@ -24,6 +24,8 @@ namespace PawNClaw.Business.Services
         IStaffRepository _staffRepository;
         IVoucherRepository _voucherRepository;
         ICustomerVoucherLogRepository _customerVoucherLogRepository;
+        ICancelLogRepository _cancelLogRepository;
+        IAccountRepository _accountRepository;
 
         private readonly ApplicationDbContext _db;
 
@@ -33,6 +35,7 @@ namespace PawNClaw.Business.Services
             IServicePriceRepository servicePriceRepository, IPetRepository petRepository,
             ICageRepository cageRepository, IStaffRepository staffRepository,
             IVoucherRepository voucherRepository, ICustomerVoucherLogRepository customerVoucherLogRepository,
+            ICancelLogRepository cancelLogRepository, IAccountRepository accountRepository,
             ApplicationDbContext db)
         {
             _bookingRepository = bookingRepository;
@@ -47,6 +50,8 @@ namespace PawNClaw.Business.Services
             _staffRepository = staffRepository;
             _voucherRepository = voucherRepository;
             _customerVoucherLogRepository = customerVoucherLogRepository;
+            _cancelLogRepository = cancelLogRepository;
+            _accountRepository = accountRepository;
             _db = db;
         }
 
@@ -59,42 +64,142 @@ namespace PawNClaw.Business.Services
             else return false;
         }
 
-        public bool ConfirmBooking(int Id, int StatusId, string StaffNote)
+        public async Task<bool> ConfirmBooking(int Id, int StatusId, string StaffNote)
         {
-            if (StatusId == 4 && StaffNote == null)
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
             {
-                return false;
-            }
-
-            var booking = _bookingRepository.Get(Id);
-
-            booking.StaffNote = StaffNote;
-
-            if (StatusId == 2)
-            {
-                booking.CheckIn = DateTime.Now;
-            }
-
-            if (StatusId == 3)
-            {
-                booking.CheckOut = DateTime.Now;
-            }
-
-            try
-            {
-                _bookingRepository.Update(booking);
-                _bookingRepository.SaveDbChange();
-                if (!Confirm(Id, StatusId))
+                try
                 {
+                    var constraint = await ConstService.Get(Const.ProjectFirebaseId, "Const", "Config");
+
+                    var limitObj = constraint["limitCancelDay"];
+                    var limit = Convert.ToInt32(limitObj);
+
+                    var limitObj2 = constraint["limitCancelCountCustomer"];
+                    var limitCount = Convert.ToInt32(limitObj2);
+
+                    var validCancelDayCenterObj = constraint["validCancelDayForCenter"];
+                    var validCancelDayCenter = Convert.ToInt32(validCancelDayCenterObj);
+
+                    DateTime today = DateTime.Now;
+
+                    var booking = _bookingRepository.Get(Id);
+
+                    if (StatusId == 4)
+                    {
+                        if (StaffNote == null)
+                        {
+                            return false;
+                        }
+
+                        if (((DateTime)booking.StartBooking).Date > today.Date.AddDays(-limit))
+                        {
+                            _cancelLogRepository.Add(new CancelLog()
+                            {
+                                BookingId = Id,
+                                CancelTime = today,
+                                CenterId = booking.CenterId,
+                                Description = "Center cancel booking, center's fault"
+                            });
+                            await _cancelLogRepository.SaveDbChangeAsync();
+                        }
+
+                        if (((DateTime)booking.StartBooking).Date <= today.Date.AddDays(validCancelDayCenter) && booking.CheckIn == null)
+                        {
+                            _cancelLogRepository.Add(new CancelLog()
+                            {
+                                BookingId = Id,
+                                CancelTime = today,
+                                CustomerId = booking.CustomerId,
+                                Description = "Center cancel booking, customer's fault"
+                            });
+                            await _cancelLogRepository.SaveDbChangeAsync();
+
+                            if (_cancelLogRepository
+                                .GetAll(x => x.CustomerId == booking.CustomerId
+                                        && ((DateTime)x.CancelTime).Month == today.Month
+                                        && ((DateTime)x.CancelTime).Year == today.Year).Count() > limitCount)
+                            {
+                                var customerAcc = _accountRepository.Get(booking.CustomerId);
+                                customerAcc.Status = false;
+                                _accountRepository.Update(customerAcc);
+                                await _accountRepository.SaveDbChangeAsync();
+                            }
+                        }
+
+                        //Hoàn lại supply amount
+                        foreach (var item in booking.SupplyOrders)
+                        {
+                            var supply = _supplyRepository.Get(item.SupplyId);
+                            supply.Quantity = (int)(supply.Quantity + item.Quantity);
+
+                            _supplyRepository.Update(supply);
+                            await _supplyRepository.SaveDbChangeAsync();
+                        }
+                    }
+
+                    booking.StaffNote = StaffNote;
+
+                    if (StatusId == 2)
+                    {
+                        booking.CheckIn = DateTime.Now;
+                    }
+
+                    if (StatusId == 3)
+                    {
+                        booking.CheckOut = DateTime.Now;
+                    }
+
+
+                    booking.StatusId = StatusId;
+                    _bookingRepository.Update(booking);
+                    await _bookingRepository.SaveDbChangeAsync();
+
+                    transaction.Commit();
+                    return true;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw new Exception();
+                }
+            }
+        }
+
+        public async Task<bool> CancelBookingForCus(int Id)
+        {
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var booking = _bookingRepository.Get(Id);
+
+                    foreach (var item in booking.SupplyOrders)
+                    {
+                        var supply = _supplyRepository.Get(item.SupplyId);
+                        supply.Quantity = (int)(supply.Quantity + item.Quantity);
+
+                        _supplyRepository.Update(supply);
+                        await _supplyRepository.SaveDbChangeAsync();
+                    }
+
+                    booking.StatusId = 4;
+
+                    _bookingRepository.Update(booking);
+                    await _bookingRepository.SaveDbChangeAsync();
+
+                    transaction.Commit();
+
+                    return true;
+
+                }
+                catch
+                {
+                    transaction.Rollback();
                     return false;
                 }
             }
-            catch
-            {
-                return false;
-            }
-
-            return true;
         }
 
         public IEnumerable<Booking> GetBookings(BookingRequestParameter bookingRequestParameter)
@@ -109,6 +214,12 @@ namespace PawNClaw.Business.Services
             List<ServiceOrderCreateParameter> serviceOrderCreateParameters,
             List<SupplyOrderCreateParameter> supplyOrderCreateParameters)
         {
+
+            //Check customer id
+            if (_accountRepository.Get(bookingCreateParameter.CustomerId).Status == false)
+            {
+                throw new Exception("This Customer Has Been Banned");
+            }
 
             int Id = 0;
 
@@ -374,8 +485,8 @@ namespace PawNClaw.Business.Services
                             }
                         }
                     }
-                    
-                    
+
+
                     if (bookingCreateParameter.VoucherCode != null && Discount > 0)
                     {
 
@@ -520,7 +631,7 @@ namespace PawNClaw.Business.Services
                 booking.Feedback = feedback;
             }
 
-            try 
+            try
             {
 
                 _bookingRepository.Update(booking);

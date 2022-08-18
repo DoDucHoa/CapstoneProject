@@ -101,13 +101,16 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
         );
         await uploadPhotoToFirebase('brands', values.avatarUrl, brandId, 'brand');
       } else if (centerId) {
-        await updateBrand(centerInfo.id, values.name, values.description, accountInfo.id);
+        await updateBrand(centerInfo.id, values.name, values.description, accountInfo.id, accountInfo.id);
       } else {
-        await updateBrand(brandData.id, values.name, values.description, values.ownerId);
+        await updateBrand(brandData.id, values.name, values.description, values.ownerId, values.modifyUser);
       }
-      reset();
       enqueueSnackbar(!isEdit ? 'Tạo mới thành công' : 'Cập nhật thành công');
-      if (!centerId) navigate(PATH_DASHBOARD.brand.list);
+
+      if (!centerId) {
+        reset();
+        navigate(PATH_DASHBOARD.brand.list);
+      }
     } catch (error) {
       console.error(error);
     }

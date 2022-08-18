@@ -11,7 +11,6 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, Typography, Button, MenuItem } from '@mui/material';
 // utils
 import { fData } from '../../../utils/formatNumber';
-import { formatTime } from '../../../utils/formatTime';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
@@ -56,7 +55,10 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Bắt buộc nhập'),
     address: Yup.string().required('Bắt buộc nhập'),
-    phone: Yup.string().required('Bắt buộc nhập'),
+    phone: Yup.string().matches(
+      /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/,
+      'Số điện thoại không hợp lệ'
+    ),
     openTimeUI: Yup.string().nullable().required('Bắt buộc nhập'),
     closeTimeUI: Yup.string().nullable().required('Bắt buộc nhập'),
     description: Yup.string(),
@@ -85,14 +87,10 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
       wardCode: centerData?.location?.wardCode || '',
       brandInfo: centerData?.brand || null,
 
-      openTime: centerData?.openTime || '',
-      openTimeUI: centerData?.openTimeDate || '',
-      closeTime: centerData?.closeTime || '',
-      closeTimeUI: centerData?.closeTimeDate || '',
-      checkin: centerData?.checkin || '',
-      checkinUI: centerData?.checkinDate || '',
-      checkout: centerData?.checkout || '',
-      checkoutUI: centerData?.checkoutDate || '',
+      openTimeUI: new Date(centerData?.openTimeDate) || '',
+      closeTimeUI: new Date(centerData?.closeTimeDate) || '',
+      checkinUI: new Date(centerData?.checkinDate) || '',
+      checkoutUI: new Date(centerData?.checkoutDate) || '',
       fullAddress: '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -170,9 +168,11 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
         await updateCenter(values);
       }
 
-      reset();
       enqueueSnackbar(!isEdit ? 'Tạo mới thành công' : 'Cập nhật thành công');
-      if (!centerId) navigate(PATH_DASHBOARD.center.list);
+      if (!centerId) {
+        reset();
+        navigate(PATH_DASHBOARD.center.list);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -403,45 +403,17 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
               </Grid>
 
               <Grid item xs={6}>
-                <RHFTimePicker
-                  name="openTimeUI"
-                  label="Giờ mở cửa"
-                  onChange={(value) => {
-                    setValue('openTimeUI', value);
-                    if (value) setValue('openTime', formatTime(value));
-                  }}
-                />
+                <RHFTimePicker name="openTimeUI" label="Giờ mở cửa" />
               </Grid>
               <Grid item xs={6}>
-                <RHFTimePicker
-                  name="closeTimeUI"
-                  label="Giờ đóng cửa"
-                  onChange={(value) => {
-                    setValue('closeTimeUI', value);
-                    setValue('closeTime', formatTime(value));
-                  }}
-                />
+                <RHFTimePicker name="closeTimeUI" label="Giờ đóng cửa" />
               </Grid>
 
               <Grid item xs={6}>
-                <RHFTimePicker
-                  name="checkinUI"
-                  label="Giờ checkin"
-                  onChange={(value) => {
-                    setValue('checkinUI', value);
-                    setValue('checkin', formatTime(value));
-                  }}
-                />
+                <RHFTimePicker name="checkinUI" label="Giờ checkin" />
               </Grid>
               <Grid item xs={6}>
-                <RHFTimePicker
-                  name="checkoutUI"
-                  label="Giờ checkout"
-                  onChange={(value) => {
-                    setValue('checkoutUI', value);
-                    setValue('checkout', formatTime(value));
-                  }}
-                />
+                <RHFTimePicker name="checkoutUI" label="Giờ checkout" />
               </Grid>
 
               <Grid item xs={12}>

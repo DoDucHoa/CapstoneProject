@@ -154,6 +154,8 @@ namespace PawNClaw.API
 
             services.AddScoped<AdminDashboardService, AdminDashboardService>();
 
+            services.AddScoped<ICancelLogRepository, CancelLogRepository>();
+
             services.AddControllers();
             services.AddControllersWithViews()
                     .AddNewtonsoftJson(options =>

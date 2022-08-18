@@ -50,7 +50,7 @@ namespace PawNClaw.API.Controllers
                 }
                 if (!String.IsNullOrEmpty(code) && !String.IsNullOrWhiteSpace(code))
                 {
-                    values = values.Where(x => x.Code.Contains(code));
+                    values = values.Where(x => x.Code.ToLower().Contains(code.ToLower()));
                 }
                 if (isAvalable != null && isAvalable == true)
                 {

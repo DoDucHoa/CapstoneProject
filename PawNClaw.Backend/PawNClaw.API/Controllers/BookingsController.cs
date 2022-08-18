@@ -14,7 +14,7 @@ namespace PawNClaw.API.Controllers
 {
     [Route("api/bookings")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class BookingsController : ControllerBase
     {
         BookingService _bookingService;
@@ -47,7 +47,7 @@ namespace PawNClaw.API.Controllers
 
                 if (create)
                 {
-                    var check = _bookingService.ConfirmBooking(updateStatusParameter.id,
+                    var check = await _bookingService.ConfirmBooking(updateStatusParameter.id,
                                                             updateStatusParameter.statusId,
                                                             updateStatusParameter.staffNote);
                     if (check)
@@ -101,8 +101,22 @@ namespace PawNClaw.API.Controllers
             }
         }
 
+        [HttpPut("customer/cancel-booking")]
+        public async Task<IActionResult> CancelBookingForCus(int Id)
+        {
+            var data = await _bookingService.CancelBookingForCus(Id);
+
+            if (data)
+            {
+                return Ok(data);
+            } else
+            {
+                return BadRequest(data);
+            }
+        }
+
         [HttpGet]
-        //[Authorize(Roles = "Owner,Staff")]
+        [Authorize(Roles = "Owner,Staff")]
         public IActionResult GetBookingForStaff([FromQuery] BookingRequestParameter bookingRequestParameter)
         {
             var data = _bookingService.GetBookings(bookingRequestParameter);

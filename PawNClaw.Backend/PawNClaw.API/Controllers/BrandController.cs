@@ -60,14 +60,16 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                await _logService.AddLog(new ActionLogsParameter(){ 
-                    Id =  brand.CreateUser,
+                var data = _brandService.Add(brand);
+                await _logService.AddLog(new ActionLogsParameter()
+                {
+                    Id = brand.CreateUser,
                     Name = _accountService.GetAccountById(brand.CreateUser).Admin.Name,
-                    Target = "Brand "+brand.Name,
+                    Target = "Brand " + brand.Name,
                     Type = "Create",
                     Time = DateTime.Now,
                 });
-                return Ok(_brandService.Add(brand));
+                return Ok(data);
             }
             catch (Exception e)
             {
@@ -88,7 +90,7 @@ namespace PawNClaw.API.Controllers
                 await _logService.AddLog(new ActionLogsParameter()
                 {
                     Id = brand.ModifyUser,
-                    Name = _accountService.GetAccountById(brand.ModifyUser).Admin.Name,
+                    Name = _accountService.GetAccountById(brand.ModifyUser).Admin == null ? _accountService.GetAccountById(brand.ModifyUser).Owner.Name : _accountService.GetAccountById(brand.ModifyUser).Admin.Name,
                     Target = "Brand " + brand.Name,
                     Type = "Update",
                     Time = DateTime.Now,
@@ -100,9 +102,9 @@ namespace PawNClaw.API.Controllers
 
         [HttpDelete("{id:int}")]
         [Authorize(Roles = "Admin,Moderator")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (_brandService.Delete(id))
+            if (await _brandService.Delete(id))
             {
                 return Ok();
             }
@@ -128,7 +130,7 @@ namespace PawNClaw.API.Controllers
             {
                 return Ok(_brandService.GetBrandByOwnerId(id));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex);
             }

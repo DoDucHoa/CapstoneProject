@@ -42,7 +42,10 @@ export default function StaffProfile() {
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Bắt buộc nhập'),
     email: Yup.string().required('Bắt buộc nhập').email(),
-    phone: Yup.string(),
+    phone: Yup.string().matches(
+      /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/,
+      'Số điện thoại không hợp lệ'
+    ),
     avatarUrl: Yup.mixed(),
     password: Yup.string().when('isChangingPassword', {
       is: (isChangingPassword) => isChangingPassword,

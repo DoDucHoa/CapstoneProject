@@ -54,7 +54,10 @@ export default function AdminNewEditForm({ isEdit, ownerData }) {
     confirmPassword: Yup.string()
       .required('Bắt buộc nhập')
       .oneOf([Yup.ref('password'), null], 'Mật khẩu không khớp'),
-    phone: Yup.string(),
+    phone: Yup.string().matches(
+      /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/,
+      'Số điện thoại không hợp lệ'
+    ),
     createdUser: Yup.number().required(),
     gender: Yup.number().required(),
     avatarUrl: Yup.mixed(),

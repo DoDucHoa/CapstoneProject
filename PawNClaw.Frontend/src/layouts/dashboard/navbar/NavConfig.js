@@ -43,7 +43,7 @@ const navConfig = [
   {
     subheader: 'booking',
     items: [
-      { title: 'Booking', path: PATH_DASHBOARD.bookingList.list, icon: ICONS.list },
+      { title: 'Đơn hàng', path: PATH_DASHBOARD.bookingList.list, icon: ICONS.list },
       {
         title: 'Lịch Đặt',
         path: PATH_DASHBOARD.booking.calendar,
@@ -55,10 +55,10 @@ const navConfig = [
   // DISCOUNT
   // ----------------------------------------------------------------------
   {
-    subheader: 'Khuyến mại',
+    subheader: 'Ưu đãi',
     items: [
       {
-        title: 'Voucher',
+        title: 'Chiết khấu',
         path: PATH_DASHBOARD.voucher.list,
         icon: ICONS.price,
       },
@@ -126,7 +126,7 @@ export const navConfigForStaff = [
   {
     subheader: 'booking',
     items: [
-      { title: 'Booking', path: PATH_DASHBOARD.bookingList.list, icon: ICONS.list },
+      { title: 'Đơn hàng', path: PATH_DASHBOARD.bookingList.list, icon: ICONS.list },
       {
         title: 'Lịch Đặt',
         path: PATH_DASHBOARD.booking.calendar,
@@ -138,10 +138,10 @@ export const navConfigForStaff = [
   // DISCOUNT
   // ----------------------------------------------------------------------
   {
-    subheader: 'Khuyến mại',
+    subheader: 'Ưu đãi',
     items: [
       {
-        title: 'Voucher',
+        title: 'Chiết khấu',
         path: PATH_DASHBOARD.voucher.list,
         icon: ICONS.price,
       },

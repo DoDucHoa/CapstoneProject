@@ -1,47 +1,40 @@
-import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 // @mui
-import { Button, Divider, MenuItem, Stack, Typography } from '@mui/material';
+import { Divider, Stack, Typography } from '@mui/material';
 // hook form
-import { RHFSelect, RHFTextField } from '../../../../components/hook-form';
-// components
-import Iconify from '../../../../components/Iconify';
-import { getPriceTypes } from '../../../../pages/dashboard/CageType/useCageTypeAPI';
+import { RHFTextField } from '../../../../components/hook-form';
 
-CageTypePrice.propTypes = {
-  createUser: PropTypes.number,
-};
+// ----------------------------------------------------------------------
 
-export default function CageTypePrice({ createUser }) {
+export default function CageTypePrice() {
   const { control } = useFormContext();
-  const [priceTypes, setPriceTypes] = useState([]);
+  // const [priceTypes, setPriceTypes] = useState([]);
 
-  useEffect(() => {
-    getPriceTypes()
-      .then((data) => setPriceTypes(data))
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+  // useEffect(() => {
+  //   getPriceTypes()
+  //     .then((data) => setPriceTypes(data))
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, []);
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: 'createPriceParameters',
   });
 
-  const handleAdd = () => {
-    append({
-      unitPrice: '',
-      createUser,
-      priceTypeCode: 'PRICE-001',
-    });
-  };
+  // const handleAdd = () => {
+  //   append({
+  //     unitPrice: '',
+  //     createUser,
+  //     priceTypeCode: 'PRICE-001',
+  //   });
+  // };
 
-  const handleRemove = (index) => {
-    remove(index);
-  };
+  // const handleRemove = (index) => {
+  //   remove(index);
+  // };
 
   return (
     <>
@@ -52,8 +45,9 @@ export default function CageTypePrice({ createUser }) {
         {fields.map((item, index) => (
           <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
-              <RHFSelect
+              {/* <RHFSelect
                 name={`createPriceParameters[${index}].priceTypeCode`}
+                disabled
                 fullWidth
                 label="Loại giá"
                 InputLabelProps={{ shrink: true }}
@@ -74,10 +68,16 @@ export default function CageTypePrice({ createUser }) {
                     {priceType.typeName}
                   </MenuItem>
                 ))}
-              </RHFSelect>
-              <RHFTextField name={`createPriceParameters[${index}].unitPrice`} label="Giá" type="number" />
+              </RHFSelect> */}
+
+              <RHFTextField
+                name={`createPriceParameters[${index}].unitPrice`}
+                label={index === 0 ? 'Giá mặc định' : 'Giá cuối tuần'}
+                type="number"
+              />
             </Stack>
 
+            {/* 
             <Button
               disabled={index === 0}
               size="small"
@@ -86,18 +86,18 @@ export default function CageTypePrice({ createUser }) {
               onClick={() => handleRemove(index)}
             >
               Xóa
-            </Button>
+            </Button> */}
           </Stack>
         ))}
       </Stack>
 
-      <Divider sx={{ my: 3, borderStyle: 'dashed' }} />
+      {/* <Divider sx={{ my: 3, borderStyle: 'dashed' }} />
 
       <Stack spacing={2} direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'flex-start', md: 'center' }}>
         <Button size="small" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleAdd}>
           Thêm giá
         </Button>
-      </Stack>
+      </Stack> */}
     </>
   );
 }
