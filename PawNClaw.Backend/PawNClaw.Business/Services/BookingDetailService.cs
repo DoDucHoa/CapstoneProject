@@ -86,7 +86,7 @@ namespace PawNClaw.Business.Services
             //    }
             //}
 
-            value.Price = updateBookingDetailParameter.Price;
+            value.Price = updateBookingDetailParameter.Price * value.Duration;
             value.CageCode = updateBookingDetailParameter.CageCode;
             value.Note = updateBookingDetailParameter.Note;
             using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
