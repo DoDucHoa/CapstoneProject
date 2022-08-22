@@ -16,15 +16,15 @@ namespace PawNClaw.Business.Services
 {
     public class SearchService
     {
-        IPetCenterRepository _petCenterRepository;
-        IBookingRepository _bookingRepository;
-        IBookingDetailRepository _bookingDetailRepository;
-        ICageRepository _cageRepository;
-        ILocationRepository _locationRepository;
-        IPetBookingDetailRepository _petBookingDetailRepository;
-        IDistrictRepository _districtRepository;
-        ICityRepository _cityRepository;
-        IPhotoRepository _photoRepository;
+        private readonly IPetCenterRepository _petCenterRepository;
+        private readonly IBookingRepository _bookingRepository;
+        private readonly IBookingDetailRepository _bookingDetailRepository;
+        private readonly ICageRepository _cageRepository;
+        private readonly ILocationRepository _locationRepository;
+        private readonly IPetBookingDetailRepository _petBookingDetailRepository;
+        private readonly IDistrictRepository _districtRepository;
+        private readonly ICityRepository _cityRepository;
+        private readonly IPhotoRepository _photoRepository;
 
         public SearchService(IPetCenterRepository petCenterRepository, ILocationRepository locationRepository,
             IBookingRepository bookingRepository, IBookingDetailRepository bookingDetailRepository,

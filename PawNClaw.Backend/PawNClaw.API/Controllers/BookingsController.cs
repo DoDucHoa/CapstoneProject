@@ -17,11 +17,11 @@ namespace PawNClaw.API.Controllers
     [Authorize]
     public class BookingsController : ControllerBase
     {
-        BookingService _bookingService;
-        BookingActivityService _bookingActivityService;
-        AccountService _accountService;
-        NotificationService _notificationService;
-        StaffServicecs _staffServices;
+        private readonly BookingService _bookingService;
+        private readonly BookingActivityService _bookingActivityService;
+        private readonly AccountService _accountService;
+        private readonly NotificationService _notificationService;
+        private readonly StaffServicecs _staffServices;
 
         public BookingsController(BookingService bookingService, BookingActivityService bookingActivityService, AccountService accountService, NotificationService notificationService, StaffServicecs staffServicecs)
         {

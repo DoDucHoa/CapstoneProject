@@ -42,7 +42,7 @@ namespace PawNClaw.API.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Owner,Staff")]
-        public async Task<ActionResult> UpdateBookingActivity([FromBody] UpdateBookingActivityParameter updateBookingActivityParameter)
+        public async Task<IActionResult> UpdateBookingActivity([FromBody] UpdateBookingActivityParameter updateBookingActivityParameter)
         {
             try
             {

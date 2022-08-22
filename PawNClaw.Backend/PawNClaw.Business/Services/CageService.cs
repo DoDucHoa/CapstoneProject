@@ -93,7 +93,7 @@ namespace PawNClaw.Business.Services
 
                 if(!string.IsNullOrWhiteSpace(cageRequestParameter.Code))
                 {
-                    values = values.Where(x => cageRequestParameter.Code.ToLower().Contains(x.Code.Trim()));
+                    values = values.Where(x => cageRequestParameter.Code.ToLower().Contains(x.Code.ToLower().Trim()));
                 }
 
                 if(cageRequestParameter.CageTypeId != null)
