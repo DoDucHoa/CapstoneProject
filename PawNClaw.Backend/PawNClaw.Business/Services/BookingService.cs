@@ -545,7 +545,6 @@ namespace PawNClaw.Business.Services
             return values;
         }
 
-
         //Get List Booking By ID
         public Booking GetBookingById(int id)
         {
