@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:pncstaff_mobile_application/blocs/search/search_bloc.dart';
 import 'package:pncstaff_mobile_application/common/components/loading_indicator.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
@@ -109,10 +110,12 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: Container(
                             margin:
                                 EdgeInsets.only(right: width * smallPadRate),
-                            width: width * 0.3,
-                            height: width * 0.3,
+                            constraints: BoxConstraints(
+                              minHeight: width * 0.35,
+                              minWidth: width * 0.35,
+                            ),
                             decoration: BoxDecoration(
-                              color: lightPrimaryColor.withOpacity(0.3),
+                              color: primaryColor.withOpacity(0.15),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Padding(
@@ -124,27 +127,34 @@ class _SearchScreenState extends State<SearchScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    padding: EdgeInsets.all(5),
+                                    padding: EdgeInsets.all(7),
                                     decoration: BoxDecoration(
                                         color: primaryColor,
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     child: Icon(
-                                      Icons.local_fire_department,
+                                      Icons.fastfood_rounded,
                                       color: Colors.white,
+                                      size: 20,
+                                      // size: 20,
                                     ),
                                   ),
                                   Text(
                                     booking.getRemainFeedingAct().toString(),
                                     style: TextStyle(
                                         fontWeight: FontWeight.w600,
-                                        fontSize: 25,
-                                        color: primaryFontColor),
+                                        fontSize: width * 0.085,
+                                        color: primaryFontColor,
+                                        // height: 1
+                                        ),
                                   ),
                                   Text(
                                     "Cho ăn",
                                     style: TextStyle(
-                                        color: primaryFontColor, fontSize: 18),
+                                        color: primaryFontColor,
+                                        fontSize: width * 0.048,
+                                        height: 1
+                                        ),
                                   ),
                                 ],
                               ),
@@ -161,10 +171,12 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: Container(
                             margin:
                                 EdgeInsets.only(right: width * smallPadRate),
-                            width: width * 0.3,
-                            height: width * 0.3,
+                            constraints: BoxConstraints(
+                              minHeight: width * 0.35,
+                              minWidth: width * 0.35,
+                            ),
                             decoration: BoxDecoration(
-                              color: lightPrimaryColor.withOpacity(0.3),
+                              color: primaryColor.withOpacity(0.15),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Padding(
@@ -176,7 +188,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    padding: EdgeInsets.all(5),
+                                    padding: EdgeInsets.all(7),
                                     decoration: BoxDecoration(
                                         color: primaryColor,
                                         borderRadius:
@@ -184,6 +196,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                     child: Icon(
                                       Icons.shopping_cart_rounded,
                                       color: Colors.white,
+                                      size: 20,
                                     ),
                                   ),
                                   Text(
@@ -193,13 +206,15 @@ class _SearchScreenState extends State<SearchScreen> {
                                         .toString(),
                                     style: TextStyle(
                                         fontWeight: FontWeight.w600,
-                                        fontSize: 25,
+                                        fontSize: width * 0.085,
                                         color: primaryFontColor),
                                   ),
                                   Text(
                                     "Đồ dùng",
                                     style: TextStyle(
-                                        color: primaryFontColor, fontSize: 18),
+                                        color: primaryFontColor,
+                                        fontSize: width * 0.048,
+                                        height: 1),
                                   ),
                                 ],
                               ),
@@ -216,10 +231,12 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: Container(
                             margin:
                                 EdgeInsets.only(right: width * smallPadRate),
-                            width: width * 0.3,
-                            height: width * 0.3,
+                            constraints: BoxConstraints(
+                              minHeight: width * 0.35,
+                              minWidth: width * 0.35,
+                            ),
                             decoration: BoxDecoration(
-                              color: lightPrimaryColor.withOpacity(0.3),
+                              color: primaryColor.withOpacity(0.15),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Padding(
@@ -231,14 +248,15 @@ class _SearchScreenState extends State<SearchScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    padding: EdgeInsets.all(5),
+                                    padding: EdgeInsets.all(7),
                                     decoration: BoxDecoration(
                                         color: primaryColor,
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     child: Icon(
-                                      Icons.back_hand,
+                                      Icons.back_hand_rounded,
                                       color: Colors.white,
+                                      size: 20,
                                     ),
                                   ),
                                   Text(
@@ -248,13 +266,15 @@ class _SearchScreenState extends State<SearchScreen> {
                                         .toString(),
                                     style: TextStyle(
                                         fontWeight: FontWeight.w600,
-                                        fontSize: 25,
+                                        fontSize: width * 0.085,
                                         color: primaryFontColor),
                                   ),
                                   Text(
                                     "Dịch vụ",
                                     style: TextStyle(
-                                        color: primaryFontColor, fontSize: 18),
+                                        color: primaryFontColor,
+                                        fontSize: width * 0.048,
+                                        height: 1),
                                   ),
                                 ],
                               ),

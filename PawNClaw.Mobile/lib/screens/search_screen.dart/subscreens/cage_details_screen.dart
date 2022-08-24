@@ -40,13 +40,46 @@ class _CageDetailsState extends State<CageDetails> {
     return true;
   }
 
+  bool isFitCage(List<Pet> request, CageTypes cageTypes) {
+    double height = 0;
+    double width = 0;
+    for (var pet in request) {
+      if (height < (pet.height! + addHeight)) {
+        height = pet.height! + addHeight;
+      }
+      width += double.parse(
+          ((pet.length! + pet.height!) / widthRatio).toStringAsFixed(1));
+    }
+    PetSizeCage petSizeCage = PetSizeCage(height, width, request.length == 1);
+
+    return cageTypes.height! >= petSizeCage.height! &&
+        cageTypes.width! >= petSizeCage.width! &&
+        (cageTypes.isSingle! ? petSizeCage.isSingle! : true);
+  }
+
+  bool isSelectedCage(List<int> request, Cages cage) {
+    var state = BlocProvider.of<BookingBloc>(context).state as BookingUpdated;
+    var booking = state.booking;
+    bool isSelected = false;
+    if (booking.bookingDetailCreateParameters!.isNotEmpty) {
+      booking.bookingDetailCreateParameters!.forEach((element) {
+        if (element.cageCode == cage.code &&
+            element.petId!.toString() != request.toString()) {
+          isSelected = true;
+          return;
+        }
+      });
+    }
+    return isSelected;
+  }
+
   @override
   void initState() {
     var state = BlocProvider.of<BookingBloc>(context).state;
     requests = (state as BookingUpdated).requests!;
     haveAvailableRequests = false;
     for (var element in requests) {
-      if (isSuitable(element, widget.cageType)) {
+      if (isFitCage(element, widget.cageType)) {
         haveAvailableRequests = true;
         selectedPetIds = [];
         element.forEach((element) {
@@ -91,14 +124,15 @@ class _CageDetailsState extends State<CageDetails> {
                             itemBuilder: (context, index, realIndex) {
                               return Container(
                                   width: size.width,
-                                  child:(cageType.photo?.url == null)? Image.asset(
-                                    CAGE_PHOTOS[index],
-                                    fit: BoxFit.cover,
-                                  ):
-                                  Image.network(
-                                    cageType.photo!.url!,
-                                    fit: BoxFit.cover,
-                                  ));
+                                  child: (cageType.photo?.url == null)
+                                      ? Image.asset(
+                                          CAGE_PHOTOS[index],
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Image.network(
+                                          cageType.photo!.url!,
+                                          fit: BoxFit.cover,
+                                        ));
                             },
                             options: CarouselOptions(
                                 height: appbarSize,
@@ -154,26 +188,95 @@ class _CageDetailsState extends State<CageDetails> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Container(
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             //decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15))),
             child: ElevatedButton(
               onPressed: (selectedPetIds != null)
                   ? () {
+                      List<int>? petIds =
+                          state.booking.selectedPetsIds ?? selectedPetIds;
+                      print(petIds);
+                      
+
+                      if (isSelectedCage(petIds!, cage)) {
+                        showDialog(
+                            context: context,
+                            builder: ((context) => AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15)),
+                                  title: Text('Phòng đã chọn'),
+                                  content: Text(
+                                      'Bạn đã chọn phòng này cho các bé khác rồi. Bạn có chắc muốn đổi phòng không?'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text('Hủy'),
+                                      style: TextButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          primary: lightFontColor),
+                                      onPressed: () {
+                                        Navigator.pop(context, false);
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: Text('Đổi phòng'),
+                                      style: TextButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10))),
+                                      onPressed: () {
+                                        Navigator.pop(context, true);
+                                      },
+                                    )
+                                  ],
+                                ))).then(
+                          (changeCage) {
+                            if (changeCage){
+                              BlocProvider.of<BookingBloc>(context).add(ChangeCage(
+                            price: cageType.totalPrice!,
+                            cageCode: cage.code!,
+                            replacePetId: petIds,
+                          ));
+                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("Đổi phòng thành công.")));
+                        Navigator.of(context).pop();
+                            }
+                          },
+                        );
+                      } else {
+                        BlocProvider.of<BookingBloc>(context).add(SelectCage(
+                            price: cageType.totalPrice!,
+                            cageCode: cage.code!,
+                            petId: petIds,
+                          ));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("Chọn phòng thành công.")));
+                        Navigator.of(context).pop();
+                      }
+                      // print(changeCage);
+                      // if (changeCage != null) {
+                      //   if (changeCage!) {
+                      //     BlocProvider.of<BookingBloc>(context).add(ChangeCage(
+                      //       price: cageType.totalPrice!,
+                      //       cageCode: cage.code!,
+                      //       replacePetId: petIds,
+                      //     ));
+                      //   } else {
+                      //     BlocProvider.of<BookingBloc>(context).add(SelectCage(
+                      //       price: cageType.totalPrice!,
+                      //       cageCode: cage.code!,
+                      //       petId: petIds,
+                      //     ));
+                      //   }
+                      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      //       content: Text((changeCage! ? "Đổi" : "Chọn") +
+                      //           " phòng thành công.")));
+                      //   Navigator.of(context).pop();
+                      // }
                       // print(context.read<BookingBloc>().state);
                       //print(state.booking.selectedPetsIds);
                       // print(selectedPetIds);
-                      BlocProvider.of<BookingBloc>(context).add(SelectCage(
-                        price: cageType.totalPrice!,
-                        cageCode: cage.code!,
-                        petId: state.booking.selectedPetsIds == null
-                            ? selectedPetIds!
-                            : state.booking.selectedPetsIds!,
-                      ));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Thêm chuồng thành công.")));
-                      // print('cart count' +
-                      //     state.booking.getCartCount().toString());
-                      Navigator.of(context).pop();
                     }
                   : null,
               // => showCupertinoDialog(

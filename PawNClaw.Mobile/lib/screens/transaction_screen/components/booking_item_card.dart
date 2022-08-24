@@ -66,7 +66,9 @@ class BookingItemCard extends StatelessWidget {
               ),
               child: (pet.photos!.isEmpty)
                   ? CircleAvatar(
-                      backgroundImage: AssetImage('lib/assets/cat_avatar0.png'),
+                      backgroundImage: AssetImage((pet.petTypeCode == 'DOG')
+                        ? 'lib/assets/dog.png'
+                        : 'lib/assets/black-cat.png'),
                     )
                   : CircleAvatar(
                       backgroundImage: NetworkImage(pet.photos!.first.url!),

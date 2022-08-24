@@ -102,9 +102,9 @@ namespace PawNClaw.API.Controllers
 
         [HttpDelete("{id:int}")]
         [Authorize(Roles = "Admin,Moderator")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (_brandService.Delete(id))
+            if (await _brandService.Delete(id))
             {
                 return Ok();
             }

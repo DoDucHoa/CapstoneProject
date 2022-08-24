@@ -145,6 +145,8 @@ class BookingRequestModel {
     }
     return voucher.value!;
   }
+
+
 }
 
 class BookingCreateParameter {
@@ -205,6 +207,8 @@ class BookingDetailCreateParameters {
     data['petId'] = this.petId;
     return data;
   }
+
+  
 }
 
 class ServiceOrderCreateParameters {

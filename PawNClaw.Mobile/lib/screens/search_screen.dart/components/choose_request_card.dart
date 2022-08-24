@@ -35,10 +35,29 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
     return true;
   }
 
+  //addHeight is const ref from Backend
+  //widthRatio is const ref from Backend
+  bool isFitCage(List<Pet> request, CageTypes cageTypes) {
+    double height = 0;
+    double width = 0;
+    for (var pet in request) {
+      if (height < (pet.height! + addHeight)) {
+        height = pet.height! + addHeight;
+      }
+      width += double.parse(
+          ((pet.length! + pet.height!) / widthRatio).toStringAsFixed(1));
+    }
+    PetSizeCage petSizeCage = PetSizeCage(height, width, request.length == 1);
+
+    return cageTypes.height! >= petSizeCage.height! &&
+        cageTypes.width! >= petSizeCage.width! &&
+        (cageTypes.isSingle! ? petSizeCage.isSingle! : true);
+  }
+
   @override
   void initState() {
     for (var i = 0; i < widget.requests.length; i++) {
-      if (isSuitable(widget.requests[i], widget.cageType)) {
+      if (isFitCage(widget.requests[i], widget.cageType)) {
         haveAvailableRequests = true;
         pets = widget.requests[i];
         selectedIndex = i;
@@ -64,7 +83,7 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
         child: (haveAvailableRequests)
             ? ListView.separated(
                 itemBuilder: (context, index) {
-                  return isSuitable(widget.requests[index], widget.cageType)
+                  return isFitCage(widget.requests[index], widget.cageType)
                       ? InkWell(
                           onTap: () {
                             pets = widget.requests[index];
@@ -166,9 +185,9 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                             fit: BoxFit.contain)
                         : null,
                     border: Border.all(
-                        color: Colors.white,
-                        width: 3,
-                        /*strokeAlign: StrokeAlign.outside*/)),
+                      color: Colors.white,
+                      width: 3, /*strokeAlign: StrokeAlign.outside*/
+                    )),
                 child: (pets[0].photos!.isEmpty)
                     ? CircleAvatar(
                         backgroundImage: AssetImage(
@@ -193,9 +212,9 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                               fit: BoxFit.contain)
                           : null,
                       border: Border.all(
-                          color: Colors.white,
-                          width: 3,
-                          /*strokeAlign: StrokeAlign.outside*/)),
+                        color: Colors.white,
+                        width: 3, /*strokeAlign: StrokeAlign.outside*/
+                      )),
                   child: (pets[1].photos!.isEmpty)
                       ? CircleAvatar(
                           backgroundImage: AssetImage(
@@ -221,9 +240,9 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                         fit: BoxFit.contain)
                     : null,
                 border: Border.all(
-                    color: Colors.white,
-                    width: 3,
-                    /*strokeAlign: StrokeAlign.outside*/)),
+                  color: Colors.white,
+                  width: 3, /*strokeAlign: StrokeAlign.outside*/
+                )),
             child: (pets[0].photos!.isEmpty)
                 ? CircleAvatar(
                     backgroundImage: AssetImage((pets[0].petTypeCode == 'DOG')
@@ -250,9 +269,9 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                               fit: BoxFit.contain)
                           : null,
                       border: Border.all(
-                          color: Colors.white,
-                          width: 3,
-                          /*strokeAlign: StrokeAlign.outside*/)),
+                        color: Colors.white,
+                        width: 3, /*strokeAlign: StrokeAlign.outside*/
+                      )),
                   child: (pets[0].photos!.isEmpty)
                       ? CircleAvatar(
                           backgroundImage: AssetImage(
@@ -276,9 +295,9 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                               fit: BoxFit.contain)
                           : null,
                       border: Border.all(
-                          color: Colors.white,
-                          width: 3,
-                          /*strokeAlign: StrokeAlign.outside*/)),
+                        color: Colors.white,
+                        width: 3, /*strokeAlign: StrokeAlign.outside*/
+                      )),
                   child: (pets[1].photos!.isEmpty)
                       ? CircleAvatar(
                           backgroundImage: AssetImage(
@@ -302,9 +321,9 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                               fit: BoxFit.contain)
                           : null,
                       border: Border.all(
-                          color: Colors.white,
-                          width: 3,
-                          /*strokeAlign: StrokeAlign.outside*/)),
+                        color: Colors.white,
+                        width: 3, /*strokeAlign: StrokeAlign.outside*/
+                      )),
                   child: (pets[2].photos!.isEmpty)
                       ? CircleAvatar(
                           backgroundImage: AssetImage(
@@ -333,9 +352,9 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                               fit: BoxFit.contain)
                           : null,
                       border: Border.all(
-                          color: Colors.white,
-                          width: 3,
-                          /*strokeAlign: StrokeAlign.outside*/)),
+                        color: Colors.white,
+                        width: 3, /*strokeAlign: StrokeAlign.outside*/
+                      )),
                   child: (pets[0].photos!.isEmpty)
                       ? CircleAvatar(
                           backgroundImage: AssetImage(
@@ -359,9 +378,9 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                               fit: BoxFit.contain)
                           : null,
                       border: Border.all(
-                          color: Colors.white,
-                          width: 3,
-                          /*strokeAlign: StrokeAlign.outside*/)),
+                        color: Colors.white,
+                        width: 3, /*strokeAlign: StrokeAlign.outside*/
+                      )),
                   child: (pets[1].photos!.isEmpty)
                       ? CircleAvatar(
                           backgroundImage: AssetImage(
@@ -391,9 +410,9 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                             ? lightFontColor
                             : Colors.transparent,
                         border: Border.all(
-                            color: Colors.white,
-                            width: 3,
-                            /*strokeAlign: StrokeAlign.outside*/)),
+                          color: Colors.white,
+                          width: 3, /*strokeAlign: StrokeAlign.outside*/
+                        )),
                     child: pets.length == 4
                         ? (pets[3].photos!.isEmpty)
                             ? CircleAvatar(
@@ -425,9 +444,9 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                               fit: BoxFit.contain)
                           : null,
                       border: Border.all(
-                          color: Colors.white,
-                          width: 3,
-                          /*strokeAlign: StrokeAlign.outside*/)),
+                        color: Colors.white,
+                        width: 3, /*strokeAlign: StrokeAlign.outside*/
+                      )),
                   child: (pets[2].photos!.isEmpty)
                       ? CircleAvatar(
                           backgroundImage: AssetImage(
