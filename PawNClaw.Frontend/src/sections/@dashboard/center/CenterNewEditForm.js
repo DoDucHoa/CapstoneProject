@@ -87,10 +87,10 @@ export default function CenterNewEditForm({ isEdit, centerData }) {
       wardCode: centerData?.location?.wardCode || '',
       brandInfo: centerData?.brand || null,
 
-      openTimeUI: new Date(centerData?.openTimeDate) || '',
-      closeTimeUI: new Date(centerData?.closeTimeDate) || '',
-      checkinUI: new Date(centerData?.checkinDate) || '',
-      checkoutUI: new Date(centerData?.checkoutDate) || '',
+      openTimeUI: new Date(centerData?.openTimeDate) || null,
+      closeTimeUI: new Date(centerData?.closeTimeDate) || null,
+      checkinUI: new Date(centerData?.checkinDate) || null,
+      checkoutUI: new Date(centerData?.checkoutDate) || null,
       fullAddress: '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps

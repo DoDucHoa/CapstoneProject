@@ -113,6 +113,9 @@ export default function BrandNewEditForm({ isEdit, brandData }) {
       }
     } catch (error) {
       console.error(error);
+      if (error.status === 400) {
+        enqueueSnackbar('Tên thương hiệu đã tồn tại trong hệ thống', { variant: 'error' });
+      }
     }
   };
 

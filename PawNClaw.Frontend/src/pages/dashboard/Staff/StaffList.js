@@ -132,6 +132,11 @@ export default function UserList() {
     await getStaffData();
   };
 
+  const handleUnBanStaff = async (id) => {
+    await banStaff(id);
+    await getStaffData();
+  };
+
   const handleOpenBanDialog = (idStaff) => {
     setSelectIdStaff(idStaff);
     setOpenDialog(true);
@@ -201,7 +206,7 @@ export default function UserList() {
                         key={row.id}
                         row={row}
                         onEditRow={() => handleEditRow(row.id)}
-                        onDeleteRow={() => handleOpenBanDialog(row.id)}
+                        onDeleteRow={() => (row.status ? handleOpenBanDialog(row.id) : handleUnBanStaff(row.id))}
                       />
                     ))}
 

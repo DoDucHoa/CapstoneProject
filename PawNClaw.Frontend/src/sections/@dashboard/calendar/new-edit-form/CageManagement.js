@@ -127,6 +127,7 @@ export default function CageManagement({ statusId, centerId, isDesktop, handleCh
                       disabled={statusId !== 1}
                       name={`petData[${cageIndex}].petBookingDetails[${petIndex}].height`}
                       type="number"
+                      isNumber
                       label="Chiều cao (cm)"
                     />
                   </Grid>
@@ -135,6 +136,7 @@ export default function CageManagement({ statusId, centerId, isDesktop, handleCh
                       disabled={statusId !== 1}
                       name={`petData[${cageIndex}].petBookingDetails[${petIndex}].length`}
                       type="number"
+                      isNumber
                       label="Chiều dài (cm)"
                     />
                   </Grid>
@@ -143,6 +145,7 @@ export default function CageManagement({ statusId, centerId, isDesktop, handleCh
                       disabled={statusId !== 1}
                       name={`petData[${cageIndex}].petBookingDetails[${petIndex}].weight`}
                       type="number"
+                      isNumber
                       label="Cân nặng (kg)"
                     />
                   </Grid>

@@ -49,12 +49,24 @@ export default function BookingListToolbar({
           <Grid item md={4}>
             <LocalizationProvider dateAdapter={AdapterDateFns} locale={vi}>
               <DatePicker
+                disabled={!fromDate}
                 label="Đến ngày"
                 value={toDate}
+                minDate={fromDate}
                 onChange={(newValue) => {
                   setToDate(newValue);
                 }}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    error={toDate && new Date(toDate).setHours(0, 0, 0, 0) < new Date(fromDate).setHours(0, 0, 0, 0)}
+                    helperText={
+                      toDate &&
+                      new Date(toDate).setHours(0, 0, 0, 0) < new Date(fromDate).setHours(0, 0, 0, 0) &&
+                      'Ngày đến không được nhỏ hơn ngày từ'
+                    }
+                  />
+                )}
               />
             </LocalizationProvider>
           </Grid>

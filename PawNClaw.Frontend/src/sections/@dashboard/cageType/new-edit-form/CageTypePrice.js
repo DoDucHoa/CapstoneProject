@@ -74,6 +74,7 @@ export default function CageTypePrice() {
                 name={`createPriceParameters[${index}].unitPrice`}
                 label={index === 0 ? 'Giá mặc định' : 'Giá cuối tuần'}
                 type="number"
+                isNumber
               />
             </Stack>
 

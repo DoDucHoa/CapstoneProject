@@ -20,13 +20,31 @@ export default function CageTypeDetail({ isEdit }) {
         <RHFTextField name="createCageTypeParameter.description" multiline rows={3} label="Mô tả" />
       </Grid>
       <Grid item xs={12} sm={4}>
-        <RHFTextField name="createCageTypeParameter.height" label="Chiều cao (cm)" type="number" disabled={isEdit} />
+        <RHFTextField
+          name="createCageTypeParameter.height"
+          label="Chiều cao (cm)"
+          type="number"
+          isNumber
+          disabled={isEdit}
+        />
       </Grid>
       <Grid item xs={12} sm={4}>
-        <RHFTextField name="createCageTypeParameter.width" label="Chiều rộng (cm)" type="number" disabled={isEdit} />
+        <RHFTextField
+          name="createCageTypeParameter.width"
+          label="Chiều rộng (cm)"
+          type="number"
+          isNumber
+          disabled={isEdit}
+        />
       </Grid>
       <Grid item xs={12} sm={4}>
-        <RHFTextField name="createCageTypeParameter.length" label="Chiều dài (cm)" type="number" disabled={isEdit} />
+        <RHFTextField
+          name="createCageTypeParameter.length"
+          label="Chiều dài (cm)"
+          type="number"
+          isNumber
+          disabled={isEdit}
+        />
       </Grid>
       <Grid item xs={12} sm={4}>
         <RHFCheckbox name="createCageTypeParameter.isSingle" label="Chuồng riêng" />

@@ -39,9 +39,21 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
     createCageTypeParameter: Yup.object().shape({
       typeName: Yup.string().required('Bắt buộc nhập'),
       description: Yup.string(),
-      height: Yup.number().required('Bắt buộc nhập').moreThan(0, 'Phải lớn hơn 0').typeError('Bắt buộc nhập'),
-      width: Yup.number().required('Bắt buộc nhập').moreThan(0, 'Phải lớn hơn 0').typeError('Bắt buộc nhập'),
-      length: Yup.number().required('Bắt buộc nhập').moreThan(0, 'Phải lớn hơn 0').typeError('Bắt buộc nhập'),
+      height: Yup.number()
+        .required('Bắt buộc nhập')
+        .moreThan(0, 'Phải lớn hơn 0')
+        .typeError('Bắt buộc nhập')
+        .max(5000, 'Phải nhỏ hơn 5000'),
+      width: Yup.number()
+        .required('Bắt buộc nhập')
+        .moreThan(0, 'Phải lớn hơn 0')
+        .typeError('Bắt buộc nhập')
+        .max(5000, 'Phải nhỏ hơn 5000'),
+      length: Yup.number()
+        .required('Bắt buộc nhập')
+        .moreThan(0, 'Phải lớn hơn 0')
+        .typeError('Bắt buộc nhập')
+        .max(5000, 'Phải nhỏ hơn 5000'),
       isSingle: Yup.boolean(),
       createUser: Yup.number().required(),
       modifyUser: Yup.number().required(),
@@ -50,7 +62,11 @@ export default function CageTypeNewEditForm({ isEdit, cageTypeData }) {
     }),
     createPriceParameters: Yup.array().of(
       Yup.object().shape({
-        unitPrice: Yup.number().required('Bắt buộc nhập').moreThan(0, 'Phải lớn hơn 0').typeError('Bắt buộc nhập'),
+        unitPrice: Yup.number()
+          .required('Bắt buộc nhập')
+          .moreThan(0, 'Phải lớn hơn 0')
+          .typeError('Bắt buộc nhập')
+          .max(9999999999, 'Giá trị vượt quá giới hạn'),
         createUser: Yup.number().required(),
         // priceTypeCode: Yup.string().required('Bắt buộc nhập'),
       })
