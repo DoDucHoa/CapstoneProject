@@ -7,7 +7,18 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 // @mui
 import { LoadingButton } from '@mui/lab';
-import { Box, Button, Card, Container, Grid, IconButton, InputAdornment, Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  Container,
+  Grid,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  Stack,
+  Typography,
+} from '@mui/material';
 // hooks
 import useSettings from '../../hooks/useSettings';
 import useAuth from '../../hooks/useAuth';
@@ -24,6 +35,11 @@ import Page from '../../components/Page';
 import Iconify from '../../components/Iconify';
 
 // ----------------------------------------------------------------------
+const GENDER_OPTIONS = [
+  { value: 1, label: 'Nam' },
+  { value: 2, label: 'Nữ' },
+  { value: 3, label: 'Khác' },
+];
 
 export default function OwnerProfile() {
   // STATE
@@ -217,16 +233,27 @@ export default function OwnerProfile() {
                   </Grid>
 
                   <Grid item xs={12}>
-                    <RHFSelect name="gender" label="Giới tính">
-                      <option key="1" value="1">
-                        Nam
-                      </option>
-                      <option key="2" value="2">
-                        Nữ
-                      </option>
-                      <option key="3" value="3">
-                        Khác
-                      </option>
+                    <RHFSelect
+                      name="gender"
+                      label="Giới tính"
+                      InputLabelProps={{ shrink: true }}
+                      SelectProps={{ native: false, sx: { textTransform: 'capitalize' } }}
+                    >
+                      {GENDER_OPTIONS.map((option) => (
+                        <MenuItem
+                          key={option.value}
+                          value={option.value}
+                          sx={{
+                            mx: 1,
+                            my: 0.5,
+                            borderRadius: 0.75,
+                            typography: 'body2',
+                            textTransform: 'capitalize',
+                          }}
+                        >
+                          {option.label}
+                        </MenuItem>
+                      ))}
                     </RHFSelect>
                   </Grid>
 
@@ -246,6 +273,7 @@ export default function OwnerProfile() {
                       <Grid item xs={12}>
                         <RHFTextField
                           name="password"
+                          helperText="Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt"
                           label="Mật khẩu"
                           type={showPassword ? 'text' : 'password'}
                           InputProps={{

@@ -1,9 +1,8 @@
-import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 
 // @mui
-import { Box, Card, Container, DialogTitle, Table, TableBody, TableContainer, TablePagination } from '@mui/material';
+import { Box, Card, Container, Table, TableBody, TableContainer, TablePagination } from '@mui/material';
 
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
@@ -12,22 +11,20 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 import useAuth from '../../../hooks/useAuth';
 import useSettings from '../../../hooks/useSettings';
 import useTable, { emptyRows } from '../../../hooks/useTable';
-// redux
-import { closeModal, getBookingDetails } from '../../../redux/slices/calendar';
+import { useDispatch } from '../../../redux/store';
 // components
-import { DialogAnimate } from '../../../components/animate';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import Page from '../../../components/Page';
 import Scrollbar from '../../../components/Scrollbar';
 import { TableEmptyRows, TableHeadCustom, TableNoData } from '../../../components/table';
 import { BookingListToolbar, BookingRow } from '../../../sections/@dashboard/bookingList';
-import { CalendarForm } from '../../../sections/@dashboard/calendar';
 import { getBookingList } from './useBookingListAPI';
+import { resetEvent } from '../../../redux/slices/calendar';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'Số chứng từ', align: 'left' },
+  { id: 'id', label: 'Đơn hàng', align: 'left' },
   { id: 'customerName', label: 'Khách hàng', align: 'left' },
   { id: 'startBooking', label: 'Ngày đặt', align: 'center' },
   { id: 'endBooking', label: 'Ngày kết thúc', align: 'center' },
@@ -39,6 +36,7 @@ const TABLE_HEAD = [
 export default function BookingList() {
   // CONFIG
   const { themeStretch } = useSettings();
+  const dispatch = useDispatch();
   const denseHeight = 72;
 
   // * --------------------------------------------------------------------------------------------------------------------------------------------
@@ -49,11 +47,6 @@ export default function BookingList() {
 
   const [tableData, setTableData] = useState([]);
   const [metadata, setMetadata] = useState({});
-
-  // * --------------------------------------------------------------------------------------------------------------------------------------------
-  // REDUX
-  const dispatch = useDispatch();
-  const { isOpenModal, bookingDetails, bookingStatuses, petData } = useSelector((state) => state.calendar);
 
   // * --------------------------------------------------------------------------------------------------------------------------------------------
   // HOOKS
@@ -67,7 +60,8 @@ export default function BookingList() {
     onChangePage,
     onChangeRowsPerPage,
   } = useTable();
-  const { centerId, centerInfo } = useAuth();
+  const { centerId } = useAuth();
+  const navigate = useNavigate();
 
   // * --------------------------------------------------------------------------------------------------------------------------------------------
   // STARTUP
@@ -88,6 +82,7 @@ export default function BookingList() {
 
   useEffect(() => {
     getBookings();
+    dispatch(resetEvent());
 
     return () => {
       setTableData([]);
@@ -98,19 +93,8 @@ export default function BookingList() {
 
   // * --------------------------------------------------------------------------------------------------------------------------------------------
   // REDUX FUNCTION
-  const handleOpenCalendarDialog = (idBooking) => {
-    dispatch(getBookingDetails(idBooking));
-  };
-
-  const handleCloseModal = () => {
-    dispatch(closeModal());
-  };
-
-  const handelChangeBookingStatus = () => {
-    const getBook = setTimeout(async () => {
-      await getBookings();
-    }, 3000);
-    return () => clearTimeout(getBook);
+  const navigateToBookingDetail = (idBooking) => {
+    navigate(PATH_DASHBOARD.bookingDetail.bookingList(idBooking));
   };
 
   const isNotFound = !(metadata.totalCount ? metadata.totalCount : 0);
@@ -120,7 +104,7 @@ export default function BookingList() {
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Đơn hàng"
-          links={[{ name: 'Trang chủ', href: PATH_DASHBOARD.root }, { name: 'Đơn booking' }]}
+          links={[{ name: 'Trang chủ', href: PATH_DASHBOARD.root }, { name: 'Đơn hàng' }]}
         />
 
         <BookingListToolbar
@@ -142,7 +126,7 @@ export default function BookingList() {
 
                 <TableBody>
                   {tableData.map((row) => (
-                    <BookingRow key={row.id} row={row} onClick={handleOpenCalendarDialog} />
+                    <BookingRow key={row.id} row={row} onClick={navigateToBookingDetail} />
                   ))}
 
                   <TableEmptyRows
@@ -170,19 +154,6 @@ export default function BookingList() {
             />
           </Box>
         </Card>
-
-        <DialogAnimate open={isOpenModal} onClose={handleCloseModal}>
-          <DialogTitle>Khách hàng: {isEmpty(bookingDetails) ? '' : bookingDetails.customer.name}</DialogTitle>
-          <CalendarForm
-            centerId={centerId}
-            centerInfo={centerInfo}
-            selectedEvent={bookingDetails || {}}
-            onCancel={handleCloseModal}
-            bookingStatuses={bookingStatuses}
-            petData={petData}
-            updateStatusColor={() => handelChangeBookingStatus()}
-          />
-        </DialogAnimate>
       </Container>
     </Page>
   );

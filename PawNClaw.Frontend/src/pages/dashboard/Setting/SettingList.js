@@ -98,8 +98,8 @@ export default function SettingList() {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={4}>
               <Stack direction={'column'} sx={{ width: 1 }} spacing={3}>
-                <RHFTextField name="kmSearch" label="Phạm vi tìm trung tâm (km)" type="number" />
-                <RHFTextField name="numOfSponsor" label="Số lượng sponsor trong 1 tháng" type="number" />
+                <RHFTextField name="kmSearch" label="Phạm vi tìm trung tâm (km)" type="number" isNumber />
+                <RHFTextField name="numOfSponsor" label="Số lượng sponsor trong 1 tháng" type="number" isNumber />
 
                 <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                   Lưu

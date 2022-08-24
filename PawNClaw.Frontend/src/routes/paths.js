@@ -76,6 +76,11 @@ export const PATH_DASHBOARD = {
     new: path(ROOTS_DASHBOARD, '/booking-list/new'),
     edit: (id) => path(ROOTS_DASHBOARD, `/booking-list/${id}/edit`),
   },
+  bookingDetail: {
+    root: path(ROOTS_DASHBOARD, '/booking-detail'),
+    bookingList: (id) => path(ROOTS_DASHBOARD, `/list/booking-detail/${id}`),
+    bookingCalendar: (id) => path(ROOTS_DASHBOARD, `/calendar/booking-detail/${id}`),
+  },
   brand: {
     root: path(ROOTS_DASHBOARD, '/brand'),
     list: path(ROOTS_DASHBOARD, '/brand/list'),

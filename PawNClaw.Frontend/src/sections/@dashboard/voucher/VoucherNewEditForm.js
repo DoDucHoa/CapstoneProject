@@ -223,6 +223,7 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
                 <RHFTextField
                   disabled={isEdit}
                   name="value"
+                  isNumber
                   type="number"
                   label={values?.voucherTypeCode === '1' ? 'Giá trị giảm (%)' : 'Giá trị giảm (VND)'}
                 />
@@ -233,6 +234,7 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
                   name="minCondition"
                   label="Điều kiện đơn hàng tối thiểu"
                   disabled={isEdit}
+                  isNumber
                   type="number"
                 />
               </Grid>
@@ -241,6 +243,7 @@ export default function VoucherNewEditForm({ isEdit, voucherData }) {
                 <RHFTextField
                   name="releaseAmount"
                   label={!isEdit ? 'Số lượng phát hành' : 'Số lượng còn lại'}
+                  isNumber
                   type="number"
                 />
               </Grid>
