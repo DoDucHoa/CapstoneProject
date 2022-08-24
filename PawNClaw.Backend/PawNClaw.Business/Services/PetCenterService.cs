@@ -214,8 +214,9 @@ namespace PawNClaw.Business.Services
                 {
                     if (_petCenterRepository.GetFirstOrDefault(x => x.Name.Trim().Equals(petCenter.Name)) != null)
                         throw new Exception("This Name Already Existed");
-                    if (_petCenterRepository.GetFirstOrDefault(x => x.Address.Trim().Equals(petCenter.Address)) != null)
+                    if (_petCenterRepository.CheckCenterForCreate(petCenter, location) != null)
                         throw new Exception("This Address Already Existed");
+                    
                     _petCenterRepository.Add(petCenter);
                     await _petCenterRepository.SaveDbChangeAsync();
 

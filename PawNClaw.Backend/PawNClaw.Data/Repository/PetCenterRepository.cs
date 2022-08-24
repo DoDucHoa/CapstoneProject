@@ -102,7 +102,8 @@ namespace PawNClaw.Data.Repository
                     && x.Bookings.Any(y => (y.StatusId == 1 || y.StatusId == 2)
                                         && DateTime.Compare(_startBooking, (DateTime)y.StartBooking) <= 0
                                         && DateTime.Compare(_endBooking, (DateTime)y.EndBooking) >= 0));
-            query.Select(x => new PetCenter() {
+            query.Select(x => new PetCenter()
+            {
                 Id = x.Id,
                 Name = x.Name,
                 Address = x.Address,
@@ -256,7 +257,7 @@ namespace PawNClaw.Data.Repository
                     .Select(ser => new Service
                     {
                         Id = ser.Id,
-                        Name =ser.Name,
+                        Name = ser.Name,
                         Description = ser.Description,
                         Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(ser.Id, PhotoTypesConst.Service),
                         ServicePrices = (ICollection<ServicePrice>)ser.ServicePrices
@@ -335,7 +336,7 @@ namespace PawNClaw.Data.Repository
                         Cages = cagetype.Cages.Where(x => x.IsOnline == true && x.Status == true).ToList(),
                         MinPrice = cagetype.Prices.Min(x => x.UnitPrice),
                         MaxPrice = cagetype.Prices.Max(x => x.UnitPrice),
-                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(cagetype.Id,PhotoTypesConst.CageType)
+                        Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(cagetype.Id, PhotoTypesConst.CageType)
                     }),
                     Vouchers = (ICollection<Voucher>)x.Vouchers.Where(x => x.Status == true
                                                                     && x.ReleaseAmount > 0
@@ -526,6 +527,18 @@ namespace PawNClaw.Data.Repository
                 });
 
             return query.ToList();
+        }
+
+        public PetCenter CheckCenterForCreate(PetCenter petCenter, Location location)
+        {
+            PetCenter query = _dbSet
+                .Include(x => x.Location)
+                .FirstOrDefault(x => x.Address.ToLower().Trim().Equals(petCenter.Address.ToLower())
+                                && x.Location.DistrictCode == location.DistrictCode
+                                && x.Location.CityCode == location.CityCode
+                                && x.Location.WardCode == location.WardCode);
+
+            return query;
         }
     }
 }

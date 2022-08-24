@@ -57,11 +57,12 @@ export default function ServicePrice({ createUser, isEdit }) {
         {fields.map((item, index) => (
           <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
-              <RHFTextField name={`servicePrice[${index}].price`} label="Giá" type="number" />
+              <RHFTextField name={`servicePrice[${index}].price`} label="Giá" type="number" isNumber />
               <RHFTextField
                 name={`servicePrice[${index}].minWeight`}
                 label="Trọng lượng tối thiểu (kg)"
                 type="number"
+                isNumber
                 disabled
               />
               <RHFTextField
@@ -69,6 +70,7 @@ export default function ServicePrice({ createUser, isEdit }) {
                 name={`servicePrice[${index}].maxWeight`}
                 label="Trọng lượng tối đa (kg)"
                 type="number"
+                isNumber
               />
             </Stack>
 

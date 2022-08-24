@@ -227,6 +227,7 @@ export default function StaffProfile() {
                       <Grid item xs={12}>
                         <RHFTextField
                           name="password"
+                          helperText="Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt"
                           label="Mật khẩu"
                           type={showPassword ? 'text' : 'password'}
                           InputProps={{

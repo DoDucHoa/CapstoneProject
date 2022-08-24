@@ -79,7 +79,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             MaterialPageRoute(
                               builder: (context) => TransactionDetailsScreen(
                                 booking: booking,
-                                redirect: NotificationScreen(),
+                                redirect: null,
                               ),
                             ),
                           );

@@ -54,7 +54,7 @@ class _SearchScreenState extends State<SearchScreen> {
           return const Scaffold(
               backgroundColor: Colors.white,
               body: LoadingIndicator(
-                  loadingText: "Đang tìm kiếm trung tâm"));
+                  loadingText: "Đang tìm kiếm"));
         },
       ),
     );

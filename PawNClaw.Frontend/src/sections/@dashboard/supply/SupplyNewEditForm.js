@@ -41,8 +41,16 @@ export default function SupplyNewEditForm({ isEdit, supplyData }) {
 
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Bắt buộc nhập'),
-    sellPrice: Yup.number().required('Bắt buộc nhập').typeError('Bắt buộc nhập').min(0, 'Số tiền phải lớn hơn 0'),
-    quantity: Yup.number().required('Bắt buộc nhập').typeError('Bắt buộc nhập').min(0, 'Số lượng phải lớn hơn 0'),
+    sellPrice: Yup.number()
+      .required('Bắt buộc nhập')
+      .typeError('Bắt buộc nhập')
+      .min(0, 'Số tiền không được nhỏ hơn 0')
+      .max(9999999999, 'Giá trị vượt quá giới hạn'),
+    quantity: Yup.number()
+      .required('Bắt buộc nhập')
+      .typeError('Bắt buộc nhập')
+      .min(0, 'Số lượng không được nhỏ hơn 0')
+      .max(9999999999, 'Giá trị vượt quá giới hạn'),
     createUser: Yup.number().required(),
     modifyUser: Yup.number().required(),
     avatarUrl: Yup.mixed().test('required', 'Ảnh đồ dùng bắt buộc nhập', (value) => value !== ''),
@@ -54,8 +62,8 @@ export default function SupplyNewEditForm({ isEdit, supplyData }) {
       id: supplyData?.id || 0,
       name: supplyData?.name || '',
       sellPrice: supplyData?.sellPrice || 0,
-      discountPrice: 0,
       quantity: supplyData?.quantity || 0,
+      discountPrice: 0,
       createUser: supplyData?.createUser || accountInfo.id,
       modifyUser: accountInfo.id,
       avatarUrl: supplyData?.photos?.length > 0 ? supplyData?.photos[0].url : '',
@@ -142,11 +150,11 @@ export default function SupplyNewEditForm({ isEdit, supplyData }) {
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(1, 1fr)' },
               }}
             >
-              <RHFTextField name="name" label="Tên đồ dùng" disabled={isEdit} />
+              <RHFTextField name="name" label="Tên đồ dùng" />
 
-              <RHFTextField label="Giá bán" name="sellPrice" type="number" />
+              <RHFTextField name="sellPrice" label="Giá bán" type="number" isNumber />
 
-              <RHFTextField label="Số lượng" name="quantity" type="number" />
+              <RHFTextField name="quantity" label="Số lượng" type="number" isNumber />
 
               <RHFSelect
                 name="supplyTypeCode"

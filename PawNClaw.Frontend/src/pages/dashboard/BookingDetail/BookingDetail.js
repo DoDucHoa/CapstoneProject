@@ -14,7 +14,12 @@ import useResponsive from '../../../hooks/useResponsive';
 import { FormProvider } from '../../../components/hook-form';
 import { compareBookingWithCurrentDate, fDateTime } from '../../../utils/formatTime';
 
-import { SupplyDialogForm, CageDialogForm, PDFInvoiceDialog, ServiceDialogForm } from './dialogs';
+import {
+  SupplyDialogForm,
+  CageDialogForm,
+  PDFInvoiceDialog,
+  ServiceDialogForm,
+} from '../../../sections/@dashboard/calendar/dialogs';
 
 import {
   BookingDetail,
@@ -24,44 +29,34 @@ import {
   PaymentDetail,
   ServiceList,
   SupplyList,
-} from './new-edit-form';
+} from '../../../sections/@dashboard/calendar/new-edit-form';
 
-import { checkSize } from './useCalendarAPI';
+import { checkSize } from '../../../sections/@dashboard/calendar/useCalendarAPI';
 import useAuth from '../../../hooks/useAuth';
 import axios from '../../../utils/axios';
 
 // ----------------------------------------------------------------------
 
-CalendarForm.propTypes = {
+BookingDetails.propTypes = {
   centerId: PropTypes.any,
   centerInfo: PropTypes.object,
   selectedEvent: PropTypes.object,
   onCancel: PropTypes.func,
   bookingStatuses: PropTypes.array,
   petData: PropTypes.array,
-  updateStatusColor: PropTypes.func,
 };
 
-CalendarForm.defaultProps = {
+BookingDetails.defaultProps = {
   centerId: 0,
   centerInfo: {},
   selectedEvent: {},
   onCancel: () => {},
   bookingStatuses: [],
   petData: [],
-  updateStatusColor: () => {},
 };
-CalendarForm.displayName = 'CalendarForm';
+BookingDetails.displayName = 'BookingDetails';
 
-export default function CalendarForm({
-  centerId,
-  centerInfo,
-  selectedEvent,
-  onCancel,
-  bookingStatuses,
-  petData,
-  updateStatusColor,
-}) {
+export default function BookingDetails({ centerId, centerInfo, selectedEvent, onCancel, bookingStatuses, petData }) {
   // STATE
   const [openSupplyDialogForm, setOpenSupplyDialogForm] = useState(false);
   const [openServiceDialogForm, setOpenServiceDialogForm] = useState(false);
@@ -180,10 +175,26 @@ export default function CalendarForm({
     watch,
     handleSubmit,
     setValue,
-    formState: { isSubmitting, isDirty },
+    formState: { isSubmitting, dirtyFields },
   } = methods;
 
   const values = watch();
+
+  // check dirty fields
+  const checkIsDirty = () => dirtyFields?.petData?.some((pet) => pet?.petBookingDetails);
+  const getDirtyIndex = () => dirtyFields?.petData?.findIndex((pet) => pet?.petBookingDetails);
+  const isDirty = checkIsDirty();
+  const dirtyIndex = getDirtyIndex();
+
+  useEffect(() => {
+    if (isDirty) {
+      setValue(`cageSizeCheck[${dirtyIndex}].isValid`, false);
+    }
+  }, [isDirty, dirtyIndex, setValue]);
+
+  useEffect(() => {
+    setValue('petData', petData);
+  }, [petData, setValue]);
 
   // FUNCTIONS
   // ----------------------------------------------------------------------
@@ -236,9 +247,8 @@ export default function CalendarForm({
       // check if current date occurs before booking date
       if (statusId !== 1 || compareBookingWithCurrentDate(startBooking)) {
         if (statusId !== 1 || (!isDirty && isSizeValid)) {
-          dispatch(createPetHealthStatus(data, id));
-          dispatch(updateBookingStatus(data));
-          updateStatusColor(data.id, data.statusId);
+          await dispatch(createPetHealthStatus(data, id));
+          await dispatch(updateBookingStatus(data));
 
           enqueueSnackbar('Cập nhật thành công!');
           onCancel();

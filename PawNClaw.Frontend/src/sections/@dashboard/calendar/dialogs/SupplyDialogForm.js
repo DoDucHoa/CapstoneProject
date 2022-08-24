@@ -12,7 +12,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 
 // redux
 import { useDispatch } from '../../../../redux/store';
-import { getBookingDetails, closeModal } from '../../../../redux/slices/calendar';
+import { getBookingDetails } from '../../../../redux/slices/calendar';
 
 // components
 import axios from '../../../../utils/axios';
@@ -79,7 +79,6 @@ export default function SupplyDialogForm({ open, onClose, supplies, bookingId })
       await UpdateSupplyOrder(data, bookingId);
       onClose();
       enqueueSnackbar('Cập nhật thành công!');
-      dispatch(closeModal());
       dispatch(getBookingDetails(bookingId));
     } catch (error) {
       enqueueSnackbar(error.message, { variant: 'error' });
@@ -116,6 +115,7 @@ export default function SupplyDialogForm({ open, onClose, supplies, bookingId })
                 size="small"
                 name={`supplies[${index}].quantity`}
                 type="number"
+                isNumber
                 onChange={(event) => setValue(`supplies[${index}].quantity`, Number(event.target.value))}
               />
             </Grid>
@@ -124,6 +124,7 @@ export default function SupplyDialogForm({ open, onClose, supplies, bookingId })
                 size="small"
                 name={`supplies[${index}].sellPrice`}
                 type="number"
+                isNumber
                 onChange={(event) => setValue(`supplies[${index}].sellPrice`, Number(event.target.value))}
               />
             </Grid>
