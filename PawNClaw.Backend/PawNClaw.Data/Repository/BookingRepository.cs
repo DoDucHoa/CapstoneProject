@@ -710,6 +710,15 @@ namespace PawNClaw.Data.Repository
                     Rating = x.Rating,
                     CustomerNote = x.CustomerNote,
                     StaffNote = x.StaffNote,
+                    Customer = new Customer
+                    {
+                        Name = x.Customer.Name,
+                        IdNavigation = new Account
+                        {
+                            Phone = x.Customer.IdNavigation.Phone,
+                            Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.CustomerId, PhotoTypesConst.Account),
+                        }
+                    },
                     BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
                     .Select(bookingdetail => new BookingDetail
                     {
@@ -741,6 +750,7 @@ namespace PawNClaw.Data.Repository
                                 Length = pet.Pet.Length,
                                 Weight = pet.Pet.Weight,
                                 Birth = pet.Pet.Birth,
+                                BreedName = pet.Pet.BreedName,
                                 Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(pet.PetId, PhotoTypesConst.PetProfile),
                             }
                         })

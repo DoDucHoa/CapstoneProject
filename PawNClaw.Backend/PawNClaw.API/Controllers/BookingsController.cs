@@ -245,7 +245,7 @@ namespace PawNClaw.API.Controllers
         {
             try
             {
-                var data = _bookingService.CheckSizePet(checkSizePet.petRequestForSearchCenters, checkSizePet.CageCode, checkSizePet.CenterId);
+                var data = _bookingService.CheckSizePet(checkSizePet.petRequestForSearchCenters, checkSizePet.CageCode, checkSizePet.CenterId, checkSizePet.BookingId);
                 return Ok(data);
             }
             catch (Exception ex)

@@ -35,5 +35,6 @@ namespace PawNClaw.Data.Parameter
         public List<PetRequestForSearchCenter> petRequestForSearchCenters { get; set; }
         public string CageCode { get; set; }
         public int CenterId { get; set; }
+        public int BookingId { get; set; }
     }
 }

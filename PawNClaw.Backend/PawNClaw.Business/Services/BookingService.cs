@@ -572,7 +572,7 @@ namespace PawNClaw.Business.Services
         }
 
         //Check Size Pet With Cage
-        public bool CheckSizePet(List<PetRequestForSearchCenter> petRequestForSearchCenters, string CageCode, int CenterId)
+        public async Task<bool> CheckSizePet(List<PetRequestForSearchCenter> petRequestForSearchCenters, string CageCode, int CenterId, int BookingId)
         {
             decimal PetHeight = 0;
             decimal PetWidth = 0;
@@ -588,6 +588,92 @@ namespace PawNClaw.Business.Services
             }
 
             var cage = _cageRepository.GetCageWithCageType(CageCode, CenterId);
+
+            using (IDbContextTransaction transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var item in petRequestForSearchCenters)
+                    {
+                        var serviceOrderUpdates = _serviceOrderRepository.GetServiceOrdersByPetIdAndBookingId(BookingId, item.Id);
+
+                        foreach (var order in serviceOrderUpdates)
+                        {
+                            var serviceOrder = _serviceOrderRepository.GetServiceOrder(BookingId, order.ServiceId);
+
+                            serviceOrder.SellPrice = _servicePriceRepository.GetFirstOrDefault(x => x.ServiceId == order.ServiceId && x.MinWeight <= item.Weight && x.MaxWeight > item.Weight).Price;
+                            serviceOrder.TotalPrice = serviceOrder.SellPrice * serviceOrder.Quantity;
+
+                            _serviceOrderRepository.Update(serviceOrder);
+                            await _serviceOrderRepository.SaveDbChangeAsync();
+                        }
+                    }
+
+                    var booking = _bookingRepository.GetBookingForCustomer(BookingId);
+
+                    var serviceOrders = booking.ServiceOrders;
+
+                    var supplyOrders = booking.SupplyOrders;
+
+                    var bookingDetails = booking.BookingDetails;
+
+                    decimal Price = 0;
+
+                    foreach (var serviceOrder in serviceOrders)
+                    {
+                        Price = (decimal)(Price + serviceOrder.TotalPrice);
+                    }
+
+                    foreach (var supplyOrder in supplyOrders)
+                    {
+                        Price = (decimal)(Price + supplyOrder.TotalPrice);
+                    }
+
+                    foreach (var bookingDetail in bookingDetails)
+                    {
+                        Price = (decimal)(Price + bookingDetail.Price);
+                    }
+
+                    var bookingToDb = _bookingRepository.Get(booking.Id);
+
+                    decimal Discount = 0;
+                    //Here Check Voucher
+                    if (bookingToDb.VoucherCode != null)
+                    {
+                        var voucher = _voucherRepository.Get(bookingToDb.VoucherCode);
+
+                        if (voucher.VoucherTypeCode.Equals("1"))
+                        {
+                            if (Price > voucher.MinCondition)
+                            {
+                                Discount = (decimal)(Price * (voucher.Value / 100));
+                            }
+                        }
+
+                        if (voucher.VoucherTypeCode.Equals("2"))
+                        {
+                            if (Price > voucher.MinCondition)
+                            {
+                                Discount = (decimal)(voucher.Value);
+                            }
+                        }
+                    }
+
+                    bookingToDb.SubTotal = Price;
+                    bookingToDb.Discount = Discount;
+                    bookingToDb.Total = Price - Discount;
+
+                    _bookingRepository.Update(bookingToDb);
+                    await _bookingRepository.SaveDbChangeAsync();
+
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw new Exception("Update Price Fail");
+                }
+            }
 
             if (PetHeight > cage.CageType.Height || PetWidth > cage.CageType.Width)
             {
