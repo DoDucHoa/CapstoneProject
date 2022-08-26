@@ -11,9 +11,8 @@ const initialState = {
   isLoading: false,
   error: null,
   events: [],
-  isOpenModal: false,
   selectedEventId: null,
-  bookingDetails: {},
+  bookingDetails: null,
   bookingStatuses: [],
   petData: [],
 };
@@ -65,33 +64,17 @@ const slice = createSlice({
 
     // SELECT EVENT
     selectEvent(state, action) {
-      const bookingDetails = action.payload;
-      state.isOpenModal = true;
+      const { bookingDetails, petData, bookingStatus } = action.payload;
       state.bookingDetails = bookingDetails;
+      state.petData = petData;
+      state.bookingStatuses = bookingStatus;
       state.isLoading = false;
     },
 
-    // GET BOOKING STATUS
-    getBookingStatusesSuccess(state, action) {
-      state.bookingStatuses = action.payload;
-      state.isLoading = false;
-    },
-
-    // GET PET DATA
-    getPetDataSuccess(state, action) {
-      state.petData = action.payload;
-      state.isLoading = false;
-    },
-
-    // OPEN MODAL
-    openModal(state) {
-      state.isOpenModal = true;
-    },
-
-    // CLOSE MODAL
-    closeModal(state) {
-      state.isOpenModal = false;
-      state.selectedEventId = null;
+    // RESET EVENT
+    resetEvent(state) {
+      state.bookingDetails = null;
+      state.petData = [];
     },
   },
 });
@@ -100,8 +83,7 @@ const slice = createSlice({
 export default slice.reducer;
 
 // Actions
-export const { openModal, closeModal, selectEvent, getBookingStatusesSuccess, getPetDataSuccess, startLoading } =
-  slice.actions;
+export const { selectEvent, startLoading, resetEvent } = slice.actions;
 
 // ----------------------------------------------------------------------
 
@@ -170,9 +152,7 @@ export function getBookingDetails(bookingId) {
         })),
       }));
 
-      dispatch(selectEvent(bookingDetails));
-      dispatch(getBookingStatusesSuccess(bookingStatusesResponse.data));
-      dispatch(getPetDataSuccess(petData));
+      dispatch(selectEvent({ bookingDetails, petData, bookingStatus: bookingStatusesResponse.data }));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

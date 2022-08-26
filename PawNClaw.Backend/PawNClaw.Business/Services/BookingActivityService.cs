@@ -10,10 +10,10 @@ namespace PawNClaw.Business.Services
 {
     public class BookingActivityService
     {
-        IBookingActivityRepository _bookingActivityRepository;
-        IPhotoRepository _photoRepository;
-        IBookingRepository _bookingRepository;
-        IAccountRepository _accountRepository;
+        private readonly IBookingActivityRepository _bookingActivityRepository;
+        private readonly IPhotoRepository _photoRepository;
+        private readonly IBookingRepository _bookingRepository;
+        private readonly IAccountRepository _accountRepository;
 
         private readonly ApplicationDbContext _db;
 

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
 // @mui
 import { TextField } from '@mui/material';
-import { TimePicker } from '@mui/lab';
+import { MobileTimePicker } from '@mui/lab';
 
 // ----------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ export default function RHFTimePicker({ name, ...other }) {
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <TimePicker
+        <MobileTimePicker
           ampm={false}
           {...field}
           {...other}

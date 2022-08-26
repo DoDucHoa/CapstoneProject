@@ -12,7 +12,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 
 // redux
 import { useDispatch } from '../../../../redux/store';
-import { getBookingDetails, closeModal } from '../../../../redux/slices/calendar';
+import { getBookingDetails } from '../../../../redux/slices/calendar';
 
 // components
 import axios from '../../../../utils/axios';
@@ -79,7 +79,6 @@ export default function ServiceDialogForm({ open, onClose, services, bookingId }
       await UpdateServiceOrder(data, bookingId);
       onClose();
       enqueueSnackbar('Cập nhật thành công!');
-      dispatch(closeModal());
       dispatch(getBookingDetails(bookingId));
     } catch (error) {
       enqueueSnackbar(error.message, { variant: 'error' });
@@ -114,6 +113,7 @@ export default function ServiceDialogForm({ open, onClose, services, bookingId }
                 size="small"
                 name={`services[${index}].quantity`}
                 type="number"
+                isNumber
                 onChange={(event) => setValue(`services[${index}].quantity`, Number(event.target.value))}
               />
             </Grid>
@@ -122,6 +122,7 @@ export default function ServiceDialogForm({ open, onClose, services, bookingId }
                 size="small"
                 name={`services[${index}].sellPrice`}
                 type="number"
+                isNumber
                 onChange={(event) => setValue(`services[${index}].sellPrice`, Number(event.target.value))}
               />
             </Grid>

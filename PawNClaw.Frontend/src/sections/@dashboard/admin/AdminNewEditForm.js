@@ -221,6 +221,7 @@ export default function AdminNewEditForm({ isEdit, adminData }) {
                 <>
                   <RHFTextField
                     name="password"
+                    helperText="Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt"
                     label="Mật khẩu"
                     type={showPassword ? 'text' : 'password'}
                     InputProps={

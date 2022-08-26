@@ -26,7 +26,7 @@ import useAuth from '../../../../hooks/useAuth';
 
 // redux
 import { useDispatch } from '../../../../redux/store';
-import { getBookingDetails, closeModal } from '../../../../redux/slices/calendar';
+import { getBookingDetails } from '../../../../redux/slices/calendar';
 
 // utils
 import axios from '../../../../utils/axios';
@@ -115,10 +115,8 @@ export default function CageDialogForm({ open, onClose, cageSearchParam, booking
           });
         })
       ).then(() => {
-        reset();
         onClose();
         enqueueSnackbar('Cập nhật thành công!');
-        dispatch(closeModal());
         dispatch(getBookingDetails(bookingId));
       });
     } catch (error) {
@@ -178,7 +176,7 @@ export default function CageDialogForm({ open, onClose, cageSearchParam, booking
           </Grid>
           <Grid item xs={12}>
             <Typography variant="caption">Giá tiền</Typography>
-            <Typography variant="h6">{fCurrency(price)} ₫</Typography>
+            <Typography variant="h6">{fCurrency(price)} ₫ /ngày</Typography>
           </Grid>
         </Grid>
 

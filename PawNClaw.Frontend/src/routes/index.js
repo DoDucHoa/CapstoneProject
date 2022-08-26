@@ -488,6 +488,34 @@ export default function Router() {
           ],
         },
         {
+          path: 'list/booking-detail',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/list/booking-detail/:id" replace />, index: true },
+            {
+              path: ':id',
+              element: (
+                <RoleBasedGuard accessibleRoles={['owner', 'staff']} currentRole={currentRole}>
+                  <BookingDetailScreen />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'calendar/booking-detail',
+          children: [
+            { path: '', element: <Navigate to="/dashboard/calendar/booking-detail/:id" replace />, index: true },
+            {
+              path: ':id',
+              element: (
+                <RoleBasedGuard accessibleRoles={['owner', 'staff']} currentRole={currentRole}>
+                  <BookingDetailScreen />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
           path: 'setting',
           children: [
             { path: '', element: <Navigate to="/dashboard/setting/list" replace />, index: true },
@@ -606,6 +634,9 @@ const BookingCalendar = Loadable(lazy(() => import('../pages/dashboard/Calendar'
 
 // BOOKING LIST
 const BookingList = Loadable(lazy(() => import('../pages/dashboard/BookingList/BookingList')));
+
+// BOOKING DETAIL
+const BookingDetailScreen = Loadable(lazy(() => import('../pages/dashboard/BookingDetail/BookingDetailScreen')));
 
 // CENTER
 const CenterList = Loadable(lazy(() => import('../pages/dashboard/Center/CenterList')));

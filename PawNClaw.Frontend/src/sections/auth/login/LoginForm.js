@@ -42,7 +42,6 @@ export default function LoginForm() {
   });
 
   const {
-    reset,
     setError,
     handleSubmit,
     formState: { errors, isSubmitting },
@@ -52,7 +51,6 @@ export default function LoginForm() {
     try {
       await login(data.email, data.password);
     } catch (error) {
-      reset();
       if (error.message.includes('auth/wrong-password')) {
         setError('afterSubmit', { ...error, message: 'Sai mật khẩu' });
       }

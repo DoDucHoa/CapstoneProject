@@ -12,20 +12,20 @@ namespace PawNClaw.Business.Services
 {
     public class BookingService
     {
-        IBookingRepository _bookingRepository;
-        IBookingDetailRepository _bookingDetailRepository;
-        IPetBookingDetailRepository _petBookingDetailRepository;
-        IServiceOrderRepository _serviceOrderRepository;
-        ISupplyOrderRepository _supplyOrderRepository;
-        ISupplyRepository _supplyRepository;
-        IServicePriceRepository _servicePriceRepository;
-        IPetRepository _petRepository;
-        ICageRepository _cageRepository;
-        IStaffRepository _staffRepository;
-        IVoucherRepository _voucherRepository;
-        ICustomerVoucherLogRepository _customerVoucherLogRepository;
-        ICancelLogRepository _cancelLogRepository;
-        IAccountRepository _accountRepository;
+        private readonly IBookingRepository _bookingRepository;
+        private readonly IBookingDetailRepository _bookingDetailRepository;
+        private readonly IPetBookingDetailRepository _petBookingDetailRepository;
+        private readonly IServiceOrderRepository _serviceOrderRepository;
+        private readonly ISupplyOrderRepository _supplyOrderRepository;
+        private readonly ISupplyRepository _supplyRepository;
+        private readonly IServicePriceRepository _servicePriceRepository;
+        private readonly IPetRepository _petRepository;
+        private readonly ICageRepository _cageRepository;
+        private readonly IStaffRepository _staffRepository;
+        private readonly IVoucherRepository _voucherRepository;
+        private readonly ICustomerVoucherLogRepository _customerVoucherLogRepository;
+        private readonly ICancelLogRepository _cancelLogRepository;
+        private readonly IAccountRepository _accountRepository;
 
         private readonly ApplicationDbContext _db;
 
@@ -544,7 +544,6 @@ namespace PawNClaw.Business.Services
 
             return values;
         }
-
 
         //Get List Booking By ID
         public Booking GetBookingById(int id)

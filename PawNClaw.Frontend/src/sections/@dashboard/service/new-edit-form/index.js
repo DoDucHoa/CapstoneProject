@@ -34,9 +34,13 @@ export default function ServiceNewEditForm({ isEdit, serviceData }) {
   const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({
-    lastPrice: Yup.number().required('Bắt buộc nhập').moreThan(0, 'Phải lớn hơn 0').typeError('Bắt buộc nhập'),
+    lastPrice: Yup.number()
+      .required('Bắt buộc nhập')
+      .moreThan(0, 'Phải lớn hơn 0')
+      .typeError('Bắt buộc nhập')
+      .max(9999999999, 'Giá vượt quá giới hạn'),
     service: Yup.object().shape({
-      name: Yup.string().required('Bắt buộc nhập'),
+      name: Yup.string().required('Bắt buộc nhập').max(255, 'Tối đa 255 ký tự'),
       description: Yup.string(),
       avatarUrl: Yup.mixed().test('required', 'Ảnh dịch vụ bắt buộc nhập', (value) => value !== ''),
     }),
@@ -44,11 +48,16 @@ export default function ServiceNewEditForm({ isEdit, serviceData }) {
       .min(1, 'Vui lòng nhập giá dịch vụ')
       .of(
         Yup.object().shape({
-          price: Yup.number().required('Bắt buộc nhập').moreThan(0, 'Phải lớn hơn 0').typeError('Bắt buộc nhập'),
+          price: Yup.number()
+            .required('Bắt buộc nhập')
+            .moreThan(0, 'Phải lớn hơn 0')
+            .typeError('Bắt buộc nhập')
+            .max(9999999999, 'Giá vượt quá giới hạn'),
           minWeight: Yup.number().required('Bắt buộc nhập').typeError('Bắt buộc nhập'),
           maxWeight: Yup.number()
             .required('Bắt buộc nhập')
             .moreThan(0, 'Phải lớn hơn 0')
+            .max(200, 'Tối đa 200kg')
             .typeError('Bắt buộc nhập')
             .moreThan(Yup.ref('minWeight'), 'Phải lớn hơn trọng lượng tối thiểu'),
         })

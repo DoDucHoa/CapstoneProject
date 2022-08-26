@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 //
 import FullCalendar from '@fullcalendar/react'; // => request placed at the top
 import listPlugin from '@fullcalendar/list';
@@ -6,32 +7,29 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
 import interactionPlugin from '@fullcalendar/interaction';
-import { isEmpty } from 'lodash';
 // @mui
-import { Card, Container, DialogTitle } from '@mui/material';
+import { Card, Container } from '@mui/material';
 // hooks
 import useAuth from '../../hooks/useAuth';
 import useSettings from '../../hooks/useSettings';
 import useResponsive from '../../hooks/useResponsive';
 // redux
 import { useDispatch, useSelector } from '../../redux/store';
-import { getEvents, closeModal, getBookingDetails } from '../../redux/slices/calendar';
+import { getEvents, resetEvent } from '../../redux/slices/calendar';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // components
 import Page from '../../components/Page';
-import { DialogAnimate } from '../../components/animate';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 // sections
-import { CalendarForm, CalendarStyle, CalendarToolbar } from '../../sections/@dashboard/calendar';
-// config
-import { BOOKING_STATUS_COLOR } from '../../config';
+import { CalendarStyle, CalendarToolbar } from '../../sections/@dashboard/calendar';
 
 // ----------------------------------------------------------------------
 
 export default function Calendar() {
-  const { centerId, centerInfo } = useAuth();
+  const { centerId } = useAuth();
   const { themeStretch } = useSettings();
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
@@ -43,10 +41,11 @@ export default function Calendar() {
   const [bookings, setBookings] = useState([]);
   const [view, setView] = useState(isDesktop ? 'dayGridMonth' : 'listWeek');
 
-  const { events, isOpenModal, bookingDetails, bookingStatuses, petData } = useSelector((state) => state.calendar);
+  const { events } = useSelector((state) => state.calendar);
 
   useEffect(() => {
     dispatch(getEvents(centerId));
+    dispatch(resetEvent());
   }, [dispatch, centerId]);
 
   useEffect(() => {
@@ -82,26 +81,7 @@ export default function Calendar() {
   };
 
   const handleSelectEvent = (arg) => {
-    dispatch(getBookingDetails(arg.event.id));
-  };
-
-  const handleCloseModal = () => {
-    dispatch(closeModal());
-  };
-
-  const handleChangeBookingStatusColor = (bookingId, statusId) => {
-    const bookingIndex = bookings.findIndex((booking) => booking.id === bookingId);
-    // eslint-disable-next-line no-var
-    var data = [...bookings];
-    if (bookingIndex !== -1) {
-      const detail = data[bookingIndex];
-      data.splice(bookingIndex, 1);
-      const result = [
-        { id: detail.id, title: detail.title, start: detail.start, textColor: BOOKING_STATUS_COLOR[statusId] },
-        ...data,
-      ];
-      setBookings(result);
-    }
+    navigate(PATH_DASHBOARD.bookingDetail.bookingCalendar(arg.event.id));
   };
 
   return (
@@ -133,19 +113,6 @@ export default function Calendar() {
             />
           </CalendarStyle>
         </Card>
-
-        <DialogAnimate open={isOpenModal} onClose={handleCloseModal}>
-          <DialogTitle>Khách hàng: {isEmpty(bookingDetails) ? '' : bookingDetails.customer.name}</DialogTitle>
-          <CalendarForm
-            centerId={centerId}
-            centerInfo={centerInfo}
-            selectedEvent={bookingDetails || {}}
-            onCancel={handleCloseModal}
-            bookingStatuses={bookingStatuses}
-            petData={petData}
-            updateStatusColor={handleChangeBookingStatusColor}
-          />
-        </DialogAnimate>
       </Container>
     </Page>
   );
