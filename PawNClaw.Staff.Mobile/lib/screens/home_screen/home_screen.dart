@@ -82,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               expandedHeight: height * 0.15,
                               floating: true,
                               pinned: true,
+                              collapsedHeight: height * 0.1,
                               flexibleSpace: FlexibleSpaceBar(
                                 collapseMode: CollapseMode.pin,
                                 background: WelcomePanel(

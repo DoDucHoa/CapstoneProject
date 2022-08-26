@@ -111,7 +111,7 @@ class _ShowAddressDialogState extends State<ShowAddressDialog> {
                               print(
                                   'lat: ${position.latitude}, long: ${position.longitude}');
                               BlocProvider.of<NearbyBloc>(context)
-                                  //.add(GetCenterNearby(state.position.latitude, state.position.longitude, state.address));
+                                  // .add(GetCenterNearby(10.974940, 106.861227, address!));
                                   .add(GetCenterNearby(position.latitude,
                                       position.longitude, address!));
                             },

@@ -297,7 +297,7 @@ class IdNavigation {
   IdNavigation.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     phone = json['phone'];
-    photo = json['photos'] != [] ?  Photo.fromJson(json['photos'][0]) : null;
+    photo = json['photos'].toString() != "[]" ?  Photo.fromJson(json['photos'][0]) : null;
   }
 
   Map<String, dynamic> toJson() {
