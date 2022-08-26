@@ -142,22 +142,25 @@ class _PetCardState extends State<PetCard> {
         ),
         Positioned(
           left: width * regularPadRate,
-          top: width * mediumPadRate,
+          top: width * smallPadRate,
           child: Container(
             height: width * 0.2,
             width: width * 0.2,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(width * 0.2),
               color: Colors.white,
-              image: DecorationImage(
-                image: AssetImage('lib/assets/cat_avatar0.png'),
+              image: (widget.pet.photos!.isEmpty) ? DecorationImage(
+                image: AssetImage(widget.pet.petTypeCode == "DOG" ? 'lib/assets/dog.png' : 'lib/assets/black-cat.png'),
+                fit: BoxFit.fitHeight,
+              ):DecorationImage(
+                image: NetworkImage(widget.pet.photos!.first.url!),
                 fit: BoxFit.fitHeight,
               ),
             ),
           ),
         ),
-        Positioned(
-            top: width * (smallPadRate * 2 + 0.2),
+        Positioned(  
+            bottom: width * (extraSmallPadRate),
             child: Container(
               margin: EdgeInsets.symmetric(
                 horizontal: width * smallPadRate * 2,

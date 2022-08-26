@@ -310,7 +310,7 @@ class _VoucherCardState extends State<VoucherCard> {
                               widget.voucher.formatExpiredDate()),
                         ]))),
                 Text(
-                  '* Đơn hàng chưa đạt giá trị tối thiểu của Voucher',
+                  '* Đơn hàng chưa đạt giá trị tối thiểu của ưu đãi',
                   style: TextStyle(fontStyle: FontStyle.italic),
                 )
               ],

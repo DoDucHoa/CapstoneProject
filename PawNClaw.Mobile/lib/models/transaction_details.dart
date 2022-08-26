@@ -135,20 +135,21 @@ class TransactionDetails {
     for (var act in this.bookingActivities!) {
       if (act.bookingDetailId != null && act.provideTime != null) {
         for (var pet in getPetsInCage(act.bookingDetailId!)) {
+          Cage cage = this
+                      .bookingDetails!
+                      .where((e) => e.id == act.bookingDetailId)
+                      .first
+                      .cage!;
           FEED_ACTS.add(Activity(
               id: act.id!,
               time: DateTime.parse(act.provideTime!),
               type: ActivityType(0),
               product: Product(
                   id: 0,
-                  name: this
-                      .bookingDetails!
-                      .where((e) => e.id == act.bookingDetailId)
-                      .first
-                      .cage!
+                  name: cage
                       .cageType!
                       .typeName!,
-                  imgUrl: act.photo!.first.url ?? "",
+                  imgUrl: cage.cageType!.photo!.url ?? "",
                   note: act.description != null
                       ? act.description!
                       : 'Cho ${pet.name} ăn'),
@@ -168,17 +169,18 @@ class TransactionDetails {
       if (act.supplyId != null && act.provideTime != null) {
         for (var pet in getPets()) {
           if (pet.id == act.petId) {
+            Supply supply = this
+                .supplyOrders!
+                .where((e) => e.supplyId == act.supplyId)
+                .first
+                .supply!;
             SUPPLY_ACTS.add(Activity(
                 id: act.id!,
                 time: DateTime.parse(act.provideTime!),
                 type: ActivityType(1),
                 product: Product(
                     id: 0,
-                    name: this
-                        .supplyOrders!
-                        .where((e) => e.supplyId == act.supplyId)
-                        .first
-                        .supply!
+                    name: supply
                         .name!,
                     imgUrl: act.photo!.first.url ?? "",
                     note: act.description != null

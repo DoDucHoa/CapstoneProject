@@ -116,13 +116,15 @@ class CenterRepository implements BaseCenterRepository {
         for (var element in bookings) {
           var customer = element["customer"];
           var idnav = customer["idNavigation"];
-          
+
           reviews.add(Review(
               rating: element["rating"],
               bookingId: element["id"],
               description: element["feedback"],
               customerName: customer["name"],
-              customerAva: Photo.fromJson(idnav["photos"].first).url));  
+              customerAva: (idnav["photos"].toString() != "[]")
+                  ? Photo.fromJson(idnav["photos"].first).url
+                  : null));
         }
         center.reviews = reviews;
       }
@@ -206,13 +208,13 @@ class CenterRepository implements BaseCenterRepository {
         for (var element in bookings) {
           var customer = element["customer"];
           var idnav = customer["idNavigation"];
-          
+
           reviews.add(Review(
               rating: element["rating"],
               bookingId: element["id"],
               description: element["feedback"],
               customerName: customer["name"],
-              customerAva: Photo.fromJson(idnav["photos"].first).url));  
+              customerAva: Photo.fromJson(idnav["photos"].first).url));
         }
         center.reviews = reviews;
       }
@@ -271,22 +273,22 @@ class CenterRepository implements BaseCenterRepository {
         Center center = Center.fromJson(response.data);
         // print('[repo] check center: ');
         // print(center.toJson());
-      if (response.data['bookings'] != null) {
-        var bookings = response.data["bookings"];
-        List<Review> reviews = [];
-        for (var element in bookings) {
-          var customer = element["customer"];
-          var idnav = customer["idNavigation"];
-          
-          reviews.add(Review(
-              rating: element["rating"],
-              bookingId: element["id"],
-              description: element["feedback"],
-              customerName: customer["name"],
-              customerAva: Photo.fromJson(idnav["photos"].first).url));  
+        if (response.data['bookings'] != null) {
+          var bookings = response.data["bookings"];
+          List<Review> reviews = [];
+          for (var element in bookings) {
+            var customer = element["customer"];
+            var idnav = customer["idNavigation"];
+
+            reviews.add(Review(
+                rating: element["rating"],
+                bookingId: element["id"],
+                description: element["feedback"],
+                customerName: customer["name"],
+                customerAva: Photo.fromJson(idnav["photos"].first).url));
+          }
+          center.reviews = reviews;
         }
-        center.reviews = reviews;
-      }
         searchResponseModel = SearchResponseModel(petCenters: [center]);
 
         return searchResponseModel;
@@ -370,8 +372,17 @@ class CenterRepository implements BaseCenterRepository {
     List<Placemark> placemark =
         await placemarkFromCoordinates(position.latitude, position.longitude);
     Placemark place = placemark[0];
+    //return "${place.thoroughfare}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
     //  print('${place.thoroughfare}');
-    return '${place.street}';
+    String? s = '';
+    if (place.street!.isNotEmpty) {
+      s = place.street;
+    }
+    if (place.thoroughfare!.isNotEmpty && !s!.contains(place.thoroughfare!)) {
+      s = s + ' ' + place.subThoroughfare!;
+    }
+    return s;
+    // return '${place.street}' ;
     // print(address);
   }
 

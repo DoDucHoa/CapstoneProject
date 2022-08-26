@@ -46,6 +46,8 @@ class _BookingCageScreenState extends State<BookingCageScreen> {
     bookingDetail.petBookingDetails!.forEach((element) {
       pets.add(element.pet!);
     });
+    // print(booking.toJson());
+    // print(bookingDetail.toJson());
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -212,18 +214,19 @@ class _BookingCageScreenState extends State<BookingCageScreen> {
                       children: [
                         Padding(
                           padding: EdgeInsets.all(width * smallPadRate),
-                          child: (pets[index].photos == null)
-                              ? CircleAvatar(
+                          child: //(pets[index].photos == null)
+                              //?
+                               CircleAvatar(
                                   backgroundImage:
                                       AssetImage("lib/assets/cat_avatar0.png"),
                                   radius: width * 0.08,
                                 )
-                              : CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                    pets[index].photos![0].url!,
-                                  ),
-                                  radius: width * 0.08,
-                                ),
+                              // : CircleAvatar(
+                              //     backgroundImage: NetworkImage(
+                              //       pets[index].photos![0].url!,
+                              //     ),
+                              //     radius: width * 0.08,
+                              //   ),
                         ),
                         Expanded(
                           child: Column(
@@ -237,7 +240,7 @@ class _BookingCageScreenState extends State<BookingCageScreen> {
                                     color: primaryFontColor),
                               ),
                               Text(
-                                pets[index].breedName!,
+                                pets[index].breedName??"",
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,

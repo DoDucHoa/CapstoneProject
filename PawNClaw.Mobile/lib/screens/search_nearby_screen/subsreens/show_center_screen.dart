@@ -6,6 +6,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:pawnclaw_mobile_application/common/components/elevated_container.dart';
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
@@ -111,7 +112,7 @@ class _AvailableCenterScreenState extends State<AvailableCenterScreen> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       //centers found
-
+                      (state.response.isNotEmpty) ?
                       ListView.builder(
                         itemBuilder: ((context, index) {
                           return CenterCard(location: state.response[index]);
@@ -119,7 +120,42 @@ class _AvailableCenterScreenState extends State<AvailableCenterScreen> {
                         shrinkWrap: true,
                         physics: ClampingScrollPhysics(),
                         itemCount: state.response.length,
-                      )
+                      ):
+                      Container(
+                    margin: EdgeInsets.symmetric(horizontal:  width * regularPadRate, vertical: width * smallPadRate),
+                    child: Column(
+                        children: [
+                          Container(
+                        padding: EdgeInsets.all(width * mediumPadRate),
+                        decoration: BoxDecoration(
+                            color: disableColor,
+                            borderRadius: BorderRadius.circular(65)),
+                        child: Icon(
+                          Iconsax.chart_fail3,
+                          size: 65,
+                          color: Colors.white,
+                        )
+                        ),
+                    SizedBox(
+                      height: width * mediumPadRate,
+                    ),
+                    Text(
+                      'Không tìm thấy kết quả',
+                      style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.w700, height: 1.5),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(
+                      height: width * extraSmallPadRate,
+                    ),
+                    Text(
+                      'Bạn thử tính năng Khánh sạn ở trang chủ xem sao?',
+                      style: TextStyle(fontSize: 15, height: 1.5),
+                      textAlign: TextAlign.center,
+                    ),
+                        ],
+                      ),
+                  )
                     ]),
               ),
             )

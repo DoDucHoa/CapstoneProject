@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.pncstaff_mobile_application">
    <application
-        android:label="pncstaff_mobile_application"
+        android:label="PawNClaw Staff"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
