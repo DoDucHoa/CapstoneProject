@@ -240,7 +240,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Text(
-                                                'Thời gian Checkout dự kiến được dựa theo quy định của trung tâm. Trung tâm sẽ thu thêm phí nếu bạn đến đón các bé sau thời gian này nhé! ',
+                                                'Thời gian Checkout dự kiến được dựa theo quy định của trung tâm. Trung tâm có thể sẽ thu thêm phí nếu bạn đến đón các bé sau thời gian này nhé! ',
                                                 textAlign: TextAlign.justify,
                                                 style: TextStyle(
                                                     fontWeight:
@@ -349,7 +349,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "THÔNG TIN CHUỒNG",
+                          "THÔNG TIN PHÒNG",
                           style: TextStyle(
                             color: primaryFontColor,
                             fontWeight: FontWeight.w600,

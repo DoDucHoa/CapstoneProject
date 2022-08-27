@@ -214,7 +214,9 @@ class CenterRepository implements BaseCenterRepository {
               bookingId: element["id"],
               description: element["feedback"],
               customerName: customer["name"],
-              customerAva: Photo.fromJson(idnav["photos"].first).url));
+              customerAva: (idnav["photos"].toString() != "[]")
+                  ? Photo.fromJson(idnav["photos"].first).url
+                  : null));
         }
         center.reviews = reviews;
       }
@@ -285,7 +287,9 @@ class CenterRepository implements BaseCenterRepository {
                 bookingId: element["id"],
                 description: element["feedback"],
                 customerName: customer["name"],
-                customerAva: Photo.fromJson(idnav["photos"].first).url));
+                customerAva:  (idnav["photos"].toString() != "[]")
+                  ? Photo.fromJson(idnav["photos"].first).url
+                  : null));
           }
           center.reviews = reviews;
         }

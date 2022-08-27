@@ -122,7 +122,7 @@ class _ChooseRequestCardState extends State<ChooseRequestCard> {
                               bottom: width * regularPadRate,
                               left: width * 0.3 / 5,
                               child: Center(
-                                child: Text('Chuồng ${index + 1}',
+                                child: Text('Phòng ${index + 1}',
                                     style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w700,
