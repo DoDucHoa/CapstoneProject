@@ -21,6 +21,7 @@ class _ServiceActivityState extends State<ServiceActivity> {
     booking.bookingDetails!.forEach(
       (cage) => cage.petBookingDetails!.forEach(
         (pet) {
+          pet.pet!.id = pet.petId;
           pets.add(pet.pet!);
         },
       ),
@@ -81,6 +82,7 @@ class _ServiceActivityState extends State<ServiceActivity> {
                 top: width * smallPadRate,
               ),
               child: ActivityCard(
+                photo: services[index].service!.photos!.first.url,
                 activityName: services[index].service!.description!,
                 note: services[index].note ?? "Không có ghi chú",
                 remainCount: booking.getRemainServiceAct(services[index]),

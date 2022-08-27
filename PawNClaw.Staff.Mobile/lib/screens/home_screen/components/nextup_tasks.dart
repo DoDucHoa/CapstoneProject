@@ -92,12 +92,29 @@ class _NextUpTasksState extends State<NextUpTasks> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(right: 8.0),
-                                  child: CircleAvatar(
-                                    backgroundImage:
-                                        AssetImage("lib/assets/cus0.png"),
-                                    backgroundColor: Colors.white,
-                                    radius: height * 0.03,
-                                  ),
+                                  child: (bookings[index]
+                                              .customer!
+                                              .idNavigation!
+                                              .photo ==
+                                          null)
+                                      ? CircleAvatar(
+                                          radius: height * 0.04,
+                                          backgroundColor:
+                                              primaryBackgroundColor,
+                                          backgroundImage:
+                                              AssetImage('lib/assets/cus0.png'),
+                                        )
+                                      : CircleAvatar(
+                                          radius: height * 0.04,
+                                          backgroundColor: frameColor,
+                                          backgroundImage: NetworkImage(
+                                            bookings[index]
+                                                .customer!
+                                                .idNavigation!
+                                                .photo!
+                                                .url!,
+                                          ),
+                                        ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(right: 8.0),
@@ -146,6 +163,8 @@ class _NextUpTasksState extends State<NextUpTasks> {
                                                             bookings[index],
                                                       )))),
                                       child: ActivityCard(
+                                          photo:
+                                              "${supplies[supIndex].supply!.photos?.first.url}",
                                           activityName:
                                               "${supplies[supIndex].supply!.name}",
                                           note: "${supplies[supIndex].note}",
@@ -190,6 +209,8 @@ class _NextUpTasksState extends State<NextUpTasks> {
                                                             bookings[index],
                                                       )))),
                                       child: ActivityCard(
+                                          photo:
+                                              "${services[serIndex].service!.photos?.first.url}",
                                           activityName:
                                               "${services[serIndex].service!.description}",
                                           note: "${services[serIndex].note}",

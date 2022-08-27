@@ -494,6 +494,7 @@ namespace PawNClaw.Data.Repository
                                 Weight = pet.Pet.Weight,
                                 Birth = pet.Pet.Birth,
                                 BreedName = pet.Pet.BreedName,
+                                PetTypeCode = pet.Pet.PetTypeCode,
                                 PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == bookingdetail.BookingId),
                                 Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(pet.Pet.Id, PhotoTypesConst.PetProfile)
                             }

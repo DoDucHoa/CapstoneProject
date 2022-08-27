@@ -136,7 +136,8 @@ class _ActivityDetailState extends State<ActivityDetail> {
                         margin: EdgeInsets.all(width * extraSmallPadRate + 5),
                         height: 55,
                         child: ClipRRect(
-                          child: Image.asset("lib/assets/vet-ava.png"),
+                          child: Image.network(
+                              "${widget.supply?.supply?.photos?.first.url ?? widget.service?.service?.photos?.first.url}"),
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
