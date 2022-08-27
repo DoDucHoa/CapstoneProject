@@ -22,15 +22,16 @@ ServiceList.propTypes = {
   statusId: PropTypes.number,
   serviceOrders: PropTypes.array,
   handleOpenServiceDialogForm: PropTypes.func,
+  isValidDate: PropTypes.bool,
 };
-export default function ServiceList({ statusId, serviceOrders, handleOpenServiceDialogForm }) {
+export default function ServiceList({ statusId, serviceOrders, handleOpenServiceDialogForm, isValidDate }) {
   return (
     <Box sx={{ px: 3, mt: 6 }}>
       <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
         <Typography paragraph variant="overline" sx={{ color: 'blue' }}>
           Dịch vụ
         </Typography>
-        {serviceOrders.length > 0 && statusId === 1 && (
+        {serviceOrders.length > 0 && statusId === 1 && isValidDate && (
           <Button variant="contained" color="warning" onClick={handleOpenServiceDialogForm}>
             Chỉnh sửa
           </Button>
@@ -50,8 +51,11 @@ export default function ServiceList({ statusId, serviceOrders, handleOpenService
                   <TableCell align="center" width={40}>
                     STT
                   </TableCell>
-                  <TableCell align="left" width={500}>
+                  <TableCell align="left" width={300}>
                     Mô tả
+                  </TableCell>
+                  <TableCell align="left" width={200}>
+                    Tên thú cưng
                   </TableCell>
                   <TableCell align="right">Số lượng</TableCell>
                   <TableCell align="right">Giá bán (VND)</TableCell>
@@ -69,8 +73,13 @@ export default function ServiceList({ statusId, serviceOrders, handleOpenService
                   >
                     <TableCell align="center">{index + 1}</TableCell>
                     <TableCell align="left">
-                      <Box sx={{ maxWidth: 560 }}>
+                      <Box sx={{ maxWidth: 360 }}>
                         <Typography variant="subtitle2">{row.service.description}</Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell align="left">
+                      <Box sx={{ maxWidth: 260 }}>
+                        <Typography variant="subtitle2">{row.pet.name}</Typography>
                       </Box>
                     </TableCell>
                     <TableCell align="right">{fNumber(row.quantity)}</TableCell>

@@ -21,8 +21,9 @@ SupplyList.propTypes = {
   statusId: PropTypes.number,
   supplyOrders: PropTypes.array,
   handleOpenSupplyDialogForm: PropTypes.func,
+  isValidDate: PropTypes.bool,
 };
-export default function SupplyList({ statusId, supplyOrders, handleOpenSupplyDialogForm }) {
+export default function SupplyList({ statusId, supplyOrders, handleOpenSupplyDialogForm, isValidDate }) {
   return (
     <Box sx={{ px: 3, pt: 5 }}>
       <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
@@ -30,7 +31,7 @@ export default function SupplyList({ statusId, supplyOrders, handleOpenSupplyDia
           Đồ dùng
         </Typography>
 
-        {supplyOrders.length > 0 && statusId === 1 && (
+        {supplyOrders.length > 0 && statusId === 1 && isValidDate && (
           <Button variant="contained" color="warning" onClick={handleOpenSupplyDialogForm}>
             Chỉnh sửa
           </Button>
@@ -51,8 +52,11 @@ export default function SupplyList({ statusId, supplyOrders, handleOpenSupplyDia
                   <TableCell align="center" width={40}>
                     STT
                   </TableCell>
-                  <TableCell align="left" width={500}>
+                  <TableCell align="left" width={300}>
                     Mô tả
+                  </TableCell>
+                  <TableCell align="left" width={200}>
+                    Tên thú cưng
                   </TableCell>
                   <TableCell align="right">Số lượng</TableCell>
                   <TableCell align="right">Giá bán (VND)</TableCell>
@@ -72,6 +76,11 @@ export default function SupplyList({ statusId, supplyOrders, handleOpenSupplyDia
                     <TableCell align="left">
                       <Box sx={{ maxWidth: 560 }}>
                         <Typography variant="subtitle2">{row.supply.name}</Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell align="left">
+                      <Box sx={{ maxWidth: 260 }}>
+                        <Typography variant="subtitle2">{row.pet.name}</Typography>
                       </Box>
                     </TableCell>
                     <TableCell align="right">{fNumber(row.quantity)}</TableCell>

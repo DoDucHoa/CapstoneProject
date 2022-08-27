@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 // @mui
+import { LoadingButton } from '@mui/lab';
 import { Box, Button, Grid, Typography } from '@mui/material';
 // reac-hooks-form
 import { useFieldArray, useFormContext } from 'react-hook-form';
@@ -17,9 +19,19 @@ CageManagement.propTypes = {
   isDesktop: PropTypes.bool,
   handleCheckSize: PropTypes.func,
   handleOpenCageDialogForm: PropTypes.func,
+  isValidDate: PropTypes.bool,
 };
 
-export default function CageManagement({ statusId, centerId, isDesktop, handleCheckSize, handleOpenCageDialogForm }) {
+export default function CageManagement({
+  statusId,
+  centerId,
+  isDesktop,
+  handleCheckSize,
+  handleOpenCageDialogForm,
+  isValidDate,
+}) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const { trigger, control, watch } = useFormContext();
   const values = watch();
   const { cageSizeCheck: checks } = values;
@@ -55,7 +67,7 @@ export default function CageManagement({ statusId, centerId, isDesktop, handleCh
               <Typography variant="h6">{fCurrency(cage.price)} ₫</Typography>
             </Grid>
 
-            {statusId === 1 && isDesktop && (
+            {statusId === 1 && isDesktop && isValidDate && (
               <Grid item xs={12} sm={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                 <Box display="flex" alignItems="center">
                   <Iconify
@@ -65,20 +77,23 @@ export default function CageManagement({ statusId, centerId, isDesktop, handleCh
                     height={30}
                   />
 
-                  <Button
+                  <LoadingButton
                     sx={{ mx: 3 }}
                     variant="contained"
                     color="primary"
+                    loading={isLoading}
                     onClick={() => {
-                      trigger([`petData[${cageIndex}]`]).then((isValid) => {
+                      trigger([`petData[${cageIndex}]`]).then(async (isValid) => {
                         if (isValid) {
-                          handleCheckSize(cageIndex, centerId);
+                          setIsLoading(true);
+                          await handleCheckSize(cageIndex, centerId);
+                          setIsLoading(false);
                         }
                       });
                     }}
                   >
                     Kiểm tra kích thước
-                  </Button>
+                  </LoadingButton>
                   <Button
                     variant="contained"
                     color="warning"
