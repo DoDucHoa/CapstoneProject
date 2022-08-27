@@ -104,7 +104,7 @@ export default function BookingDetails({ centerId, centerInfo, selectedEvent, on
       case 1:
         return status.id !== 3;
       case 2:
-        return status.id === 2 || status.id === 3 || status.id === 4;
+        return status.id === 2 || status.id === 3;
       case 3:
         return status.id === 3;
       case 4:
@@ -251,7 +251,11 @@ export default function BookingDetails({ centerId, centerInfo, selectedEvent, on
           await dispatch(updateBookingStatus(data));
 
           enqueueSnackbar('Cập nhật thành công!');
-          onCancel();
+          if (values.statusId !== 3) {
+            onCancel();
+          } else {
+            setOpenPDFDialog(true);
+          }
         } else {
           enqueueSnackbar('Vui lòng kiểm tra lại kích thước của thú cưng!', { variant: 'error' });
         }
