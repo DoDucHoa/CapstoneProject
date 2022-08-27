@@ -141,10 +141,10 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                 child: IconButton(
                                     onPressed: () {
                                       showDialog(context: context, builder: (context) => AlertDialog(
-                                        title: Text('Xóa Pet Profile'),
+                                        title: Text('Xóa thú cưng'),
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(10)),
-                                        content: Text('Bạn có chắc chắn muốn xóa pet profile này không?'),
+                                        content: Text('Bạn có chắc chắn muốn xóa thú cưng này không?'),
                                         actions: <Widget>[
                                           ElevatedButton(
                                             child: Text('Hủy'),

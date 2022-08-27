@@ -67,7 +67,7 @@ class SearchFailDialog extends StatelessWidget {
                   SizedBox(
                     height: width * mediumPadRate,
                   ),
-                  ElevatedButton(
+                  if (!errorMessage.contains("nearby")) ElevatedButton(
                       onPressed: () {
                         if ((state as SearchFail).target
                             is TransactionDetails) {
@@ -205,6 +205,11 @@ class SearchFailDialog extends StatelessWidget {
       return result;
     }
     if (s.contains('no response')) {
+      result.add('Không tìm thấy trung tâm phù hợp quanh khu vực của bạn');
+      result.add('');
+      return result;
+    }
+    if (s.contains('no nearby')) {
       result.add('Không tìm thấy trung tâm phù hợp quanh khu vực của bạn');
       result.add('');
       return result;

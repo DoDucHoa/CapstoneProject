@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/nearby_center/nearby_bloc.dart';
+import 'package:pawnclaw_mobile_application/blocs/search/search_bloc.dart';
 import 'package:pawnclaw_mobile_application/blocs/sponsor/sponsor_bloc.dart';
 import 'package:pawnclaw_mobile_application/common/components/loading_indicator.dart';
 import 'package:pawnclaw_mobile_application/common/constants.dart';
+import 'package:pawnclaw_mobile_application/screens/search_screen.dart/components/search_fail_dialog.dart';
 
 import 'components/show_address_dialog.dart';
 import 'subsreens/show_center_screen.dart';
@@ -36,6 +38,9 @@ class _SearchScreenState extends State<SearchScreen> {
           if (state is LoadCentersNearby) {
             //print('Loaded CENTERS');
             return const AvailableCenterScreen();
+          }
+          if (state is SearchFail){
+            return const SearchFailDialog(errorMessage: "no nearby",);
           }
 
           return const Scaffold(

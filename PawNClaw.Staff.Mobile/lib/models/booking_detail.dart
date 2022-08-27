@@ -1,4 +1,5 @@
 import 'package:pncstaff_mobile_application/models/photo.dart';
+import 'package:pncstaff_mobile_application/models/user_profile.dart';
 import 'dart:convert';
 
 import 'pet.dart';
@@ -297,7 +298,9 @@ class IdNavigation {
   IdNavigation.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     phone = json['phone'];
-    photo = json['photos'] != [] ?  Photo.fromJson(json['photos'][0]) : null;
+    photo = json['photos'].toString() != "[]"
+        ? Photo.fromJson(json['photos'][0])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -309,7 +312,7 @@ class IdNavigation {
   }
 }
 
-class BookingDetails { 
+class BookingDetails {
   int? bookingId;
   int? id;
   double? price;
@@ -333,7 +336,7 @@ class BookingDetails {
       this.duration,
       // this.note,
       // this.booking,
-      // this.c,
+      this.c,
       this.bookingActivities,
       this.petBookingDetails,
       this.foodSchedules,
@@ -348,7 +351,7 @@ class BookingDetails {
     duration = json['duration'];
     // note = json['note'];
     // booking = json['booking'];
-    // c = json['c'];
+    c = Cage.fromJson(json['c']);
     if (json['bookingActivities'] != null) {
       bookingActivities = <BookingActivities>[];
       json['bookingActivities'].forEach((v) {
@@ -448,7 +451,7 @@ class FoodSchedules {
 class PetBookingDetails {
   // int? bookingId;
   int? line;
-  // int? petId;
+  int? petId;
   // Null? bookingDetail;
   Pet? pet;
 
@@ -463,7 +466,7 @@ class PetBookingDetails {
   PetBookingDetails.fromJson(Map<String, dynamic> json) {
     // bookingId = json['bookingId'];
     line = json['line'];
-    // petId = json['petId'];
+    petId = json['petId'];
     // bookingDetail = json['bookingDetail'];
     pet = json['pet'] != null ? new Pet.fromJson(json['pet']) : null;
   }
@@ -472,7 +475,7 @@ class PetBookingDetails {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     // data['bookingId'] = this.bookingId;
     data['line'] = this.line;
-    // data['petId'] = this.petId;
+    data['petId'] = this.petId;
     // data['bookingDetail'] = this.bookingDetail;
     if (this.pet != null) {
       data['pet'] = this.pet!.toJson();
@@ -545,6 +548,7 @@ class Service {
   String? description;
   double? sellPrice;
   double? discountPrice;
+  List<Photos>? photos;
   // String? createDate;
   // String? modifyDate;
   // int? createUser;
@@ -557,29 +561,36 @@ class Service {
   // List<Null>? serviceOrders;
   // List<Null>? servicePrices;
 
-  Service({
-    this.id,
-    this.description,
-    this.sellPrice,
-    this.discountPrice,
-    // this.createDate,
-    // this.modifyDate,
-    // this.createUser,
-    // this.modifyUser,
-    // this.status,
-    // this.centerId,
-    // this.center,
-    // this.createUserNavigation,
-    // this.modifyUserNavigation,
-    // this.serviceOrders,
-    // this.servicePrices
-  });
+  Service(
+      {this.id,
+      this.description,
+      this.sellPrice,
+      this.discountPrice,
+      this.photos
+      // this.createDate,
+      // this.modifyDate,
+      // this.createUser,
+      // this.modifyUser,
+      // this.status,
+      // this.centerId,
+      // this.center,
+      // this.createUserNavigation,
+      // this.modifyUserNavigation,
+      // this.serviceOrders,
+      // this.servicePrices
+      });
 
   Service.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     description = json['description'];
     sellPrice = json['sellPrice'];
     discountPrice = json['discountPrice'];
+    if (json['photos'] != null) {
+      photos = <Photos>[];
+      json['photos'].forEach((v) {
+        photos!.add(new Photos.fromJson(v));
+      });
+    }
     // // createDate = json['createDate'];
     // // modifyDate = json['modifyDate'];
     // // createUser = json['createUser'];
@@ -707,6 +718,7 @@ class Supply {
   // Null? modifyUserNavigation;
   // Null? supplyTypeCodeNavigation;
   // List<Null>? supplyOrders;
+  List<Photos>? photos;
 
   Supply({
     this.id,
@@ -714,6 +726,7 @@ class Supply {
     this.sellPrice,
     this.discountPrice,
     this.quantity,
+    this.photos,
     // this.createDate,
     // this.modifyDate,
     // this.createUser,
@@ -734,6 +747,12 @@ class Supply {
     sellPrice = json['sellPrice'];
     discountPrice = json['discountPrice'];
     quantity = json['quantity'];
+    if (json['photos'] != null) {
+      photos = <Photos>[];
+      json['photos'].forEach((v) {
+        photos!.add(new Photos.fromJson(v));
+      });
+    }
     // createDate = json['createDate'];
     // modifyDate = json['modifyDate'];
     // createUser = json['createUser'];
@@ -864,73 +883,76 @@ class BookingActivities {
 //
 //     final cage = cageFromJson(jsonString);
 
-
 class Cage {
-    Cage({
-        this.code,
-        this.centerId,
-        this.name,
-        this.color,
-        this.cageType,
-    });
+  Cage({
+    this.code,
+    this.centerId,
+    this.name,
+    this.color,
+    this.cageType,
+  });
 
-    String? code;
-    int? centerId;
-    String? name;
-    String? color;
-    CageType? cageType;
+  String? code;
+  int? centerId;
+  String? name;
+  String? color;
+  CageType? cageType;
 
-    factory Cage.fromRawJson(String str) => Cage.fromJson(json.decode(str));
+  factory Cage.fromRawJson(String str) => Cage.fromJson(json.decode(str));
 
-    String toRawJson() => json.encode(toJson());
+  String toRawJson() => json.encode(toJson());
 
-    factory Cage.fromJson(Map<String, dynamic> json) => Cage(
+  factory Cage.fromJson(Map<String, dynamic> json) => Cage(
         code: json["code"] == null ? null : json["code"],
         centerId: json["centerId"] == null ? null : json["centerId"],
         name: json["name"] == null ? null : json["name"],
         color: json["color"],
-        cageType: json["cageType"] == null ? null : CageType.fromJson(json["cageType"]),
-    );
+        cageType: json["cageType"] == null
+            ? null
+            : CageType.fromJson(json["cageType"]),
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "code": code == null ? null : code,
         "centerId": centerId == null ? null : centerId,
         "name": name == null ? null : name,
         "color": color,
         "cageType": cageType == null ? null : cageType!.toJson(),
-    };
+      };
 }
 
 class CageType {
-    CageType({
-        this.id,
-        this.typeName,
-        this.isSingle,
-        this.photos,
-    });
+  CageType({
+    this.id,
+    this.typeName,
+    this.isSingle,
+    this.photos,
+  });
 
-    int? id;
-    String? typeName;
-    bool? isSingle;
-    List<Photo>? photos;
+  int? id;
+  String? typeName;
+  bool? isSingle;
+  List<Photo>? photos;
 
-    factory CageType.fromRawJson(String str) => CageType.fromJson(json.decode(str));
+  factory CageType.fromRawJson(String str) =>
+      CageType.fromJson(json.decode(str));
 
-    String toRawJson() => json.encode(toJson());
+  String toRawJson() => json.encode(toJson());
 
-    factory CageType.fromJson(Map<String, dynamic> json) => CageType(
+  factory CageType.fromJson(Map<String, dynamic> json) => CageType(
         id: json["id"] == null ? null : json["id"],
         typeName: json["typeName"] == null ? null : json["typeName"],
         isSingle: json["isSingle"] == null ? null : json["isSingle"],
-        photos: json["photos"] == null ? null : List<Photo>.from(json["photos"].map((x) => Photo.fromJson(x))),
-    );
+        photos: json["photos"] == null
+            ? null
+            : List<Photo>.from(json["photos"].map((x) => Photo.fromJson(x))),
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id == null ? null : id,
         "typeName": typeName == null ? null : typeName,
         "isSingle": isSingle == null ? null : isSingle,
-        "photos": photos == null ? null : photos!.map((x) => x.toJson()).toList(),
-    };
+        "photos":
+            photos == null ? null : photos!.map((x) => x.toJson()).toList(),
+      };
 }
-
-
