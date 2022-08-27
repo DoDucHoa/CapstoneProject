@@ -6,9 +6,10 @@ import { isEmpty } from 'lodash';
 // form
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// hooks
+// redux
 import { useDispatch } from '../../../redux/store';
-import { updateBookingStatus, createPetHealthStatus } from '../../../redux/slices/calendar';
+import { updateBookingStatus, createPetHealthStatus, getBookingDetails } from '../../../redux/slices/calendar';
+// hooks
 import useResponsive from '../../../hooks/useResponsive';
 // components
 import { FormProvider } from '../../../components/hook-form';
@@ -85,6 +86,8 @@ export default function BookingDetails({ centerId, centerInfo, selectedEvent, on
     voucherCodeNavigation,
   } = selectedEvent;
 
+  const isValidDate = compareBookingWithCurrentDate(startBooking);
+
   const petOldInfo = bookingDetails
     .map((detail) =>
       detail.petBookingDetails.map((petData) => ({
@@ -97,20 +100,17 @@ export default function BookingDetails({ centerId, centerInfo, selectedEvent, on
     .reduce((acc, cur) => acc.concat(cur), []);
 
   bookingStatuses = bookingStatuses.filter((status) => {
-    if (statusId === 1) {
-      return status.id !== 3;
-    }
-
-    if (statusId === 2) {
-      return status.id === 2 || status.id === 3 || status.id === 4;
-    }
-
-    if (statusId === 3) {
-      return status.id === 3;
-    }
-
-    if (statusId === 4) {
-      return status.id === 4;
+    switch (statusId) {
+      case 1:
+        return status.id !== 3;
+      case 2:
+        return status.id === 2 || status.id === 3 || status.id === 4;
+      case 3:
+        return status.id === 3;
+      case 4:
+        return status.id === 4;
+      default:
+        break;
     }
 
     return status;
@@ -245,8 +245,8 @@ export default function BookingDetails({ centerId, centerInfo, selectedEvent, on
   const onSubmit = async (data) => {
     try {
       // check if current date occurs before booking date
-      if (statusId !== 1 || compareBookingWithCurrentDate(startBooking)) {
-        if (statusId !== 1 || (!isDirty && isSizeValid)) {
+      if (values.statusId !== 2 || isValidDate) {
+        if (values.statusId !== 2 || (!isDirty && isSizeValid)) {
           await dispatch(createPetHealthStatus(data, id));
           await dispatch(updateBookingStatus(data));
 
@@ -266,11 +266,31 @@ export default function BookingDetails({ centerId, centerInfo, selectedEvent, on
   const handleCheckSize = async (cageIndex, centerId) => {
     const { cageCode, petBookingDetails } = values.petData[cageIndex];
     try {
-      const response = await checkSize(petBookingDetails, cageCode, centerId);
+      const response = await checkSize(petBookingDetails, cageCode, centerId, id);
+
+      await Promise.all(
+        petBookingDetails.map(async (pet) => {
+          await axios.post('/api/pethealthhistories', {
+            isUpdatePet: true,
+            createPetHealthHistoryParameter: {
+              checkedDate: new Date(),
+              description: 'Kiểm tra kích thước',
+              centerName: centerInfo.name,
+              petId: pet.id,
+              length: pet.length,
+              height: pet.height,
+              weight: pet.weight,
+              bookingId: id,
+            },
+          });
+        })
+      );
+
       if (response === true) {
         enqueueSnackbar('Kích thước thú cưng hợp lệ!');
         reset({ petData }, { keepValues: true });
         setValue(`cageSizeCheck[${cageIndex}].isValid`, true);
+        dispatch(getBookingDetails(id));
       } else {
         enqueueSnackbar('Kích thước thú cưng không hợp lệ!', { variant: 'error' });
         setValue(`cageSizeCheck[${cageIndex}].isValid`, false);
@@ -313,18 +333,21 @@ export default function BookingDetails({ centerId, centerInfo, selectedEvent, on
           isDesktop={isDesktop}
           handleCheckSize={handleCheckSize}
           handleOpenCageDialogForm={handleOpenCageDialogForm}
+          isValidDate={isValidDate}
         />
 
         <SupplyList
           statusId={statusId}
           supplyOrders={supplyOrders}
           handleOpenSupplyDialogForm={handleOpenSupplyDialogForm}
+          isValidDate={isValidDate}
         />
 
         <ServiceList
           statusId={statusId}
           serviceOrders={serviceOrders}
           handleOpenServiceDialogForm={handleOpenServiceDialogForm}
+          isValidDate={isValidDate}
         />
 
         <PaymentDetail
