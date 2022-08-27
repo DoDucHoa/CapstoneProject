@@ -359,10 +359,7 @@ namespace PawNClaw.Data.Repository
                             Name = supplyorder.Supply.Name,
                             Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(supplyorder.SupplyId, PhotoTypesConst.Supply),
                         },
-                        /*Pet = new Pet
-                        {
-                            Name = supplyorder.Pet.Name,
-                        }*/
+                        Pet = supplyorder.Pet
                     }),
                     ServiceOrders = (ICollection<ServiceOrder>)x.ServiceOrders
                     .Select(serviceorder => new ServiceOrder
@@ -381,6 +378,7 @@ namespace PawNClaw.Data.Repository
                             Description = serviceorder.Service.Description,
                             Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(serviceorder.ServiceId, PhotoTypesConst.Service),
                         },
+                        Pet = serviceorder.Pet
                         /*Pet = new Pet
                         {
                             Name = serviceorder.Pet.Name,
