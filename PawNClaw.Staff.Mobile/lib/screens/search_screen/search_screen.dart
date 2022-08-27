@@ -25,8 +25,74 @@ class _SearchScreenState extends State<SearchScreen> {
     double width = MediaQuery.of(context).size.width;
     return BlocBuilder<SearchBloc, SearchState>(builder: (context, state) {
       if (state is SearchFail) {
-        return Center(
-          child: Text(state.error),
+        return Scaffold(
+          backgroundColor: frameColor,
+          body: Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(40),
+                side: BorderSide.none,
+              ),
+              backgroundColor: primaryColor.withOpacity(0.5),
+              child: Container(
+                margin: EdgeInsets.symmetric(
+                    vertical: width * regularPadRate,
+                    horizontal: width * smallPadRate),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(width * mediumPadRate),
+                      decoration: BoxDecoration(
+                          color: frameColor,
+                          borderRadius: BorderRadius.circular(65)),
+                      child: Image.asset("lib/assets/sorry.png"),
+                    ),
+                    SizedBox(
+                      height: width * mediumPadRate,
+                    ),
+                    Text(
+                      "Không thấy chuồng cần tìm...",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          height: 1.5),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(
+                      height: width * mediumPadRate,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        BlocProvider.of<SearchBloc>(context).add(ClearSearch());
+                        Navigator.of(context).pushNamed("/");
+                      },
+                      style: ElevatedButton.styleFrom(
+                        // primary: Cprim,
+
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        primary: Colors.white,
+                      ),
+                      child: Container(
+                        //width: width * (1 - 2 * regularPadRate),
+                        padding: EdgeInsets.symmetric(
+                            vertical: width * smallPadRate),
+                        child: Center(
+                          child: Text(
+                            'Quay lại',
+                            style: TextStyle(
+                                color: primaryColor,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
         );
       }
       if (state is SearchDone) {
@@ -40,6 +106,7 @@ class _SearchScreenState extends State<SearchScreen> {
           },
         );
         return Scaffold(
+          backgroundColor: frameColor,
           appBar: AppBar(
             title: Text(
               state.cageCode,
@@ -142,19 +209,18 @@ class _SearchScreenState extends State<SearchScreen> {
                                   Text(
                                     booking.getRemainFeedingAct().toString(),
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: width * 0.085,
-                                        color: primaryFontColor,
-                                        // height: 1
-                                        ),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: width * 0.085,
+                                      color: primaryFontColor,
+                                      // height: 1
+                                    ),
                                   ),
                                   Text(
                                     "Cho ăn",
                                     style: TextStyle(
                                         color: primaryFontColor,
                                         fontSize: width * 0.048,
-                                        height: 1
-                                        ),
+                                        height: 1),
                                   ),
                                 ],
                               ),
