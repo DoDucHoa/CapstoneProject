@@ -16,6 +16,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         super(SearchInitial()) {
     on<SearchByCagecode>((event, emit) async {
       // TODO: implement event handler
+      emit(SearchInitial());
       try {
         var booking = await _bookingRepository.searchBookingByCagecode(
             centerId: event.centerId, cageCode: event.cageCode);
