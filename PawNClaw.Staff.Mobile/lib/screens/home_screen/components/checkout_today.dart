@@ -149,14 +149,22 @@ class BookingCard extends StatelessWidget {
                   right: width * extraSmallPadRate,
                   bottom: width * extraSmallPadRate,
                 ),
-                child: CircleAvatar(
-                  backgroundImage: AssetImage("lib/assets/cus0.png"),
-                  backgroundColor: Colors.white,
-                  radius: height * 0.04,
-                ),
+                child: (booking.customer!.idNavigation!.photo == null)
+                    ? CircleAvatar(
+                        radius: height * 0.04,
+                        backgroundColor: primaryBackgroundColor,
+                        backgroundImage: AssetImage('lib/assets/cus0.png'),
+                      )
+                    : CircleAvatar(
+                        radius: height * 0.04,
+                        backgroundColor: frameColor,
+                        backgroundImage: NetworkImage(
+                          booking.customer!.idNavigation!.photo!.url!,
+                        ),
+                      ),
               ),
               Container(
-                height: height * 0.08,
+                constraints: BoxConstraints(minHeight: height * 0.08),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -12,6 +12,7 @@ class ActivityCard extends StatelessWidget {
   final BookingDetail booking;
   final Pet pet;
   final int remainCount;
+  final String? photo;
 
   const ActivityCard(
       {required this.activityName,
@@ -19,6 +20,7 @@ class ActivityCard extends StatelessWidget {
       required this.pet,
       required this.booking,
       required this.remainCount,
+      this.photo,
       Key? key})
       : super(key: key);
 
@@ -38,7 +40,9 @@ class ActivityCard extends StatelessWidget {
               margin: EdgeInsets.all(width * extraSmallPadRate + 5),
               height: 55,
               child: ClipRRect(
-                child: Image.asset("lib/assets/vet-ava.png"),
+                child: photo != null
+                    ? Image.network(photo!)
+                    : Image.asset("lib/assets/vet-ava.png"),
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -55,7 +59,7 @@ class ActivityCard extends StatelessWidget {
                         fontWeight: FontWeight.w700),
                   ),
                   Text(
-                    note,
+                    note != "null" ? note : "Không có chú thích",
                     style: TextStyle(
                         color: lightFontColor,
                         fontSize: 13,
@@ -74,9 +78,16 @@ class ActivityCard extends StatelessWidget {
             Container(
                 margin: EdgeInsets.all(width * extraSmallPadRate + 5),
                 height: 35,
-                child: CircleAvatar(
-                  backgroundImage: AssetImage('lib/assets/cat_avatar0.png'),
-                ) // borderRadius: BorderRadius.circular(35),),
+                child: pet.photos!.isNotEmpty
+                    ? CircleAvatar(
+                        backgroundImage: NetworkImage(pet.photos!.first.url!),
+                      )
+                    : CircleAvatar(
+                        backgroundImage: AssetImage(pet.petTypeCode == "DOG"
+                            ? 'lib/assets/dog.png'
+                            : 'lib/assets/black-cat.png'),
+                      )
+                // borderRadius: BorderRadius.circular(35),),
                 ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

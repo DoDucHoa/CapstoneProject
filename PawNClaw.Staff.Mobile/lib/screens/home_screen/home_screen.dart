@@ -4,24 +4,12 @@ import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:pncstaff_mobile_application/blocs/auth/auth_bloc.dart';
 import 'package:pncstaff_mobile_application/blocs/booking/booking_bloc.dart';
-import 'package:pncstaff_mobile_application/common/components/elevated_container.dart';
 import 'package:pncstaff_mobile_application/common/components/line_indicator.dart';
 import 'package:pncstaff_mobile_application/common/components/loading_indicator.dart';
 import 'package:pncstaff_mobile_application/common/constants.dart';
-import 'package:pncstaff_mobile_application/common/vn_locale.dart';
-import 'package:pncstaff_mobile_application/models/account.dart';
-import 'package:pncstaff_mobile_application/models/booking.dart';
-import 'package:pncstaff_mobile_application/models/booking_detail.dart';
-import 'package:pncstaff_mobile_application/models/pet.dart';
 import 'package:pncstaff_mobile_application/repositories/booking/booking_repository.dart';
-import 'package:pncstaff_mobile_application/screens/activity_screen/components/activity_card.dart';
-import 'package:pncstaff_mobile_application/screens/home_screen/components/home_body.dart';
-import 'package:intl/intl.dart';
-import 'package:pncstaff_mobile_application/screens/home_screen/components/todo_list.dart';
 import 'package:pncstaff_mobile_application/screens/profile_screen/profile_screen.dart';
 
-import 'components/checkout_today.dart';
-import 'components/nextup_tasks.dart';
 import 'components/welcome_panel.dart';
 import 'subscreens/tracking_activities.dart';
 
@@ -48,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
       color: frameColor,
       child: TrackingActivities(),
     ),
-    Container(child: Text('Booking list'),),
+    // Container(child: Text('Booking list'),),
     ProfileScreen(),
   ];
 
@@ -148,11 +136,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         Iconsax.home5,
                       ),
                       label: ""),
-                      BottomNavigationBarItem(
-                      icon: Icon(
-                        Iconsax.document_text5,
-                      ),
-                      label: ""),
+                  // BottomNavigationBarItem(
+                  // icon: Icon(
+                  //   Iconsax.document_text5,
+                  // ),
+                  // label: ""),
                   BottomNavigationBarItem(
                       icon: Icon(
                         Icons.person_rounded,
