@@ -93,23 +93,76 @@ namespace PawNClaw.Business.Services
 
                         startBooking = startBooking.AddDays(i);
 
-                        foreach (var foodSchedule in bookingDetail.C.CageType.FoodSchedules)
+                        if (i == 0)
                         {
-                            bookingActivity = new BookingActivity();
-                            bookingActivity.BookingId = booking.Id;
-                            bookingActivity.BookingDetailId = bookingDetail.Id;
-                            bookingActivity.ActivityTimeFrom = TimeHelper.SetTime(startBooking, foodSchedule.FromTime.Hours, foodSchedule.FromTime.Minutes);
-                            bookingActivity.ActivityTimeTo = TimeHelper.SetTime(startBooking, foodSchedule.ToTime.Hours, foodSchedule.ToTime.Minutes);
+                            foreach (var foodSchedule in bookingDetail.C.CageType.FoodSchedules)
+                            {
+                                if (foodSchedule.ToTime > startBooking.TimeOfDay)
+                                {
+                                    bookingActivity = new BookingActivity();
+                                    bookingActivity.BookingId = booking.Id;
+                                    bookingActivity.BookingDetailId = bookingDetail.Id;
+                                    bookingActivity.ActivityTimeFrom = TimeHelper.SetTime(startBooking, foodSchedule.FromTime.Hours, foodSchedule.FromTime.Minutes);
+                                    bookingActivity.ActivityTimeTo = TimeHelper.SetTime(startBooking, foodSchedule.ToTime.Hours, foodSchedule.ToTime.Minutes);
 
-                            try
-                            {
-                                _bookingActivityRepository.Add(bookingActivity);
-                                await _bookingActivityRepository.SaveDbChangeAsync();
+                                    try
+                                    {
+                                        _bookingActivityRepository.Add(bookingActivity);
+                                        await _bookingActivityRepository.SaveDbChangeAsync();
+                                    }
+                                    catch
+                                    {
+                                        transaction.Rollback();
+                                        throw new Exception();
+                                    }
+                                }
                             }
-                            catch
+                        }
+                        else if (i + 1 == bookingDetail.Duration)
+                        {
+                            foreach (var foodSchedule in bookingDetail.C.CageType.FoodSchedules)
                             {
-                                transaction.Rollback();
-                                throw new Exception();
+                                if (foodSchedule.FromTime < startBooking.TimeOfDay)
+                                {
+                                    bookingActivity = new BookingActivity();
+                                    bookingActivity.BookingId = booking.Id;
+                                    bookingActivity.BookingDetailId = bookingDetail.Id;
+                                    bookingActivity.ActivityTimeFrom = TimeHelper.SetTime(startBooking, foodSchedule.FromTime.Hours, foodSchedule.FromTime.Minutes);
+                                    bookingActivity.ActivityTimeTo = TimeHelper.SetTime(startBooking, foodSchedule.ToTime.Hours, foodSchedule.ToTime.Minutes);
+
+                                    try
+                                    {
+                                        _bookingActivityRepository.Add(bookingActivity);
+                                        await _bookingActivityRepository.SaveDbChangeAsync();
+                                    }
+                                    catch
+                                    {
+                                        transaction.Rollback();
+                                        throw new Exception();
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (var foodSchedule in bookingDetail.C.CageType.FoodSchedules)
+                            {
+                                bookingActivity = new BookingActivity();
+                                bookingActivity.BookingId = booking.Id;
+                                bookingActivity.BookingDetailId = bookingDetail.Id;
+                                bookingActivity.ActivityTimeFrom = TimeHelper.SetTime(startBooking, foodSchedule.FromTime.Hours, foodSchedule.FromTime.Minutes);
+                                bookingActivity.ActivityTimeTo = TimeHelper.SetTime(startBooking, foodSchedule.ToTime.Hours, foodSchedule.ToTime.Minutes);
+
+                                try
+                                {
+                                    _bookingActivityRepository.Add(bookingActivity);
+                                    await _bookingActivityRepository.SaveDbChangeAsync();
+                                }
+                                catch
+                                {
+                                    transaction.Rollback();
+                                    throw new Exception();
+                                }
                             }
                         }
                     }
