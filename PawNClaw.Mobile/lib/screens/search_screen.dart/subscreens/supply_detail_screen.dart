@@ -417,22 +417,21 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                           icon: Iconsax.add_square,
                           color: primaryColor,
                           onPressed: () {
-                            print(supply.quantity);
-                            if (widget.isUpdate != null && widget.isUpdate!){
+                            // print(supply.quantity);
+                            if (widget.isUpdate != null && widget.isUpdate!) {
                               if (quantity < supply.quantity!) {
                                 setState(() {
                                   quantity = quantity + 1;
                                 });
+                              } else {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text(
+                                      'Số lượng của sản phẩm này đã đạt đủ'),
+                                ));
                               }
-                              else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Số lượng của sản phẩm này đã đạt đủ'),
-                                    ));
-                              }
-                            } else 
-                            if (state.booking.supplyOrderCreateParameters!
-                                .isNotEmpty) {
+                            } else if (state.booking
+                                .supplyOrderCreateParameters!.isNotEmpty) {
                               var supplyOrder = state
                                   .booking.supplyOrderCreateParameters!
                                   .where((element) =>
@@ -443,10 +442,20 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                                 supplyOrder.forEach((element) {
                                   booked += element.quantity!;
                                 });
-                                if (widget.isUpdate != null && widget.isUpdate!) {
 
-                                }
                                 if (quantity + booked < supply.quantity!) {
+                                  setState(() {
+                                    quantity = quantity + 1;
+                                  });
+                                } else {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(
+                                        'Số lượng của sản phẩm này đã đạt đủ'),
+                                  ));
+                                }
+                              } else {
+                                if (quantity < supply.quantity!) {
                                   setState(() {
                                     quantity = quantity + 1;
                                   });
@@ -526,15 +535,14 @@ class _SupplyDetailsState extends State<SupplyDetails> {
               onPressed: () {
                 //print('pet id:' + pets[selectedIndex].id!.toString());
                 bool isValid = false;
-                 if (widget.isUpdate != null && widget.isUpdate!){
-                              if (quantity < supply.quantity!) {
-                                isValid = true;
-                              }
-                              else {
-                                isValid = false;
-                              }
-                            } else 
-                if (state.booking.supplyOrderCreateParameters!.isNotEmpty) {
+                if (widget.isUpdate != null && widget.isUpdate!) {
+                  if (quantity < supply.quantity!) {
+                    isValid = true;
+                  } else {
+                    isValid = false;
+                  }
+                } else if (state
+                    .booking.supplyOrderCreateParameters!.isNotEmpty) {
                   var supplyOrder = state.booking.supplyOrderCreateParameters!
                       .where((element) => supply.id == element.supplyId);
 
@@ -544,6 +552,12 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                       booked += element.quantity!;
                     });
                     if (quantity + booked <= supply.quantity!) {
+                      isValid = true;
+                    } else {
+                      isValid = false;
+                    }
+                  } else {
+                    if (quantity < supply.quantity!) {
                       isValid = true;
                     } else {
                       isValid = false;
