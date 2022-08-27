@@ -48,6 +48,7 @@ class BookingItemCard extends StatelessWidget {
     // });
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    print(pet.toJson());
     return Column(
       children: [
         Row(

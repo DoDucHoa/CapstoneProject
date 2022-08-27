@@ -345,43 +345,43 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                 SizedBox(
                   height: 15,
                 ),
-                Container(
-                    //height: 100,
-                    width: size.width,
-                    padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(15),
-                            bottomRight: Radius.circular(15))),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Chi tiết',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w600),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        ReadMoreText(
-                          // cage.description,
-                          "This is description...",
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: lightFontColor,
-                            fontWeight: FontWeight.w500,
-                          ), //halt
-                          trimLines:
-                              5, //thêm card chọn pet xong thì sửa số này lại nhá
-                          trimCollapsedText: 'xem thêm',
-                          trimExpandedText: 'thu gọn',
-                          // maxLines: 5,
-                          // overflow: TextOverflow.ellipsis,
-                        )
-                      ],
-                    )),
+                // Container(
+                //     //height: 100,
+                //     width: size.width,
+                //     padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+                //     decoration: BoxDecoration(
+                //         color: Colors.white,
+                //         borderRadius: BorderRadius.only(
+                //             bottomLeft: Radius.circular(15),
+                //             bottomRight: Radius.circular(15))),
+                //     child: Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         Text(
+                //           'Chi tiết',
+                //           style: TextStyle(
+                //               fontSize: 18, fontWeight: FontWeight.w600),
+                //         ),
+                //         SizedBox(
+                //           height: 10,
+                //         ),
+                //         ReadMoreText(
+                //           // cage.description,
+                //           "This is description...",
+                //           style: TextStyle(
+                //             fontSize: 15,
+                //             color: lightFontColor,
+                //             fontWeight: FontWeight.w500,
+                //           ), //halt
+                //           trimLines:
+                //               5, //thêm card chọn pet xong thì sửa số này lại nhá
+                //           trimCollapsedText: 'xem thêm',
+                //           trimExpandedText: 'thu gọn',
+                //           // maxLines: 5,
+                //           // overflow: TextOverflow.ellipsis,
+                //         )
+                //       ],
+                //     )),
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -417,7 +417,20 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                           icon: Iconsax.add_square,
                           color: primaryColor,
                           onPressed: () {
-                            //print(supply.quantity);
+                            print(supply.quantity);
+                            if (widget.isUpdate != null && widget.isUpdate!){
+                              if (quantity < supply.quantity!) {
+                                setState(() {
+                                  quantity = quantity + 1;
+                                });
+                              }
+                              else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Số lượng của sản phẩm này đã đạt đủ'),
+                                    ));
+                              }
+                            } else 
                             if (state.booking.supplyOrderCreateParameters!
                                 .isNotEmpty) {
                               var supplyOrder = state
@@ -430,6 +443,9 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                                 supplyOrder.forEach((element) {
                                   booked += element.quantity!;
                                 });
+                                if (widget.isUpdate != null && widget.isUpdate!) {
+
+                                }
                                 if (quantity + booked < supply.quantity!) {
                                   setState(() {
                                     quantity = quantity + 1;
@@ -510,6 +526,14 @@ class _SupplyDetailsState extends State<SupplyDetails> {
               onPressed: () {
                 //print('pet id:' + pets[selectedIndex].id!.toString());
                 bool isValid = false;
+                 if (widget.isUpdate != null && widget.isUpdate!){
+                              if (quantity < supply.quantity!) {
+                                isValid = true;
+                              }
+                              else {
+                                isValid = false;
+                              }
+                            } else 
                 if (state.booking.supplyOrderCreateParameters!.isNotEmpty) {
                   var supplyOrder = state.booking.supplyOrderCreateParameters!
                       .where((element) => supply.id == element.supplyId);
@@ -519,7 +543,7 @@ class _SupplyDetailsState extends State<SupplyDetails> {
                     supplyOrder.forEach((element) {
                       booked += element.quantity!;
                     });
-                    if (quantity + booked < supply.quantity!) {
+                    if (quantity + booked <= supply.quantity!) {
                       isValid = true;
                     } else {
                       isValid = false;

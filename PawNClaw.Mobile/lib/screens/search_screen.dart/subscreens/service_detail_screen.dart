@@ -424,7 +424,19 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                     icon: Iconsax.add_square,
                     color: primaryColor,
                     onPressed: () {
-                      if (state
+                      print(state.booking.bookingCreateParameter!.due!);
+                      if ((widget.isUpdate != null && widget.isUpdate!)) {
+                        if (quantity <
+                            state.booking.bookingCreateParameter!.due!) {
+                          setState(() {
+                            quantity = quantity + 1;
+                          });
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  'Số lượng dịch vụ tối đa dựa theo số ngày.')));
+                        }
+                      } else if (state
                           .booking.serviceOrderCreateParameters!.isNotEmpty) {
                         var serviceOrder = state
                             .booking.serviceOrderCreateParameters!
@@ -443,17 +455,29 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                                 content: Text(
                                     'Số lượng dịch vụ tối đa dựa theo số ngày.')));
                           }
+                        }else {
+                        if (quantity <
+                            state.booking.bookingCreateParameter!.due!)
+                          setState(() {
+                            quantity = quantity + 1;
+                          });
+                        else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  'Số lượng dịch vụ tối đa dựa theo số ngày.')));
                         }
                       }
-
-                      if (quantity < state.booking.bookingCreateParameter!.due!)
-                        setState(() {
-                          quantity = quantity + 1;
-                        });
-                      else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(
-                                'Số lượng dịch vụ tối đa dựa theo số ngày.')));
+                      } else {
+                        if (quantity <
+                            state.booking.bookingCreateParameter!.due!)
+                          setState(() {
+                            quantity = quantity + 1;
+                          });
+                        else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  'Số lượng dịch vụ tối đa dựa theo số ngày.')));
+                        }
                       }
                     }),
               ],
@@ -467,6 +491,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
           //decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15))),
           child: ElevatedButton(
             onPressed: () {
+              print(state.booking.bookingCreateParameter!.due!);
               // => showCupertinoDialog(
               //   barrierDismissible: false,
               //   context: context,
@@ -476,25 +501,41 @@ class _ServiceDetailsState extends State<ServiceDetails> {
               // ).then((value) {
               // print(pets[selectedIndex].id);
               bool isValid = false;
-              if (state.booking.serviceOrderCreateParameters!.isNotEmpty) {
+              if ((widget.isUpdate != null && widget.isUpdate!)) {
+
+                if (quantity <= state.booking.bookingCreateParameter!.due!) {
+                  isValid = true;
+                } else {
+                  isValid = false;
+                }
+              } else if (state
+                  .booking.serviceOrderCreateParameters!.isNotEmpty) {
+
                 var serviceOrder = state.booking.serviceOrderCreateParameters!
                     .where((element) =>
                         element.serviceId == service.id &&
                         element.petId == pets[selectedIndex].id)
                     .toList();
                 if (serviceOrder.isNotEmpty) {
+
                   if (quantity + serviceOrder.first.quantity! <=
                       state.booking.bookingCreateParameter!.due!) {
                     isValid = true;
                   } else {
                     isValid = false;
                   }
+                }else {
+                if (quantity <= state.booking.bookingCreateParameter!.due!) {
+                  isValid = true;
                 } else {
-                  if (quantity <= state.booking.bookingCreateParameter!.due!) {
-                    isValid = true;
-                  } else {
-                    isValid = false;
-                  }
+                  isValid = false;
+                }
+              }
+              } else {
+                if (quantity <= state.booking.bookingCreateParameter!.due!) {
+                  isValid = true;
+                } else {
+                  isValid = false;
                 }
               }
               if (isValid) {

@@ -182,7 +182,7 @@ class TransactionDetails {
                     id: 0,
                     name: supply
                         .name!,
-                    imgUrl: act.photo!.first.url ?? "",
+                    imgUrl:  supply.photo?.url ?? "",
                     note: act.description != null
                         ? act.description!
                         : 'Không có chú thích'),
@@ -201,19 +201,20 @@ class TransactionDetails {
       if (act.serviceId != null && act.provideTime != null) {
         for (var pet in getPets()) {
           if (pet.id == act.petId) {
+             Service service = 
+                        serviceOrders!
+                        .where((e) => e.serviceId == act.serviceId)
+                        .first
+                        .service!;
             SERVICE_ACTS.add(Activity(
                 id: act.id!,
                 time: DateTime.parse(act.provideTime!),
                 type: ActivityType(2),
                 product: Product(
                     id: 0,
-                    name: this
-                        .serviceOrders!
-                        .where((e) => e.serviceId == act.serviceId)
-                        .first
-                        .service!
+                    name: service
                         .description!,
-                    imgUrl: act.photo!.first.url ?? "",
+                    imgUrl: service.photo?.url ?? "",
                     note: act.description != null
                         ? act.description!
                         : 'Không có chú thích'),
@@ -428,11 +429,13 @@ class Service {
     this.id,
     this.description,
     this.discountPrice,
+    this.photo
   });
 
   int? id;
   String? description;
   double? discountPrice;
+  Photo? photo;
 
   factory Service.fromRawJson(String str) => Service.fromJson(json.decode(str));
 
@@ -444,6 +447,7 @@ class Service {
         discountPrice: json["discountPrice"] != null
             ? json["discountPrice"].toDouble()
             : 0,
+        photo: json["photos"].toString() != "[]" ? Photo.fromJson(json["photos"].last) : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -501,11 +505,13 @@ class Supply {
     this.id,
     this.name,
     this.discountPrice,
+    this.photo
   });
 
   int? id;
   String? name;
   double? discountPrice;
+  Photo? photo;
 
   factory Supply.fromRawJson(String str) => Supply.fromJson(json.decode(str));
 
@@ -517,12 +523,14 @@ class Supply {
         discountPrice: json["discountPrice"] != null
             ? json["discountPrice"].toDouble()
             : 0,
+            photo: (json["photos"].toString() != "[]")? Photo.fromJson(json["photos"].last):null
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
         "discountPrice": discountPrice,
+        "photos": [photo!.toJson()]
       };
 }
 

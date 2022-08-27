@@ -587,7 +587,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "THÔNG TIN CHUỒNG",
+                                "THÔNG TIN PHÒNG",
                                 style: TextStyle(
                                   color: primaryFontColor,
                                   fontWeight: FontWeight.w600,

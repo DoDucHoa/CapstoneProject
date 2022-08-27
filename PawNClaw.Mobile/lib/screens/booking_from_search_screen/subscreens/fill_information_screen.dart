@@ -322,13 +322,13 @@ class _FillInformationScreenState extends State<FillInformationScreen> {
                 //       )),
                 // ),
                 // const Spacer(flex: 30),
-                Text(
-                  "*Lưu ý: thời gian đặt chỗ của bạn sẽ được làm tròn tới phút 30 hoặc một tiếng để tiện cho việc xếp lịch và tính tiền.",
-                  style: TextStyle(
-                    fontStyle: FontStyle.italic,
-                    color: primaryColor,
-                  ),
-                ),
+                // Text(
+                //   "*Lưu ý: thời gian đặt chỗ của bạn sẽ được làm tròn tới phút 30 hoặc một tiếng để tiện cho việc xếp lịch và tính tiền.",
+                //   style: TextStyle(
+                //     fontStyle: FontStyle.italic,
+                //     color: primaryColor,
+                //   ),
+                // ),
                 SizedBox(
                   height: 15,
                 ),

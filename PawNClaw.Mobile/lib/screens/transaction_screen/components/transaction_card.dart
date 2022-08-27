@@ -39,7 +39,7 @@ class TransactionCard extends StatelessWidget {
             MaterialPageRoute(
                 builder: (context) => TransactionDetailsScreen(
                       booking: booking,
-                      redirect:  TransactionList()
+                      redirect:null // TransactionList()
                     )));
       }),
       child: Column(
