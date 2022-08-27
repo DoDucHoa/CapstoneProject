@@ -18,4 +18,4 @@ class SearchByCagecode extends SearchEvent {
   List<Object> get props => [cageCode, centerId];
 }
 
-class ClearSearch extends SearchEvent{}
+class ClearSearch extends SearchEvent {}

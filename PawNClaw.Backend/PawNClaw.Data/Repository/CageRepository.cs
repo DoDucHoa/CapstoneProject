@@ -26,12 +26,12 @@ namespace PawNClaw.Data.Repository
 
             if (IsSingle == false)
             {
-                return query.Include("CageType").Where(x => x.CageTypeId == Id
+                return query.Include("CageType").Where(x => x.CageTypeId == Id && x.Status == true
                                 && !cageCodesInvalid.Contains(x.Code) && x.IsOnline == true && x.CageType.IsSingle == IsSingle).Count();
             }
             else
             {
-                return query.Include("CageType").Where(x => x.CageTypeId == Id
+                return query.Include("CageType").Where(x => x.CageTypeId == Id && x.Status == true
                                 && !cageCodesInvalid.Contains(x.Code) && x.IsOnline == true).Count();
             }
         }

@@ -12,5 +12,7 @@ namespace PawNClaw.Data.Interface
         public void RemoveServiceOrder(int BookingId, int ServiceId);
 
         public IEnumerable<ServiceOrder> GetServiceOrdersByPetIdAndBookingId(int BookingId, int PetId);
+
+        public ServiceOrder GetServiceOrder(int BookingId, int ServiceId);
     }
 }

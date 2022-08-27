@@ -359,10 +359,7 @@ namespace PawNClaw.Data.Repository
                             Name = supplyorder.Supply.Name,
                             Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(supplyorder.SupplyId, PhotoTypesConst.Supply),
                         },
-                        /*Pet = new Pet
-                        {
-                            Name = supplyorder.Pet.Name,
-                        }*/
+                        Pet = supplyorder.Pet
                     }),
                     ServiceOrders = (ICollection<ServiceOrder>)x.ServiceOrders
                     .Select(serviceorder => new ServiceOrder
@@ -381,6 +378,7 @@ namespace PawNClaw.Data.Repository
                             Description = serviceorder.Service.Description,
                             Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(serviceorder.ServiceId, PhotoTypesConst.Service),
                         },
+                        Pet = serviceorder.Pet
                         /*Pet = new Pet
                         {
                             Name = serviceorder.Pet.Name,
@@ -494,6 +492,7 @@ namespace PawNClaw.Data.Repository
                                 Weight = pet.Pet.Weight,
                                 Birth = pet.Pet.Birth,
                                 BreedName = pet.Pet.BreedName,
+                                PetTypeCode = pet.Pet.PetTypeCode,
                                 PetHealthHistories = (ICollection<PetHealthHistory>)pet.Pet.PetHealthHistories.Where(pethealth => pethealth.BookingId == bookingdetail.BookingId),
                                 Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(pet.Pet.Id, PhotoTypesConst.PetProfile)
                             }
@@ -710,6 +709,15 @@ namespace PawNClaw.Data.Repository
                     Rating = x.Rating,
                     CustomerNote = x.CustomerNote,
                     StaffNote = x.StaffNote,
+                    Customer = new Customer
+                    {
+                        Name = x.Customer.Name,
+                        IdNavigation = new Account
+                        {
+                            Phone = x.Customer.IdNavigation.Phone,
+                            Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(x.CustomerId, PhotoTypesConst.Account),
+                        }
+                    },
                     BookingDetails = (ICollection<BookingDetail>)x.BookingDetails
                     .Select(bookingdetail => new BookingDetail
                     {
@@ -741,6 +749,7 @@ namespace PawNClaw.Data.Repository
                                 Length = pet.Pet.Length,
                                 Weight = pet.Pet.Weight,
                                 Birth = pet.Pet.Birth,
+                                BreedName = pet.Pet.BreedName,
                                 Photos = (ICollection<Photo>)_photoRepository.GetPhotosByIdActorAndPhotoType(pet.PetId, PhotoTypesConst.PetProfile),
                             }
                         })

@@ -353,7 +353,7 @@ class _PetCardState extends State<PetCard> {
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                   content: Text(
-                                      "Không thể chọn 2 thú cưng khác loài trong cùng một yêu cầu.")));
+                                      "Không thể ghép các thú cưng khác loài trong cùng một phòng.")));
                             }
                           }
                           //  state = BlocProvider.of<SearchBloc>(context).state;

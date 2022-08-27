@@ -26,11 +26,6 @@ class BookingRepository implements BaseBookingRepository {
       List<BookingDetail> bookings = response.data
           .map<BookingDetail>((e) => BookingDetail.fromJson(e))
           .toList();
-      print('reponse: $bookings.length');
-      bookings.first.bookingDetails!.forEach((element) {
-        print(element.c!.toJson());
-      });
-
       return bookings;
     } on DioError catch (e) {
       print(e.response?.data);

@@ -109,34 +109,34 @@ class _ActivityScreenState extends State<ActivityScreen> {
                     height: width * smallPadRate,
                   ),
                   //BUTTON
-                  ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                ActivityReportScreen(activity: activity)));
-                      },
-                      style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15))),
-                      child: Container(
-                        //width: width*(1 - 2*regularPadRate),
-                        padding: EdgeInsets.symmetric(
-                          vertical: width * smallPadRate,
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Báo cáo hoạt động này',
-                            style: TextStyle(
-                                color: primaryColor,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                      )),
-                  SizedBox(
-                    height: width * smallPadRate,
-                  ),
+                  // ElevatedButton(
+                  //     onPressed: () {
+                  //       Navigator.of(context).push(MaterialPageRoute(
+                  //           builder: (context) =>
+                  //               ActivityReportScreen(activity: activity)));
+                  //     },
+                  //     style: ElevatedButton.styleFrom(
+                  //         primary: Colors.white,
+                  //         shape: RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(15))),
+                  //     child: Container(
+                  //       //width: width*(1 - 2*regularPadRate),
+                  //       padding: EdgeInsets.symmetric(
+                  //         vertical: width * smallPadRate,
+                  //       ),
+                  //       child: Center(
+                  //         child: Text(
+                  //           'Báo cáo hoạt động này',
+                  //           style: TextStyle(
+                  //               color: primaryColor,
+                  //               fontSize: 15,
+                  //               fontWeight: FontWeight.w700),
+                  //         ),
+                  //       ),
+                  //     )),
+                  // SizedBox(
+                  //   height: width * smallPadRate,
+                  // ),
                   ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(

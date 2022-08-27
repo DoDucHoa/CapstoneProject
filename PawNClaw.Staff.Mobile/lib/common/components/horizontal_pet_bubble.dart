@@ -26,7 +26,9 @@ class PetBubbleCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.all(width * 0.02),
             child: CircleAvatar(
-              backgroundImage: AssetImage('lib/assets/cat_avatar0.png'),
+              backgroundImage: AssetImage(pet.petTypeCode == "DOG"
+                  ? 'lib/assets/dog.png'
+                  : 'lib/assets/black-cat.png'),
             ),
           ),
           Text(
