@@ -108,7 +108,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       color: frameColor,
                                       width: 4,
                                     ),
-                                    borderRadius: BorderRadius.circular(width*0.3),
+                                    borderRadius:
+                                        BorderRadius.circular(width * 0.3),
                                   ),
                                   child: CircleAvatar(
                                     radius: width * 0.2,

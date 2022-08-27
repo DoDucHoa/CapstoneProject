@@ -39,5 +39,10 @@ namespace PawNClaw.Data.Repository
                 Quantity = x.Quantity
             });
         }
+
+        public ServiceOrder GetServiceOrder(int BookingId, int ServiceId)
+        {
+            return _dbSet.Find(ServiceId, BookingId);
+        }
     }
 }

@@ -21,6 +21,7 @@ class _SupplyActivityState extends State<SupplyActivity> {
     booking.bookingDetails!.forEach(
       (cage) => cage.petBookingDetails!.forEach(
         (pet) {
+          pet.pet!.id = pet.petId;
           pets.add(pet.pet!);
         },
       ),
@@ -81,6 +82,7 @@ class _SupplyActivityState extends State<SupplyActivity> {
                 top: width * smallPadRate,
               ),
               child: ActivityCard(
+                photo: supplies[index].supply!.photos!.first.url,
                 activityName: supplies[index].supply!.name!,
                 note: supplies[index].note ?? "Không có ghi chú",
                 remainCount: booking.getRemainSupplyAct(supplies[index]),

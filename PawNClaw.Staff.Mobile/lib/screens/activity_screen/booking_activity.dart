@@ -14,6 +14,7 @@ import 'package:pncstaff_mobile_application/models/pet.dart';
 import 'package:pncstaff_mobile_application/repositories/booking/booking_repository.dart';
 import 'package:intl/intl.dart';
 import 'package:pncstaff_mobile_application/screens/activity_screen/subscreens/supply_activity.dart';
+import 'package:pncstaff_mobile_application/screens/home_screen/subscreens/booking_cage.dart';
 
 import 'subscreens/service_activity.dart';
 
@@ -86,12 +87,21 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              CircleAvatar(
-                                radius: height * 0.04,
-                                backgroundColor: lightPrimaryColor,
-                                backgroundImage:
-                                    AssetImage('lib/assets/cus0.png'),
-                              ),
+                              (booking.customer!.idNavigation!.photo == null)
+                                  ? CircleAvatar(
+                                      radius: height * 0.04,
+                                      backgroundColor: primaryBackgroundColor,
+                                      backgroundImage:
+                                          AssetImage('lib/assets/cus0.png'),
+                                    )
+                                  : CircleAvatar(
+                                      radius: height * 0.04,
+                                      backgroundColor: frameColor,
+                                      backgroundImage: NetworkImage(
+                                        booking.customer!.idNavigation!.photo!
+                                            .url!,
+                                      ),
+                                    ),
                               Padding(
                                 padding: EdgeInsets.all(width * smallPadRate),
                                 child: Column(
@@ -452,6 +462,78 @@ class _BookingActivityScreenState extends State<BookingActivityScreen> {
                               SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(children: [
+                                  (booking.getRemainFeedingAct() > 0)
+                                      ? InkWell(
+                                          onTap: () => Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      BookingCageScreen(
+                                                          booking: booking,
+                                                          bookingDetail: booking
+                                                              .bookingDetails!
+                                                              .first))),
+                                          child: Container(
+                                            margin: EdgeInsets.only(
+                                                right: width * smallPadRate),
+                                            constraints: BoxConstraints(
+                                              minHeight: width * 0.35,
+                                              minWidth: width * 0.35,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: primaryColor
+                                                  .withOpacity(0.15),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsets.all(
+                                                  width * smallPadRate * 0.7),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    padding: EdgeInsets.all(7),
+                                                    decoration: BoxDecoration(
+                                                        color: primaryColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10)),
+                                                    child: Icon(
+                                                      Icons.fastfood_rounded,
+                                                      color: Colors.white,
+                                                      size: 20,
+                                                      // size: 20,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    booking
+                                                        .getRemainFeedingAct()
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: width * 0.085,
+                                                      color: primaryFontColor,
+                                                      // height: 1
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "Cho ăn",
+                                                    style: TextStyle(
+                                                        color: primaryFontColor,
+                                                        fontSize: width * 0.048,
+                                                        height: 1),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      : Container(),
                                   InkWell(
                                     onTap: () => Navigator.of(context)
                                         .push(MaterialPageRoute(
