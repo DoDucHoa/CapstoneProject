@@ -78,7 +78,7 @@ class ActivityCard extends StatelessWidget {
             Container(
                 margin: EdgeInsets.all(width * extraSmallPadRate + 5),
                 height: 35,
-                child: pet.photos!.isNotEmpty
+                child: pet.photos != null
                     ? CircleAvatar(
                         backgroundImage: NetworkImage(pet.photos!.first.url!),
                       )
