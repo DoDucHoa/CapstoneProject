@@ -81,13 +81,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               bottom: TabBar(
                                 tabs: [
                                   Tab(
-                                    text: 'To-do list',
+                                    text: 'Công việc',
                                   ),
                                   Tab(
-                                    text: 'Check-out today',
+                                    text: 'Check-out\n Hôm nay',
                                   ),
                                   Tab(
-                                    text: 'Next up tasks',
+                                    text: 'Nhiệm vụ\n tiếp theo',
                                   ),
                                 ],
                                 labelColor: Colors.white,

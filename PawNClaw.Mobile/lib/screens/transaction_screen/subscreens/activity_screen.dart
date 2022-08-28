@@ -89,7 +89,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: (activity.imgUrl != null)
-                          ? FadeInImage.assetNetwork(placeholder: 'lib/assets/new-paw.gif', image:
+                          ? FadeInImage.assetNetwork(placeholder: 'lib/assets/loading.gif', image:
                               activity.imgUrl!,
                               width: width * (1 - 2 * mediumPadRate),
                               height: width * (1 - 2 * mediumPadRate) * 3 / 2,

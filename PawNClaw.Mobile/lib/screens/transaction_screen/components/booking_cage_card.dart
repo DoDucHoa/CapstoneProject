@@ -71,7 +71,9 @@ class BookingCageCard extends StatelessWidget {
                   Container(
                       width: width / 3,
                       child: Text(
-                        bookingDetails.cage!.name!,
+                        bookingDetails.cage!.cageType!.typeName!
+                        ,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: primaryFontColor,
                           fontWeight: FontWeight.w500,
@@ -120,7 +122,7 @@ class BookingCageCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              bookingDetails.cage!.cageType!.typeName!,
+              bookingDetails.cage!.name!,
               style: TextStyle(
                 color: primaryFontColor,
                 fontWeight: FontWeight.w500,
