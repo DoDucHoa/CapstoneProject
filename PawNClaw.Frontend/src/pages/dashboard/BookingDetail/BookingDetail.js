@@ -279,7 +279,7 @@ export default function BookingDetails({ centerId, centerInfo, selectedEvent, on
             createPetHealthHistoryParameter: {
               checkedDate: new Date(),
               description: 'Kiểm tra kích thước',
-              centerName: centerInfo.name,
+              centerName: centerInfo ? centerInfo.name : '',
               petId: pet.id,
               length: pet.length,
               height: pet.height,
