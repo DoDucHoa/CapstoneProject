@@ -109,7 +109,7 @@ export default function SupplyNewEditForm({ isEdit, supplyData }) {
     try {
       if (!isEdit) {
         const supplyId = await createSupply(values);
-        uploadPhotoToFirebase('supplies', values.avatarUrl, supplyId, 'supply');
+        await uploadPhotoToFirebase('supplies', values.avatarUrl, supplyId, 'supply');
       } else {
         await updateSupply(values, accountInfo.id);
       }
