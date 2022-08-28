@@ -193,12 +193,12 @@ function AuthProvider({ children }) {
   const register = (email, password) => createUserWithEmailAndPassword(AUTH, email, password);
 
   const logout = () => {
+    dispatch({ type: 'LOGOUT' });
     signOut(AUTH);
     setSession(null);
     setAccountInfoSession(null);
     setCenterInfoSession(null);
     setCenterIdSession(null);
-    dispatch({ type: 'LOGOUT' });
     // window.location.reload();
   };
 
