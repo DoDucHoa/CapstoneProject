@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
 // @mui
-import { LoadingButton } from '@mui/lab';
 import { Box, Button, Grid, Typography } from '@mui/material';
 // reac-hooks-form
 import { useFieldArray, useFormContext } from 'react-hook-form';
@@ -30,8 +28,6 @@ export default function CageManagement({
   handleOpenCageDialogForm,
   isValidDate,
 }) {
-  const [isLoading, setIsLoading] = useState(false);
-
   const { trigger, control, watch } = useFormContext();
   const values = watch();
   const { cageSizeCheck: checks } = values;
@@ -77,23 +73,20 @@ export default function CageManagement({
                     height={30}
                   />
 
-                  <LoadingButton
+                  <Button
                     sx={{ mx: 3 }}
                     variant="contained"
                     color="primary"
-                    loading={isLoading}
                     onClick={() => {
-                      trigger([`petData[${cageIndex}]`]).then(async (isValid) => {
+                      trigger([`petData[${cageIndex}]`]).then((isValid) => {
                         if (isValid) {
-                          setIsLoading(true);
-                          await handleCheckSize(cageIndex, centerId);
-                          setIsLoading(false);
+                          handleCheckSize(cageIndex, centerId);
                         }
                       });
                     }}
                   >
                     Kiểm tra kích thước
-                  </LoadingButton>
+                  </Button>
                   <Button
                     variant="contained"
                     color="warning"
