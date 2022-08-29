@@ -115,8 +115,7 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                             borderRadius: BorderRadius.circular(width),
                             image: (center.getThumbnail() == null)
                                 ? DecorationImage(
-                                    image:
-                                        AssetImage('/lib/assets/center0.jpg'),
+                                    image: AssetImage('lib/assets/center0.jpg'),
                                     fit: BoxFit.cover)
                                 : DecorationImage(
                                     image: NetworkImage(
@@ -755,7 +754,8 @@ class _ConfirmBookingState extends State<ConfirmBooking> {
                         ),
                       ),
                       onChanged: ((value) {
-                        state.booking.bookingCreateParameter!.customerNote = value;
+                        state.booking.bookingCreateParameter!.customerNote =
+                            value;
                       }),
                     ),
                   ),
