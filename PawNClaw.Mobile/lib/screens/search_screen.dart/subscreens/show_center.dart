@@ -37,9 +37,9 @@ class _ShowAvailableCenterState extends State<AvailableCenterScreen> {
             ),
             leading: IconButton(
               onPressed: () {
-                 BlocProvider.of<SearchBloc>(context)
-                          ..add(BackToPetSelection(
-                              (state as SearchCompleted).requests));
+                BlocProvider.of<SearchBloc>(context)
+                  ..add(
+                      BackToPetSelection((state as SearchCompleted).requests));
               },
               // => Navigator.of(context).push(
               //     MaterialPageRoute(builder: (context) => SearchScreen())),
@@ -51,61 +51,63 @@ class _ShowAvailableCenterState extends State<AvailableCenterScreen> {
             backgroundColor: backgroundColor,
             elevation: 0,
           ),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ((state as SearchCompleted)
-                      .searchResponse
-                      .districtName!
-                      .isNotEmpty)
-                  ? Column(children: [
-                      Icon(
-                        Icons.flag_circle_rounded,
-                        size: 65,
-                        color: lightFontColor,
-                      ),
-                      Container(
-                        width: width * (1 - 2 * mediumPadRate),
-                        child: Text(
-                          'Rất tiếc! Chúng tôi không thể tìm thấy \n khách sạn nào ở khu vực mà bạn yêu cầu.\nBạn có thể tham khảo những khách sạn \n ở khu vực lân cận sau đây.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: lightFontColor,
-                              height: 1.2),
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ((state as SearchCompleted)
+                        .searchResponse
+                        .districtName!
+                        .isNotEmpty)
+                    ? Column(children: [
+                        Icon(
+                          Icons.flag_circle_rounded,
+                          size: 65,
+                          color: lightFontColor,
                         ),
-                      ),
-                      SizedBox(height: 15),
-                      Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: width * mediumPadRate,
-                            ),
-                            Text(
-                              (state as SearchCompleted)
-                                  .searchResponse
-                                  .districtName!,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
+                        Container(
+                          width: width * (1 - 2 * mediumPadRate),
+                          child: Text(
+                            'Rất tiếc! Chúng tôi không thể tìm thấy \n khách sạn nào ở khu vực mà bạn yêu cầu.\nBạn có thể tham khảo những khách sạn \n ở khu vực lân cận sau đây.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: lightFontColor,
+                                height: 1.2),
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: width * mediumPadRate,
                               ),
-                            )
-                          ]),
-                    ])
-                  : Container(),
-              ListView.builder(
-                itemCount: (state as SearchCompleted).centers.length,
-                itemBuilder: ((context, index) {
-                  return CenterCard(
-                    center: state.centers[index],
-                  );
-                }),
-                physics: ClampingScrollPhysics(),
-                shrinkWrap: true,
-              ),
-            ],
+                              Text(
+                                (state as SearchCompleted)
+                                    .searchResponse
+                                    .districtName!,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              )
+                            ]),
+                      ])
+                    : Container(),
+                ListView.builder(
+                  itemCount: (state as SearchCompleted).centers.length,
+                  itemBuilder: ((context, index) {
+                    return CenterCard(
+                      center: state.centers[index],
+                    );
+                  }),
+                  physics: ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                ),
+              ],
+            ),
           ),
         );
       },
