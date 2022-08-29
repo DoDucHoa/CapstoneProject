@@ -255,6 +255,7 @@ export default function BookingDetails({ centerId, centerInfo, selectedEvent, on
             onCancel();
           } else {
             setOpenPDFDialog(true);
+            dispatch(getBookingDetails(id));
           }
         } else {
           enqueueSnackbar('Vui lòng kiểm tra lại kích thước của thú cưng!', { variant: 'error' });
