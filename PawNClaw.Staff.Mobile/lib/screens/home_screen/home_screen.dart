@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
               resizeToAvoidBottomInset: true,
               body: _selectedItemPosition == 0
                   ? DefaultTabController(
-                      length: 3,
+                      length: 2,
                       child: NestedScrollView(
                         headerSliverBuilder: ((context, value) {
                           var authState =
@@ -80,9 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               shadowColor: Colors.transparent,
                               bottom: TabBar(
                                 tabs: [
-                                  Tab(
-                                    text: 'Công việc',
-                                  ),
                                   Tab(
                                     text: 'Check-out\n Hôm nay',
                                   ),

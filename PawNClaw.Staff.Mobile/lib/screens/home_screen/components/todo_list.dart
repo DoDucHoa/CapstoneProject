@@ -78,6 +78,7 @@ class _TodoListState extends State<TodoList> {
     bookings.forEach(
       (element) {
         remainFeedingActivites.addAll(element.getUndoneFeedingAct());
+        print(element.getUndoneFeedingAct());
       },
     );
     print(times);

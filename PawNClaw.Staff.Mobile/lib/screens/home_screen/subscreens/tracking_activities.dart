@@ -19,7 +19,7 @@ class _TrackingActivitiesState extends State<TrackingActivities> {
   Widget build(BuildContext context) {
     var state = (BlocProvider.of<BookingBloc>(context).state as BookingLoaded);
     return TabBarView(children: [
-      TodoList(bookings: state.bookings),
+      // TodoList(bookings: state.bookings),
       CheckoutToday(bookings: state.bookings),
       NextUpTasks(bookings: state.bookings),
     ]);
