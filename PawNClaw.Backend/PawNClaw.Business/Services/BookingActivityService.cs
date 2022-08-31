@@ -118,31 +118,6 @@ namespace PawNClaw.Business.Services
                                 }
                             }
                         }
-                        else if (i + 1 == bookingDetail.Duration)
-                        {
-                            foreach (var foodSchedule in bookingDetail.C.CageType.FoodSchedules)
-                            {
-                                if (foodSchedule.FromTime < startBooking.TimeOfDay)
-                                {
-                                    bookingActivity = new BookingActivity();
-                                    bookingActivity.BookingId = booking.Id;
-                                    bookingActivity.BookingDetailId = bookingDetail.Id;
-                                    bookingActivity.ActivityTimeFrom = TimeHelper.SetTime(startBooking, foodSchedule.FromTime.Hours, foodSchedule.FromTime.Minutes);
-                                    bookingActivity.ActivityTimeTo = TimeHelper.SetTime(startBooking, foodSchedule.ToTime.Hours, foodSchedule.ToTime.Minutes);
-
-                                    try
-                                    {
-                                        _bookingActivityRepository.Add(bookingActivity);
-                                        await _bookingActivityRepository.SaveDbChangeAsync();
-                                    }
-                                    catch
-                                    {
-                                        transaction.Rollback();
-                                        throw new Exception();
-                                    }
-                                }
-                            }
-                        }
                         else
                         {
                             foreach (var foodSchedule in bookingDetail.C.CageType.FoodSchedules)
