@@ -40,7 +40,7 @@ class ActivityCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                      width: width * 0.6,
+                      constraints: BoxConstraints(minWidth: width * 0.4),
                       child: Text(
                         activity.product!.name,
                         style: TextStyle(
@@ -52,7 +52,7 @@ class ActivityCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       )),
                   Container(
-                      width: width * 0.6,
+                      constraints: BoxConstraints(minWidth: width * 0.4),
                       child: Text(
                         activity.product!.note,
                         style: TextStyle(
